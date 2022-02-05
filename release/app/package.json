@@ -1,0 +1,21 @@
+{
+  "name": "casemove",
+  "productName": "casemove",
+  "version": "1.0.0",
+  "description": "CSGO Storage unit manager that helps you move stuff. ",
+  "main": "./dist/main/main.js",
+  "author": {
+    "name": "Nombers",
+    "email": "casemovenombers@gmail.com",
+    "url": "https://github.com/nombersDev/casemove"
+  },
+  "scripts": {
+    "electron-rebuild": "node -r ts-node/register ../../.erb/scripts/electron-rebuild.js",
+    "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.js",
+    "postinstall": "npm run electron-rebuild && npm run link-modules"
+  },
+  "dependencies": {
+    "globaloffensive": "^2.1.0",
+    "steam-user": "^4.20.2"
+  }
+}
