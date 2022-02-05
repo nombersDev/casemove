@@ -47,7 +47,6 @@ To use:
 ----
 
 ## COMMON QUESTIONS
-
 #### Can I be VAC banned?
 
 The app doesn’t interact with your CSGO game client. It doesn’t inject any code into the game. You don’t even need to have the game installed for the app to run. All the app does is connect to Steam and emulate a CSGO connection.
@@ -57,6 +56,13 @@ Furthermore, the libraries [Steam-user](https://github.com/DoctorMcKay/node-stea
 #### Does Casemove store any of my information?
 
 No, Casemove doesn’t store any information on your computer. It also doesn’t send any information to anyone outside of Steam.
+
+
+#### Where can I read more about the safety?
+
+Casemove is comparable to the software "Archi Steam Farm" and since Archi has made a terric wiki on this issue, I'd refer over this wiki for further [reading](https://github.com/JustArchiNET/ArchiSteamFarm/wiki/FAQ#security--privacy--vac--bans--tos)
+
+As with anything, It's important to know that the using this software is distributed "as is" and without any warrenty. 
 
 ----
 ## Built using
