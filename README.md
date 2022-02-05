@@ -70,7 +70,7 @@ No, Casemove doesn’t store any information on your computer. It also doesn’t
 Casemove was created by Nombers.
 
 - Bitcoin donations can be sent to `1Fuy4cX8q739NAtEFexEsZYqza8GVfH9sb`
-- Skin donations can be sent to [here](https://steamcommunity.com/tradeoffer/new/?partner=1033744096&token=29ggoJY7)
+- Skin donations can be sent [here](https://steamcommunity.com/tradeoffer/new/?partner=1033744096&token=29ggoJY7)
 
 
 
