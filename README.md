@@ -59,6 +59,11 @@ Furthermore, the libraries [Steam-user](https://github.com/DoctorMcKay/node-stea
 No, casemove doesn’t store any information on your computer. It also doesn’t send any information to anyone outside of Steam.
 
 ----
+## Built using
+- Node version 14.18.2
+- React Electron Boilerplate
+- Tailwind v2
+----
 
 ## Author
 
