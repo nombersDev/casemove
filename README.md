@@ -49,9 +49,10 @@ To use:
 ## COMMON QUESTIONS
 #### Can I be VAC banned?
 
+No.
 The app doesn’t interact with your CSGO game client. It doesn’t inject any code into the game. You don’t even need to have the game installed for the app to run. All the app does is connect to Steam and emulate a CSGO connection.
 
-Furthermore, the libraries [Steam-user](https://github.com/DoctorMcKay/node-steam-user) & [Global Offensive](https://github.com/DoctorMcKay/node-globaloffensive) have been used by thousands of people. There hasn’t been an issue with these apps getting people VAC banned and this app is merely a cosmetic rendition of these libraries.
+Furthermore, the libraries [Steam-user](https://github.com/DoctorMcKay/node-steam-user) & [Global Offensive](https://github.com/DoctorMcKay/node-globaloffensive) have been used by thousands of people, and this app is merely a cosmetic rendition of these libraries.
 
 #### Does Casemove store any of my information?
 
