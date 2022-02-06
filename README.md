@@ -79,6 +79,12 @@ Casemove was created by Nombers.
 - Bitcoin donations can be sent to `1Fuy4cX8q739NAtEFexEsZYqza8GVfH9sb`
 - Skin donations can be sent [here](https://steamcommunity.com/tradeoffer/new/?partner=1033744096&token=29ggoJY7)
 
+----
+
+## How to build
+
+The main instructions on how to build the application from source be found using the [Electron React Boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate) and it's [docs](https://electron-react-boilerplate.js.org/docs/building). 
+I've built the app using [NVM](https://github.com/nvm-sh/nvm) with node version 14.18.2. 
 
 
 ----
