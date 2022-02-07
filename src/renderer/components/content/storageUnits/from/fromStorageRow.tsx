@@ -1,3 +1,4 @@
+import { LightningBoltIcon, XIcon } from '@heroicons/react/solid';
 import { useDispatch, useSelector } from 'react-redux';
 import { moveFromAddRemove } from 'renderer/store/actions/moveFromActions';
 
@@ -52,6 +53,9 @@ function content({ projectRow }) {
     return classes.filter(Boolean).join(' ');
   }
   const now = new Date();
+  const isEmpty = fromReducer.totalToMove.filter(
+    (row) => row[0] == projectRow.item_id
+  ).length == 0
 
   return (
     <>
@@ -80,17 +84,40 @@ function content({ projectRow }) {
               ? projectRow.item_customname
               : projectRow.item_name}
             <br />
-            <span className="text-gray-500">
-              {projectRow.item_customname !== null
-                ? projectRow.item_storage_total !== undefined
-                  ? projectRow.item_name +
-                    ' (' +
-                    projectRow.item_storage_total +
-                    ')'
-                  : projectRow.item_name
+            <span
+              className="text-gray-500"
+              title={projectRow.item_paint_wear}
+            >
+              {projectRow.item_customname !== null ? projectRow.item_name : ''}
+              {projectRow.item_customname !== null &&
+              projectRow.item_paint_wear !== undefined
+                ? ' - '
                 : ''}
+              {projectRow.item_paint_wear !== undefined
+                ? projectRow.item_wear_name
+                : ''}
+                
             </span>
           </span>
+        </div>
+      </td>
+      <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 font-medium">
+        <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
+          <div className="flex flex-shrink-0 -space-x-1">
+            {projectRow.stickers?.map((sticker, index) => (
+              <img
+                key={index}
+                className="max-w-none h-8 w-8 rounded-full ring-2 object-cover ring-transparent bg-gradient-to-t from-gray-100 to-gray-300"
+                src={
+                  'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
+                  sticker.sticker_url +
+                  '.png'
+                }
+                alt={sticker.sticker_name}
+                title={sticker.sticker_name}
+              />
+            ))}
+          </div>
         </div>
       </td>
       <td className="hidden md:table-cell px-6 py-3 text-sm text-gray-500 font-medium">
@@ -100,6 +127,7 @@ function content({ projectRow }) {
           </div>
         </div>
       </td>
+      
 
       <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-center font-normal">
         {projectRow.trade_unlock !== undefined
@@ -125,9 +153,7 @@ function content({ projectRow }) {
               id="postal-code"
               autoComplete="off"
               value={
-                fromReducer.totalToMove.filter(
-                  (row) => row[0] == projectRow.item_id
-                ).length == 0
+                isEmpty
                   ? ''
                   : fromReducer.totalToMove.filter(
                       (row) => row[0] == projectRow.item_id
@@ -139,6 +165,35 @@ function content({ projectRow }) {
             />
           </div>
         </div>
+      </td>
+      <td className="table-cell px-6 py-3 text-sm text-gray-500 font-medium">
+        <button
+          onClick={() => returnField(1000)}
+          className={classNames(
+            1000 - inventory.inventory.length - fromReducer.totalItemsToMove ==
+              0
+              ? 'pointer-events-none'
+              : ''
+          )}
+        >
+          <LightningBoltIcon
+            className="h-4 w-4 text-gray-400 hover:text-yellow-400"
+            aria-hidden="true"
+          />
+        </button>
+        <button
+          onClick={() => returnField(0)}
+          className={classNames(
+            isEmpty
+              ? 'pointer-events-none hidden'
+              : ''
+          )}
+        >
+          <XIcon
+            className="h-4 w-4 text-gray-400 hover:text-red-400  "
+            aria-hidden="true"
+          />
+        </button>
       </td>
       <td className="hidden md:px-6 py-3 whitespace-nowrap text-right text-sm font-medium"></td>
     </>

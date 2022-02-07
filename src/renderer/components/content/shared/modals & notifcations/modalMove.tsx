@@ -7,18 +7,17 @@ import {
   closeMoveModal,
   modalResetStorageIdsToClearFrom,
   moveModalAddToFail,
+  moveModalResetPayload,
   moveModalUpdate,
 } from 'renderer/store/actions/modalMove actions';
 import { moveToClearAll } from 'renderer/store/actions/moveToActions';
 import {
-  moveFromAddCasketToStorages,
   moveFromClearAll,
-  moveFromRemoveCasket,
   moveFromReset,
 } from 'renderer/store/actions/moveFromActions';
-import { clearStorageIDData } from 'renderer/store/actions/inventoryActions';
 
 export default function MoveModal() {
+  // const [hasRun, setRun] = useState(false);
   const [seenID, setID] = useState('');
   const [seenStorage, setStorage] = useState('');
   const dispatch = useDispatch();
@@ -38,12 +37,8 @@ export default function MoveModal() {
       );
       dispatch(moveFromClearAll());
     }
-    modalData.storageIdsToClearFrom.forEach((storageID) => {
-      dispatch(moveFromAddCasketToStorages(storageID));
-      dispatch(clearStorageIDData(storageID));
-      dispatch(moveFromRemoveCasket(storageID));
-    });
     dispatch(modalResetStorageIdsToClearFrom());
+    dispatch(moveModalResetPayload());
   }
 
   async function runModal() {
@@ -82,36 +77,44 @@ export default function MoveModal() {
           dispatch(moveModalUpdate());
         }
         if (modalData.modalPayload['isLast']) {
-          
-          if (modalData.modalPayload['type'] == 'to') {
-            dispatch(moveFromReset());
-          }
-          dispatch(modalResetStorageIdsToClearFrom());
-          dispatch(closeMoveModal());
+          // if (modalData.modalPayload['type'] == 'to') {
+          //   dispatch(moveFromReset());
+          // }
+          // dispatch(closeMoveModal());
+          // dispatch(modalResetStorageIdsToClearFrom());
         }
       }
     }
   }
   if (
-    modalData.modalPayload !== {} &&
+    Object.keys(modalData.modalPayload).length !== 0 &&
     seenID != modalData.modalPayload.itemID
   ) {
-    console.log(modalData.modalPayload.storageID, seenStorage)
+    console.log('Running');
+    // setRun(true)
+    console.log(
+      modalData.modalPayload !== {},
+      Object.keys(modalData.modalPayload).length
+    );
+    console.log(
+      Object.keys(modalData.modalPayload),
+      modalData.modalPayload,
+      modalData.modalPayload.itemID
+    );
     if (modalData.modalPayload.storageID != seenStorage) {
-      dispatch(moveFromReset())
+      dispatch(moveFromReset());
     }
+    setStorage;
     setID(modalData.modalPayload.itemID);
     runModal();
-  }
-
-  if (modalData.modalPayload == {}) {
-    setStorage('')
   }
 
   return (
     <Transition.Root
       show={
         modalData.doCancel.includes(modalData.modalPayload['key'])
+          ? false
+          : Object.keys(modalData.modalPayload).length == 0
           ? false
           : modalData.moveOpen
       }

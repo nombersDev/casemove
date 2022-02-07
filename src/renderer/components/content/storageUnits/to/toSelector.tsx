@@ -50,7 +50,7 @@ function content() {
             className="order-0 inline-flex items-center px-4 py-2 border border-transparent hover:bg-gray-50 focus:outline-none sm:order-1 sm:ml-3"
             onClick={() => refreshInventory()}
           >
-            <RefreshIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
+            <RefreshIcon className="h-4 w-4 text-gray-500" aria-hidden="true" />
           </Link>
           <span className="mr-3 text-gray-500 text-xs font-medium uppercase tracking-wide">
             Hide empty

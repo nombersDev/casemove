@@ -1,5 +1,5 @@
 export const LoadingButton = () => (
-  <svg className="animate-spin h-5 w-5 ..." viewBox="0 0 24 24">
+  <svg className="animate-spin h-4 w-4 ..." viewBox="0 0 24 24">
     <path
       className="opacity-75"
       fill="currentColor"

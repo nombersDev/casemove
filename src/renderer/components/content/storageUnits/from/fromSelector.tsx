@@ -1,5 +1,5 @@
 import { Menu, Transition, Switch } from '@headlessui/react';
-import { DotsVerticalIcon, RefreshIcon } from '@heroicons/react/solid';
+import { CheckIcon, DotsVerticalIcon, RefreshIcon, XIcon } from '@heroicons/react/solid';
 import { Fragment, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -60,6 +60,44 @@ function content() {
     window.electron.ipcRenderer.refreshInventory();
   }
 
+  // Get all storage unit data
+  async function getAllStorages() {
+    const casketResults = await inventory.inventory.filter(function (row) {
+      if (!row.item_url.includes('casket')) {
+        return false; // skip
+      }
+      if (row.item_storage_total == 0 && localHide) {
+        return false; // skip
+      }
+      return true;
+    });
+    for (const [_key, project] of Object.entries(casketResults)) {
+      let projectRow = project as any;
+      if (!fromReducer.activeStorages.includes(projectRow.item_id)) {
+        await getStorageData(projectRow.item_id, projectRow.item_customname);
+      }
+    }
+  }
+
+  // Get all storage unit data
+  async function unMarkAllStorages() {
+    const casketResults = await inventory.inventory.filter(function (row) {
+      if (!row.item_url.includes('casket')) {
+        return false; // skip
+      }
+      if (row.item_storage_total == 0 && localHide) {
+        return false; // skip
+      }
+      return true;
+    });
+    for (const [_key, project] of Object.entries(casketResults)) {
+      let projectRow = project as any;
+      if (fromReducer.activeStorages.includes(projectRow.item_id)) {
+        await getStorageData(projectRow.item_id, projectRow.item_customname);
+      }
+    }
+  }
+
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <RenameModal />
@@ -71,14 +109,43 @@ function content() {
           <Link
             to=""
             type="button"
-            className="order-0 inline-flex items-center px-4 py-2 border border-transparent hover:bg-gray-50 focus:outline-none sm:order-1 sm:ml-3"
+            onClick={() => getAllStorages()}
+            className=
+              'order-1 ml-3  order-1 inline-flex items-center px-4 py-2 hover:border hover:shadow-sm  text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0'
+
+          >
+
+            <CheckIcon
+                    className=" h-4 w-4 text-gray-700"
+                    aria-hidden="true"
+                  />
+          </Link>
+          <Link
+            to=""
+            type="button"
+            onClick={() => unMarkAllStorages()}
+            className=
+              'order-1 ml-3  order-1 inline-flex items-center px-4 py-2 hover:border hover:shadow-sm  text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0'
+
+          >
+
+            <XIcon
+                    className="h-4 w-4 text-gray-700"
+                    aria-hidden="true"
+                  />
+          </Link>
+
+          <Link
+            to=""
+            type="button"
+            className="order-last inline-flex items-center px-4 py-2 border border-transparent hover:bg-gray-50 focus:outline-none"
             onClick={() => refreshInventory()}
           >
             {getLoadingButton ? (
               <LoadingButton />
             ) : (
               <RefreshIcon
-                className="h-5 w-5 text-gray-500"
+                className="h-4 w-4 text-gray-500"
                 aria-hidden="true"
               />
             )}
@@ -91,7 +158,7 @@ function content() {
             onChange={() => dispatch(moveFromSetHide())}
             className={classNames(
               localHide ? 'bg-indigo-600' : 'bg-gray-200',
-              'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none'
+              'relative inline-flex mr-3 flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none'
             )}
           >
             <span
