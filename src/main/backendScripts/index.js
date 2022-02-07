@@ -340,6 +340,10 @@ class items {
       if (returnDict['item_url'].includes('econ/status_icons/service_medal_')) {
         return false;
       }
+      
+      if (returnDict['item_url'].includes('plusstars')) {
+        return false;
+      }
     }
 
     // If characters
