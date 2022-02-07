@@ -19,12 +19,14 @@ const initialState = {
               modalPayload: action.payload.query[0].payload,
               query: queryData
           }
-      
+
       case 'MOVE_MODAL_UPDATE':
         console.log('length', state.query)
         if (state.query.length == 0) {
           return {
-            ...state
+            ...state,
+            modalPayload: initialState.modalPayload,
+            moveOpen: false
           }
         }
           let initialStoragesToClear = state.storageIdsToClearFrom
@@ -53,7 +55,7 @@ const initialState = {
         }
       case 'MOVE_MODAL_RESET_PAYLOAD':
         return {
-          ...state, 
+          ...state,
           query: initialState.query
         }
       case 'MOVE_MODAL_CANCEL':
@@ -72,13 +74,13 @@ const initialState = {
             ...state,
             totalFailed: state.totalFailed + 1
         }
-      case 'SIGN_OUT': 
+      case 'SIGN_OUT':
         return {
           ...initialState
         }
       default:
         return {...state}
-      
+
     }
   };
 

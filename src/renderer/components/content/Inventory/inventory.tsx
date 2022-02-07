@@ -33,7 +33,7 @@ function content() {
               <LoadingButton />
             ) : (
               <RefreshIcon
-                className="h-5 w-5 text-gray-500"
+                className="h-4 w-4 text-gray-500"
                 aria-hidden="true"
               />
             )}

@@ -18,12 +18,10 @@ function content() {
     (state: any) => state.inventoryFiltersReducer
   );
   const userDetails = useSelector((state: any) => state.authReducer);
+
   const dispatch = useDispatch();
 
   let inventoryToUse = [] as any;
-  console.log('inventory', inventory);
-  console.log('filters', inventoryFilters);
-  console.log(inventoryFilters.inventoryFiltered.length);
   if (
     inventoryFilters.inventoryFiltered.length == 0 &&
     inventoryFilters.inventoryFilter.length == 0
@@ -32,6 +30,7 @@ function content() {
   } else {
     inventoryToUse = inventoryFilters.inventoryFiltered;
   }
+  console.log(inventory.combinedInventory);
 
   return (
     <>
@@ -100,7 +99,21 @@ function content() {
         </thead>
         <tbody className="bg-white divide-y divide-gray-100">
           {inventoryToUse.map((project) => (
-            <tr key={project.item_id} className="hover:shadow-inner">
+            <tr key={project.item_id}
+            className={classNames(
+              project.item_name
+                ?.toLowerCase()
+                .includes(inventoryFilters.searchInput.toLowerCase().trim())
+                ||
+                project.item_customname
+                ?.toLowerCase()
+                .includes(inventoryFilters.searchInput.toLowerCase().trim())
+
+                ? ''
+                : 'hidden',
+              'hover:shadow-inner'
+            )}
+            >
               <td className="table-cell px-6 py-3 whitespace-nowrap font-medium text-sm text-gray-500 text-right">
                 <div
                   className={classNames(
@@ -154,7 +167,10 @@ function content() {
                         ''
                       )}
                     </span>
-                    <span className="text-gray-500">
+                    <span
+                      className="text-gray-500 "
+                      title={project.item_paint_wear}
+                    >
                       {project.item_customname !== null
                         ? project.item_storage_total !== undefined
                           ? project.item_name +
@@ -163,6 +179,21 @@ function content() {
                             ')'
                           : project.item_name
                         : ''}
+                        
+
+                      {project.item_customname !== null &&
+                      project.item_paint_wear !== undefined
+                        ? ' - '
+                        : ''}
+
+                      {project.item_paint_wear !== undefined
+                        ? project.item_wear_name
+                        : ''}
+                      {/* 
+                      {isShown == project.item_id  && project.item_paint_wear !== undefined?
+                        <div>{project.item_paint_wear}</div>
+                       : ''} */}
+
                     </span>
                   </span>
                 </div>
@@ -226,6 +257,7 @@ function content() {
                   </Link>
                 </div>
               </td>
+
               <td className="hidden md:px-6 py-3 whitespace-nowrap text-right text-sm font-medium"></td>
             </tr>
           ))}

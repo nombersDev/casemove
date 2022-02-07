@@ -40,6 +40,9 @@ function StorageUnits() {
                 <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   <span className="lg:pl-2">Product</span>
                 </th>
+                <th className="hidden xl:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Stickers/Patches
+                </th>
 
                 <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Storage
@@ -56,6 +59,9 @@ function StorageUnits() {
                 <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                   <span className="md:hidden">move</span>
                 </th>
+                <th className="md:hidden table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <span className="md:hidden"></span>
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
@@ -65,7 +71,10 @@ function StorageUnits() {
                   className={classNames(
                     project.item_name
                       ?.toLowerCase()
-                      .includes(fromReducer.searchInput.toLowerCase())
+                      .includes(fromReducer.searchInput.toLowerCase().trim()) ||
+                      project.item_customname
+                        ?.toLowerCase()
+                        .includes(fromReducer.searchInput.toLowerCase().trim())
                       ? ''
                       : 'hidden',
                     'hover:shadow-inner'

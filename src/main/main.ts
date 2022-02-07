@@ -73,7 +73,7 @@ const createWindow = async () => {
     show: false,
     width: 1124,
     height: 728,
-    minWidth: 650,
+    minWidth: 750,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -156,7 +156,7 @@ app
      if (process.platform == 'darwin') {
       reactDevToolsPath = path.join(
         os.homedir(),
-        '/Library/Application Support/Google/Chrome/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/3.0.9_2'
+        '/Library/Application Support/Google/Chrome/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/3.0.9_0'
       )
 
     }

@@ -17,12 +17,10 @@ async function getTranslations(items) {
     const data = response.data;
     var ks = data.split(/\n/);
     ks.forEach(function (value) {
-      if (value?.includes('//re-use')) {
-        return;
-      }
       // Iterate hits
       var test = value.match(/"(.*?)"/g);
-      if (test) {
+      if (test && test[1]) {
+
         finalDict[test[0].replaceAll('"', '').toLowerCase()] = test[1];
       }
     });
@@ -33,12 +31,15 @@ async function getTranslations(items) {
 }
 
 function updateItemsLoop(jsonData, keyToRun) {
-  const returnDict = {};
-  const items = jsonData['items_game'][keyToRun];
-  for (const [key, value] of Object.entries(items)) {
-    returnDict[key] = value;
+  const returnDict = {}
+  for (const [key, value] of Object.entries(jsonData['items_game'])) {
+      if (key == keyToRun) {
+          for (const [subKey, subValue] of Object.entries(value)) {
+              returnDict[subKey] = subValue
+          }
+      }
   }
-  return returnDict;
+  return returnDict
 }
 
 async function updateItems(items) {
@@ -55,17 +56,8 @@ async function updateItems(items) {
     dict_to_write['paint_kits'] = updateItemsLoop(jsonData, 'paint_kits');
     dict_to_write['prefabs'] = updateItemsLoop(jsonData, 'prefabs');
     dict_to_write['sticker_kits'] = updateItemsLoop(jsonData, 'sticker_kits');
-
-    // Get music definitions
-    var musicDict = {};
-    for (const [key, value] of Object.entries(jsonData['items_game'])) {
-      if (key == 'music_definitions') {
-        for (const [musicKey, musicValue] of Object.entries(value)) {
-          musicDict[musicKey] = musicValue;
-        }
-      }
-    }
-    dict_to_write['music_kits'] = musicDict;
+    dict_to_write['music_kits'] = updateItemsLoop(jsonData, 'music_definitions');
+    dict_to_write['graffiti_tints'] = updateItemsLoop(jsonData, 'graffiti_tints');
 
     return dict_to_write;
   });
@@ -103,6 +95,10 @@ class items {
       let musicIndexBytes = getAttributeValueBytes(value, 166);
       if (musicIndexBytes) {
         value.music_index = musicIndexBytes.readUInt32LE(0);
+      }
+      let graffitiTint = getAttributeValueBytes(value, 233);
+      if (graffitiTint) {
+        value.graffiti_tint = graffitiTint.readUInt32LE(0);
       }
       if (
         (value['casket_id'] !== undefined && isCasket == false) ||
@@ -175,6 +171,8 @@ class items {
         )) {
           stickerList.push(
             this.handleError(this.stickersProcessData, [stickersValue])
+
+
           );
         }
         returnDict['stickers'] = stickerList;
@@ -187,12 +185,12 @@ class items {
   }
 
   itemProcessorHasStickersApplied(returnDict, storageRow) {
-    if (returnDict['item_url'].includes('econ/characters')) {
+    if (returnDict['item_url'].includes('econ/characters') || returnDict['item_url'].includes('econ/default_generated') || returnDict['item_url'].includes('weapons/base_weapons')) {
       if (storageRow['stickers'] !== undefined) {
         return true;
       }
     }
-    return this.checkIfAttributeIsThere(storageRow, 125);
+    return false
   }
 
   itemProcessorName(storageRow, imageURL) {
@@ -204,6 +202,8 @@ class items {
       const musicKitResult = this.getMusicKits(musicKitIndex);
       return this.getTranslation(musicKitResult['loc_name']);
     }
+
+
 
     // Main checks
     // Get first string
@@ -271,6 +271,12 @@ class items {
         }
       }
     }
+    // Graffiti kit check
+    if (storageRow['graffiti_tint'] !== undefined) {
+      const graffitiKitIndex = storageRow['graffiti_tint'];
+      const graffitiKitResult = capitalizeWords(this.getGraffitiKitName(graffitiKitIndex).replace('_', ' '));
+      var finalName =  finalName + ' (' + graffitiKitResult + ')';
+    }
 
     return finalName;
   }
@@ -334,6 +340,10 @@ class items {
       if (returnDict['item_url'].includes('econ/status_icons/service_medal_')) {
         return false;
       }
+      
+      if (returnDict['item_url'].includes('plusstars')) {
+        return false;
+      }
     }
 
     // If characters
@@ -381,7 +391,7 @@ class items {
 
   getTranslation(csgoString) {
     let stringFormatted = csgoString.replace('#', '').toLowerCase();
-   
+
     return this.translation[stringFormatted].replaceAll('"', '');
   }
   getPrefab(prefab) {
@@ -395,6 +405,15 @@ class items {
   getMusicKits(musicIndex) {
     return this.csgoItems['music_kits'][musicIndex];
   }
+
+  getGraffitiKitName(graffitiID) {
+    for (const [key, value] of Object.entries(this.csgoItems['graffiti_tints'])) {
+      if (value.id == graffitiID) {
+        return key
+      }
+    }
+  }
+
 
   getStickerDetails(stickerID) {
     return this.csgoItems['sticker_kits'][stickerID];
@@ -433,4 +452,7 @@ function getAttributeValueBytes(item, attribDefIndex) {
   return attrib ? attrib.value_bytes : null;
 }
 
+function capitalizeWords(string) {
+  return string.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+};
 module.exports = items;

@@ -1,3 +1,4 @@
+import { LightningBoltIcon, XIcon } from '@heroicons/react/solid';
 import { useDispatch, useSelector } from 'react-redux';
 import { moveToAddRemove } from 'renderer/store/actions/moveToActions';
 
@@ -55,6 +56,9 @@ function content({ projectRow }) {
   }
 
   const now = new Date();
+  const isEmpty =
+    toReducer.totalToMove.filter((row) => row[0] == projectRow.item_id)
+      .length == 0;
 
   return (
     <>
@@ -81,16 +85,22 @@ function content({ projectRow }) {
             {projectRow.item_customname !== null
               ? projectRow.item_customname
               : projectRow.item_name}
+
             <br />
-            <span className="text-gray-500">
-              {projectRow.item_customname !== null
-                ? projectRow.item_storage_total !== undefined
-                  ? projectRow.item_name +
-                    ' (' +
-                    projectRow.item_storage_total +
-                    ')'
-                  : projectRow.item_name
+            <span
+              className="text-gray-500"
+              title={projectRow.item_paint_wear}
+              
+            >
+              {projectRow.item_customname !== null ? projectRow.item_name : ''}
+              {projectRow.item_customname !== null &&
+              projectRow.item_paint_wear !== undefined
+                ? ' - '
                 : ''}
+              {projectRow.item_paint_wear !== undefined
+                ? projectRow.item_wear_name
+                : ''}
+              
             </span>
           </span>
         </div>
@@ -139,9 +149,7 @@ function content({ projectRow }) {
               id="postal-code"
               autoComplete="off"
               value={
-                toReducer.totalToMove.filter(
-                  (row) => row[0] == projectRow.item_id
-                ).length == 0
+                isEmpty
                   ? ''
                   : toReducer.totalToMove.filter(
                       (row) => row[0] == projectRow.item_id
@@ -153,6 +161,33 @@ function content({ projectRow }) {
             />
           </div>
         </div>
+      </td>
+      <td className={classNames(toReducer.activeStorages.length == 0 ? 'pointer-events-none' : '', "table-cell px-6 py-3 text-sm text-gray-500 font-medium")}>
+        <button
+          onClick={() => returnField(1000)}
+          className={classNames(
+            1000 -
+              toReducer.activeStoragesAmount -
+              toReducer.totalItemsToMove ==
+              0
+              ? 'pointer-events-none'
+              : ''
+          )}
+        >
+          <LightningBoltIcon
+            className="h-4 w-4 text-gray-400 hover:text-yellow-400"
+            aria-hidden="true"
+          />
+        </button>
+        <button
+          onClick={() => returnField(0)}
+          className={classNames(isEmpty ? 'pointer-events-none hidden' : '')}
+        >
+          <XIcon
+            className="h-4 w-4 text-gray-400 hover:text-red-400  "
+            aria-hidden="true"
+          />
+        </button>
       </td>
       <td className="hidden md:px-6 py-3 whitespace-nowrap text-right text-sm font-medium"></td>
     </>

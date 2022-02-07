@@ -1,12 +1,13 @@
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import { Fragment } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
-import { ChevronDownIcon, FilterIcon } from '@heroicons/react/solid';
+import { ChevronDownIcon, FilterIcon, SearchIcon } from '@heroicons/react/solid';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   filterInventoryAddOption,
   filterInventorySetSort,
   filterInventoryClearAll,
+  inventoryFilterSetSearch,
 } from 'renderer/store/actions/filtersInventoryActions';
 import { classNames } from '../shared/inventoryFunctions';
 const filters = {
@@ -84,7 +85,7 @@ function content() {
           Filters
         </h2>
         <div className="relative col-start-1 row-start-1 py-4">
-          <div className=" mx-auto flex space-x-6 divide-x divide-gray-200 text-sm px-4 sm:px-6 lg:px-8">
+          <div className=" mx-auto flex items-center  space-x-6 divide-x divide-gray-200 text-sm px-4 sm:px-6 lg:px-8">
             <div>
               <Disclosure.Button className="group text-gray-700 font-medium flex items-center">
                 <FilterIcon
@@ -102,6 +103,31 @@ function content() {
               >
                 Clear all
               </button>
+            </div>
+            <label htmlFor="search" className="sr-only">
+              Search items
+            </label>
+            <div className="relative rounded-md">
+              <div
+                className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                aria-hidden="true"
+              >
+                <SearchIcon
+                  className="mr-3 h-4 w-4 text-gray-400"
+                  aria-hidden="true"
+                />
+              </div>
+              <input
+                type="text"
+                name="search"
+                id="search"
+                value={inventoryFilters.searchInput}
+                className="block w-full pb-0.5  focus:outline-none  pl-9 sm:text-sm border-gray-300 rounded-md h-9"
+                placeholder="Search items"
+                onChange={(e) =>
+                  dispatch(inventoryFilterSetSearch(e.target.value))
+                }
+              />
             </div>
           </div>
         </div>

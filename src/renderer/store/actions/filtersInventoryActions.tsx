@@ -17,7 +17,14 @@ export const filterInventoryClearAll = () => {
         type: 'CLEAR_ALL'
     }
 }
-
+export const inventoryFilterSetSearch = (searchField) => {
+  return {
+      type: 'INVENTORY_FILTERS_SET_SEARCH',
+      payload: {
+          searchField: searchField
+      }
+  }
+}
 
 export async function filterInventoryAddOption(combinedInventory, state, filterString ) {
     let filterAlreadyExists = state.inventoryFilter.indexOf(filterString) > -1;
