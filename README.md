@@ -11,6 +11,7 @@ This is the latest stable version and can be downloaded from the [releases](http
 - [Windows - (Casemove-1.1.1)](https://github.com/nombersDev/casemove/releases/download/1.1.1/Casemove.Setup.1.1.1.exe)
 - [Mac - (Casemove-1.1.1)](https://github.com/nombersDev/casemove/releases/download/1.1.1/Casemove-1.1.1.dmg)
 
+
 <img src="https://raw.githubusercontent.com/nombersDev/casemove/main/assets/casemove-preview.png" alt="Casemove preview" />
 
 
