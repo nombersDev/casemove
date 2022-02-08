@@ -13,6 +13,7 @@ import inventoryContent from './components/content/Inventory/inventory';
 import {
   DownloadIcon,
   GiftIcon,
+  InboxInIcon,
   RefreshIcon,
   SearchIcon,
   SelectorIcon,
@@ -74,25 +75,32 @@ function AppContent() {
 
   // Redux user details
   const userDetails = useSelector((state: any) => state.authReducer);
-  const filterDetails = useSelector((state: any) => state.inventoryFiltersReducer);
+  const filterDetails = useSelector(
+    (state: any) => state.inventoryFiltersReducer
+  );
 
   function updateAutomation(itemHref) {
     setSideMenuOption(itemHref);
     setSidebarOpen(false);
-  };
+  }
 
   if (currentSideMenuOption != location.pathname) {
     setSideMenuOption(location.pathname);
-  };
+  }
 
   // Log out of session
   const dispatch = useDispatch();
 
   async function handleFilterData(combinedInventory) {
-    if (filterDetails.inventoryFilter.length > 0 || filterDetails.sortValue != 'Default') {
-      console.log(combinedInventory,
+    if (
+      filterDetails.inventoryFilter.length > 0 ||
+      filterDetails.sortValue != 'Default'
+    ) {
+      console.log(
+        combinedInventory,
         filterDetails.inventoryFilter,
-        filterDetails.sortValue)
+        filterDetails.sortValue
+      );
       dispatch(
         await filterInventorySetSort(
           combinedInventory,
@@ -112,10 +120,10 @@ function AppContent() {
   }
 
   async function handleSubMessage(messageValue) {
-    const actionToTake = await handleUserEvent(messageValue) as any;
+    const actionToTake = (await handleUserEvent(messageValue)) as any;
     dispatch(actionToTake);
     if (messageValue[0] == 1) {
-      await handleFilterData(actionToTake.payload.combinedInventory)
+      await handleFilterData(actionToTake.payload.combinedInventory);
     }
     setIsListening(false);
   }
@@ -129,6 +137,21 @@ function AppContent() {
     window.electron.ipcRenderer.retryConnection();
   }
 
+  // Should update status
+  const [shouldUpdate, setShouldUpdate] = useState(0);
+  const [getVersion, setVersion] = useState('');
+  async function getUpdate() {
+    const doUpdate = await window.electron.ipcRenderer.needUpdate();
+    console.log(doUpdate);
+    setVersion('v' + doUpdate[1])
+    if (doUpdate[0] == true) {
+      setShouldUpdate(1);
+    }
+  }
+  if (shouldUpdate == 0) {
+    setShouldUpdate(2);
+    getUpdate();
+  }
 
   return (
     <>
@@ -193,6 +216,7 @@ function AppContent() {
                 </Transition.Child>
                 <div className="flex-shrink-0 flex items-center px-4">
                   <Logo />
+                  <span className="">{shouldUpdate}</span>
                 </div>
                 <div className="mt-5 flex-1 h-0 overflow-y-auto">
                   <nav className="px-2">
@@ -363,7 +387,7 @@ function AppContent() {
                 <button
                   type="button"
                   onClick={() => retryConnection()}
-                  className="inline-flex items-center bg-green-200 px-6 shadow-md py-3 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
+                  className="inline-flex items-center bg-green-200 px-6 shadow-md py-3 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 hover:shadow-none focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
                 >
                   <RefreshIcon
                     className="mr-3 h-4 w-4 text-green-900"
@@ -372,6 +396,23 @@ function AppContent() {
                   />
                   <span className="mr-3 text-green-900">Retry connection</span>
                 </button>
+              ) : shouldUpdate == 1 ? (
+                <a
+                  href="https://github.com/nombersDev/casemove/releases"
+                  target="_blank"
+                >
+                  <button
+                    type="button"
+                    className="inline-flex items-center bg-green-200 px-6 shadow-md py-3 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 hover:shadow-none focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
+                  >
+                    <InboxInIcon
+                      className="mr-3 h-4 w-4 text-gray-500"
+                      style={{ marginLeft: -22 }}
+                      aria-hidden="true"
+                    />
+                    <span className="mr-3">Update ready</span>
+                  </button>
+                </a>
               ) : (
                 <a
                   href="https://steamcommunity.com/tradeoffer/new/?partner=1033744096&token=29ggoJY7"
@@ -451,8 +492,11 @@ function AppContent() {
                   ))}
                 </div>
               </div>
+
             </nav>
           </div>
+
+          <span className="text-xs pl-4 text-gray-500">{getVersion}</span>
         </div>
         {/* Main column */}
         <div className="lg:pl-64 flex flex-col">
@@ -468,33 +512,54 @@ function AppContent() {
             </button>
             <div className="flex-1 flex justify-between px-4 sm:px-6 lg:px-8">
               <div className="flex-1 items-center justify-end flex">
-              <div className="px-3">
-              {userDetails.CSGOConnection == false &&
-              userDetails.isLoggedIn == true ? (
-                <button
-                  type="button"
-                  onClick={() => retryConnection()}
-                  className="inline-flex items-center bg-green-200 px-6 shadow-md py-3 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
-                >
-                  <RefreshIcon
-                    className="mr-3 h-4 w-4 text-green-900"
-                    style={{ marginLeft: -25 }}
-                    aria-hidden="true"
-                  />
-                  <span className="mr-3 text-green-900">Retry connection</span>
-                </button>
-              ) : (
-                ''
-              )}
-            </div>
+                <div className="px-3">
+                  {userDetails.CSGOConnection == false &&
+                  userDetails.isLoggedIn == true ? (
+                    <button
+                      type="button"
+                      onClick={() => retryConnection()}
+                      className="inline-flex items-center bg-green-200 px-6 shadow-md py-3 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
+                    >
+                      <RefreshIcon
+                        className="mr-3 h-4 w-4 text-green-900"
+                        style={{ marginLeft: -25 }}
+                        aria-hidden="true"
+                      />
+                      <span className="mr-3 text-green-900">
+                        Retry connection
+                      </span>
+                    </button>
+                  ) : shouldUpdate == 1 ? (
+                    <a
+                      href="https://steamcommunity.com/tradeoffer/new/?partner=1033744096&token=29ggoJY7"
+                      target="_blank"
+                    >
+                      <button
+                        type="button"
+                        className="inline-flex items-center px-6 py-3 border border-gray-200 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
+                      >
+                        <InboxInIcon
+                          className="mr-3 h-4 w-4 text-gray-500"
+                          style={{ marginLeft: -22 }}
+                          aria-hidden="true"
+                        />
+                        <span className="mr-3">Update ready</span>
+                      </button>
+                    </a>
+                  ) : (
+                    ''
+                  )}
+                </div>
               </div>
               <div className="flex items-center">
                 {/* Profile dropdown */}
-                <Menu as="div" 
-                className={classNames(
-                userDetails.isLoggedIn ? '' : 'pointer-events-none',
-                'ml-3 relative'
-                 )}>
+                <Menu
+                  as="div"
+                  className={classNames(
+                    userDetails.isLoggedIn ? '' : 'pointer-events-none',
+                    'ml-3 relative'
+                  )}
+                >
                   <div>
                     <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2">
                       <span className="sr-only">Open user menu</span>
@@ -508,9 +573,12 @@ function AppContent() {
                         </svg>
                       ) : (
                         <img
-                          className={
-                            classNames(userDetails.CSGOConnection ? 'border-2 border-solid border-green-400' : 'border-4 border-solid border-red-400',
-                            "w-10 h-10 bg-gray-300 rounded-full flex-shrink-0")}
+                          className={classNames(
+                            userDetails.CSGOConnection
+                              ? 'border-2 border-solid border-green-400'
+                              : 'border-4 border-solid border-red-400',
+                            'w-10 h-10 bg-gray-300 rounded-full flex-shrink-0'
+                          )}
                           src={userDetails.userProfilePicture}
                           alt=""
                         />
@@ -528,22 +596,22 @@ function AppContent() {
                   >
                     <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none">
                       <div className="py-1">
-                      <Menu.Item>
-                      {({ active }) => (
-                        <Link
-                          to=""
-                          onClick={() => logOut()}
-                          className={classNames(
-                            active
-                              ? 'bg-gray-100 text-gray-900'
-                              : 'text-gray-700',
-                            'block px-4 py-2 text-sm'
+                        <Menu.Item>
+                          {({ active }) => (
+                            <Link
+                              to=""
+                              onClick={() => logOut()}
+                              className={classNames(
+                                active
+                                  ? 'bg-gray-100 text-gray-900'
+                                  : 'text-gray-700',
+                                'block px-4 py-2 text-sm'
+                              )}
+                            >
+                              Logout
+                            </Link>
                           )}
-                        >
-                          Logout
-                        </Link>
-                      )}
-                    </Menu.Item>
+                        </Menu.Item>
                       </div>
                     </Menu.Items>
                   </Transition>
