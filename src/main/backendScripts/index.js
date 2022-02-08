@@ -117,7 +117,15 @@ class items {
       ]);
       if (returnDict['item_name'] == '') {
         console.log('Error');
-        console.log(value, this.get_def_index(value['def_index']));
+        try {
+          console.log(value, this.get_def_index(value['def_index']));
+        }
+        catch (err) {
+          console.log(value)
+
+        }
+        // console.log(value, this.get_def_index(value['def_index']));
+        // console.log(value)
       }
       returnDict['item_customname'] = value['custom_name'];
       returnDict['item_url'] = imageURL;
@@ -340,7 +348,7 @@ class items {
       if (returnDict['item_url'].includes('econ/status_icons/service_medal_')) {
         return false;
       }
-      
+
       if (returnDict['item_url'].includes('plusstars')) {
         return false;
       }
