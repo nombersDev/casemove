@@ -92,6 +92,9 @@ class items {
     var returnList = [];
 
     for (const [key, value] of Object.entries(inventoryResult)) {
+      if (value['def_index'] == undefined) {
+        continue
+      }
       let musicIndexBytes = getAttributeValueBytes(value, 166);
       if (musicIndexBytes) {
         value.music_index = musicIndexBytes.readUInt32LE(0);
@@ -117,7 +120,12 @@ class items {
       ]);
       if (returnDict['item_name'] == '') {
         console.log('Error');
-        console.log(value, this.get_def_index(value['def_index']));
+        try {
+          console.log(value, this.get_def_index(value['def_index']));
+        }
+        catch (err) {
+          console.log(value)
+        }
       }
       returnDict['item_customname'] = value['custom_name'];
       returnDict['item_url'] = imageURL;
@@ -163,6 +171,7 @@ class items {
         this.itemProcessorHasStickersApplied,
         [returnDict, value]
       );
+      returnDict['def_index'] = value['def_index']
 
       if (returnDict['item_has_stickers']) {
         const stickerList = [];
@@ -340,7 +349,7 @@ class items {
       if (returnDict['item_url'].includes('econ/status_icons/service_medal_')) {
         return false;
       }
-      
+
       if (returnDict['item_url'].includes('plusstars')) {
         return false;
       }

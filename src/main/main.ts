@@ -3,24 +3,15 @@ import 'regenerator-runtime/runtime';
 import path from 'path';
 import Store from 'electron-store';
 import { app, BrowserWindow, shell, ipcMain, session } from 'electron';
-import { autoUpdater } from 'electron-updater';
-import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import { fetchItems } from './backendScripts/getCommands';
+import { fetchItems } from './steam/getCommands';
 import os from 'os';
 import SteamUser from 'steam-user'
 import GlobalOffensive from 'globaloffensive'
-import {isLoggedInElsewhere} from './backendScripts/steam'
+import {isLoggedInElsewhere} from './steam/steam'
+import {getGithubVersion} from './scripts/versionHelper'
 
-
-export default class AppUpdater {
-  constructor() {
-    log.transports.file.level = 'info';
-    autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
-  }
-}
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -42,6 +33,7 @@ const isDevelopment =
 if (isDevelopment) {
   require('electron-debug')();
 }
+
 
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
@@ -86,6 +78,7 @@ const createWindow = async () => {
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
   mainWindow.on('ready-to-show', () => {
+    console.log(app.getVersion())
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
@@ -109,10 +102,6 @@ const createWindow = async () => {
     shell.openExternal(url);
   });
 
-
-  // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
-  new AppUpdater();
 };
 
 /**
@@ -179,7 +168,25 @@ app
 
 var fetchItemClass = new fetchItems();
 
+// Version manager
+let gitHub = 0
+ipcMain.on('needUpdate', async (event) => {
+  try {
+    if (gitHub == 0) {
+      gitHub = parseInt(await getGithubVersion())
+    }
+    const version = parseInt(app.getVersion().toString().replaceAll('.', ''))
 
+    if (gitHub > version) {
+      event.reply('needUpdate-reply', [true, app.getVersion(), gitHub])
+    } else {
+      event.reply('needUpdate-reply', [false, app.getVersion(), gitHub])
+    }
+  } catch {
+    event.reply('needUpdate-reply', [false, app.getVersion(), 0])
+    gitHub = 1
+  }
+});
 
 // Return 1 = Success
 // Return 2 = Steam Guard
@@ -411,21 +418,6 @@ async function startEvents(csgo, user) {
 
 
 }
-
-
-
-
-
-// No need for Item customization, right?
-
-// csgo.on('itemCustomizationNotification', (itemIds, notificationType) => {
-//   if (notificationType == GlobalOffensive.ItemCustomizationNotification.CasketInvFull) {
-//       console.log('Storage unit ' + itemIds[0] + ' is full');
-//       mainWindow?.webContents.send('userEvents', ['itemCustomizationNotification', [itemIds, notificationType]])
-//
-//   }
-// });
-
 
 // Store IPC
 const store = new Store();

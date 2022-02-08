@@ -19,6 +19,7 @@ import {
   moveToClearAll,
   moveTosetSearchField,
   moveToSetSortOption,
+  moveToSetStorageAmount,
 } from 'renderer/store/actions/moveToActions';
 doCancel;
 const sortOptions = [
@@ -67,6 +68,21 @@ function content() {
     dispatch(moveModalQuerySet(queryNew));
   }
   moveItems;
+
+  // Storage count
+  let storageRow = [{item_storage_total: 0}]
+  if (toReducer.activeStorages.length != 0) {
+    storageRow = inventory.inventory.filter(function (item) {
+      if (item.item_id.includes(toReducer.activeStorages[0])) {
+        return item
+      }
+    });
+  }
+  console.log(storageRow)
+  if (storageRow[0].item_storage_total != toReducer.activeStoragesAmount && storageRow[0].item_storage_total != null) {
+    dispatch(moveToSetStorageAmount(storageRow[0].item_storage_total))
+
+  }
 
   return (
     <div className="bg-white mt-8">

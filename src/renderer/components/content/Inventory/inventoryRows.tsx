@@ -99,20 +99,21 @@ function content() {
         </thead>
         <tbody className="bg-white divide-y divide-gray-100">
           {inventoryToUse.map((project) => (
-            <tr key={project.item_id}
-            className={classNames(
-              project.item_name
-                ?.toLowerCase()
-                .includes(inventoryFilters.searchInput.toLowerCase().trim())
-                ||
-                project.item_customname
-                ?.toLowerCase()
-                .includes(inventoryFilters.searchInput.toLowerCase().trim())
-
-                ? ''
-                : 'hidden',
-              'hover:shadow-inner'
-            )}
+            <tr
+              key={project.item_id}
+              className={classNames(
+                project.item_name
+                  ?.toLowerCase()
+                  .includes(
+                    inventoryFilters.searchInput.toLowerCase().trim()
+                  ) ||
+                  project.item_customname
+                    ?.toLowerCase()
+                    .includes(inventoryFilters.searchInput.toLowerCase().trim())
+                  ? ''
+                  : 'hidden',
+                'hover:shadow-inner'
+              )}
             >
               <td className="table-cell px-6 py-3 whitespace-nowrap font-medium text-sm text-gray-500 text-right">
                 <div
@@ -143,9 +144,27 @@ function content() {
                   </div>
                   <span>
                     <span className="flex">
-                      {project.item_customname !== null
-                        ? project.item_customname
-                        : project.item_name}
+                      {project.item_name !== ''
+                        ? project.item_customname !== null
+                          ? project.item_customname
+                          : project.item_name
+                        :
+                        <span>
+                        <a
+                        href="https://forms.gle/6qZ8N2ES8CdeavcVA"
+                        target="_blank"
+                        className="font-medium text-indigo-600 hover:text-indigo-500"
+                      >
+                        An error occurred. Please report this here.
+                      </a>
+                      <br/>
+                      <button className="px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" onClick={() => navigator.clipboard.writeText(JSON.stringify(project))}> COPY REF</button>
+
+                      </span>
+
+                        }
+
+
                       {project.item_url.includes('casket') ? (
                         <Link
                           to=""
@@ -179,7 +198,6 @@ function content() {
                             ')'
                           : project.item_name
                         : ''}
-                        
 
                       {project.item_customname !== null &&
                       project.item_paint_wear !== undefined
@@ -189,11 +207,10 @@ function content() {
                       {project.item_paint_wear !== undefined
                         ? project.item_wear_name
                         : ''}
-                      {/* 
+                      {/*
                       {isShown == project.item_id  && project.item_paint_wear !== undefined?
                         <div>{project.item_paint_wear}</div>
                        : ''} */}
-
                     </span>
                   </span>
                 </div>

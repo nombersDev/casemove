@@ -11,6 +11,15 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.send('refreshInventory');
     },
     // User commands
+    needUpdate() {
+      return new Promise((resolve) => {
+        ipcRenderer.send('needUpdate')
+        ipcRenderer.once('needUpdate-reply', (evt, message) => {
+          resolve(message);
+        });
+      });
+    },
+    // User commands
     retryConnection() {
       ipcRenderer.send('retryConnection');
     },
@@ -122,6 +131,7 @@ contextBridge.exposeInMainWorld('electron', {
         'errorMain',
         'signOut',
         'retryConnection',
+        'needUpdate'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
@@ -139,6 +149,7 @@ contextBridge.exposeInMainWorld('electron', {
         'errorMain',
         'signOut',
         'retryConnection',
+        'needUpdate',
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
