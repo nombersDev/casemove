@@ -1,17 +1,18 @@
 # CASEMOVE
 
 *Casemove is an open-source desktop application that helps you easily move items out of and into Storage Units in Counter-Strike: Global Offensive. The app utilizes the [Steam-user](https://github.com/DoctorMcKay/node-steam-user) & [Global Offensive](https://github.com/DoctorMcKay/node-globaloffensive) libraries to establish a connection with Steam and interact with the Global Offensive game coordinator.* 
+# CASEMOVE
 
+*Casemove is an open-source desktop application that helps you easily move items out of and into Storage Units in Counter-Strike: Global Offensive. The app utilizes the [Steam-user](https://github.com/DoctorMcKay/node-steam-user) & [Global Offensive](https://github.com/DoctorMcKay/node-globaloffensive) libraries to establish a connection with Steam and interact with the Global Offensive game coordinator.* 
 
 ----
 
-## Download Latest Stable Version (Casemove 1.0.0)
+## Download Latest Version (Casemove 1.1.1)
 
 This is the latest stable version and can be downloaded from the [releases](https://github.com/nombersDev/casemove/releases) page, or directly from:
 
-- [Windows - (Casemove-1.0.0)](https://github.com/nombersDev/casemove/releases/download/1.0.0/Casemove.Setup.1.0.0.exe)
-- [Mac ARM64 - (Casemove-1.0.0)](https://github.com/nombersDev/casemove/releases/download/1.0.0/Casemove-1.0.0-arm64.dmg)
-- [Mac - (Casemove-1.0.0)](https://github.com/nombersDev/casemove/releases/download/1.0.0/Casemove-1.0.0.dmg)
+- [Windows - (Casemove-1.1.1)](https://github.com/nombersDev/casemove/releases/download/1.1.1/Casemove.Setup.1.1.1.exe)
+- [Mac - (Casemove-1.1.1)](https://github.com/nombersDev/casemove/releases/download/1.1.1/Casemove-1.1.1.dmg)
 
 <img src="https://raw.githubusercontent.com/nombersDev/casemove/main/assets/casemove-preview.png" alt="Casemove preview" />
 
@@ -63,7 +64,7 @@ No, Casemove doesn’t store any information on your computer. It also doesn’t
 
 Casemove is comparable to the software "Archi Steam Farm" and since Archi has made a terric wiki on this issue, I'd refer over this wiki for further [reading](https://github.com/JustArchiNET/ArchiSteamFarm/wiki/FAQ#security--privacy--vac--bans--tos)
 
-As with anything, It's important to know that the using this software is distributed "as is" and without any warrenty. 
+As with anything, It's important to know that the using this software is distributed "as is" and without any warranty. 
 
 ----
 ## Built using
