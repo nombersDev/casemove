@@ -62,7 +62,7 @@ No, Casemove doesn’t store any information on your computer. It also doesn’t
 
 Casemove is comparable to the software "Archi Steam Farm" and since Archi has made a terric wiki on this issue, I'd refer over this wiki for further [reading](https://github.com/JustArchiNET/ArchiSteamFarm/wiki/FAQ#security--privacy--vac--bans--tos)
 
-As with anything, It's important to know that the using this software is distributed "as is" and without any warrenty. 
+As with anything, It's important to know that the using this software is distributed "as is" and without any warranty. 
 
 ----
 ## Built using
