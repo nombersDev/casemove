@@ -44,6 +44,14 @@ export const moveToAddCasketToStorages = (casketID, casketVolume) => {
     }
 }
 
+export const moveToSetStorageAmount = (storageAmount) => {
+    return {
+        type: 'SET_STORAGE_AMOUNT',
+        payload: {
+            storageAmount: storageAmount
+        }
+    }
+}
 export const moveToAddRemove = (casketID, itemID, totalItems, itemName) => {
     return {
         type: 'MOVE_TO_TOTAL_TO_ADD',

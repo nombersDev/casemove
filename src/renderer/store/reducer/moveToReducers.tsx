@@ -51,6 +51,12 @@ const initialState = {
             totalItemsToMove: newTotalItemsToMove
         }
 
+        case 'SET_STORAGE_AMOUNT': 
+        return {
+          ...state, 
+          activeStoragesAmount: action.payload.storageAmount
+        }
+
         case 'MOVE_TO_SET_SEARCH':
           return {
               ...state,

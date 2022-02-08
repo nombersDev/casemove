@@ -67,22 +67,17 @@ export default function MoveModal() {
         }
         if (modalData.modalPayload['type'] == 'from') {
           try {
-            await window.electron.ipcRenderer.moveFromStorageUnit(
+             await window.electron.ipcRenderer.moveFromStorageUnit(
               modalData.modalPayload['storageID'],
               modalData.modalPayload['itemID']
             );
+            // await new Promise(r => setTimeout(r, 25));
           } catch {
             dispatch(moveModalAddToFail());
           }
           dispatch(moveModalUpdate());
         }
-        if (modalData.modalPayload['isLast']) {
-          // if (modalData.modalPayload['type'] == 'to') {
-          //   dispatch(moveFromReset());
-          // }
-          // dispatch(closeMoveModal());
-          // dispatch(modalResetStorageIdsToClearFrom());
-        }
+        
       }
     }
   }
