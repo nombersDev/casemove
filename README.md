@@ -11,8 +11,8 @@ This is the latest stable version and can be downloaded from the [releases](http
 - [Windows - (Casemove-1.1.1)](https://github.com/nombersDev/casemove/releases/download/1.1.1/Casemove.Setup.1.1.1.exe)
 - [Mac - (Casemove-1.1.1)](https://github.com/nombersDev/casemove/releases/download/1.1.1/Casemove-1.1.1.dmg)
 
+https://user-images.githubusercontent.com/98760010/153054583-eddad769-a6df-473e-9338-efbdb3dd021a.mp4
 
-<img src="https://raw.githubusercontent.com/nombersDev/casemove/main/assets/casemove-preview.png" alt="Casemove preview" />
 
 
 Features include:
@@ -57,6 +57,9 @@ Furthermore, the libraries [Steam-user](https://github.com/DoctorMcKay/node-stea
 
 No, Casemove doesn’t store any information on your computer. It also doesn’t send any information to anyone outside of Steam.
 
+#### Why can't I just log in using the Steam Web authentication?
+
+In order to move items in and out of Storage Units, the app needs to have an active connection with the CSGO game coordinator. This is not possible when using the web authentication method. 
 
 #### Where can I read more about the safety?
 
