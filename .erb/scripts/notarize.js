@@ -1,11 +1,11 @@
 const { notarize } = require('electron-notarize');
 const { build } = require('../../package.json');
-require('dotenv').config();
 exports.default = async function notarizeMacos(context) {
   const { electronPlatformName, appOutDir } = context;
   if (electronPlatformName !== 'darwin') {
     return;
   }
+  require('dotenv').config();
 
   if (process.env.CI !== "true") {
     console.warn('Skipping notarizing step. Packaging is not running in CI');
