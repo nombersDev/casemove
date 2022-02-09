@@ -2,6 +2,7 @@ const fs = require('fs');
 const VDF = require('@node-steam/vdf');
 const axios = require('axios');
 
+
 const itemsLink =
   'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/scripts/items/items_game.txt';
 const translationsLink =
@@ -11,23 +12,35 @@ function fileCatcher(endNote) {
   return `${csgo_install_directory}${endNote}`;
 }
 
+async function fileGetError(items) {
+  let csgoEnglish = require('./itemsBackupFiles/csgo_english.json')
+  items.setTranslations(csgoEnglish);
+  let itemsGame = require('./itemsBackupFiles/items_game.json')
+  items.setCSGOItems(itemsGame);
+}
+
 async function getTranslations(items) {
-  const returnValue = await axios.get(translationsLink).then((response) => {
-    const finalDict = {};
-    const data = response.data;
-    var ks = data.split(/\n/);
-    ks.forEach(function (value) {
-      // Iterate hits
-      var test = value.match(/"(.*?)"/g);
-      if (test && test[1]) {
+  try {
+    const returnValue = await axios.get(translationsLink).then((response) => {
+      const finalDict = {};
+      const data = response.data;
+      var ks = data.split(/\n/);
+      ks.forEach(function (value) {
+        // Iterate hits
+        var test = value.match(/"(.*?)"/g);
+        if (test && test[1]) {
+          finalDict[test[0].replaceAll('"', '').toLowerCase()] = test[1];
+        }
+      });
 
-        finalDict[test[0].replaceAll('"', '').toLowerCase()] = test[1];
-      }
+      return finalDict;
     });
-    return finalDict;
-  });
-
-  items.setTranslations(returnValue);
+    returnValue['stickerkit_cs20_boost_holo']
+    items.setTranslations(returnValue);
+  } catch (err) {
+    console.log('Error occurred during translation parsing')
+    fileGetError(items)
+  }
 }
 
 function updateItemsLoop(jsonData, keyToRun) {
@@ -43,25 +56,35 @@ function updateItemsLoop(jsonData, keyToRun) {
 }
 
 async function updateItems(items) {
-  const returnValue = await axios.get(itemsLink).then((response) => {
-    const dict_to_write = {
-      items: {},
-      paint_kits: {},
-      prefabs: {},
-      sticker_kits: {},
-    };
-    const data = response.data;
-    const jsonData = VDF.parse(data);
-    dict_to_write['items'] = updateItemsLoop(jsonData, 'items');
-    dict_to_write['paint_kits'] = updateItemsLoop(jsonData, 'paint_kits');
-    dict_to_write['prefabs'] = updateItemsLoop(jsonData, 'prefabs');
-    dict_to_write['sticker_kits'] = updateItemsLoop(jsonData, 'sticker_kits');
-    dict_to_write['music_kits'] = updateItemsLoop(jsonData, 'music_definitions');
-    dict_to_write['graffiti_tints'] = updateItemsLoop(jsonData, 'graffiti_tints');
+  try {
+    const returnValue = await axios.get(itemsLink).then((response) => {
+      const dict_to_write = {
+        items: {},
+        paint_kits: {},
+        prefabs: {},
+        sticker_kits: {},
+      };
+      const data = response.data;
+      const jsonData = VDF.parse(data);
+      dict_to_write['items'] = updateItemsLoop(jsonData, 'items');
+      dict_to_write['paint_kits'] = updateItemsLoop(jsonData, 'paint_kits');
+      dict_to_write['prefabs'] = updateItemsLoop(jsonData, 'prefabs');
+      dict_to_write['sticker_kits'] = updateItemsLoop(jsonData, 'sticker_kits');
+      dict_to_write['music_kits'] = updateItemsLoop(jsonData, 'music_definitions');
+      dict_to_write['graffiti_tints'] = updateItemsLoop(jsonData, 'graffiti_tints');
 
-    return dict_to_write;
-  });
-  items.setCSGOItems(returnValue);
+      return dict_to_write;
+    });
+    // Validate data
+    returnValue['items'][1209]
+    items.setCSGOItems(returnValue);
+
+  } catch (err) {
+    console.log('Error occurred during items parsing')
+    fileGetError(items)
+
+  }
+
 }
 
 class items {
