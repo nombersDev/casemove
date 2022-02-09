@@ -21,10 +21,12 @@ node_modules
 release/app/dist
 release/build
 .erb/dll
+.env
 
 .idea
 npm-debug.log.*
 *.css.d.ts
 *.sass.d.ts
 *.scss.d.ts
+.DS_Store
 .DS_Store

@@ -12,7 +12,6 @@ import GlobalOffensive from 'globaloffensive'
 import {isLoggedInElsewhere} from './steam/steam'
 import {getGithubVersion} from './scripts/versionHelper'
 
-
 let mainWindow: BrowserWindow | null = null;
 
 ipcMain.on('ipc-example', async (event, arg) => {
