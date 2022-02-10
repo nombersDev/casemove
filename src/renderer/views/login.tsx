@@ -45,7 +45,9 @@ export default function LoginPage() {
       storePassword,
       authCode
     );
-    responseCode = responseStatus[0];
+    console.log(responseStatus)
+    responseCode = responseStatus[0]
+    
     // Notification
     switch (responseCode) {
       case 1:
@@ -74,7 +76,7 @@ export default function LoginPage() {
         openNotification(
           false,
           'Unknown error',
-          'Could be wrong credentials, a network error or something else.'
+          'Could be wrong credentials, a network error or something else.' + responseStatus[1]
         );
         setUsername('');
         setPassword('');
