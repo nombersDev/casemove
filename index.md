@@ -1,37 +1,26 @@
-## Welcome to GitHub Pages
+## Casemove
 
-You can use the [editor on GitHub](https://github.com/nombersDev/casemove/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+Casemove is an open-source desktop application that helps you easily move items out of and into Storage Units in Counter-Strike: Global Offensive. The app utilizes the Steam-user & Global Offensive libraries to establish a connection with Steam and interact with the Global Offensive game coordinator.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
-### Markdown
+## COMMON QUESTIONS
+#### Can I be VAC banned?
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+No.
+The app doesn’t interact with your CSGO game client. It doesn’t inject any code into the game. You don’t even need to have the game installed for the app to run. All the app does is connect to Steam and emulate a CSGO connection.
 
-```markdown
-Syntax highlighted code block
+Furthermore, the libraries [Steam-user](https://github.com/DoctorMcKay/node-steam-user) & [Global Offensive](https://github.com/DoctorMcKay/node-globaloffensive) have been used by thousands of people, and this app is merely a cosmetic rendition of these libraries.
 
-# Header 1
-## Header 2
-### Header 3
+#### Does Casemove store any of my information?
 
-- Bulleted
-- List
+No, Casemove doesn’t store any information on your computer. It also doesn’t send any information to anyone outside of Steam.
 
-1. Numbered
-2. List
+#### Why can't I just log in using the Steam Web authentication?
 
-**Bold** and _Italic_ and `Code` text
+In order to move items in and out of Storage Units, the app needs to have an active connection with the CSGO game coordinator. This is not possible when using the web authentication method. 
 
-[Link](url) and ![Image](src)
-```
+#### Where can I read more about the safety?
 
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
+Casemove is comparable to the software "Archi Steam Farm" and since Archi has made a terric wiki on this issue, I'd refer over this wiki for further [reading](https://github.com/JustArchiNET/ArchiSteamFarm/wiki/FAQ#security--privacy--vac--bans--tos)
 
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/nombersDev/casemove/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+As with anything, It's important to know that the using this software is distributed "as is" and without any warranty. 
