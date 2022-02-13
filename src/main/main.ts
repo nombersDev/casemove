@@ -11,6 +11,7 @@ import SteamUser from 'steam-user'
 import GlobalOffensive from 'globaloffensive'
 import {isLoggedInElsewhere} from './steam/steam'
 import {getGithubVersion} from './scripts/versionHelper'
+// import {download} from 'electron-dl'
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -74,6 +75,9 @@ const createWindow = async () => {
   mainWindow.webContents.session.clearStorageData()
 
 
+
+
+
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
   mainWindow.on('ready-to-show', () => {
@@ -87,6 +91,7 @@ const createWindow = async () => {
       mainWindow.show();
     }
   });
+
 
   mainWindow.on('closed', () => {
     mainWindow = null;
@@ -161,6 +166,7 @@ app
   .catch(console.log);
 
 }
+
   /**
  * IPC...
  */
@@ -420,6 +426,7 @@ async function startEvents(csgo, user) {
 
 // Store IPC
 const store = new Store();
+store.set('fastMove', false);
 ipcMain.on('electron-store-get', async (event, val) => {
   event.returnValue = store.get(val);
 });
@@ -427,4 +434,5 @@ ipcMain.on('electron-store-set', async (event, key, val) => {
   event
   store.set(key, val);
 });
+
 

@@ -13,10 +13,17 @@ contextBridge.exposeInMainWorld('electron', {
     // User commands
     needUpdate() {
       return new Promise((resolve) => {
-        ipcRenderer.send('needUpdate')
+        ipcRenderer.send('needUpdate');
         ipcRenderer.once('needUpdate-reply', (evt, message) => {
           resolve(message);
         });
+      });
+    },
+
+    downloadFile(url, dir) {
+      ipcRenderer.send('download', {
+        url: url,
+        properties: { directory: dir },
       });
     },
     // User commands
@@ -131,7 +138,8 @@ contextBridge.exposeInMainWorld('electron', {
         'errorMain',
         'signOut',
         'retryConnection',
-        'needUpdate'
+        'needUpdate',
+        'download'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
@@ -150,6 +158,7 @@ contextBridge.exposeInMainWorld('electron', {
         'signOut',
         'retryConnection',
         'needUpdate',
+        'download'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`

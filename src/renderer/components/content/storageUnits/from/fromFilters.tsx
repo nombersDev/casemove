@@ -78,7 +78,7 @@ function content() {
       <Disclosure
         as="section"
         aria-labelledby="filter-heading"
-        className="relative z-10 grid items-center border-b"
+        className="relative z-10 grid items-center border-b dark:bg-dark-level-one dark:border-opacity-50"
       >
         <div className="relative col-start-1 row-start-1 py-4 flex justify-between">
           <div className="max-w-7xl flex items-center space-x-6 divide-x divide-gray-200 text-sm px-4 sm:px-6 lg:px-8">

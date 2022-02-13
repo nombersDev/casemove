@@ -4,16 +4,13 @@ const Logo = (props) => (
     data-name="Layer 1"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 376.03 62.61"
-    className="h-7"
+    className="h-7 fill-current dark:text-dark-white"
     {...props}
   >
     <defs>
       <style>{'.cls-2{fill:#491b12}'}</style>
     </defs>
     <path
-      style={{
-        fill: '#4338ca',
-      }}
       d="m288.45 34.91-11.4 19.76h-7.29l9.33-16.51h-11.58l-5.8 10.03h6.94l-3.9 6.48h-10.52l-11.41-19.76 11.41-19.76h10.83l3.6 6.49h-10.69l-7.66 13.27 5.79 10.04 7.66-13.28h15.34l-9.48-16.52h7.43l11.4 19.76z"
     />
     <path
