@@ -285,7 +285,15 @@ export async function downloadReport(storageData) {
     let storageName = d.storage_name
     if (storageName == undefined) {
       storageName = '#Inventory'
+    }
 
+    let stickersData = d.stickers;
+    if (stickersData != []) {
+      let newStickers = [] as any;
+      stickersData.forEach(element => {
+        newStickers.push(element.sticker_name)
+      });
+      stickersData = newStickers.join(';');
     }
     const returnDict = {
       item_name: d.item_name,
@@ -298,7 +306,7 @@ export async function downloadReport(storageData) {
       item_wear_name: d.item_wear_name,
       item_paint_wear: d.item_paint_wear,
       item_has_stickers: d.item_has_stickers,
-      item_stickers: d.stickers
+      item_stickers: stickersData
     }
     return JSON.stringify(Object.values(returnDict));
 })
