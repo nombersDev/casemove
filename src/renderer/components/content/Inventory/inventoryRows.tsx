@@ -30,10 +30,6 @@ function content() {
   } else {
     inventoryToUse = inventoryFilters.inventoryFiltered;
   }
-  console.log(inventory.combinedInventory);
-  console.log(inventoryFilters.inventoryFilter)
-  console.log(inventoryFilters.inventoryFiltered)
-  console.log(inventoryFilters.searchInput)
 
   return (
     <>

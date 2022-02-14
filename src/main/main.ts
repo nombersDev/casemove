@@ -12,7 +12,7 @@ import GlobalOffensive from 'globaloffensive'
 import {isLoggedInElsewhere} from './steam/steam'
 import {getGithubVersion} from './scripts/versionHelper'
 // import {download} from 'electron-dl'
-
+import * as fs from 'fs';
 let mainWindow: BrowserWindow | null = null;
 
 ipcMain.on('ipc-example', async (event, arg) => {
@@ -73,6 +73,20 @@ const createWindow = async () => {
     },
   });
   mainWindow.webContents.session.clearStorageData()
+
+  ipcMain.on("download", (_event, info) => {
+    let fileP = path.join(
+      os.homedir(),
+      '/Downloads/casemove.csv'
+    )
+    
+    fs.writeFileSync(fileP, info, 'utf-8'); 
+    shell.showItemInFolder(fileP)
+    
+    //  @ts-ignore
+    // download(BrowserWindow.getFocusedWindow(), info.url, info.properties)
+    //     .then(dl =>  event.reply('download-reply', dl.getSavePath()) );
+  });
 
 
 

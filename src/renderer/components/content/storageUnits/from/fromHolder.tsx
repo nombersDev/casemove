@@ -71,10 +71,10 @@ function StorageUnits() {
                   className={classNames(
                     project.item_name
                       ?.toLowerCase()
-                      .includes(fromReducer.searchInput.toLowerCase().trim()) ||
+                      .includes(fromReducer.searchInput?.toLowerCase().trim()) ||
                       project.item_customname
                         ?.toLowerCase()
-                        .includes(fromReducer.searchInput.toLowerCase().trim())
+                        .includes(fromReducer.searchInput?.toLowerCase().trim())
                       ? ''
                       : 'hidden',
                     'hover:shadow-inner'

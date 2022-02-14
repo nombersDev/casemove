@@ -20,11 +20,8 @@ contextBridge.exposeInMainWorld('electron', {
       });
     },
 
-    downloadFile(url, dir) {
-      ipcRenderer.send('download', {
-        url: url,
-        properties: { directory: dir },
-      });
+    downloadFile(data) {
+      ipcRenderer.send('download', data);
     },
     // User commands
     retryConnection() {

@@ -26,7 +26,6 @@ function content() {
   const fromReducer = useSelector((state: any) => state.moveFromReducer);
   const localHide = fromReducer.doHide;
 
-  const [doDownload, setDoDownload] = useState(false)
 
   const [getLoadingButton, setLoadingButton] = useState(false);
   const [storageLoading, setStorageLoading] = useState(false);
@@ -79,7 +78,6 @@ function content() {
         await getStorageData(projectRow.item_id, projectRow.item_customname);
       }
     }
-    setDoDownload(true)
   }
 
   // Get all storage unit data
@@ -101,25 +99,7 @@ function content() {
     }
   }
 
-  async function downloadReport() {
-    let csvContent = "data:text/csv;charset=utf-8,";
-    var csv = inventory.storageInventory.map(function(d){
-      return JSON.stringify(Object.values(d));
-  })
-  .join('\n')
-  .replace(/(^\[)|(\]$)/mg, '');
-  csv = csvContent + csv
-  console.log(csv)
-  var encodedUri = encodeURI(csvContent);
-var link = document.createElement("a");
-link.setAttribute("href", encodedUri);
-link.setAttribute("download", "my_data.csv");
-document.body.appendChild(link); // Required for FF
-  }
-  if (doDownload) {
-    downloadReport()
-    setDoDownload(false)
-  }
+  
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
