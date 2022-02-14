@@ -30,7 +30,6 @@ function content() {
   } else {
     inventoryToUse = inventoryFilters.inventoryFiltered;
   }
-  console.log(inventory.combinedInventory);
 
   return (
     <>
@@ -105,11 +104,11 @@ function content() {
                 project.item_name
                   ?.toLowerCase()
                   .includes(
-                    inventoryFilters.searchInput.toLowerCase().trim()
+                    inventoryFilters.searchInput?.toLowerCase().trim()
                   ) ||
                   project.item_customname
                     ?.toLowerCase()
-                    .includes(inventoryFilters.searchInput.toLowerCase().trim())
+                    .includes(inventoryFilters.searchInput?.toLowerCase().trim() ) || inventoryFilters.searchInput == undefined
                   ? ''
                   : 'hidden',
                 'hover:shadow-inner'

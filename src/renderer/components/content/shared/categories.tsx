@@ -8,7 +8,7 @@ const itemCategories = [
   {
     value: 'status_icons',
     name: 'Collectibles & Passes',
-    bgColorClass: 'bg-black',
+    bgColorClass: 'bg-red-500',
     href: '#',
   },
   {

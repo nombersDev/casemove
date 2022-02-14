@@ -26,6 +26,7 @@ function content() {
   const fromReducer = useSelector((state: any) => state.moveFromReducer);
   const localHide = fromReducer.doHide;
 
+
   const [getLoadingButton, setLoadingButton] = useState(false);
   const [storageLoading, setStorageLoading] = useState(false);
   const inventory = useSelector((state: any) => state.inventoryReducer);
@@ -98,6 +99,8 @@ function content() {
     }
   }
 
+  
+
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <RenameModal />
@@ -111,12 +114,12 @@ function content() {
             type="button"
             onClick={() => getAllStorages()}
             className=
-              'order-1 ml-3  order-1 inline-flex items-center px-4 py-2 hover:border hover:shadow-sm  text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0'
+              'order-1 ml-3  order-1 inline-flex items-center px-4 py-2 hover:border hover:shadow-sm  text-sm font-medium rounded-md text-gray-700  hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0'
 
           >
 
             <CheckIcon
-                    className=" h-4 w-4 text-gray-700"
+                    className=" h-4 w-4 text-gray-700 dark:text-dark-white"
                     aria-hidden="true"
                   />
           </Link>
@@ -125,12 +128,12 @@ function content() {
             type="button"
             onClick={() => unMarkAllStorages()}
             className=
-              'order-1 ml-3  order-1 inline-flex items-center px-4 py-2 hover:border hover:shadow-sm  text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0'
+              'order-1 ml-3  order-1 inline-flex items-center px-4 py-2 hover:border hover:shadow-sm  text-sm font-medium rounded-md text-gray-700  hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0'
 
           >
 
             <XIcon
-                    className="h-4 w-4 text-gray-700"
+                    className="h-4 w-4 text-gray-700 dark:text-dark-white"
                     aria-hidden="true"
                   />
           </Link>
@@ -138,19 +141,19 @@ function content() {
           <Link
             to=""
             type="button"
-            className="order-last inline-flex items-center px-4 py-2 border border-transparent hover:bg-gray-50 focus:outline-none"
+            className="order-last inline-flex  items-center px-4 py-2 border border-transparent hover:bg-gray-50 focus:outline-none"
             onClick={() => refreshInventory()}
           >
             {getLoadingButton ? (
               <LoadingButton />
             ) : (
               <RefreshIcon
-                className="h-4 w-4 text-gray-500"
+                className="h-4 w-4 text-gray-500 dark:text-dark-white"
                 aria-hidden="true"
               />
             )}
           </Link>
-          <span className="mr-3 text-gray-500 text-xs font-medium uppercase tracking-wide">
+          <span className="mr-3 text-gray-500 dark:text-dark-white text-xs font-medium uppercase tracking-wide">
             Hide empty
           </span>
           <Switch
@@ -241,7 +244,7 @@ function content() {
                   getLoadingButton
                     ? 'pointer-events-none	'
                     : 'pointer-events-auto',
-                  'relative col-span-1 flex shadow-sm rounded-md'
+                  'relative col-span-1  flex shadow-sm rounded-md'
                 )}
               >
                 <Link
@@ -256,7 +259,7 @@ function content() {
                 >
                   <div
                     className={classNames(
-                      'flex-shrink-0 h-full  flex items-center justify-center w-16 text-white border-t border-l border-b border-gray-200 rounded-l-md'
+                      'flex-shrink-0 h-full  flex items-center justify-center w-16 dark:border-opacity-50 text-white border-t border-l border-b border-gray-200 rounded-l-md dark:bg-dark-level-two'
                     )}
                   >
                     <img
@@ -274,7 +277,7 @@ function content() {
                     />
                   </div>
                 </Link>
-                <div className="flex-1 flex items-center justify-between border-t border-r border-b border-gray-200 bg-white rounded-r-md truncate">
+                <div className="flex-1 dark:bg-dark-level-two dark:border-opacity-50 flex items-center justify-between border-t border-r border-b border-gray-200 bg-white rounded-r-md truncate">
                   <Link
                     to=""
                     onClick={() =>
@@ -287,7 +290,7 @@ function content() {
                     )}
                     key={project.item_id}
                   >
-                    <div className="flex-1 px-4 py-2 text-sm truncate">
+                    <div className="flex-1 px-4 py-2 text-sm dark:text-dark-white truncate">
                       {project.item_customname != null ? (
                         project.item_customname
                       ) : (
@@ -317,7 +320,7 @@ function content() {
                     </div>
                   </Link>
                   <Menu as="div" className="flex-shrink-0 pr-2">
-                    <Menu.Button className="w-8 h-8 bg-white inline-flex items-center justify-center text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600">
+                    <Menu.Button className="w-8 h-8 inline-flex items-center justify-center text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600">
                       <span className="sr-only">Open options</span>
                       <DotsVerticalIcon
                         className="w-5 h-5"

@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { LoadingButton } from 'renderer/components/content/shared/animations';
 import combineInventory from 'renderer/components/content/shared/inventoryFunctions';
 import NotificationElement from 'renderer/components/content/shared/modals & notifcations/notification';
+import SteamLogo from 'renderer/components/content/shared/steamLogo';
 import { setInventoryAction } from 'renderer/store/actions/inventoryActions';
 import { signIn } from 'renderer/store/actions/userStatsActions';
 import { getURL } from 'renderer/store/helpers/userStatusHelper';
@@ -45,7 +46,9 @@ export default function LoginPage() {
       storePassword,
       authCode
     );
-    responseCode = responseStatus[0];
+    console.log(responseStatus)
+    responseCode = responseStatus[0]
+
     // Notification
     switch (responseCode) {
       case 1:
@@ -74,7 +77,7 @@ export default function LoginPage() {
         openNotification(
           false,
           'Unknown error',
-          'Could be wrong credentials, a network error or something else.'
+          'Could be wrong credentials, a network error or something else.' + responseStatus[1]
         );
         setUsername('');
         setPassword('');
@@ -123,12 +126,8 @@ export default function LoginPage() {
       <div className="min-h-full flex items-center  pt-32 justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div>
-            <img
-              className="mx-auto h-12 w-auto"
-              src="https://store.cloudflare.steamstatic.com/public/shared/images/email/logo_footer.png"
-              alt="Workflow"
-            />
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            <SteamLogo />
+            <h2 className="mt-6 text-center dark:text-dark-white text-3xl font-extrabold text-gray-900">
               Connect to Steam
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
@@ -149,7 +148,7 @@ export default function LoginPage() {
                   onChange={(e) => setUsername(e.target.value)}
                   required
                   value={username}
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  className="appearance-none dark:bg-dark-level-one dark:text-dark-white  dark:border-opacity-50 rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                   placeholder="Username"
                 />
               </div>
@@ -165,7 +164,7 @@ export default function LoginPage() {
                   autoComplete="current-password"
                   required
                   value={password}
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  className="appearance-none dark:text-dark-white rounded-none dark:bg-dark-level-one  dark:border-opacity-50 relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900  focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                   placeholder="Password"
                 />
               </div>
@@ -179,8 +178,8 @@ export default function LoginPage() {
                   value={authCode}
                   onChange={(e) => setAuthCode(e.target.value)}
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                  placeholder="authcode (optional)"
+                  className="appearance-none rounded-none dark:bg-dark-level-one dark:text-dark-white dark:border-opacity-50 relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  placeholder="Authcode (optional)"
                 />
               </div>
             </div>

@@ -77,7 +77,7 @@ export default function MoveModal() {
           }
           dispatch(moveModalUpdate());
         }
-        
+
       }
     }
   }
@@ -103,6 +103,7 @@ export default function MoveModal() {
     setID(modalData.modalPayload.itemID);
     runModal();
   }
+  const devMode = false;
 
   return (
     <Transition.Root
@@ -110,7 +111,7 @@ export default function MoveModal() {
         modalData.doCancel.includes(modalData.modalPayload['key'])
           ? false
           : Object.keys(modalData.modalPayload).length == 0
-          ? false
+          ? devMode
           : modalData.moveOpen
       }
       as={Fragment}
@@ -179,6 +180,11 @@ export default function MoveModal() {
                   </div>
                 </div>
               </div>
+              <span className="mr-3 text-gray-500 dark:text-dark-white text-xs font-medium uppercase tracking-wide">
+
+          </span>
+
+
               <div className="mt-5 sm:mt-6">
                 <button
                   type="button"
@@ -188,8 +194,21 @@ export default function MoveModal() {
                   Cancel
                 </button>
               </div>
+              <div className="flex flex-wrap content-center items-center justify-center mr-3 mt-2 text-gray-400 dark:text-dark-white text-xs font-medium uppercase tracking-wide">
+
+          {/* This element is to trick the browser into centering the modal contents.
+            <div>
+              ENABLE FAST MODE
+            </div> */}
+
+
+
+
+          </div>
             </div>
+
           </Transition.Child>
+
         </div>
       </Dialog>
     </Transition.Root>

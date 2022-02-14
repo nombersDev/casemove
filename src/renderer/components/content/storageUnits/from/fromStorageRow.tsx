@@ -59,7 +59,7 @@ function content({ projectRow }) {
 
   return (
     <>
-      <td className="px-6 py-3 max-w-0 w-full whitespace-nowrap overflow-hidden text-sm font-normal text-gray-900">
+      <td className="px-6 py-3 max-w-0 w-full whitespace-nowrap overflow-hidden text-sm font-normal text-gray-900 dark:text-dark-white">
         <div className="flex items-center space-x-3 lg:pl-2">
           <div
             className={classNames(

@@ -11,7 +11,8 @@ import SteamUser from 'steam-user'
 import GlobalOffensive from 'globaloffensive'
 import {isLoggedInElsewhere} from './steam/steam'
 import {getGithubVersion} from './scripts/versionHelper'
-
+// import {download} from 'electron-dl'
+import * as fs from 'fs';
 let mainWindow: BrowserWindow | null = null;
 
 ipcMain.on('ipc-example', async (event, arg) => {
@@ -73,6 +74,23 @@ const createWindow = async () => {
   });
   mainWindow.webContents.session.clearStorageData()
 
+  ipcMain.on("download", (_event, info) => {
+    let fileP = path.join(
+      os.homedir(),
+      '/Downloads/casemove.csv'
+    )
+    
+    fs.writeFileSync(fileP, info, 'utf-8'); 
+    shell.showItemInFolder(fileP)
+    
+    //  @ts-ignore
+    // download(BrowserWindow.getFocusedWindow(), info.url, info.properties)
+    //     .then(dl =>  event.reply('download-reply', dl.getSavePath()) );
+  });
+
+
+
+
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
@@ -87,6 +105,7 @@ const createWindow = async () => {
       mainWindow.show();
     }
   });
+
 
   mainWindow.on('closed', () => {
     mainWindow = null;
@@ -161,6 +180,7 @@ app
   .catch(console.log);
 
 }
+
   /**
  * IPC...
  */
@@ -255,7 +275,7 @@ ipcMain.on('login', async (event, username, password, shouldRemember, authcode =
   });
   user.once('error', (error) => {
     console.log(error)
-    event.reply('login-reply', [4])
+    event.reply('login-reply', [4, error])
   })
 
   user.logOn(logInOptions)
@@ -420,6 +440,7 @@ async function startEvents(csgo, user) {
 
 // Store IPC
 const store = new Store();
+store.set('fastMove', false);
 ipcMain.on('electron-store-get', async (event, val) => {
   event.returnValue = store.get(val);
 });
@@ -427,4 +448,5 @@ ipcMain.on('electron-store-set', async (event, key, val) => {
   event
   store.set(key, val);
 });
+
 

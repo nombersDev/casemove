@@ -57,7 +57,7 @@ const navigation = [
 
 function AppContent() {
   SearchIcon;
-  // document.documentElement.classList.add('dark')
+  //document.documentElement.classList.add('dark')
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -163,11 +163,11 @@ function AppContent() {
         <body class="h-full">
         ```
       */}
-      <div className="min-h-full dark:bg-gray-900 h-screen">
+      <div className="min-h-full dark:bg-dark-level-one h-screen">
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
             as="div"
-            className="fixed inset-0 flex z-40 dark:bg-gray-400 lg:hidden"
+            className="fixed inset-0 flex z-40 dark:bg-dark-level-two lg:hidden"
             onClose={setSidebarOpen}
           >
             <Transition.Child
@@ -289,7 +289,7 @@ function AppContent() {
         </Transition.Root>
 
         {/* Static sidebar for desktop */}
-        <div className="hidden lg:flex lg:flex-col dark:bg-gray-800 lg:w-64 lg:fixed lg:inset-y-0 lg:border-r lg:border-gray-200 lg:pt-5 lg:pb-4 lg:bg-gray-100">
+        <div className="hidden lg:flex lg:flex-col dark:bg-dark-level-two dark:border-opacity-50 lg:w-64 lg:fixed lg:inset-y-0 lg:border-r lg:border-gray-200 lg:pt-5 lg:pb-4 lg:bg-gray-100">
           <div className="flex items-center flex-shrink-0 px-6">
             <Logo />
           </div>
@@ -304,7 +304,7 @@ function AppContent() {
               )}
             >
               <div>
-                <Menu.Button className="group w-full bg-gray-100 rounded-md px-3.5 py-2 text-sm text-left font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-offset-2 focus:ring-offset-gray-100">
+                <Menu.Button className="group w-full bg-gray-100 rounded-md px-3.5 py-2 text-sm text-left font-medium text-gray-700 dark:bg-dark-level-two hover:bg-gray-200 focus:outline-none focus:ring-offset-2 focus:ring-offset-gray-100">
                   <span className="flex w-full justify-between items-center">
                     <span className="flex min-w-0 items-center justify-between space-x-3">
                       {userDetails.userProfilePicture == null ? (
@@ -324,7 +324,7 @@ function AppContent() {
                       )}
 
                       <span className="flex-1 flex flex-col min-w-0">
-                        <span className="text-gray-900 text-sm font-medium truncate">
+                        <span className="text-gray-900 dark:text-dark-white text-sm font-medium truncate">
                           {userDetails.displayName}
                         </span>
                         <span className="text-xs font-medium text-gray-500 group-hover:text-gray-500">
@@ -420,7 +420,7 @@ function AppContent() {
                 >
                   <button
                     type="button"
-                    className="inline-flex items-center px-6 py-3 border border-gray-200 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
+                    className="inline-flex items-center px-6 py-3 border border-gray-200 dark:bg-dark-level-one   dark:border-opacity-0  text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
                   >
                     <GiftIcon
                       className="mr-3 h-4 w-4 text-gray-500"
@@ -441,10 +441,10 @@ function AppContent() {
                     to={item.href}
                     className={classNames(
                       currentSideMenuOption.includes(item.href)
-                        ? 'bg-gray-100 text-gray-900'
-                        : 'text-gray-600 dark:text-gray-200 hover:text-gray-900 hover:bg-gray-50',
+                        ? 'bg-gray-100 text-gray-900 dark:bg-opacity-10 dark:text-opacity-60'
+                        : 'text-gray-600 dark:text-gray-200 hover:text-gray-900 hover:bg-gray-50 dark:bg-opacity-10 dark:hover:text-opacity-60 ',
                       userDetails.isLoggedIn ? '' : 'pointer-events-none',
-                      'group flex items-center px-2 py-2 text-base leading-5 font-medium rounded-md'
+                      'group flex items-center px-2 py-2 dark:text-dark-white text-base leading-5 font-medium rounded-md'
                     )}
                     aria-current={item.current ? 'page' : undefined}
                     onClick={() => updateAutomation(item.href)}
@@ -452,9 +452,9 @@ function AppContent() {
                     <item.icon
                       className={classNames(
                         currentSideMenuOption.includes(item.href)
-                          ? 'text-gray-500'
+                          ? 'text-gray-500 dark:text-opacity-60'
                           : 'text-gray-400 group-hover:text-gray-500',
-                        'mr-3 flex-shrink-0 h-6 w-6'
+                        'mr-3 flex-shrink-0 h-6 w-6  dark:text-dark-white'
                       )}
                       aria-hidden="true"
                     />
@@ -478,7 +478,7 @@ function AppContent() {
                   {itemCategories.map((team) => (
                     <a
                       key={team.name}
-                      className="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md"
+                      className="group flex items-center px-3 py-2 dark:text-dark-white text-sm font-medium text-gray-700 rounded-md"
                     >
                       <span
                         className={classNames(

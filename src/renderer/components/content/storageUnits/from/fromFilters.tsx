@@ -4,6 +4,7 @@ import { Disclosure, Menu, Transition } from '@headlessui/react';
 import {
   ArchiveIcon,
   ChevronDownIcon,
+  DocumentDownloadIcon,
   SaveAsIcon,
   SearchIcon,
   SwitchHorizontalIcon,
@@ -14,7 +15,7 @@ import {
   moveFromsetSearchField,
   moveFromSetSortOption,
 } from 'renderer/store/actions/moveFromActions';
-import { sortDataFunction } from '../../shared/inventoryFunctions';
+import { downloadReport, sortDataFunction } from '../../shared/inventoryFunctions';
 import { inventorySetStoragesData } from 'renderer/store/actions/inventoryActions';
 import MoveModal from '../../shared/modals & notifcations/modalMove';
 import { moveModalQuerySet } from 'renderer/store/actions/modalMove actions';
@@ -68,6 +69,7 @@ function content() {
     console.log(queryNew);
     dispatch(moveModalQuerySet(queryNew));
   }
+  
 
   return (
     <div className="bg-white mt-8">
@@ -78,7 +80,7 @@ function content() {
       <Disclosure
         as="section"
         aria-labelledby="filter-heading"
-        className="relative z-10 grid items-center border-b"
+        className="relative z-10 grid items-center border-b dark:bg-dark-level-one dark:border-opacity-50"
       >
         <div className="relative col-start-1 row-start-1 py-4 flex justify-between">
           <div className="max-w-7xl flex items-center space-x-6 divide-x divide-gray-200 text-sm px-4 sm:px-6 lg:px-8">
@@ -172,8 +174,29 @@ function content() {
             </div>
           </div>
           <div className="flex justify-end justify-items-end max-w-7xl px-4 sm:px-6 lg:px-8 ">
+            
             <div className="flex items-center divide-x divide-gray-200">
-              <div>
+            <div className="pr-3">
+                <Link
+                  to=""
+                  type="button"
+                  onClick={() => downloadReport(inventory.storageInventory)}
+                  className={classNames(
+                    inventory.storageInventory.length == 0
+                      ? 'pointer-events-none border-gray-100'
+                      : 'hover:shadow-sm border-gray-200 ',
+                    'order-1 ml-3 inline-flex items-center px-4 py-2 border   text-sm font-medium rounded-md text-gray-500 bg-white hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0'
+                  )}
+                >
+                  <DocumentDownloadIcon
+                    className="mr-3 h-4 w-4 text-gray-500"
+                    aria-hidden="true"
+                  />
+                  Download
+                  
+                </Link>
+              </div>
+              <div className="pl-3">
                 <span className="mr-3 flex items-center text-gray-500 text-xs font-medium uppercase tracking-wide">
                   <ArchiveIcon
                     className="flex-none w-5 h-5 mr-2 text-gray-400 group-hover:text-gray-500"
@@ -217,6 +240,7 @@ function content() {
                   />
                 </Link>
               </div>
+              
             </div>
           </div>
         </div>
