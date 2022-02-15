@@ -82,10 +82,6 @@ const createWindow = async () => {
     
     fs.writeFileSync(fileP, info, 'utf-8'); 
     shell.showItemInFolder(fileP)
-    
-    //  @ts-ignore
-    // download(BrowserWindow.getFocusedWindow(), info.url, info.properties)
-    //     .then(dl =>  event.reply('download-reply', dl.getSavePath()) );
   });
 
 
@@ -373,25 +369,31 @@ async function startEvents(csgo, user) {
   })
 
   // Remove items from storage unit
-  ipcMain.on('removeFromStorageUnit', async (event, casketID, itemID) => {
+  ipcMain.on('removeFromStorageUnit', async (event, casketID, itemID, fastMode) => {
     csgo.removeFromCasket(casketID, itemID)
-    csgo.once('itemCustomizationNotification', (itemIds, notificationType) => {
-      if (notificationType == GlobalOffensive.ItemCustomizationNotification.CasketRemoved) {
-        console.log(itemIds + ' removed from storage unit')
-        event.reply('removeFromStorageUnit-reply', [1, itemIds[0]]);
-    }
-  });
-  })
+    if (fastMode == false) {
+      csgo.once('itemCustomizationNotification', (itemIds, notificationType) => {
+        if (notificationType == GlobalOffensive.ItemCustomizationNotification.CasketRemoved) {
+          console.log(itemIds + ' removed from storage unit')
+          event.reply('removeFromStorageUnit-reply', [1, itemIds[0]]);
+      }
+     
+    });
+    } 
+})
 
   // Move to Storage Unit
-  ipcMain.on('moveToStorageUnit', async (event, casketID, itemID) => {
+  ipcMain.on('moveToStorageUnit', async (event, casketID, itemID, fastMode) => {
     csgo.addToCasket(casketID, itemID)
-    csgo.once('itemCustomizationNotification', (itemIds, notificationType) => {
-      if (notificationType == GlobalOffensive.ItemCustomizationNotification.CasketAdded) {
-        console.log(itemIds[0] + ' added to storage unit')
-        event.reply('moveToStorageUnit-reply', [1, itemIds[0]]);
+    if (fastMode) {
+      csgo.once('itemCustomizationNotification', (itemIds, notificationType) => {
+        if (notificationType == GlobalOffensive.ItemCustomizationNotification.CasketAdded) {
+          console.log(itemIds[0] + ' added to storage unit')
+          event.reply('moveToStorageUnit-reply', [1, itemIds[0]]);
+      }
+    });
     }
-  });
+    
   })
 
   // Get storage unit contents

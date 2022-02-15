@@ -89,39 +89,67 @@ contextBridge.exposeInMainWorld('electron', {
     },
 
     // Commands
-    moveFromStorageUnit(casketID, itemID) {
-      let timeout = new Promise((_resolve, reject) => {
-        let id = setTimeout(() => {
-          clearTimeout(id);
-          reject();
-        }, 10000);
-      });
+    moveFromStorageUnit(casketID, itemID, fastMode) {
+      
       // Create a promise that rejects in <ms> milliseconds
       let storageUnitResponse = new Promise((resolve) => {
-        ipcRenderer.send('removeFromStorageUnit', casketID, itemID);
+        ipcRenderer.send('removeFromStorageUnit', casketID, itemID, fastMode);
 
-        ipcRenderer.once('removeFromStorageUnit-reply', (event, arg) => {
-          resolve(arg);
-        });
+        if (fastMode) {
+          resolve(fastMode)
+        }
+        else {
+          ipcRenderer.once('removeFromStorageUnit-reply', (event, arg) => {
+            resolve(arg);
+          });
+        }
+        
       });
-      return Promise.race([storageUnitResponse, timeout]);
+      if (fastMode) {
+        return true
+      } else {
+        let timeout = new Promise((_resolve, reject) => {
+          let id = setTimeout(() => {
+            clearTimeout(id);
+            reject();
+          }, 10000);
+        });
+        return Promise.race([storageUnitResponse, timeout]);
+      }
+      
     },
     // Commands
-    moveToStorageUnit(casketID, itemID) {
-      let timeout = new Promise((_resolve, reject) => {
-        let id = setTimeout(() => {
-          clearTimeout(id);
-          reject();
-        }, 10000);
-      });
+    moveToStorageUnit(casketID, itemID, fastMode) {
+      
+      
       let storageUnitResponse = new Promise((resolve) => {
-        ipcRenderer.send('moveToStorageUnit', casketID, itemID);
+        ipcRenderer.send('moveToStorageUnit', casketID, itemID, fastMode);
+        if (fastMode) {
+          console.log(true)
+          resolve(fastMode)
+        }
+        else {
+          ipcRenderer.once('moveToStorageUnit-reply', (event, arg) => {
+            resolve(arg);
+          });
+        }
 
-        ipcRenderer.once('moveToStorageUnit-reply', (event, arg) => {
-          resolve(arg);
-        });
+        
       });
+      
+      if (fastMode) {
+        return true
+      } else {
+        let timeout = new Promise((_resolve, reject) => {
+          let id = setTimeout(() => {
+            clearTimeout(id);
+            reject();
+          }, 10000);
+        });
+        
       return Promise.race([storageUnitResponse, timeout]);
+      }
+      
     },
 
     on(channel, func) {
