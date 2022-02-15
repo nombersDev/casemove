@@ -31,15 +31,13 @@ export default function MoveModal() {
       dispatch(moveToClearAll());
     }
     if (modalData.modalPayload['type'] == 'from') {
-      window.electron.ipcRenderer.moveFromStorageUnit(
-        modalData.modalPayload['storageID'],
-        modalData.modalPayload['itemID']
-      );
       dispatch(moveFromClearAll());
     }
     dispatch(modalResetStorageIdsToClearFrom());
     dispatch(moveModalResetPayload());
   }
+
+  const fastMode = false;
 
   async function runModal() {
     if (modalData.moveOpen) {
@@ -49,32 +47,53 @@ export default function MoveModal() {
             'Sending to command',
             modalData.modalPayload['storageID']
           );
-
-          try {
-            await window.electron.ipcRenderer.moveToStorageUnit(
+          if (fastMode) {
+            window.electron.ipcRenderer.moveToStorageUnit(
               modalData.modalPayload['storageID'],
-              modalData.modalPayload['itemID']
+              modalData.modalPayload['itemID'],
+              fastMode
             );
-          } catch {
-            dispatch(moveModalAddToFail());
+            await new Promise(r => setTimeout(r, 25));
+          } else {
+            try {
+              await window.electron.ipcRenderer.moveToStorageUnit(
+                modalData.modalPayload['storageID'],
+                modalData.modalPayload['itemID'],
+                fastMode
+              );
+            } catch {
+              dispatch(moveModalAddToFail());
+            }
           }
-
-          // await new Promise(r => setTimeout(r, 250));
+        
           dispatch(moveModalUpdate());
           if (modalData.modalPayload['isLast']) {
             dispatch(moveToClearAll());
           }
         }
         if (modalData.modalPayload['type'] == 'from') {
-          try {
-             await window.electron.ipcRenderer.moveFromStorageUnit(
+          if (fastMode) {
+            window.electron.ipcRenderer.moveFromStorageUnit(
               modalData.modalPayload['storageID'],
-              modalData.modalPayload['itemID']
+              modalData.modalPayload['itemID'],
+              fastMode
             );
-            // await new Promise(r => setTimeout(r, 25));
-          } catch {
-            dispatch(moveModalAddToFail());
+            await new Promise(r => setTimeout(r, 25));
+
+          } else {
+            try {
+              await window.electron.ipcRenderer.moveFromStorageUnit(
+               modalData.modalPayload['storageID'],
+               modalData.modalPayload['itemID'],
+               fastMode
+             );
+             // await new Promise(r => setTimeout(r, 25));
+           } catch {
+             dispatch(moveModalAddToFail());
+           }
+
           }
+          
           dispatch(moveModalUpdate());
         }
 

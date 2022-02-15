@@ -4,13 +4,13 @@
 
 ----
 
-## Download Latest Version (Casemove 1.1.3)
+## Download Latest Version (Casemove 1.2.0)
 
 This is the latest stable version and can be downloaded from the [releases](https://github.com/nombersDev/casemove/releases) page, or directly from:
 
-- [Windows - (Casemove-1.1.3)](https://github.com/nombersDev/casemove/releases/download/1.1.3/Casemove.Setup.1.1.3.exe)
-- [Mac - (Casemove-1.1.3)](https://github.com/nombersDev/casemove/releases/download/1.1.3/Casemove-1.1.3.dmg)
-- [Mac ARM 64 (M1) - (Casemove-1.1.3)](https://github.com/nombersDev/casemove/releases/download/1.1.3/Casemove-1.1.3-arm64.dmg)
+- [Windows - (Casemove-1.2.0)](https://github.com/nombersDev/casemove/releases/download/1.2.0/Casemove.Setup.1.2.0.exe)
+- [Mac - (Casemove-1.2.0)](https://github.com/nombersDev/casemove/releases/download/1.2.0/Casemove-1.2.0.dmg)
+- [Mac ARM 64 (M1) - (Casemove-1.2.0)](https://github.com/nombersDev/casemove/releases/download/1.2.0/Casemove-1.2.0-arm64.dmg)
 
 https://user-images.githubusercontent.com/98760010/153054583-eddad769-a6df-473e-9338-efbdb3dd021a.mp4
 
@@ -24,13 +24,15 @@ Features include:
   * Rename your storage units
   * Sort, search and filter your inventory
   * Sort, search and filter your storage units contents
+  * Download a file over your Storage units and inventory contents
+  * Switch between multiple accounts easily
+  * Use your shared secret key instead of an auth code to log in  
  
 ----
 
 # Currently being working on
 
 - Dark mode 
-- Storing multiple user account data for easy switching
 - A report section for exporting storage contents
 
 
@@ -56,7 +58,7 @@ Furthermore, the libraries [Steam-user](https://github.com/DoctorMcKay/node-stea
 
 #### Does Casemove store any of my information?
 
-No, Casemove doesn’t store any information on your computer. It also doesn’t send any information to anyone outside of Steam.
+No, Casemove doesn’t store any information on your computer, except for when you ask it to remember your login information, in which case it stores it safely using [safeStore](https://www.electronjs.org/docs/latest/api/safe-storage). It also doesn’t send any information to anyone outside of Steam.
 
 #### Why can't I just log in using the Steam Web authentication?
 

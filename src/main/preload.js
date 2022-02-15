@@ -19,6 +19,23 @@ contextBridge.exposeInMainWorld('electron', {
         });
       });
     },
+    // User account
+    getAccountDetails() {
+      return new Promise((resolve) => {
+        ipcRenderer.send('electron-store-getAccountDetails');
+        ipcRenderer.once(
+          'electron-store-getAccountDetails-reply',
+          (evt, message) => {
+            resolve(message);
+          }
+        );
+      });
+    },
+
+    // User account
+    deleteAccountDetails(username) {
+      ipcRenderer.send('electron-store-deleteAccountDetails', username);
+    },
 
     downloadFile(data) {
       ipcRenderer.send('download', data);
@@ -32,26 +49,30 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.send('signOut');
     },
     // USER CONNECTIONS
-    loginUser(username, password, storePassword, shouldRemember, authcode) {
+    loginUser(
+      username,
+      password,
+      shouldRemember,
+      authcode,
+      sharedSecret
+    )
+    {
+      
+      if (authcode == '') {
+        authcode = null;
+      }
+      if (sharedSecret == '') {
+        sharedSecret = null;
+      }
       return new Promise((resolve) => {
-        if (authcode == '') {
-          ipcRenderer.send(
-            'login',
-            username,
-            password,
-            storePassword,
-            shouldRemember
-          );
-        } else {
-          ipcRenderer.send(
-            'login',
-            username,
-            password,
-            storePassword,
-            shouldRemember,
-            authcode
-          );
-        }
+        ipcRenderer.send(
+          'login',
+          username,
+          password,
+          shouldRemember,
+          authcode,
+          sharedSecret
+        );
         ipcRenderer.once('login-reply', (event, arg) => {
           resolve(arg);
         });
@@ -89,39 +110,64 @@ contextBridge.exposeInMainWorld('electron', {
     },
 
     // Commands
-    moveFromStorageUnit(casketID, itemID) {
-      let timeout = new Promise((_resolve, reject) => {
-        let id = setTimeout(() => {
-          clearTimeout(id);
-          reject();
-        }, 10000);
-      });
+    moveFromStorageUnit(casketID, itemID, fastMode) {
+
       // Create a promise that rejects in <ms> milliseconds
       let storageUnitResponse = new Promise((resolve) => {
-        ipcRenderer.send('removeFromStorageUnit', casketID, itemID);
+        ipcRenderer.send('removeFromStorageUnit', casketID, itemID, fastMode);
 
-        ipcRenderer.once('removeFromStorageUnit-reply', (event, arg) => {
-          resolve(arg);
-        });
+        if (fastMode) {
+          resolve(fastMode)
+        }
+        else {
+          ipcRenderer.once('removeFromStorageUnit-reply', (event, arg) => {
+            resolve(arg);
+          });
+        }
+        
       });
-      return Promise.race([storageUnitResponse, timeout]);
+      if (fastMode) {
+        return true
+      } else {
+        let timeout = new Promise((_resolve, reject) => {
+          let id = setTimeout(() => {
+            clearTimeout(id);
+            reject();
+          }, 10000);
+        });
+        return Promise.race([storageUnitResponse, timeout]);
+      }
+      
     },
     // Commands
-    moveToStorageUnit(casketID, itemID) {
-      let timeout = new Promise((_resolve, reject) => {
-        let id = setTimeout(() => {
-          clearTimeout(id);
-          reject();
-        }, 10000);
-      });
+    moveToStorageUnit(casketID, itemID, fastMode) {
       let storageUnitResponse = new Promise((resolve) => {
-        ipcRenderer.send('moveToStorageUnit', casketID, itemID);
+        ipcRenderer.send('moveToStorageUnit', casketID, itemID, fastMode);
+        if (fastMode) {
+          resolve(fastMode)
+        }
+        else {
+          ipcRenderer.once('moveToStorageUnit-reply', (event, arg) => {
+            resolve(arg);
+          });
+        }
 
-        ipcRenderer.once('moveToStorageUnit-reply', (event, arg) => {
-          resolve(arg);
-        });
+        
       });
+      
+      if (fastMode) {
+        return true
+      } else {
+        let timeout = new Promise((_resolve, reject) => {
+          let id = setTimeout(() => {
+            clearTimeout(id);
+            reject();
+          }, 10000);
+        });
+        
       return Promise.race([storageUnitResponse, timeout]);
+      }
+      
     },
 
     on(channel, func) {
@@ -136,7 +182,8 @@ contextBridge.exposeInMainWorld('electron', {
         'signOut',
         'retryConnection',
         'needUpdate',
-        'download'
+        'download',
+        'electron-store-getAccountDetails',
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
@@ -155,7 +202,8 @@ contextBridge.exposeInMainWorld('electron', {
         'signOut',
         'retryConnection',
         'needUpdate',
-        'download'
+        'download',
+        'electron-store-getAccountDetails',
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
