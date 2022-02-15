@@ -1,253 +1,178 @@
-import { LockClosedIcon } from '@heroicons/react/solid';
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { LoadingButton } from 'renderer/components/content/shared/animations';
-import combineInventory from 'renderer/components/content/shared/inventoryFunctions';
-import NotificationElement from 'renderer/components/content/shared/modals & notifcations/notification';
-import SteamLogo from 'renderer/components/content/shared/steamLogo';
-import { setInventoryAction } from 'renderer/store/actions/inventoryActions';
-import { signIn } from 'renderer/store/actions/userStatsActions';
-import { getURL } from 'renderer/store/helpers/userStatusHelper';
+import { Disclosure } from '@headlessui/react'
+import { useState } from 'react'
+import LoginForm from './loginForm'
+import UserGrid from './userManagement'
+
+const subtotal = '$210.00'
+const discount = { code: 'CHEAPSKATE', amount: '$24.00' }
+const taxes = '$23.68'
+const shipping = '$22.00'
+const total = '$341.68'
+const products = [
+  {
+    id: 1,
+    name: 'Micro Backpack',
+    href: '#',
+    price: '$70.00',
+    color: 'Moss',
+    size: '5L',
+    imageSrc: 'https://tailwindui.com/img/ecommerce-images/checkout-page-04-product-01.jpg',
+    imageAlt:
+      'Moss green canvas compact backpack with double top zipper, zipper front pouch, and matching carry handle and backpack straps.',
+  },
+  // More products...
+]
 
 export default function LoginPage() {
-  // Usestate
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [authCode, setAuthCode] = useState('');
-  const [doShow, setDoShow] = useState(false);
-  const [wasSuccess, setWasSuccess] = useState(false);
-  const [titleToDisplay, setTitleToDisplay] = useState('test');
-  const [textToDisplay, setTextToDisplay] = useState('test');
-  const [storePassword, setStorePassword] = useState(false);
-  const [getLoadingButton, setLoadingButton] = useState(false);
-  setStorePassword;
-  // Handle login
-  const dispatch = useDispatch();
-  // Return 1 = Success
-  // Return 2 = Steam Guard
-  // Return 3 = Steam Guard wrong
-  // Return 4 = Wrong password
-  // Return 5 = Playing elsewhere
-
-  async function openNotification(success, title, text) {
-    setWasSuccess(success);
-    setTitleToDisplay(title);
-    setTextToDisplay(text);
-    setDoShow(true);
-  }
-  async function onSubmit(e) {
-    e.preventDefault();
-    setLoadingButton(true);
-    let responseCode = 1;
-    responseCode = 1;
-    const responseStatus = await window.electron.ipcRenderer.loginUser(
-      username,
-      password,
-      storePassword,
-      authCode
-    );
-    console.log(responseStatus)
-    responseCode = responseStatus[0]
-
-    // Notification
-    switch (responseCode) {
-      case 1:
-        openNotification(
-          true,
-          'Logged in successfully!',
-          'The app has successfully logged you in. Happy storaging.'
-        );
-        break;
-      case 2:
-        openNotification(
-          false,
-          'Steam Guard error!',
-          'Steam Guard might be required. Try again.'
-        );
-        break;
-      case 3:
-        openNotification(
-          false,
-          'Wrong Steam Guard code',
-          'Got the wrong Steam Guard code. Try again.'
-        );
-        break;
-
-      case 4:
-        openNotification(
-          false,
-          'Unknown error',
-          'Could be wrong credentials, a network error or something else.' + responseStatus[1]
-        );
-        setUsername('');
-        setPassword('');
-        break;
-
-      case 5:
-        openNotification(
-          false,
-          'Playing elsewhere',
-          'You were logged in but the account is currently playing elsewhere. Close the session and try again.'
-        );
-        break;
-    }
-    // If success login
-    if (responseCode == 1) {
-      let returnPackage = {
-        steamID: responseStatus[1][0],
-        displayName: responseStatus[1][1],
-        CSGOConnection: responseStatus[1][2],
-      };
-      await new Promise((r) => setTimeout(r, 2500));
-      try {
-        const profilePicture = await getURL(returnPackage.steamID);
-        returnPackage['userProfilePicture'] = profilePicture;
-      } catch (error) {
-        returnPackage['userProfilePicture'] =
-          'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/econ/characters/customplayer_tm_separatist.png';
-      }
-
-      dispatch(signIn(returnPackage));
-      const combined = await combineInventory(responseStatus[1][3]);
-      dispatch(
-        setInventoryAction({
-          inventory: responseStatus[1][3],
-          combinedInventory: combined,
-        })
-      );
-    } else {
-      setAuthCode('');
-    }
-    setLoadingButton(false);
-  }
+  const [getLock, setLock] = useState('')
 
   return (
     <>
-      <div className="min-h-full flex items-center  pt-32 justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
-          <div>
-            <SteamLogo />
-            <h2 className="mt-6 text-center dark:text-dark-white text-3xl font-extrabold text-gray-900">
-              Connect to Steam
-            </h2>
-            <p className="mt-2 text-center text-sm text-gray-600">
-              The application needs to have an active Steam connection to manage
-              your CSGO items.
-            </p>
-          </div>
-          <form className="mt-8 space-y-6" action="#" method="POST">
-            <input type="hidden" name="remember" defaultValue="true" />
-            <div className="rounded-md shadow-sm -space-y-px">
-              <div>
-                <label htmlFor="email-address" className="sr-only">
-                  Username
-                </label>
-                <input
-                  id="username"
-                  name="username"
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                  value={username}
-                  className="appearance-none dark:bg-dark-level-one dark:text-dark-white  dark:border-opacity-50 rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                  placeholder="Username"
-                />
-              </div>
-              <div>
-                <label htmlFor="password" className="sr-only">
-                  Password
-                </label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  onChange={(e) => setPassword(e.target.value)}
-                  autoComplete="current-password"
-                  required
-                  value={password}
-                  className="appearance-none dark:text-dark-white rounded-none dark:bg-dark-level-one  dark:border-opacity-50 relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900  focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                  placeholder="Password"
-                />
-              </div>
-              <div className="">
-                <label htmlFor="authcode" className="sr-only">
-                  Authcode
-                </label>
-                <input
-                  id="authcode"
-                  name="authcode"
-                  value={authCode}
-                  onChange={(e) => setAuthCode(e.target.value)}
-                  required
-                  className="appearance-none rounded-none dark:bg-dark-level-one dark:text-dark-white dark:border-opacity-50 relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                  placeholder="Authcode (optional)"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                {/*
+      {/*
+        This example requires updating your template:
 
         ```
         <html class="h-full bg-white">
         <body class="h-full">
         ```
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                  onChange={() => setStorePassword}
-                />
-
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                  Remember me
-                </label>
       */}
-              </div>
-
-              <div className="text-sm">
-                <a
-                  href="https://help.steampowered.com/en/wizard/HelpWithLogin"
-                  target="_blank"
-                  className="font-medium text-indigo-600 hover:text-indigo-500"
-                >
-                  Forgot your password?
-                </a>
-              </div>
-            </div>
-
-            <div>
-              <button
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                onClick={(e) => onSubmit(e)}
-                type="button"
-              >
-                <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                  {getLoadingButton ? (
-                    <LoadingButton />
-                  ) : (
-                    <LockClosedIcon
-                      className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400"
-                      aria-hidden="true"
-                    />
-                  )}
-                </span>
-                Sign in
-              </button>
-            </div>
-          </form>
+      <main className="lg:min-h-full lg:overflow-hidden lg:flex lg:flex-row-reverse">
+        <div className="px-4 py-6 sm:px-6 lg:hidden">
+          <div className="max-w-lg mx-auto flex">
+            <a href="#">
+              <span className="sr-only">Workflow</span>
+              <img
+                src="https://tailwindui.com/img/logos/workflow-mark.svg?color=indigo&shade=600"
+                alt=""
+                className="h-8 w-auto"
+              />
+            </a>
+          </div>
         </div>
-      </div>
-      <NotificationElement
-        success={wasSuccess}
-        titleToDisplay={titleToDisplay}
-        textToDisplay={textToDisplay}
-        doShow={doShow}
-        setShow={() => {
-          setDoShow(false);
-        }}
-      />
+
+        <h1 className="sr-only">Checkout</h1>
+
+        {/* Account switcher mobile */}
+        <section aria-labelledby="order-heading" className="bg-gray-50 px-4 py-6 sm:px-6 lg:hidden">
+          <Disclosure as="div" className="max-w-lg mx-auto">
+            {({ open }) => (
+              <>
+                <div className="flex items-center justify-between">
+                  <h2 id="order-heading" className="text-lg font-medium text-gray-900">
+                    Your Order
+                  </h2>
+                  <Disclosure.Button className="font-medium text-indigo-600 hover:text-indigo-500">
+                    {open ? <span>Hide full summary</span> : <span>Show full summary</span>}
+                  </Disclosure.Button>
+                </div>
+
+                <Disclosure.Panel>
+                  <ul role="list" className="divide-y divide-gray-200 border-b border-gray-200">
+                    {products.map((product) => (
+                      <li key={product.id} className="flex py-6 space-x-6">
+                        <img
+                          src={product.imageSrc}
+                          alt={product.imageAlt}
+                          className="flex-none w-40 h-40 object-center object-cover bg-gray-200 rounded-md"
+                        />
+                        <div className="flex flex-col justify-between space-y-4">
+                          <div className="text-sm font-medium space-y-1">
+                            <h3 className="text-gray-900">{product.name}</h3>
+                            <p className="text-gray-900">{product.price}</p>
+                            <p className="text-gray-500">{product.color}</p>
+                            <p className="text-gray-500">{product.size}</p>
+                          </div>
+                          <div className="flex space-x-4">
+                            <button type="button" className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+                              Edit
+                            </button>
+                            <div className="flex border-l border-gray-300 pl-4">
+                              <button
+                                type="button"
+                                className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <form className="mt-10">
+                    <label htmlFor="discount-code-mobile" className="block text-sm font-medium text-gray-700">
+                      Discount code
+                    </label>
+                    <div className="flex space-x-4 mt-1">
+                      <input
+                        type="text"
+                        id="discount-code-mobile"
+                        name="discount-code-mobile"
+                        className="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      />
+                      <button
+                        type="submit"
+                        className="bg-gray-200 text-sm font-medium text-gray-600 rounded-md px-4 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500"
+                      >
+                        Apply
+                      </button>
+                    </div>
+                  </form>
+
+                  <dl className="text-sm font-medium text-gray-500 mt-10 space-y-6">
+                    <div className="flex justify-between">
+                      <dt>Subtotal</dt>
+                      <dd className="text-gray-900">{subtotal}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                      <dt className="flex">
+                        Discount
+                        <span className="ml-2 rounded-full bg-gray-200 text-xs text-gray-600 py-0.5 px-2 tracking-wide">
+                          {discount.code}
+                        </span>
+                      </dt>
+                      <dd className="text-gray-900">-{discount.amount}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                      <dt>Taxes</dt>
+                      <dd className="text-gray-900">{taxes}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                      <dt>Shipping</dt>
+                      <dd className="text-gray-900">{shipping}</dd>
+                    </div>
+                  </dl>
+                </Disclosure.Panel>
+
+                <p className="flex items-center justify-between text-sm font-medium text-gray-900 border-t border-gray-200 pt-6 mt-6">
+                  <span className="text-base">Total</span>
+                  <span className="text-base">{total}</span>
+                </p>
+              </>
+            )}
+          </Disclosure>
+        </section>
+
+        {/* Account switcher */}
+        <section aria-labelledby="summary-heading" className="hidden bg-gray-50 w-full max-w-xs flex-col lg:flex">
+          <h2 id="summary-heading" className="sr-only">
+            Order summary
+          </h2>
+
+          <UserGrid clickOnProfile={(username) => setLock(username)}/>
+        </section>
+
+        {/* Login */}
+        <section
+          aria-labelledby="payment-heading"
+          className="flex-auto overflow-y-auto px-4 pt-12 pb-16 sm:px-6 sm:pt-16 lg:px-8 lg:pt-0 lg:pb-24"
+        >
+          <div className="max-w-lg mx-auto">
+            <LoginForm isLock={getLock} replaceLock={() => setLock('')}/>
+          </div>
+        </section>
+      </main>
     </>
-  );
+  )
 }

@@ -19,6 +19,23 @@ contextBridge.exposeInMainWorld('electron', {
         });
       });
     },
+    // User account
+    getAccountDetails() {
+      return new Promise((resolve) => {
+        ipcRenderer.send('electron-store-getAccountDetails');
+        ipcRenderer.once(
+          'electron-store-getAccountDetails-reply',
+          (evt, message) => {
+            resolve(message);
+          }
+        );
+      });
+    },
+
+    // User account
+    deleteAccountDetails(username) {
+      ipcRenderer.send('electron-store-deleteAccountDetails', username);
+    },
 
     downloadFile(data) {
       ipcRenderer.send('download', data);
@@ -32,26 +49,35 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.send('signOut');
     },
     // USER CONNECTIONS
-    loginUser(username, password, storePassword, shouldRemember, authcode) {
+    loginUser(
+      username,
+      password,
+      shouldRemember,
+      authcode,
+      sharedSecret
+    )
+    {
+      console.log(username,
+        password,
+        shouldRemember,
+        authcode,
+        sharedSecret)
+      console.log(sharedSecret)
+      if (authcode == '') {
+        authcode = null;
+      }
+      if (sharedSecret == '') {
+        sharedSecret = null;
+      }
       return new Promise((resolve) => {
-        if (authcode == '') {
-          ipcRenderer.send(
-            'login',
-            username,
-            password,
-            storePassword,
-            shouldRemember
-          );
-        } else {
-          ipcRenderer.send(
-            'login',
-            username,
-            password,
-            storePassword,
-            shouldRemember,
-            authcode
-          );
-        }
+        ipcRenderer.send(
+          'login',
+          username,
+          password,
+          shouldRemember,
+          authcode,
+          sharedSecret
+        );
         ipcRenderer.once('login-reply', (event, arg) => {
           resolve(arg);
         });
@@ -136,7 +162,8 @@ contextBridge.exposeInMainWorld('electron', {
         'signOut',
         'retryConnection',
         'needUpdate',
-        'download'
+        'download',
+        'electron-store-getAccountDetails',
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
@@ -155,7 +182,8 @@ contextBridge.exposeInMainWorld('electron', {
         'signOut',
         'retryConnection',
         'needUpdate',
-        'download'
+        'download',
+        'electron-store-getAccountDetails',
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`

@@ -1,7 +1,6 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import Store from 'electron-store';
 import { app, BrowserWindow, shell, ipcMain, session } from 'electron';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
@@ -11,10 +10,11 @@ import SteamUser from 'steam-user'
 import GlobalOffensive from 'globaloffensive'
 import {isLoggedInElsewhere} from './steam/steam'
 import {getGithubVersion} from './scripts/versionHelper'
-// import {download} from 'electron-dl'
 import * as fs from 'fs';
-let mainWindow: BrowserWindow | null = null;
+import SteamTotp from 'steam-totp';
+import {storeUserAccount, getLoginDetails, store, deleteUserData} from './store/settings'
 
+let mainWindow: BrowserWindow | null = null;
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
   console.log(msgTemplate(arg));
@@ -79,10 +79,10 @@ const createWindow = async () => {
       os.homedir(),
       '/Downloads/casemove.csv'
     )
-    
-    fs.writeFileSync(fileP, info, 'utf-8'); 
+
+    fs.writeFileSync(fileP, info, 'utf-8');
     shell.showItemInFolder(fileP)
-    
+
     //  @ts-ignore
     // download(BrowserWindow.getFocusedWindow(), info.url, info.properties)
     //     .then(dl =>  event.reply('download-reply', dl.getSavePath()) );
@@ -212,8 +212,18 @@ ipcMain.on('needUpdate', async (event) => {
 // Return 3 = Steam Guard wrong
 // Return 4 = Wrong password
 // Return 5 = Playing elsewhere
-ipcMain.on('login', async (event, username, password, shouldRemember, authcode = null) => {
-  shouldRemember
+ipcMain.on('login', async (event, username, password, shouldRemember, authcode = null, secretKey = null) => {
+
+  // Conditional check with random string
+  if (password == '~{nA?HJjb]7hB7-') {
+    let safeDetails = await getLoginDetails(username)
+    password = safeDetails.password
+    if (safeDetails.secretKey != undefined) {
+      secretKey = safeDetails.secretKey
+    }
+
+  }
+
   let user = new SteamUser();
   let csgo = new GlobalOffensive(user);
 
@@ -221,6 +231,13 @@ ipcMain.on('login', async (event, username, password, shouldRemember, authcode =
     accountName: username,
     password: password,
     twoFactorCode: undefined
+  }
+  if (secretKey != null) {
+    logInOptions = {
+      accountName: username,
+      password: password,
+      twoFactorCode: SteamTotp.generateAuthCode(secretKey)
+    };
   }
 
   if (authcode != null) {
@@ -230,6 +247,8 @@ ipcMain.on('login', async (event, username, password, shouldRemember, authcode =
       twoFactorCode: authcode
     };
   }
+
+
 
 
 
@@ -250,8 +269,8 @@ ipcMain.on('login', async (event, username, password, shouldRemember, authcode =
   // Success
   user.once('loggedOn', () => {
 
-    user.on('accountInfo', (username) => {
-        console.log("Logged into Steam as " + username);
+    user.on('accountInfo', (displayName) => {
+        console.log("Logged into Steam as " + displayName);
         isLoggedInElsewhere(user).then((returnValue) => {
           if (returnValue) {
             event.reply('login-reply', [5])
@@ -263,8 +282,11 @@ ipcMain.on('login', async (event, username, password, shouldRemember, authcode =
             if(csgo.haveGCSession) {
               console.log('Have Session!');
               fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
-                const returnPackage = [user.logOnResult.client_supplied_steamid, username, csgo.haveGCSession, returnValue]
+                const returnPackage = [user.logOnResult.client_supplied_steamid, displayName, csgo.haveGCSession, returnValue]
                 startEvents(csgo, user)
+                if (shouldRemember) {
+                  storeUserAccount(username, displayName, password, user.logOnResult.client_supplied_steamid, secretKey)
+                }
                 event.reply('login-reply', [1, returnPackage])
 
               })
@@ -438,9 +460,18 @@ async function startEvents(csgo, user) {
 
 }
 
+// Kinda store
+ipcMain.on('electron-store-getAccountDetails', async (event) => {
+  const accountDetails = store.get('account')
+  event.returnValue = event.reply('electron-store-getAccountDetails-reply', accountDetails)
+});
+
+ipcMain.on('electron-store-deleteAccountDetails', async (_event, username) => {
+  deleteUserData(username)
+});
+
+
 // Store IPC
-const store = new Store();
-store.set('fastMove', false);
 ipcMain.on('electron-store-get', async (event, val) => {
   event.returnValue = store.get(val);
 });
