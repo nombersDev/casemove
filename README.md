@@ -55,7 +55,7 @@ Furthermore, the libraries [Steam-user](https://github.com/DoctorMcKay/node-stea
 
 #### Does Casemove store any of my information?
 
-No, Casemove doesn’t store any information on your computer. It also doesn’t send any information to anyone outside of Steam.
+No, Casemove doesn’t store any information on your computer, except for when you ask it to remember your login information, in which case it stores it safely using [safeStore](https://www.electronjs.org/docs/latest/api/safe-storage). It also doesn’t send any information to anyone outside of Steam.
 
 #### Why can't I just log in using the Steam Web authentication?
 
