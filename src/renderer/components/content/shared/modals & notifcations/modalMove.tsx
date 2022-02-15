@@ -31,17 +31,13 @@ export default function MoveModal() {
       dispatch(moveToClearAll());
     }
     if (modalData.modalPayload['type'] == 'from') {
-      window.electron.ipcRenderer.moveFromStorageUnit(
-        modalData.modalPayload['storageID'],
-        modalData.modalPayload['itemID']
-      );
       dispatch(moveFromClearAll());
     }
     dispatch(modalResetStorageIdsToClearFrom());
     dispatch(moveModalResetPayload());
   }
 
-  const fastMode = true;
+  const fastMode = false;
 
   async function runModal() {
     if (modalData.moveOpen) {
@@ -79,7 +75,8 @@ export default function MoveModal() {
           if (fastMode) {
             window.electron.ipcRenderer.moveFromStorageUnit(
               modalData.modalPayload['storageID'],
-              modalData.modalPayload['itemID']
+              modalData.modalPayload['itemID'],
+              fastMode
             );
             await new Promise(r => setTimeout(r, 25));
 
@@ -87,7 +84,8 @@ export default function MoveModal() {
             try {
               await window.electron.ipcRenderer.moveFromStorageUnit(
                modalData.modalPayload['storageID'],
-               modalData.modalPayload['itemID']
+               modalData.modalPayload['itemID'],
+               fastMode
              );
              // await new Promise(r => setTimeout(r, 25));
            } catch {

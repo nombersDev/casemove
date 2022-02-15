@@ -6,8 +6,11 @@ export default function UserGrid({clickOnProfile}) {
   const [hasRun, setHasRun] = useState(false);
   const [getUsers, setUsers] = useState([] as any);
   async function updateFunction() {
-    const doUpdate = await window.electron.ipcRenderer.getAccountDetails();
+    let doUpdate = await window.electron.ipcRenderer.getAccountDetails();
     let finalList = [] as any;
+    if (doUpdate == undefined) {
+      doUpdate = {}
+    }
     for (const [key, value] of Object.entries(doUpdate)) {
       let userObject = value as any;
       userObject['username'] = key;

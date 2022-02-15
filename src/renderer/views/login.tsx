@@ -2,27 +2,7 @@ import { Disclosure } from '@headlessui/react'
 import { useState } from 'react'
 import LoginForm from './loginForm'
 import UserGrid from './userManagement'
-
-const subtotal = '$210.00'
-const discount = { code: 'CHEAPSKATE', amount: '$24.00' }
-const taxes = '$23.68'
-const shipping = '$22.00'
-const total = '$341.68'
-const products = [
-  {
-    id: 1,
-    name: 'Micro Backpack',
-    href: '#',
-    price: '$70.00',
-    color: 'Moss',
-    size: '5L',
-    imageSrc: 'https://tailwindui.com/img/ecommerce-images/checkout-page-04-product-01.jpg',
-    imageAlt:
-      'Moss green canvas compact backpack with double top zipper, zipper front pouch, and matching carry handle and backpack straps.',
-  },
-  // More products...
-]
-
+Disclosure
 export default function LoginPage() {
   const [getLock, setLock] = useState('')
 
@@ -37,6 +17,7 @@ export default function LoginPage() {
         ```
       */}
       <main className="lg:min-h-full lg:overflow-hidden lg:flex lg:flex-row-reverse">
+        {/*
         <div className="px-4 py-6 sm:px-6 lg:hidden">
           <div className="max-w-lg mx-auto flex">
             <a href="#">
@@ -52,7 +33,7 @@ export default function LoginPage() {
 
         <h1 className="sr-only">Checkout</h1>
 
-        {/* Account switcher mobile */}
+         Account switcher mobile 
         <section aria-labelledby="order-heading" className="bg-gray-50 px-4 py-6 sm:px-6 lg:hidden">
           <Disclosure as="div" className="max-w-lg mx-auto">
             {({ open }) => (
@@ -152,7 +133,7 @@ export default function LoginPage() {
               </>
             )}
           </Disclosure>
-        </section>
+        </section> */}
 
         {/* Account switcher */}
         <section aria-labelledby="summary-heading" className="hidden bg-gray-50 w-full max-w-xs flex-col lg:flex">

@@ -4,13 +4,13 @@
 
 ----
 
-## Download Latest Version (Casemove 1.1.3)
+## Download Latest Version (Casemove 1.2.0)
 
 This is the latest stable version and can be downloaded from the [releases](https://github.com/nombersDev/casemove/releases) page, or directly from:
 
-- [Windows - (Casemove-1.1.3)](https://github.com/nombersDev/casemove/releases/download/1.1.3/Casemove.Setup.1.1.3.exe)
-- [Mac - (Casemove-1.1.3)](https://github.com/nombersDev/casemove/releases/download/1.1.3/Casemove-1.1.3.dmg)
-- [Mac ARM 64 (M1) - (Casemove-1.1.3)](https://github.com/nombersDev/casemove/releases/download/1.1.3/Casemove-1.1.3-arm64.dmg)
+- [Windows - (Casemove-1.2.0)](https://github.com/nombersDev/casemove/releases/download/1.2.0/Casemove.Setup.1.2.0.exe)
+- [Mac - (Casemove-1.2.0)](https://github.com/nombersDev/casemove/releases/download/1.2.0/Casemove-1.2.0.dmg)
+- [Mac ARM 64 (M1) - (Casemove-1.2.0)](https://github.com/nombersDev/casemove/releases/download/1.2.0/Casemove-1.2.0-arm64.dmg)
 
 https://user-images.githubusercontent.com/98760010/153054583-eddad769-a6df-473e-9338-efbdb3dd021a.mp4
 
@@ -30,7 +30,6 @@ Features include:
 # Currently being working on
 
 - Dark mode 
-- Storing multiple user account data for easy switching
 - A report section for exporting storage contents
 
 

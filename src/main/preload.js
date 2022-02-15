@@ -57,12 +57,7 @@ contextBridge.exposeInMainWorld('electron', {
       sharedSecret
     )
     {
-      console.log(username,
-        password,
-        shouldRemember,
-        authcode,
-        sharedSecret)
-      console.log(sharedSecret)
+      
       if (authcode == '') {
         authcode = null;
       }
@@ -116,7 +111,7 @@ contextBridge.exposeInMainWorld('electron', {
 
     // Commands
     moveFromStorageUnit(casketID, itemID, fastMode) {
-      
+
       // Create a promise that rejects in <ms> milliseconds
       let storageUnitResponse = new Promise((resolve) => {
         ipcRenderer.send('removeFromStorageUnit', casketID, itemID, fastMode);
@@ -146,12 +141,9 @@ contextBridge.exposeInMainWorld('electron', {
     },
     // Commands
     moveToStorageUnit(casketID, itemID, fastMode) {
-      
-      
       let storageUnitResponse = new Promise((resolve) => {
         ipcRenderer.send('moveToStorageUnit', casketID, itemID, fastMode);
         if (fastMode) {
-          console.log(true)
           resolve(fastMode)
         }
         else {

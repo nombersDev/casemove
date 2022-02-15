@@ -407,7 +407,7 @@ async function startEvents(csgo, user) {
   // Move to Storage Unit
   ipcMain.on('moveToStorageUnit', async (event, casketID, itemID, fastMode) => {
     csgo.addToCasket(casketID, itemID)
-    if (fastMode) {
+    if (fastMode == false) {
       csgo.once('itemCustomizationNotification', (itemIds, notificationType) => {
         if (notificationType == GlobalOffensive.ItemCustomizationNotification.CasketAdded) {
           console.log(itemIds[0] + ' added to storage unit')
