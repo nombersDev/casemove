@@ -1,8 +1,6 @@
 const SteamLogo = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={293.44}
-    height={89.333}
     viewBox="0 0 293.44 89.333"
     xmlSpace="preserve"
     className="m-auto h-14 fill-current dark:text-dark-white"

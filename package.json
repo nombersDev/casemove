@@ -213,6 +213,7 @@
     "electron-redux": "^1.5.4",
     "electron-store": "^8.0.1",
     "electron-updater": "^4.3.9",
+    "fernet": "^0.4.0",
     "globaloffensive": "^2.1.0",
     "history": "4.x.x",
     "react": "^17.0.2",
@@ -222,7 +223,9 @@
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.4.1",
     "regenerator-runtime": "^0.13.9",
-    "steam-user": "^4.20.2"
+    "steam-totp": "^2.1.1",
+    "steam-user": "^4.20.2",
+    "xmldom": "^0.6.0"
   },
   "devEngines": {
     "node": ">=14.x",
