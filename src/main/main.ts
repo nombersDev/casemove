@@ -12,7 +12,7 @@ import {isLoggedInElsewhere} from './steam/steam'
 import {getGithubVersion} from './scripts/versionHelper'
 import * as fs from 'fs';
 import SteamTotp from 'steam-totp';
-import {storeUserAccount, getLoginDetails, store, deleteUserData} from './store/settings'
+import {storeUserAccount, getLoginDetails, deleteUserData, getValue, setValue} from './store/settings'
 
 let mainWindow: BrowserWindow | null = null;
 ipcMain.on('ipc-example', async (event, arg) => {
@@ -399,9 +399,9 @@ async function startEvents(csgo, user) {
           console.log(itemIds + ' removed from storage unit')
           event.reply('removeFromStorageUnit-reply', [1, itemIds[0]]);
       }
-     
+
     });
-    } 
+    }
 })
 
   // Move to Storage Unit
@@ -415,7 +415,7 @@ async function startEvents(csgo, user) {
       }
     });
     }
-    
+
   })
 
   // Get storage unit contents
@@ -464,7 +464,7 @@ async function startEvents(csgo, user) {
 
 // Kinda store
 ipcMain.on('electron-store-getAccountDetails', async (event) => {
-  const accountDetails = store.get('account')
+  const accountDetails = await getValue('account')
   event.returnValue = event.reply('electron-store-getAccountDetails-reply', accountDetails)
 });
 
@@ -475,11 +475,11 @@ ipcMain.on('electron-store-deleteAccountDetails', async (_event, username) => {
 
 // Store IPC
 ipcMain.on('electron-store-get', async (event, val) => {
-  event.returnValue = store.get(val);
+  event.reply('electron-store-get-reply', await getValue(val))
 });
 ipcMain.on('electron-store-set', async (event, key, val) => {
   event
-  store.set(key, val);
+  setValue(key, val);
 });
 
 

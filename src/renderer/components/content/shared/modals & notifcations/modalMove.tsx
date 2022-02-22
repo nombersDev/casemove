@@ -22,6 +22,7 @@ export default function MoveModal() {
   const [seenStorage, setStorage] = useState('');
   const dispatch = useDispatch();
   const modalData = useSelector((state: any) => state.modalMoveReducer);
+  const settingsData = useSelector((state: any) => state.settingsReducer);
   async function cancelMe() {
     dispatch(closeMoveModal());
     dispatch(cancelModal(modalData.modalPayload['key']));
@@ -37,7 +38,7 @@ export default function MoveModal() {
     dispatch(moveModalResetPayload());
   }
 
-  const fastMode = false;
+  const fastMode = settingsData.fastMove;
 
   async function runModal() {
     if (modalData.moveOpen) {
@@ -65,7 +66,7 @@ export default function MoveModal() {
               dispatch(moveModalAddToFail());
             }
           }
-        
+
           dispatch(moveModalUpdate());
           if (modalData.modalPayload['isLast']) {
             dispatch(moveToClearAll());
@@ -93,7 +94,7 @@ export default function MoveModal() {
            }
 
           }
-          
+
           dispatch(moveModalUpdate());
         }
 
@@ -105,16 +106,6 @@ export default function MoveModal() {
     seenID != modalData.modalPayload.itemID
   ) {
     console.log('Running');
-    // setRun(true)
-    console.log(
-      modalData.modalPayload !== {},
-      Object.keys(modalData.modalPayload).length
-    );
-    console.log(
-      Object.keys(modalData.modalPayload),
-      modalData.modalPayload,
-      modalData.modalPayload.itemID
-    );
     if (modalData.modalPayload.storageID != seenStorage) {
       dispatch(moveFromReset());
     }

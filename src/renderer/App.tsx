@@ -28,7 +28,7 @@ import {
 import itemCategories from './components/content/shared/categories';
 import { toMoveContext } from './context/toMoveContext';
 import StorageUnitsComponent from './components/content/storageUnits/from/Content';
-import LoginPage from './views/login';
+import LoginPage from './views/login/login';
 import { useDispatch, useSelector } from 'react-redux';
 import { signOut } from './store/actions/userStatsActions';
 import { handleUserEvent } from './store/handleMessage';
@@ -36,6 +36,8 @@ import Logo from './components/content/shared/logo 2';
 import ToContent from './components/content/storageUnits/to/toHolder';
 import { classNames } from './components/content/shared/inventoryFunctions';
 import { filterInventorySetSort } from './store/actions/filtersInventoryActions';
+import settingsPage from './views/settings/settings';
+import { setFastMove } from './store/actions/settings';
 DocumentDownloadIcon;
 
 //{ name: 'Reports', href: '/reports', icon: DocumentDownloadIcon, current: false }
@@ -75,6 +77,8 @@ function AppContent() {
 
   // Redux user details
   const userDetails = useSelector((state: any) => state.authReducer);
+  const modalData = useSelector((state: any) => state.modalMoveReducer);
+  const settingsData = useSelector((state: any) => state.settingsReducer);
   const filterDetails = useSelector(
     (state: any) => state.inventoryFiltersReducer
   );
@@ -110,16 +114,28 @@ function AppContent() {
       );
     }
   }
+  // First time setup
+  async function setFirstTimeSettings() {
+    dispatch(setFastMove(await window.electron.store.get('fastmove')))
+  }
 
   // Forward user event to Store
   if (isListening == false) {
+    setFirstTimeSettings()
     window.electron.ipcRenderer.userEvents().then((messageValue) => {
+      console.log('here')
       handleSubMessage(messageValue);
     });
     setIsListening(true);
   }
 
   async function handleSubMessage(messageValue) {
+
+    if (settingsData.fastMove && modalData.query.length > 0) {
+      console.log('Command blocked', modalData.moveOpen, settingsData.fastMove)
+      setIsListening(false);
+      return
+    }
     const actionToTake = (await handleUserEvent(messageValue)) as any;
     dispatch(actionToTake);
     if (messageValue[0] == 1) {
@@ -136,6 +152,9 @@ function AppContent() {
   async function retryConnection() {
     window.electron.ipcRenderer.retryConnection();
   }
+
+
+
 
   // Should update status
   const [shouldUpdate, setShouldUpdate] = useState(0);
@@ -359,6 +378,23 @@ function AppContent() {
                 leaveTo="transform opacity-0 scale-95"
               >
                 <Menu.Items className="z-10 mx-3 origin-top absolute right-0 left-0 mt-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none">
+                  <div className="py-1">
+                    <Menu.Item>
+                      {({ active }) => (
+                        <Link
+                          to="/settings"
+                          className={classNames(
+                            active
+                              ? 'bg-gray-100 text-gray-900'
+                              : 'text-gray-700',
+                            'block px-4 py-2 text-sm'
+                          )}
+                        >
+                          Settings
+                        </Link>
+                      )}
+                    </Menu.Item>
+                  </div>
                   <div className="py-1">
                     <Menu.Item>
                       {({ active }) => (
@@ -640,6 +676,7 @@ function AppContent() {
                   <Route exact path="/transferto" component={ToContent} />
                   <Route path="/signin" component={LoginPage} />
                   <Route exact path="/inventory" component={inventoryContent} />
+                  <Route exact path="/settings" component={settingsPage} />
                 </toMoveContext.Provider>
               </Switch>
             </Router>

@@ -1,5 +1,5 @@
 import itemCategories from './categories';
-
+import axios from "axios"
 // This will combine the inventory when specific conditions match
 export default function combineInventory(thisInventory) {
   const seenProducts = [] as any;
@@ -315,4 +315,16 @@ export async function downloadReport(storageData) {
 .replace(/(^\[)|(\]$)/mg, '');
 csv = csvContent + csv
 window.electron.ipcRenderer.downloadFile(csv)
+}
+
+export async function getPricing(productName) {
+  return new Promise((resolve,) => {
+    axios
+    .get(`https://.co/pricing/${productName}`)
+    .then(function(response) {
+      console.log(response)
+      resolve(response)
+    })
+}).catch(error => console.log(error.message));
+
 }
