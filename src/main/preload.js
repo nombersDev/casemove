@@ -57,7 +57,7 @@ contextBridge.exposeInMainWorld('electron', {
       sharedSecret
     )
     {
-      
+
       if (authcode == '') {
         authcode = null;
       }
@@ -124,7 +124,7 @@ contextBridge.exposeInMainWorld('electron', {
             resolve(arg);
           });
         }
-        
+
       });
       if (fastMode) {
         return true
@@ -137,7 +137,7 @@ contextBridge.exposeInMainWorld('electron', {
         });
         return Promise.race([storageUnitResponse, timeout]);
       }
-      
+
     },
     // Commands
     moveToStorageUnit(casketID, itemID, fastMode) {
@@ -152,9 +152,9 @@ contextBridge.exposeInMainWorld('electron', {
           });
         }
 
-        
+
       });
-      
+
       if (fastMode) {
         return true
       } else {
@@ -164,10 +164,10 @@ contextBridge.exposeInMainWorld('electron', {
             reject();
           }, 10000);
         });
-        
+
       return Promise.race([storageUnitResponse, timeout]);
       }
-      
+
     },
 
     on(channel, func) {
@@ -184,6 +184,8 @@ contextBridge.exposeInMainWorld('electron', {
         'needUpdate',
         'download',
         'electron-store-getAccountDetails',
+        'electron-store-get',
+        'electron-store-set'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
@@ -204,6 +206,8 @@ contextBridge.exposeInMainWorld('electron', {
         'needUpdate',
         'download',
         'electron-store-getAccountDetails',
+        'electron-store-get',
+        'electron-store-set'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
@@ -212,8 +216,15 @@ contextBridge.exposeInMainWorld('electron', {
     },
   },
   store: {
+    // Commands
     get(val) {
-      return ipcRenderer.sendSync('electron-store-get', val);
+      return new Promise((resolve) => {
+        ipcRenderer.send('electron-store-get', val);
+
+        ipcRenderer.once('electron-store-get-reply', (event, arg) => {
+          resolve(arg);
+        });
+      });
     },
     set(property, val) {
       ipcRenderer.send('electron-store-set', property, val);

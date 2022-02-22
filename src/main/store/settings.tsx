@@ -95,11 +95,20 @@ async function getAllAccountDetails() {
   return store.get('account')
 }
 
+async function setValue(stringToSet, valueToSet) {
+  store.set(stringToSet, valueToSet)
+}
+
+async function getValue(stringToGet) {
+  return store.get(stringToGet)
+}
+
 module.exports = {
   storeUserAccount,
   getLoginDetails,
-  store,
   getAllAccountDetails,
-  deleteUserData
+  deleteUserData,
+  setValue,
+  getValue
 };
-export { storeUserAccount, getLoginDetails, store, getAllAccountDetails, deleteUserData };
+export { storeUserAccount, getLoginDetails, getAllAccountDetails, deleteUserData, setValue, getValue };

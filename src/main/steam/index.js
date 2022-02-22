@@ -211,6 +211,7 @@ class items {
       } else {
         returnDict['stickers'] = [];
       }
+      // console.log(value, returnDict)
       returnList.push(returnDict);
     }
     return returnList;
@@ -227,6 +228,11 @@ class items {
 
   itemProcessorName(storageRow, imageURL) {
     const defIndexresult = this.get_def_index(storageRow['def_index']);
+
+    // Check if CSGO Case Key
+    if (imageURL == 'econ/tools/weapon_case_key') {
+      return 'CS:GO Case Key'
+    }
 
     // Music kit check
     if (storageRow['music_index'] !== undefined) {
@@ -308,6 +314,11 @@ class items {
       const graffitiKitIndex = storageRow['graffiti_tint'];
       const graffitiKitResult = capitalizeWords(this.getGraffitiKitName(graffitiKitIndex).replace('_', ' '));
       var finalName =  finalName + ' (' + graffitiKitResult + ')';
+    }
+
+    // Star
+    if (storageRow['quality'] == 3) {
+      var finalName =  '★ ' + finalName;
     }
 
     return finalName;
