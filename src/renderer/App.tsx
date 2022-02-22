@@ -116,7 +116,11 @@ function AppContent() {
   }
   // First time setup
   async function setFirstTimeSettings() {
-    dispatch(setFastMove(await window.electron.store.get('fastmove')))
+    let storedFastMove = await window.electron.store.get('fastmove')
+    if (storedFastMove == undefined) {
+      storedFastMove = false
+    }
+    dispatch(setFastMove(storedFastMove))
   }
 
   // Forward user event to Store
