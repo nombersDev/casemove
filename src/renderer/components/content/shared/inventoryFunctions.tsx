@@ -1,5 +1,6 @@
 import itemCategories from './categories';
 import axios from "axios"
+
 // This will combine the inventory when specific conditions match
 export default function combineInventory(thisInventory) {
   const seenProducts = [] as any;
@@ -112,7 +113,8 @@ export async function getStorageUnitDataReload(storageID, storageName) {
   return newStorageData;
 }
 
-export async function getStorageUnitData(storageID, storageName) {
+export async function getStorageUnitData(storageID, storageName, prices) {
+
   let newStorageData = [] as any;
   let storageResult = await window.electron.ipcRenderer.getStorageUnitData(
     storageID
@@ -131,7 +133,12 @@ export async function getStorageUnitData(storageID, storageName) {
     }
     item['storage_id'] = storageID;
     item['storage_name'] = storageName;
+    if (prices[item.item_name] == undefined) {
+      console.log(prices)
+      window.electron.ipcRenderer.getPrice(item)
+    }
     newStorageData.push(item);
+
   });
   return newStorageData;
 }
@@ -280,7 +287,7 @@ export async function sortDataFunction(sortValue, inventory) {
 }
 
 export async function downloadReport(storageData) {
-  let csvContent = "Item Name,Item Custom Name, Item Moveable, Storage Name, Tradehold, Category, Combined QTY, Item Wear Name, Item Paint Wear,Item Has Stickers/Patches,Stickers\n";
+  let csvContent = "Item Name,Item Custom Name, Price, Price Combined, Item Moveable, Storage Name, Tradehold, Category, Combined QTY, Item Wear Name, Item Paint Wear,Item Has Stickers/Patches,Stickers\n";
   var csv = storageData.map(function(d){
     let storageName = d.storage_name
     if (storageName == undefined) {
@@ -298,6 +305,8 @@ export async function downloadReport(storageData) {
     const returnDict = {
       item_name: d.item_name,
       item_customname: d.item_customname,
+      price: d.item_price,
+      price_combined: d.item_price_combined,
       item_moveable: d.item_moveable,
       storage_name: storageName,
       trade_unlock: d.trade_unlock,

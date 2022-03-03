@@ -37,7 +37,8 @@ import ToContent from './components/content/storageUnits/to/toHolder';
 import { classNames } from './components/content/shared/inventoryFunctions';
 import { filterInventorySetSort } from './store/actions/filtersInventoryActions';
 import settingsPage from './views/settings/settings';
-import { setFastMove } from './store/actions/settings';
+import { setCurrencyValue, setFastMove, setLocale, setSourceValue } from './store/actions/settings';
+import { pricing_addPrice } from './store/actions/pricingActions';
 DocumentDownloadIcon;
 
 //{ name: 'Reports', href: '/reports', icon: DocumentDownloadIcon, current: false }
@@ -83,6 +84,7 @@ function AppContent() {
     (state: any) => state.inventoryFiltersReducer
   );
 
+
   function updateAutomation(itemHref) {
     setSideMenuOption(itemHref);
     setSidebarOpen(false);
@@ -116,11 +118,36 @@ function AppContent() {
   }
   // First time setup
   async function setFirstTimeSettings() {
+    // Fastmove
     let storedFastMove = await window.electron.store.get('fastmove')
     if (storedFastMove == undefined) {
       storedFastMove = false
     }
     dispatch(setFastMove(storedFastMove))
+    // Currency
+    await window.electron.store.get('pricing.currency').then((returnValue) => {
+      console.log(returnValue)
+      dispatch(setCurrencyValue(returnValue))
+    })
+    // Source
+    await window.electron.store.get('pricing.source').then((returnValue) => {
+      console.log(returnValue)
+      let valueToWrite = returnValue
+      console.log(valueToWrite)
+      if (returnValue == undefined) {
+        valueToWrite = {
+          id: 1,
+          name: 'Steam Community Market',
+          title: 'steam_listing',
+          avatar: 'https://steamcommunity.com/favicon.ico',
+        }
+      }
+      dispatch(setSourceValue(valueToWrite))
+    })
+    await window.electron.store.get('locale').then((returnValue) => {
+      console.log(returnValue)
+      dispatch(setLocale(returnValue))
+    })
   }
 
   // Forward user event to Store
@@ -174,6 +201,17 @@ function AppContent() {
   if (shouldUpdate == 0) {
     setShouldUpdate(2);
     getUpdate();
+  }
+
+  // Pricing
+  const [firstRun, setFirstRun] = useState(false)
+
+  if (firstRun == false) {
+    setFirstRun(true)
+    window.electron.ipcRenderer.on('pricing', (message) => {
+      dispatch(pricing_addPrice(message[0], message[1].item_name))
+    });
+
   }
 
   return (

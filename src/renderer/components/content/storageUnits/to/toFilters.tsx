@@ -177,6 +177,7 @@ function content() {
                 type="text"
                 name="search"
                 id="search"
+                spellCheck="false"
                 value={toReducer.searchInput}
                 className="block w-full pb-0.5  focus:outline-none  pl-9 sm:text-sm border-gray-300 rounded-md h-9"
                 placeholder="Search items"

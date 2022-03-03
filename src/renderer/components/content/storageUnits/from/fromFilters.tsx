@@ -15,10 +15,14 @@ import {
   moveFromsetSearchField,
   moveFromSetSortOption,
 } from 'renderer/store/actions/moveFromActions';
-import { downloadReport, sortDataFunction } from '../../shared/inventoryFunctions';
+import {
+  downloadReport,
+  sortDataFunction,
+} from '../../shared/inventoryFunctions';
 import { inventorySetStoragesData } from 'renderer/store/actions/inventoryActions';
 import MoveModal from '../../shared/modals & notifcations/modalMove';
 import { moveModalQuerySet } from 'renderer/store/actions/modalMove actions';
+import PricingAmount from '../../shared/filters/pricingAmount';
 
 const sortOptions = [
   { name: 'Default' },
@@ -35,6 +39,10 @@ function content() {
   const dispatch = useDispatch();
   const fromReducer = useSelector((state: any) => state.moveFromReducer);
   const inventory = useSelector((state: any) => state.inventoryReducer);
+  const settingsData = useSelector((state: any) => state.settingsReducer);
+  const pricesResult = useSelector((state: any) => state.pricingReducer);
+
+  // States
 
   async function onSortChange(sortValue) {
     dispatch(moveFromSetSortOption(sortValue));
@@ -69,7 +77,62 @@ function content() {
     console.log(queryNew);
     dispatch(moveModalQuerySet(queryNew));
   }
-  
+  // Calculate storage amount prices
+  let totalAmount = 0 as any;
+  let inventoryFilter = inventory.storageInventory.filter(function (row) {
+    if (
+      row.item_name
+        ?.toLowerCase()
+        .trim()
+        .includes(fromReducer.searchInput?.toLowerCase().trim())
+    ) {
+      return true; // skip
+    }
+    if (
+      row.item_wear_name
+        ?.toLowerCase()
+        .trim()
+        .includes(fromReducer.searchInput?.toLowerCase().trim())
+    ) {
+      return true; // skip
+    }
+    if (
+      row.item_customname
+        ?.toLowerCase()
+        .trim()
+        .includes(fromReducer.searchInput?.toLowerCase().trim())
+    ) {
+      return true; // skip
+    }
+    if (fromReducer.searchInput == undefined) {
+      return true; // skip
+    }
+    return false;
+  });
+
+
+  inventoryFilter.forEach((projectRow) => {
+    try {
+      totalAmount +=
+        projectRow.combined_QTY *
+        pricesResult.prices[projectRow.item_name]?.[settingsData.source.title];
+    } catch {
+      totalAmount += 0;
+    }
+  });
+  totalAmount = totalAmount.toFixed(0);
+
+  // Send download
+  async function sendDownload() {
+    inventoryFilter.forEach((element) => {
+      element['item_price'] =
+        pricesResult.prices[element.item_name]?.[settingsData.source.title];
+      element['item_price_combined'] =
+        element.combined_QTY *
+        pricesResult.prices[element.item_name]?.[settingsData.source.title];
+    });
+    downloadReport(inventoryFilter);
+  }
 
   return (
     <div className="bg-white mt-8">
@@ -167,6 +230,7 @@ function content() {
                 value={fromReducer.searchInput}
                 className="block w-full pb-0.5  focus:outline-none  pl-9 sm:text-sm border-gray-300 rounded-md h-9"
                 placeholder="Search items"
+                spellCheck="false"
                 onChange={(e) =>
                   dispatch(moveFromsetSearchField(e.target.value))
                 }
@@ -174,13 +238,12 @@ function content() {
             </div>
           </div>
           <div className="flex justify-end justify-items-end max-w-7xl px-4 sm:px-6 lg:px-8 ">
-            
             <div className="flex items-center divide-x divide-gray-200">
-            <div className="pr-3">
+              <div className="pr-3">
                 <Link
                   to=""
                   type="button"
-                  onClick={() => downloadReport(inventory.storageInventory)}
+                  onClick={() => sendDownload()}
                   className={classNames(
                     inventory.storageInventory.length == 0
                       ? 'pointer-events-none border-gray-100'
@@ -193,8 +256,10 @@ function content() {
                     aria-hidden="true"
                   />
                   Download
-                  
                 </Link>
+              </div>
+              <div className="pl-3">
+                <PricingAmount totalAmount={totalAmount}/>
               </div>
               <div className="pl-3">
                 <span className="mr-3 flex items-center text-gray-500 text-xs font-medium uppercase tracking-wide">
@@ -240,7 +305,6 @@ function content() {
                   />
                 </Link>
               </div>
-              
             </div>
           </div>
         </div>

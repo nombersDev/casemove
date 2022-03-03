@@ -7,6 +7,7 @@ import modalRenameReducer from './modalRename'
 import moveFromReducer from './moveFromReducers'
 import moveToReducer from './moveToReducers'
 import settingsReducer from "./settings";
+import pricingReducer from "./pricing";
 
 const rootReducers = combineReducers({
     authReducer,
@@ -16,7 +17,8 @@ const rootReducers = combineReducers({
     modalRenameReducer,
     moveFromReducer,
     moveToReducer,
-    settingsReducer
+    settingsReducer,
+    pricingReducer
 })
 
 export default rootReducers;

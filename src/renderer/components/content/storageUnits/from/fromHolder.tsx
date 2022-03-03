@@ -40,6 +40,9 @@ function StorageUnits() {
                 <th className="table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   <span className="lg:pl-2">Product</span>
                 </th>
+                <th className="table-cell px-6 py-3 border-b border-gray-200 text-center dark:border-opacity-50 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Price
+                </th>
                 <th className="hidden xl:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Stickers/Patches
                 </th>
@@ -74,7 +77,10 @@ function StorageUnits() {
                       .includes(fromReducer.searchInput?.toLowerCase().trim()) ||
                       project.item_customname
                         ?.toLowerCase()
-                        .includes(fromReducer.searchInput?.toLowerCase().trim())
+                        .includes(fromReducer.searchInput?.toLowerCase().trim()) ||
+                        project.item_wear_name
+                          ?.toLowerCase()
+                          .includes(fromReducer.searchInput?.toLowerCase().trim())
                       ? ''
                       : 'hidden',
                     'hover:shadow-inner'

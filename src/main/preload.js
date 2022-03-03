@@ -40,6 +40,9 @@ contextBridge.exposeInMainWorld('electron', {
     downloadFile(data) {
       ipcRenderer.send('download', data);
     },
+    getPrice(itemRow) {
+      ipcRenderer.send('getPrice', itemRow);
+    },
     // User commands
     retryConnection() {
       ipcRenderer.send('retryConnection');
@@ -185,7 +188,8 @@ contextBridge.exposeInMainWorld('electron', {
         'download',
         'electron-store-getAccountDetails',
         'electron-store-get',
-        'electron-store-set'
+        'electron-store-set',
+        'pricing'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
@@ -207,7 +211,8 @@ contextBridge.exposeInMainWorld('electron', {
         'download',
         'electron-store-getAccountDetails',
         'electron-store-get',
-        'electron-store-set'
+        'electron-store-set',
+        'pricing'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`

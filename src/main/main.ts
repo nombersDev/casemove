@@ -13,7 +13,11 @@ import {getGithubVersion} from './scripts/versionHelper'
 import * as fs from 'fs';
 import SteamTotp from 'steam-totp';
 import {storeUserAccount, getLoginDetails, deleteUserData, getValue, setValue} from './store/settings'
+import { pricingEmitter, runItems } from './store/pricing';
 
+const CC = require('currency-converter-lt');
+
+let currencyConverter = new CC();
 let mainWindow: BrowserWindow | null = null;
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
@@ -34,6 +38,7 @@ if (isDevelopment) {
   require('electron-debug')();
 }
 
+console.log()
 
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
@@ -121,6 +126,7 @@ const createWindow = async () => {
 /**
  * Add event listeners...
  */
+let currentLocale = 'da-dk'
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
@@ -147,6 +153,8 @@ if (!gotTheLock) {
 app
   .whenReady()
   .then(async () => {
+    currentLocale = app.getLocale()
+    console.log('Currentlocal', currentLocale)
 
     if (process.env.NODE_ENV === 'development') {
 
@@ -283,8 +291,9 @@ ipcMain.on('login', async (event, username, password, shouldRemember, authcode =
                 if (shouldRemember) {
                   storeUserAccount(username, displayName, password, user.logOnResult.client_supplied_steamid, secretKey)
                 }
-                event.reply('login-reply', [1, returnPackage])
+                console.log(user)
 
+                event.reply('login-reply', [1, returnPackage])
               })
               }
             })
@@ -304,6 +313,16 @@ ipcMain.on('login', async (event, username, password, shouldRemember, authcode =
 // Adds events listeners the user
 // Forward Steam notifications to renderer
 async function startEvents(csgo, user) {
+
+  // Pricing
+  const pricing = new runItems(user)
+  pricingEmitter.on('result', (data, itemRow) => {
+    console.log(data, itemRow)
+    mainWindow?.webContents.send('pricing', [data, itemRow])
+  });
+  ipcMain.on('getPrice', async (_event, info) => {
+    pricing.handleItem(info)
+  })
 
   // CSGO listeners
   // Inventory events
@@ -438,6 +457,9 @@ async function startEvents(csgo, user) {
 
 
   async function clearForNewSession() {
+    // Remove for pricing
+    pricingEmitter.removeAllListeners('result')
+
     // Remove for CSGO
     csgo.removeAllListeners('itemRemoved')
     csgo.removeAllListeners('itemChanged')
@@ -462,6 +484,7 @@ async function startEvents(csgo, user) {
 
 }
 
+
 // Kinda store
 ipcMain.on('electron-store-getAccountDetails', async (event) => {
   const accountDetails = await getValue('account')
@@ -472,10 +495,29 @@ ipcMain.on('electron-store-deleteAccountDetails', async (_event, username) => {
   deleteUserData(username)
 });
 
+let seenPrices = {}
 
 // Store IPC
 ipcMain.on('electron-store-get', async (event, val) => {
-  event.reply('electron-store-get-reply', await getValue(val))
+  if (val == 'locale') {
+    event.reply('electron-store-get-reply', currentLocale)
+    return
+  }
+  if (val == 'currency') {
+    currencyConverter
+    getValue('pricing.currency').then((returnValue) => {
+      if (seenPrices[returnValue] == undefined) {
+        seenPrices[returnValue] = currencyConverter.convert(100, 'USD', returnValue)
+      }
+      event.reply('electron-store-get-reply', seenPrices[returnValue])
+    })
+  }
+
+  getValue(val).then((returnValue) => {
+
+    event.reply('electron-store-get-reply', returnValue)
+  })
+
 });
 ipcMain.on('electron-store-set', async (event, key, val) => {
   event

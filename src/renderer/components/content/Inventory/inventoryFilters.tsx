@@ -1,7 +1,12 @@
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import { Fragment } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
-import { ChevronDownIcon, DocumentDownloadIcon, FilterIcon, SearchIcon } from '@heroicons/react/solid';
+import {
+  ChevronDownIcon,
+  DocumentDownloadIcon,
+  FilterIcon,
+  SearchIcon,
+} from '@heroicons/react/solid';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   filterInventoryAddOption,
@@ -10,6 +15,7 @@ import {
   inventoryFilterSetSearch,
 } from 'renderer/store/actions/filtersInventoryActions';
 import { classNames, downloadReport } from '../shared/inventoryFunctions';
+import PricingAmount from '../shared/filters/pricingAmount';
 const filters = {
   onlyMoveable: [
     { value: '1trade_unlock', label: 'Active tradehold' },
@@ -45,6 +51,8 @@ function content() {
     (state: any) => state.inventoryFiltersReducer
   );
   const inventory = useSelector((state: any) => state.inventoryReducer);
+  const pricesResult = useSelector((state: any) => state.pricingReducer);
+  const settingsData = useSelector((state: any) => state.settingsReducer);
 
   // Update selected filter
   async function addRemoveFilter(filterValue: string) {
@@ -72,10 +80,8 @@ function content() {
     dispatch(filterInventoryClearAll());
   }
 
-  
-
   let inventoryToUse = [] as any;
-  
+
   if (
     inventoryFilters.inventoryFiltered.length == 0 &&
     inventoryFilters.inventoryFilter.length == 0
@@ -84,27 +90,61 @@ function content() {
   } else {
     inventoryToUse = inventoryFilters.inventoryFiltered;
   }
-  console.log(inventoryToUse)
+
+  // Calculate inventory amount prices
+  let totalAmount = 0 as any;
+  let inventoryFilter = inventoryToUse.filter(function (row) {
+    if (
+      row.item_name
+        ?.toLowerCase()
+        .trim()
+        .includes(inventoryFilters.searchInput?.toLowerCase().trim())
+    ) {
+      return true; // skip
+    }
+    if (
+      row.item_customname
+        ?.toLowerCase()
+        .trim()
+        .includes(inventoryFilters.searchInput?.toLowerCase().trim())
+    ) {
+      return true; // skip
+    }
+    if (
+      row.item_wear_name
+        ?.toLowerCase()
+        .trim()
+        .includes(inventoryFilters.searchInput?.toLowerCase().trim())
+    ) {
+      return true; // skip
+    }
+    if (inventoryFilters.searchInput == undefined) {
+      return true; // skip
+    }
+    return false;
+  });
+  inventoryFilter.forEach((projectRow) => {
+    if (pricesResult.prices[projectRow.item_name]?.[settingsData.source.title]) {
+      totalAmount +=
+        projectRow.combined_QTY *
+        pricesResult.prices[projectRow.item_name]?.[settingsData.source.title];
+    }
+  });
+  totalAmount = totalAmount.toFixed(0);
+
+  // Download function
   async function sendDownload() {
-    const inventoryToDownload = await inventoryToUse.filter(function (row) {
-      if (row.item_name?.toLowerCase().trim().includes(inventoryFilters.searchInput?.toLowerCase().trim())) {
-        return true; // skip
-      }
-      if (row.item_customname?.toLowerCase().trim().includes(inventoryFilters.searchInput?.toLowerCase().trim())) {
-        return true; // skip
-      }
-      if (inventoryFilters.searchInput == undefined) {
-        return true; // skip
-      }
-      return false;
+    console.log(inventoryFilter);
+    console.log(inventoryFilters.searchInput);
+    inventoryFilter.forEach((element) => {
+      element['item_price'] =
+        pricesResult.prices[element.item_name]?.[settingsData.source.title];
+      element['item_price_combined'] =
+        element.combined_QTY *
+        pricesResult.prices[element.item_name]?.[settingsData.source.title];
     });
-    console.log(inventoryToDownload)
-    console.log(inventoryFilters.searchInput)
 
-    downloadReport(inventoryToDownload)
-
-
-    
+    downloadReport(inventoryFilter);
   }
 
   return (
@@ -131,56 +171,56 @@ function content() {
               </Disclosure.Button>
             </div>
             <div className="pl-6">
-            <Menu as="div" className="relative inline-block">
-              <div className="flex">
-                <Menu.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
-                  {inventoryFilters.sortValue == 'Default'
-                    ? 'Sort'
-                    : inventoryFilters.sortValue}
-                  <ChevronDownIcon
-                    className="flex-shrink-0 -mr-1 ml-1 h-5 w-5 text-gray-400 group-hover:text-gray-500"
-                    aria-hidden="true"
-                  />
-                </Menu.Button>
-              </div>
+              <Menu as="div" className="relative inline-block">
+                <div className="flex">
+                  <Menu.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
+                    {inventoryFilters.sortValue == 'Default'
+                      ? 'Sort'
+                      : inventoryFilters.sortValue}
+                    <ChevronDownIcon
+                      className="flex-shrink-0 -mr-1 ml-1 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                      aria-hidden="true"
+                    />
+                  </Menu.Button>
+                </div>
 
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <Menu.Items className="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-2xl bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-                  <div className="py-1">
-                    {sortOptions.map((option) => (
-                      <Menu.Item key={option.name}>
-                        {({ active }) => (
-                          <Link
-                            to=""
-                            className={classNames(
-                              option.name == inventoryFilters.sortValue
-                                ? 'font-medium text-gray-900 pointer-events-none'
-                                : 'text-gray-500',
-                              active &&
-                                option.name != inventoryFilters.sortValue
-                                ? 'bg-gray-100'
-                                : '',
-                              'block px-4 py-2 text-sm'
-                            )}
-                            onClick={(event) => onSort(event, option.name)}
-                          >
-                            {option.name}
-                          </Link>
-                        )}
-                      </Menu.Item>
-                    ))}
-                  </div>
-                </Menu.Items>
-              </Transition>
-            </Menu>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-2xl bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div className="py-1">
+                      {sortOptions.map((option) => (
+                        <Menu.Item key={option.name}>
+                          {({ active }) => (
+                            <Link
+                              to=""
+                              className={classNames(
+                                option.name == inventoryFilters.sortValue
+                                  ? 'font-medium text-gray-900 pointer-events-none'
+                                  : 'text-gray-500',
+                                active &&
+                                  option.name != inventoryFilters.sortValue
+                                  ? 'bg-gray-100'
+                                  : '',
+                                'block px-4 py-2 text-sm'
+                              )}
+                              onClick={(event) => onSort(event, option.name)}
+                            >
+                              {option.name}
+                            </Link>
+                          )}
+                        </Menu.Item>
+                      ))}
+                    </div>
+                  </Menu.Items>
+                </Transition>
+              </Menu>
             </div>
             <div className="pl-6">
               <button
@@ -208,6 +248,7 @@ function content() {
                 type="text"
                 name="search"
                 id="search"
+                spellCheck="false"
                 value={inventoryFilters.searchInput}
                 className="block w-full pb-0.5  focus:outline-none  pl-9 sm:text-sm border-gray-300 rounded-md h-9"
                 placeholder="Search items"
@@ -218,8 +259,8 @@ function content() {
             </div>
           </div>
           <div className="flex justify-end justify-items-end max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center divide-x divide-gray-200">
-            <div className="">
+            <div className="flex items-center divide-x divide-gray-200">
+              <div className="pr-3">
                 <Link
                   to=""
                   type="button"
@@ -236,15 +277,15 @@ function content() {
                     aria-hidden="true"
                   />
                   Download
-                  
                 </Link>
               </div>
-              
-              
+              <div className="pl-3">
+                <PricingAmount totalAmount={totalAmount} />
+              </div>
             </div>
+          </div>
         </div>
-        </div>
-        
+
         <Disclosure.Panel className="border-t border-gray-200 py-10">
           <div className="mx-auto grid grid-cols-1 gap-x-4 px-4 text-sm sm:px-6 md:gap-x-6 lg:px-8 ">
             <div className="grid grid-cols-1 gap-y-10 auto-rows-min md:grid-cols-3 md:gap-x-6">
@@ -358,7 +399,6 @@ function content() {
             </div>
           </div>
         </Disclosure.Panel>
-        
       </Disclosure>
     </div>
   );
