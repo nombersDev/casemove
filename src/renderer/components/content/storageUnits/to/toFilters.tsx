@@ -78,7 +78,6 @@ function content() {
       }
     });
   }
-  console.log(storageRow)
   if (storageRow[0].item_storage_total != toReducer.activeStoragesAmount && storageRow[0].item_storage_total != null) {
     dispatch(moveToSetStorageAmount(storageRow[0].item_storage_total))
 
@@ -177,6 +176,7 @@ function content() {
                 type="text"
                 name="search"
                 id="search"
+                spellCheck="false"
                 value={toReducer.searchInput}
                 className="block w-full pb-0.5  focus:outline-none  pl-9 sm:text-sm border-gray-300 rounded-md h-9"
                 placeholder="Search items"

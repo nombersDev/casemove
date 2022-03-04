@@ -2,10 +2,13 @@ import { LockClosedIcon } from '@heroicons/react/solid';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { LoadingButton } from 'renderer/components/content/shared/animations';
-import combineInventory, { classNames } from 'renderer/components/content/shared/inventoryFunctions';
+import combineInventory, {
+  classNames,
+} from 'renderer/components/content/shared/inventoryFunctions';
 import NotificationElement from 'renderer/components/content/shared/modals & notifcations/notification';
 import SteamLogo from 'renderer/components/content/shared/steamLogo';
 import { setInventoryAction } from 'renderer/store/actions/inventoryActions';
+import { setCurrencyRate, setLocale, setSourceValue } from 'renderer/store/actions/settings';
 import { signIn } from 'renderer/store/actions/userStatsActions';
 import { getURL } from 'renderer/store/helpers/userStatusHelper';
 
@@ -23,7 +26,7 @@ export default function LoginForm({ isLock, replaceLock }) {
   const [textToDisplay, setTextToDisplay] = useState('test');
   const [storePassword, setStorePassword] = useState(true);
   const [getLoadingButton, setLoadingButton] = useState(false);
-  const [secretEnabled, setSecretEnabled] = useState(false)
+  const [secretEnabled, setSecretEnabled] = useState(false);
   // Handle login
   const dispatch = useDispatch();
   // Return 1 = Success
@@ -38,8 +41,7 @@ export default function LoginForm({ isLock, replaceLock }) {
     setTextToDisplay(text);
     setDoShow(true);
   }
-  async function onSubmit(e) {
-    e.preventDefault();
+  async function onSubmit() {
     setLoadingButton(true);
     let responseCode = 1;
     responseCode = 1;
@@ -104,6 +106,29 @@ export default function LoginForm({ isLock, replaceLock }) {
     // If success login
 
     if (responseCode == 1) {
+      // Currency rate
+      await window.electron.ipcRenderer
+        .getCurrencyRate()
+        .then((returnValue) => {
+          console.log('currencyrate', returnValue);
+          dispatch(setCurrencyRate(returnValue[0], returnValue[1]));
+        });
+      // Source
+      await window.electron.store.get('pricing.source').then((returnValue) => {
+        let valueToWrite = returnValue;
+        if (returnValue == undefined) {
+          valueToWrite = {
+            id: 1,
+            name: 'Steam Community Market',
+            title: 'steam_listing',
+            avatar: 'https://steamcommunity.com/favicon.ico',
+          };
+        }
+        dispatch(setSourceValue(valueToWrite));
+      });
+      await window.electron.store.get('locale').then((returnValue) => {
+        dispatch(setLocale(returnValue));
+      });
       let returnPackage = {
         steamID: responseStatus[1][0],
         displayName: responseStatus[1][1],
@@ -142,6 +167,22 @@ export default function LoginForm({ isLock, replaceLock }) {
     if (isLock != '') {
       replaceLock();
     }
+  }
+
+  const [seenOnce, setOnce] = useState(false);
+  const [sendSubmit, shouldSubmit] = useState(false);
+  if (seenOnce == false) {
+    document.addEventListener('keyup', ({ key }) => {
+      if (key == 'Enter') {
+        shouldSubmit(true);
+      }
+    });
+    setOnce(true);
+  }
+
+  if (sendSubmit) {
+    onSubmit();
+    shouldSubmit(false);
   }
 
   return (
@@ -250,8 +291,6 @@ export default function LoginForm({ isLock, replaceLock }) {
               </div>
 
               <div className="flex items-center">
-
-
                 <label
                   htmlFor="sharedSecret"
                   className="mr-2 block text-sm text-gray-900"
@@ -271,7 +310,7 @@ export default function LoginForm({ isLock, replaceLock }) {
             <div>
               <button
                 className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                onClick={(e) => onSubmit(e)}
+                onClick={() => onSubmit()}
                 type="button"
               >
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">

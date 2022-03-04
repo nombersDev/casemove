@@ -37,7 +37,13 @@ import ToContent from './components/content/storageUnits/to/toHolder';
 import { classNames } from './components/content/shared/inventoryFunctions';
 import { filterInventorySetSort } from './store/actions/filtersInventoryActions';
 import settingsPage from './views/settings/settings';
-import { setFastMove } from './store/actions/settings';
+import {
+  setCurrencyRate,
+  setFastMove,
+  setLocale,
+  setSourceValue,
+} from './store/actions/settings';
+import { pricing_addPrice } from './store/actions/pricingActions';
 DocumentDownloadIcon;
 
 //{ name: 'Reports', href: '/reports', icon: DocumentDownloadIcon, current: false }
@@ -116,29 +122,54 @@ function AppContent() {
   }
   // First time setup
   async function setFirstTimeSettings() {
-    let storedFastMove = await window.electron.store.get('fastmove')
-    if (storedFastMove == undefined) {
-      storedFastMove = false
+    if (settingsData.currencyPrice == {} || settingsData.source == undefined) {
+      // Fastmove
+      console.log('Getting settings');
+      let storedFastMove = await window.electron.store.get('fastmove');
+      if (storedFastMove == undefined) {
+        storedFastMove = false;
+      }
+      dispatch(setFastMove(storedFastMove));
+      // Source
+      await window.electron.store.get('pricing.source').then((returnValue) => {
+        let valueToWrite = returnValue;
+        if (returnValue == undefined) {
+          valueToWrite = {
+            id: 1,
+            name: 'Steam Community Market',
+            title: 'steam_listing',
+            avatar: 'https://steamcommunity.com/favicon.ico',
+          };
+        }
+        dispatch(setSourceValue(valueToWrite));
+      });
+      // Currency rate
+      await window.electron.ipcRenderer
+        .getCurrencyRate()
+        .then((returnValue) => {
+          console.log('currencyrate', returnValue);
+          dispatch(setCurrencyRate(returnValue[0], returnValue[1]));
+        });
+      await window.electron.store.get('locale').then((returnValue) => {
+        dispatch(setLocale(returnValue));
+      });
     }
-    dispatch(setFastMove(storedFastMove))
   }
 
   // Forward user event to Store
   if (isListening == false) {
-    setFirstTimeSettings()
+    setFirstTimeSettings();
     window.electron.ipcRenderer.userEvents().then((messageValue) => {
-      console.log('here')
       handleSubMessage(messageValue);
     });
     setIsListening(true);
   }
 
   async function handleSubMessage(messageValue) {
-
     if (settingsData.fastMove && modalData.query.length > 0) {
-      console.log('Command blocked', modalData.moveOpen, settingsData.fastMove)
+      console.log('Command blocked', modalData.moveOpen, settingsData.fastMove);
       setIsListening(false);
-      return
+      return;
     }
     const actionToTake = (await handleUserEvent(messageValue)) as any;
     dispatch(actionToTake);
@@ -157,16 +188,13 @@ function AppContent() {
     window.electron.ipcRenderer.retryConnection();
   }
 
-
-
-
   // Should update status
   const [shouldUpdate, setShouldUpdate] = useState(0);
   const [getVersion, setVersion] = useState('');
   async function getUpdate() {
     const doUpdate = await window.electron.ipcRenderer.needUpdate();
     console.log(doUpdate);
-    setVersion('v' + doUpdate[1])
+    setVersion('v' + doUpdate[1]);
     if (doUpdate[0] == true) {
       setShouldUpdate(1);
     }
@@ -174,6 +202,16 @@ function AppContent() {
   if (shouldUpdate == 0) {
     setShouldUpdate(2);
     getUpdate();
+  }
+
+  // Pricing
+  const [firstRun, setFirstRun] = useState(false);
+
+  if (firstRun == false) {
+    setFirstRun(true);
+    window.electron.ipcRenderer.on('pricing', (message) => {
+      dispatch(pricing_addPrice(message[0], message[1].item_name));
+    });
   }
 
   return (
@@ -532,7 +570,6 @@ function AppContent() {
                   ))}
                 </div>
               </div>
-
             </nav>
           </div>
 

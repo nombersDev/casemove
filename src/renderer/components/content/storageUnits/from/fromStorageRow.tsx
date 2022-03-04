@@ -1,4 +1,4 @@
-import { LightningBoltIcon, XIcon } from '@heroicons/react/solid';
+import { LightningBoltIcon, TagIcon, XIcon } from '@heroicons/react/solid';
 import { useDispatch, useSelector } from 'react-redux';
 import { moveFromAddRemove } from 'renderer/store/actions/moveFromActions';
 
@@ -6,6 +6,8 @@ function content({ projectRow }) {
   const dispatch = useDispatch();
   const fromReducer = useSelector((state: any) => state.moveFromReducer);
   const inventory = useSelector((state: any) => state.inventoryReducer);
+  const pricesResult = useSelector((state: any) => state.pricingReducer);
+  const settingsData = useSelector((state: any) => state.settingsReducer);
 
   async function returnField(fieldValue) {
     fieldValue = parseInt(fieldValue);
@@ -52,10 +54,11 @@ function content({ projectRow }) {
   function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
   }
+
   const now = new Date();
-  const isEmpty = fromReducer.totalToMove.filter(
-    (row) => row[0] == projectRow.item_id
-  ).length == 0
+  const isEmpty =
+    fromReducer.totalToMove.filter((row) => row[0] == projectRow.item_id)
+      .length == 0;
 
   return (
     <>
@@ -80,30 +83,43 @@ function content({ projectRow }) {
           </div>
 
           <span>
-          {projectRow.item_name !== ''
-                        ? projectRow.item_customname !== null
-                          ? projectRow.item_customname
-                          : projectRow.item_name
-                        :
-                        <span>
-                        <a
-                        href="https://forms.gle/6qZ8N2ES8CdeavcVA"
-                        target="_blank"
-                        className="font-medium text-indigo-600 hover:text-indigo-500"
-                      >
-                        An error occurred. Please report this here.
-                      </a>
-                      <br/>
-                      <button className="px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" onClick={() => navigator.clipboard.writeText(JSON.stringify(projectRow))}> COPY REF</button>
-
-                      </span>
-
-                        }
-            <br />
-            <span
-              className="text-gray-500"
-              title={projectRow.item_paint_wear}
-            >
+            <span className="flex">
+              {projectRow.item_name !== '' ? (
+                projectRow.item_customname !== null ? (
+                  projectRow.item_customname
+                ) : (
+                  projectRow.item_name
+                )
+              ) : (
+                <span>
+                  <a
+                    href="https://forms.gle/6qZ8N2ES8CdeavcVA"
+                    target="_blank"
+                    className="font-medium text-indigo-600 hover:text-indigo-500"
+                  >
+                    An error occurred. Please report this here.
+                  </a>
+                  <br />
+                  <button
+                    className="px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    onClick={() =>
+                      navigator.clipboard.writeText(JSON.stringify(projectRow))
+                    }
+                  >
+                    {' '}
+                    COPY REF
+                  </button>
+                </span>
+              )}
+              {projectRow.item_name !== '' &&
+              projectRow.item_customname !== null &&
+              !projectRow.item_url.includes('casket') ? (
+                <TagIcon className="h-3 w-3 ml-1" />
+              ) : (
+                ''
+              )}
+            </span>
+            <span className="text-gray-500" title={projectRow.item_paint_wear}>
               {projectRow.item_customname !== null ? projectRow.item_name : ''}
               {projectRow.item_customname !== null &&
               projectRow.item_paint_wear !== undefined
@@ -112,9 +128,25 @@ function content({ projectRow }) {
               {projectRow.item_paint_wear !== undefined
                 ? projectRow.item_wear_name
                 : ''}
-
             </span>
           </span>
+        </div>
+      </td>
+      <td className="table-cell px-6 py-3 text-sm text-gray-500 font-medium">
+        <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
+          <div className="flex flex-shrink-0 -space-x-1 text-gray-500 font-normal">
+            {pricesResult.prices[projectRow.item_name] == undefined ||
+            projectRow.combined_QTY == 1
+              ? new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(pricesResult.prices[projectRow.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency])
+              : new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(Math.round(projectRow.combined_QTY * pricesResult.prices[projectRow.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency]))}
+          </div>
+        </div>
+        <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
+          <div className="flex flex-shrink-0 -space-x-1 text-gray-400 text-xs font-normal">
+            {pricesResult.prices[projectRow.item_name] == undefined
+              ? ''
+              : projectRow.combined_QTY == 1 ? '' : new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(pricesResult.prices[projectRow.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency])}
+          </div>
         </div>
       </td>
       <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 font-medium">
@@ -143,7 +175,6 @@ function content({ projectRow }) {
           </div>
         </div>
       </td>
-
 
       <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-center font-normal">
         {projectRow.trade_unlock !== undefined
@@ -199,11 +230,7 @@ function content({ projectRow }) {
         </button>
         <button
           onClick={() => returnField(0)}
-          className={classNames(
-            isEmpty
-              ? 'pointer-events-none hidden'
-              : ''
-          )}
+          className={classNames(isEmpty ? 'pointer-events-none hidden' : '')}
         >
           <XIcon
             className="h-4 w-4 text-gray-400 hover:text-red-400  "

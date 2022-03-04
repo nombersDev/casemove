@@ -2,6 +2,7 @@ import {
   CheckCircleIcon,
   ExternalLinkIcon,
   PencilIcon,
+  TagIcon,
 } from '@heroicons/react/solid';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -17,7 +18,9 @@ function content() {
   const inventoryFilters = useSelector(
     (state: any) => state.inventoryFiltersReducer
   );
+  const pricesResult = useSelector((state: any) => state.pricingReducer);
   const userDetails = useSelector((state: any) => state.authReducer);
+  const settingsData = useSelector((state: any) => state.settingsReducer);
 
   const dispatch = useDispatch();
 
@@ -30,6 +33,14 @@ function content() {
   } else {
     inventoryToUse = inventoryFilters.inventoryFiltered;
   }
+  inventoryToUse.forEach(projectRow => {
+    if (pricesResult.prices[projectRow.item_name] == undefined) {
+      window.electron.ipcRenderer.getPrice(projectRow)
+    }
+  });
+
+
+
 
   return (
     <>
@@ -79,6 +90,9 @@ function content() {
             <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               <span className="lg:pl-2">Product</span>
             </th>
+            <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Price
+                </th>
             <th className="hidden xl:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Stickers/Patches
             </th>
@@ -108,7 +122,15 @@ function content() {
                   ) ||
                   project.item_customname
                     ?.toLowerCase()
-                    .includes(inventoryFilters.searchInput?.toLowerCase().trim() ) || inventoryFilters.searchInput == undefined
+                    .includes(
+                      inventoryFilters.searchInput?.toLowerCase().trim()
+                    ) ||
+                    project.item_wear_name
+                      ?.toLowerCase()
+                      .includes(
+                        inventoryFilters.searchInput?.toLowerCase().trim()
+                      ) ||
+                  inventoryFilters.searchInput == undefined
                   ? ''
                   : 'hidden',
                 'hover:shadow-inner'
@@ -143,26 +165,42 @@ function content() {
                   </div>
                   <span>
                     <span className="flex">
-                      {project.item_name !== ''
-                        ? project.item_customname !== null
-                          ? project.item_customname
-                          : project.item_name
-                        :
+                      {project.item_name !== '' ? (
+                        project.item_customname !== null ? (
+                          project.item_customname
+                        ) : (
+                          project.item_name
+                        )
+                      ) : (
                         <span>
-                        <a
-                        href="https://forms.gle/6qZ8N2ES8CdeavcVA"
-                        target="_blank"
-                        className="font-medium text-indigo-600 hover:text-indigo-500"
-                      >
-                        An error occurred. Please report this here.
-                      </a>
-                      <br/>
-                      <button className="px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" onClick={() => navigator.clipboard.writeText(JSON.stringify(project))}> COPY REF</button>
-
-                      </span>
-
-                        }
-
+                          <a
+                            href="https://forms.gle/6qZ8N2ES8CdeavcVA"
+                            target="_blank"
+                            className="font-medium text-indigo-600 hover:text-indigo-500"
+                          >
+                            An error occurred. Please report this here.
+                          </a>
+                          <br />
+                          <button
+                            className="px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            onClick={() =>
+                              navigator.clipboard.writeText(
+                                JSON.stringify(project)
+                              )
+                            }
+                          >
+                            {' '}
+                            COPY REF
+                          </button>
+                        </span>
+                      )}
+                      {project.item_name !== '' &&
+                      project.item_customname !== null &&
+                      !project.item_url.includes('casket') ? (
+                        <TagIcon className="h-3 w-3  ml-1" />
+                      ) : (
+                        ''
+                      )}
 
                       {project.item_url.includes('casket') ? (
                         <Link
@@ -212,6 +250,26 @@ function content() {
                        : ''} */}
                     </span>
                   </span>
+                </div>
+              </td>
+              <td className="table-cell px-6 py-3 text-sm text-gray-500 font-medium">
+                <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
+                  <div className="flex flex-shrink-0 -space-x-1 text-gray-500 font-normal">
+                    {project.item_moveable ? pricesResult.prices[project.item_name] == undefined ||
+                    project.combined_QTY == 1
+                      ? new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(pricesResult.prices[project.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency])
+                      : new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(Math.round(project.combined_QTY * pricesResult.prices[project.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency])
+                        ) : ''}
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
+                  <div className="flex flex-shrink-0 -space-x-1 text-gray-400 text-xs font-normal">
+                    {pricesResult.prices[project.item_name] == undefined
+                      ? ''
+                      : project.combined_QTY == 1
+                      ? ''
+                      : new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(pricesResult.prices[project.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency])}
+                  </div>
                 </div>
               </td>
               <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 font-medium">

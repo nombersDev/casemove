@@ -31,6 +31,7 @@ function content() {
   const [storageLoading, setStorageLoading] = useState(false);
   const inventory = useSelector((state: any) => state.inventoryReducer);
   const fromSelector = useSelector((state: any) => state.moveFromReducer);
+  const pricesResult = useSelector((state: any) => state.pricingReducer);
 
   // Clear all filters
 
@@ -47,7 +48,8 @@ function content() {
       dispatch(moveFromRemoveCasket(storageID));
     } else {
       dispatch(moveFromAddCasketToStorages(storageID));
-      let storageResult = await getStorageUnitData(storageID, storageName);
+      let storageResult = await getStorageUnitData(storageID, storageName, pricesResult.prices);
+
       dispatch(
         addStorageInventoryData(storageResult, storageID, fromReducer.sortValue)
       );
@@ -99,7 +101,7 @@ function content() {
     }
   }
 
-  
+
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">

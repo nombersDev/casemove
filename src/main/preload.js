@@ -40,6 +40,21 @@ contextBridge.exposeInMainWorld('electron', {
     downloadFile(data) {
       ipcRenderer.send('download', data);
     },
+    getPrice(itemRow) {
+      ipcRenderer.send('getPrice', itemRow);
+    },
+    getCurrencyRate() {
+      return new Promise((resolve) => {
+        ipcRenderer.send('getCurrency');
+        ipcRenderer.once(
+          'getCurrency-reply',
+          (evt, message) => {
+            console.log(message)
+            resolve(message);
+          }
+        );
+      });
+    },
     // User commands
     retryConnection() {
       ipcRenderer.send('retryConnection');
@@ -185,7 +200,9 @@ contextBridge.exposeInMainWorld('electron', {
         'download',
         'electron-store-getAccountDetails',
         'electron-store-get',
-        'electron-store-set'
+        'electron-store-set',
+        'pricing',
+        'getPrice'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
@@ -207,7 +224,9 @@ contextBridge.exposeInMainWorld('electron', {
         'download',
         'electron-store-getAccountDetails',
         'electron-store-get',
-        'electron-store-set'
+        'electron-store-set',
+        'pricing',
+        'getPrice'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
@@ -218,10 +237,13 @@ contextBridge.exposeInMainWorld('electron', {
   store: {
     // Commands
     get(val) {
-      return new Promise((resolve) => {
-        ipcRenderer.send('electron-store-get', val);
 
-        ipcRenderer.once('electron-store-get-reply', (event, arg) => {
+      const key = Math.random().toString(36).substr(2, 3) + "-" + Math.random().toString(36).substr(2, 3) + "-" + Math.random().toString(36).substr(2, 4);
+      return new Promise((resolve) => {
+        ipcRenderer.send('electron-store-get', val, key);
+
+        ipcRenderer.once('electron-store-get-reply' + key, (event, arg) => {
+          console.log(arg)
           resolve(arg);
         });
       });
