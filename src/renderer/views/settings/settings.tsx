@@ -209,9 +209,9 @@ export default function settingsPage() {
     window.electron.store.set('pricing.currency', valueToSet);
     // Currency price
     await window.electron.ipcRenderer.getCurrencyRate().then((returnValue) => {
-      console.log('currencyrate', returnValue)
-      dispatch(setCurrencyRate(returnValue[0], returnValue[1]))
-    })
+      console.log('currencyrate', returnValue);
+      dispatch(setCurrencyRate(returnValue[0], returnValue[1]));
+    });
   }
   const [currency, setCurrency] = useState(settingsData.currency);
 
@@ -223,8 +223,6 @@ export default function settingsPage() {
   }
   const [source, setSource] = useState(settingsData.source);
   console.log(source);
-
-
 
   return (
     <>
@@ -256,8 +254,16 @@ export default function settingsPage() {
                       {/* Description list with inline editing */}
                       <div className="divide-y divide-gray-200">
                         <div className="">
+                        <h3 className="text-lg pt-5 leading-6 font-medium text-gray-900">
+                                General settings
+                              </h3>
+                              <p className="max-w-2xl text-sm text-gray-500">
+                                Toggles the general application settings
+                              </p>
                           <dl className="divide-y divide-gray-200">
+
                             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+
                               <dt className="text-sm font-medium text-gray-900">
                                 Fastmove <br />
                                 <span className="text-gray-400">
@@ -333,7 +339,6 @@ export default function settingsPage() {
                                 </span>
                               </dd>
                             </div>
-                            
                           </dl>
                         </div>
                       </div>
