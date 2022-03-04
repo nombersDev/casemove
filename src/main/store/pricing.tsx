@@ -13,7 +13,7 @@ async function getPricesBackup(cas) {
   cas.setPricing(pricesBackup);
 }
 async function getPrices(cas) {
-  const url = 'https://prices.csgotrer.app/latest/prices_v6.json';
+  const url = 'https://prices.csgotrader.app/latest/prices_v6.json';
   axios
     .get(url)
     .then(function (response) {
