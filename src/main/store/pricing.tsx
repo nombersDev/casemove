@@ -107,7 +107,7 @@ class runItems {
     this.prices = pricingData;
   }
   async makeSinglerequest(itemRow) {
-    let itemNamePricing = itemRow.item_name;
+    let itemNamePricing = itemRow.item_name.replaceAll('(Holo/Foil)', '(Holo-Foil)');
     if (itemRow.item_wear_name !== undefined) {
       itemNamePricing = itemRow.item_name + ' (' + itemRow.item_wear_name + ')';
     }
