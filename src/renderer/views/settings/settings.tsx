@@ -217,7 +217,6 @@ export default function settingsPage() {
 
   // Pricing - source
   async function updateSource(valueToSet) {
-    console.log(valueToSet);
     setSource(valueToSet);
     dispatch(setSourceValue(valueToSet));
     window.electron.store.set('pricing.source', valueToSet);
@@ -225,7 +224,7 @@ export default function settingsPage() {
   const [source, setSource] = useState(settingsData.source);
   console.log(source);
 
-  
+
 
   return (
     <>
@@ -334,19 +333,7 @@ export default function settingsPage() {
                                 </span>
                               </dd>
                             </div>
-                            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-                              <dt className="text-sm font-medium text-gray-900">
-                                Dark mode <br />
-                                <span className="text-gray-400">
-                                  {' '}
-                                  Coming soon
-                                </span>
-                              </dt>
-                              <dd className="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                <span className="flex-grow"></span>
-                                <span className="flex items-center ml-4 flex-shrink-0"></span>
-                              </dd>
-                            </div>
+                            
                           </dl>
                         </div>
                       </div>

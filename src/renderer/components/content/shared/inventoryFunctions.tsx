@@ -134,7 +134,6 @@ export async function getStorageUnitData(storageID, storageName, prices) {
     item['storage_id'] = storageID;
     item['storage_name'] = storageName;
     if (prices[item.item_name] == undefined) {
-      console.log(prices)
       window.electron.ipcRenderer.getPrice(item)
     }
     newStorageData.push(item);

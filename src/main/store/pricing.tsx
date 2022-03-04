@@ -1,15 +1,33 @@
-import { getValue, setValue } from "./settings";
+import { getValue, setValue } from './settings';
 
 const axios = require('axios');
 require('dotenv').config();
 const EventEmitter = require('events');
 class MyEmitter extends EventEmitter {}
 const pricingEmitter = new MyEmitter();
+
+// Get latest prices, if fail use backup
+
+async function getPricesBackup(cas) {
+  const pricesBackup = require('./backup/prices.json');
+  cas.setPricing(pricesBackup);
+}
 async function getPrices(cas) {
-  const url = 'https://prices.csgotrader.app/latest/prices_v6.json';
-  axios.get(url).then(function (response) {
-    cas.setPricing(response.data);
-  });
+  const url = 'https://prices.csgotrer.app/latest/prices_v6.json';
+  axios
+    .get(url)
+    .then(function (response) {
+      console.log(response.statusCode);
+      if (response.statusCode !== 200) {
+        getPricesBackup(cas)
+      } else {
+        cas.setPricing(response.data);
+      }
+    })
+    .catch(function () {
+      console.log('heress');
+      getPricesBackup(cas)
+    });
 }
 
 let currencyCodes = {
@@ -80,13 +98,12 @@ class runItems {
     getPrices(this);
     getValue('pricing.currency').then((returnValue) => {
       if (returnValue == undefined) {
-        setValue('pricing.currency', currencyCodes[steamUser.wallet.currency])
+        setValue('pricing.currency', currencyCodes[steamUser.wallet.currency]);
       }
-    })
-
-
+    });
   }
   async setPricing(pricingData) {
+    console.log('pricingSet')
     this.prices = pricingData;
   }
   async makeSinglerequest(itemRow) {

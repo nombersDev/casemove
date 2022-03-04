@@ -17,7 +17,15 @@ import { pricingEmitter, runItems } from './store/pricing';
 
 const CC = require('currency-converter-lt');
 
-let currencyConverter = new CC();
+// Currency converter
+let currencyConverter = new CC({isDecimalComma:true});
+currencyConverter.from('USD').to('DKK').amount(100).convert().then((response) => {
+  if (!response.toString().includes('.')) {
+    currencyConverter = new CC();
+  }
+})
+
+
 let mainWindow: BrowserWindow | null = null;
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
@@ -324,18 +332,17 @@ async function startEvents(csgo, user) {
   let seenCurrencyRate = {}
   ipcMain.on('getCurrency', async (event) => {
     getValue('pricing.currency').then((returnValue) => {
-      console.log( returnValue)
       if (seenCurrencyRate[returnValue] == undefined) {
         currencyConverter.from('USD').to(returnValue).amount(100).convert().then((response) => {
-          response = response / 10000
-          console.log(response, returnValue)
-          seenCurrencyRate[returnValue] = response 
+          console.log(returnValue, response)
+          response = response / 100
+          seenCurrencyRate[returnValue] = response
           event.reply('getCurrency-reply', [returnValue, response])
         })
       } else {
         event.reply('getCurrency-reply', [returnValue, seenCurrencyRate[returnValue]])
       }
-      
+
     })
   })
 
@@ -511,19 +518,19 @@ ipcMain.on('electron-store-deleteAccountDetails', async (_event, username) => {
 });
 
 // Store IPC
-ipcMain.on('electron-store-get', async (event, val) => {
+ipcMain.on('electron-store-get', async (event, val, key) => {
   if (val == 'locale') {
-    event.reply('electron-store-get-reply', currentLocale)
+    event.reply('electron-store-get-reply' + key, currentLocale)
     return
   }
     getValue(val).then((returnValue) => {
 
-      event.reply('electron-store-get-reply', returnValue)
-      
-    })
-  
+      event.reply('electron-store-get-reply' + key, returnValue)
 
-  
+    })
+
+
+
 
 });
 ipcMain.on('electron-store-set', async (event, key, val) => {

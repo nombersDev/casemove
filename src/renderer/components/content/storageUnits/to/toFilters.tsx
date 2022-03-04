@@ -78,7 +78,6 @@ function content() {
       }
     });
   }
-  console.log(storageRow)
   if (storageRow[0].item_storage_total != toReducer.activeStoragesAmount && storageRow[0].item_storage_total != null) {
     dispatch(moveToSetStorageAmount(storageRow[0].item_storage_total))
 

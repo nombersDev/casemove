@@ -39,8 +39,8 @@ function content() {
   const dispatch = useDispatch();
   const fromReducer = useSelector((state: any) => state.moveFromReducer);
   const inventory = useSelector((state: any) => state.inventoryReducer);
-  const settingsData = useSelector((state: any) => state.settingsReducer);
   const pricesResult = useSelector((state: any) => state.pricingReducer);
+  const settingsData = useSelector((state: any) => state.settingsReducer);
 
   // States
 
@@ -115,7 +115,7 @@ function content() {
     try {
       totalAmount +=
         projectRow.combined_QTY *
-        pricesResult.prices[projectRow.item_name]?.[settingsData.source.title];
+        pricesResult.prices[projectRow.item_name]?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency];
     } catch {
       totalAmount += 0;
     }
@@ -125,10 +125,11 @@ function content() {
   // Send download
   async function sendDownload() {
     inventoryFilter.forEach((element) => {
-      element['item_price'] = new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(pricesResult.prices[element.item_name]?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency])
+      element['item_price'] =
+        pricesResult.prices[element.item_name]?.[settingsData.source.title]  * settingsData.currencyPrice[settingsData.currency];
       element['item_price_combined'] =
-      new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(element.combined_QTY *
-        pricesResult.prices[element.item_name]?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency])
+        element.combined_QTY *
+        pricesResult.prices[element.item_name]?.[settingsData.source.title]  * settingsData.currencyPrice[settingsData.currency]
     });
     downloadReport(inventoryFilter);
   }
@@ -258,7 +259,7 @@ function content() {
                 </Link>
               </div>
               <div className="pl-3">
-                <PricingAmount totalAmount={new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(totalAmount * settingsData.currencyPrice[settingsData.currency])}/>
+                <PricingAmount totalAmount={new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(totalAmount)}/>
               </div>
               <div className="pl-3">
                 <span className="mr-3 flex items-center text-gray-500 text-xs font-medium uppercase tracking-wide">

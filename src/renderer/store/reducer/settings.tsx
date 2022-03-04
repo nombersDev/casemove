@@ -37,6 +37,7 @@ const settingsReducer = (state = initialState, action) => {
         currencyDict[action.payload.currency] = action.payload.rate
       return {
         ...state,
+        currency: action.payload.currency,
         currencyPrice: currencyDict,
       };
 

@@ -44,10 +44,7 @@ export default function MoveModal() {
     if (modalData.moveOpen) {
       if (modalData.doCancel.includes(modalData.modalPayload['key']) == false) {
         if (modalData.modalPayload['type'] == 'to') {
-          console.log(
-            'Sending to command',
-            modalData.modalPayload['storageID']
-          );
+
           if (fastMode) {
             window.electron.ipcRenderer.moveToStorageUnit(
               modalData.modalPayload['storageID'],
@@ -105,7 +102,6 @@ export default function MoveModal() {
     Object.keys(modalData.modalPayload).length !== 0 &&
     seenID != modalData.modalPayload.itemID
   ) {
-    console.log('Running');
     if (modalData.modalPayload.storageID != seenStorage) {
       dispatch(moveFromReset());
     }

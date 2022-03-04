@@ -124,10 +124,12 @@ function content() {
     return false;
   });
   inventoryFilter.forEach((projectRow) => {
-    if (pricesResult.prices[projectRow.item_name]?.[settingsData.source.title]) {
+    if (pricesResult.prices[projectRow.item_name]?.[settingsData?.source?.title]) {
+      console.log(projectRow.item_name, projectRow.combined_QTY *
+        pricesResult.prices[projectRow.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency])
       totalAmount +=
         projectRow.combined_QTY *
-        pricesResult.prices[projectRow.item_name]?.[settingsData.source.title];
+        pricesResult.prices[projectRow.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency];
     }
   });
   totalAmount = totalAmount.toFixed(0);
@@ -138,10 +140,10 @@ function content() {
     console.log(inventoryFilters.searchInput);
     inventoryFilter.forEach((element) => {
       element['item_price'] =
-        pricesResult.prices[element.item_name]?.[settingsData.source.title];
+        pricesResult.prices[element.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency];
       element['item_price_combined'] =
         element.combined_QTY *
-        pricesResult.prices[element.item_name]?.[settingsData.source.title];
+        pricesResult.prices[element.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency];
     });
 
     downloadReport(inventoryFilter);
@@ -280,7 +282,7 @@ function content() {
                 </Link>
               </div>
               <div className="pl-3">
-                <PricingAmount totalAmount={totalAmount} />
+                <PricingAmount totalAmount={new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(totalAmount)} />
               </div>
             </div>
           </div>

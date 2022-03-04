@@ -20,6 +20,7 @@ function content() {
   );
   const pricesResult = useSelector((state: any) => state.pricingReducer);
   const userDetails = useSelector((state: any) => state.authReducer);
+  const settingsData = useSelector((state: any) => state.settingsReducer);
 
   const dispatch = useDispatch();
 
@@ -256,13 +257,8 @@ function content() {
                   <div className="flex flex-shrink-0 -space-x-1 text-gray-500 font-normal">
                     {project.item_moveable ? pricesResult.prices[project.item_name] == undefined ||
                     project.combined_QTY == 1
-                      ? '$' +
-                        pricesResult.prices[project.item_name]?.steam_listing
-                      : '$' +
-                        Math.round(
-                          project.combined_QTY *
-                            pricesResult.prices[project.item_name]
-                              ?.steam_listing
+                      ? new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(pricesResult.prices[project.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency])
+                      : new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(Math.round(project.combined_QTY * pricesResult.prices[project.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency])
                         ) : ''}
                   </div>
                 </div>
@@ -272,9 +268,7 @@ function content() {
                       ? ''
                       : project.combined_QTY == 1
                       ? ''
-                      : '$' +
-                        pricesResult.prices[project.item_name]
-                          ?.steam_listing}
+                      : new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(pricesResult.prices[project.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency])}
                   </div>
                 </div>
               </td>

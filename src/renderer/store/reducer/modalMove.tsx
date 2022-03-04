@@ -21,7 +21,6 @@ const initialState = {
           }
 
       case 'MOVE_MODAL_UPDATE':
-        console.log('length', state.query)
         if (state.query.length == 0) {
           return {
             ...state,
