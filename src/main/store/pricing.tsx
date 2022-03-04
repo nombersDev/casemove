@@ -80,7 +80,6 @@ class runItems {
     getPrices(this);
     getValue('pricing.currency').then((returnValue) => {
       if (returnValue == undefined) {
-        console.log('Currency', steamUser.wallet.currency, currencyCodes[steamUser.wallet.currency])
         setValue('pricing.currency', currencyCodes[steamUser.wallet.currency])
       }
     })
@@ -97,7 +96,6 @@ class runItems {
     }
 
     if (this.prices[itemNamePricing] !== undefined) {
-      console.log(this.prices[itemNamePricing]);
       let pricingDict = {
         buff163: this.prices[itemNamePricing]?.buff163.starting_at?.price,
         steam_listing: this.prices[itemNamePricing]?.steam?.last_7d,

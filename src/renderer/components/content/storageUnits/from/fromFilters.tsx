@@ -125,11 +125,10 @@ function content() {
   // Send download
   async function sendDownload() {
     inventoryFilter.forEach((element) => {
-      element['item_price'] =
-        pricesResult.prices[element.item_name]?.[settingsData.source.title];
+      element['item_price'] = new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(pricesResult.prices[element.item_name]?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency])
       element['item_price_combined'] =
-        element.combined_QTY *
-        pricesResult.prices[element.item_name]?.[settingsData.source.title];
+      new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(element.combined_QTY *
+        pricesResult.prices[element.item_name]?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency])
     });
     downloadReport(inventoryFilter);
   }
@@ -259,7 +258,7 @@ function content() {
                 </Link>
               </div>
               <div className="pl-3">
-                <PricingAmount totalAmount={totalAmount}/>
+                <PricingAmount totalAmount={new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(totalAmount * settingsData.currencyPrice[settingsData.currency])}/>
               </div>
               <div className="pl-3">
                 <span className="mr-3 flex items-center text-gray-500 text-xs font-medium uppercase tracking-wide">

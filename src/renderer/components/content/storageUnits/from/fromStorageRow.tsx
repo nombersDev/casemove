@@ -137,8 +137,8 @@ function content({ projectRow }) {
           <div className="flex flex-shrink-0 -space-x-1 text-gray-500 font-normal">
             {pricesResult.prices[projectRow.item_name] == undefined ||
             projectRow.combined_QTY == 1
-              ? new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(pricesResult.prices[projectRow.item_name]?.[settingsData.source.title])
-              : new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(Math.round(projectRow.combined_QTY * pricesResult.prices[projectRow.item_name]?.[settingsData.source.title]))}
+              ? new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(pricesResult.prices[projectRow.item_name]?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency])
+              : new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(Math.round(projectRow.combined_QTY * pricesResult.prices[projectRow.item_name]?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency]))}
           </div>
         </div>
         <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">

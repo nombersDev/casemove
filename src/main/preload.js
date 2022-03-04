@@ -43,6 +43,18 @@ contextBridge.exposeInMainWorld('electron', {
     getPrice(itemRow) {
       ipcRenderer.send('getPrice', itemRow);
     },
+    getCurrencyRate() {
+      return new Promise((resolve) => {
+        ipcRenderer.send('getCurrency');
+        ipcRenderer.once(
+          'getCurrency-reply',
+          (evt, message) => {
+            console.log(message)
+            resolve(message);
+          }
+        );
+      });
+    },
     // User commands
     retryConnection() {
       ipcRenderer.send('retryConnection');
@@ -189,7 +201,8 @@ contextBridge.exposeInMainWorld('electron', {
         'electron-store-getAccountDetails',
         'electron-store-get',
         'electron-store-set',
-        'pricing'
+        'pricing',
+        'getPrice'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
@@ -212,7 +225,8 @@ contextBridge.exposeInMainWorld('electron', {
         'electron-store-getAccountDetails',
         'electron-store-get',
         'electron-store-set',
-        'pricing'
+        'pricing',
+        'getPrice'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
@@ -227,6 +241,7 @@ contextBridge.exposeInMainWorld('electron', {
         ipcRenderer.send('electron-store-get', val);
 
         ipcRenderer.once('electron-store-get-reply', (event, arg) => {
+          console.log(arg)
           resolve(arg);
         });
       });

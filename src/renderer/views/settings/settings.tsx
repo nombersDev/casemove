@@ -2,6 +2,7 @@ import { Fragment, useState } from 'react';
 import { Listbox, Switch, Transition } from '@headlessui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  setCurrencyRate,
   setCurrencyValue,
   setFastMove,
   setSourceValue,
@@ -206,6 +207,11 @@ export default function settingsPage() {
     setCurrency(valueToSet);
     dispatch(setCurrencyValue(valueToSet));
     window.electron.store.set('pricing.currency', valueToSet);
+    // Currency price
+    await window.electron.ipcRenderer.getCurrencyRate().then((returnValue) => {
+      console.log('currencyrate', returnValue)
+      dispatch(setCurrencyRate(returnValue[0], returnValue[1]))
+    })
   }
   const [currency, setCurrency] = useState(settingsData.currency);
 
@@ -218,6 +224,8 @@ export default function settingsPage() {
   }
   const [source, setSource] = useState(settingsData.source);
   console.log(source);
+
+  
 
   return (
     <>

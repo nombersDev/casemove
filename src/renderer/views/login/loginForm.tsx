@@ -6,6 +6,7 @@ import combineInventory, { classNames } from 'renderer/components/content/shared
 import NotificationElement from 'renderer/components/content/shared/modals & notifcations/notification';
 import SteamLogo from 'renderer/components/content/shared/steamLogo';
 import { setInventoryAction } from 'renderer/store/actions/inventoryActions';
+import { setCurrencyRate } from 'renderer/store/actions/settings';
 import { signIn } from 'renderer/store/actions/userStatsActions';
 import { getURL } from 'renderer/store/helpers/userStatusHelper';
 
@@ -104,6 +105,10 @@ export default function LoginForm({ isLock, replaceLock }) {
     // If success login
 
     if (responseCode == 1) {
+      await window.electron.ipcRenderer.getCurrencyRate().then((returnValue) => {
+        console.log('currencyrate', returnValue)
+        dispatch(setCurrencyRate(returnValue[0], returnValue[1]))
+      })
       let returnPackage = {
         steamID: responseStatus[1][0],
         displayName: responseStatus[1][1],

@@ -7,7 +7,7 @@ export default function PricingAmount({totalAmount}) {
         className="flex-none w-5 h-5 mr-2 text-gray-400 group-hover:text-gray-500"
         aria-hidden="true"
       />{' '}
-      <span className="text-yellow-500">$ {totalAmount} </span>
+      <span className="text-yellow-500">{totalAmount} </span>
     </span>
   );
 }

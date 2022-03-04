@@ -22,3 +22,12 @@ export const setSourceValue = (valueToSet) => {
       payload: valueToSet
   }
 }
+export const setCurrencyRate = (currency, rate) => {
+  return {
+      type: 'SETTINGS_ADD_CURRENCYPRICE',
+      payload: {
+        currency: currency,
+        rate: rate
+      }
+  }
+}

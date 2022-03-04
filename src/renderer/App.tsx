@@ -37,7 +37,7 @@ import ToContent from './components/content/storageUnits/to/toHolder';
 import { classNames } from './components/content/shared/inventoryFunctions';
 import { filterInventorySetSort } from './store/actions/filtersInventoryActions';
 import settingsPage from './views/settings/settings';
-import { setCurrencyValue, setFastMove, setLocale, setSourceValue } from './store/actions/settings';
+import { setCurrencyRate, setCurrencyValue, setFastMove, setLocale, setSourceValue } from './store/actions/settings';
 import { pricing_addPrice } from './store/actions/pricingActions';
 DocumentDownloadIcon;
 
@@ -126,7 +126,10 @@ function AppContent() {
     dispatch(setFastMove(storedFastMove))
     // Currency
     await window.electron.store.get('pricing.currency').then((returnValue) => {
-      console.log(returnValue)
+      console.log('Pricing.currency', returnValue)
+      if (returnValue == undefined) {
+        returnValue = 'USD'
+      }
       dispatch(setCurrencyValue(returnValue))
     })
     // Source
@@ -144,9 +147,16 @@ function AppContent() {
       }
       dispatch(setSourceValue(valueToWrite))
     })
+    // Locale
     await window.electron.store.get('locale').then((returnValue) => {
       console.log(returnValue)
       dispatch(setLocale(returnValue))
+    })
+    window.electron.ipcRenderer.getCurrencyRate()
+    // Currency price
+    await window.electron.ipcRenderer.getCurrencyRate().then((returnValue) => {
+      console.log('currencyrate', returnValue)
+      dispatch(setCurrencyRate(returnValue[0], returnValue[1]))
     })
   }
 

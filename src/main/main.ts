@@ -291,7 +291,6 @@ ipcMain.on('login', async (event, username, password, shouldRemember, authcode =
                 if (shouldRemember) {
                   storeUserAccount(username, displayName, password, user.logOnResult.client_supplied_steamid, secretKey)
                 }
-                console.log(user)
 
                 event.reply('login-reply', [1, returnPackage])
               })
@@ -317,11 +316,27 @@ async function startEvents(csgo, user) {
   // Pricing
   const pricing = new runItems(user)
   pricingEmitter.on('result', (data, itemRow) => {
-    console.log(data, itemRow)
     mainWindow?.webContents.send('pricing', [data, itemRow])
   });
   ipcMain.on('getPrice', async (_event, info) => {
     pricing.handleItem(info)
+  })
+  let seenCurrencyRate = {}
+  ipcMain.on('getCurrency', async (event) => {
+    getValue('pricing.currency').then((returnValue) => {
+      console.log( returnValue)
+      if (seenCurrencyRate[returnValue] == undefined) {
+        currencyConverter.from('USD').to(returnValue).amount(100).convert().then((response) => {
+          response = response / 10000
+          console.log(response, returnValue)
+          seenCurrencyRate[returnValue] = response 
+          event.reply('getCurrency-reply', [returnValue, response])
+        })
+      } else {
+        event.reply('getCurrency-reply', [returnValue, seenCurrencyRate[returnValue]])
+      }
+      
+    })
   })
 
   // CSGO listeners
@@ -495,28 +510,20 @@ ipcMain.on('electron-store-deleteAccountDetails', async (_event, username) => {
   deleteUserData(username)
 });
 
-let seenPrices = {}
-
 // Store IPC
 ipcMain.on('electron-store-get', async (event, val) => {
   if (val == 'locale') {
     event.reply('electron-store-get-reply', currentLocale)
     return
   }
-  if (val == 'currency') {
-    currencyConverter
-    getValue('pricing.currency').then((returnValue) => {
-      if (seenPrices[returnValue] == undefined) {
-        seenPrices[returnValue] = currencyConverter.convert(100, 'USD', returnValue)
-      }
-      event.reply('electron-store-get-reply', seenPrices[returnValue])
+    getValue(val).then((returnValue) => {
+
+      event.reply('electron-store-get-reply', returnValue)
+      
     })
-  }
+  
 
-  getValue(val).then((returnValue) => {
-
-    event.reply('electron-store-get-reply', returnValue)
-  })
+  
 
 });
 ipcMain.on('electron-store-set', async (event, key, val) => {

@@ -2,6 +2,7 @@ const initialState = {
   fastMove: false,
   currency: 'USD',
   locale: 'EN-GB',
+  currencyPrice: {}
 };
 
 const settingsReducer = (state = initialState, action) => {
@@ -12,6 +13,11 @@ const settingsReducer = (state = initialState, action) => {
         fastMove: action.payload,
       };
     case 'SETTINGS_SET_CURRENCY':
+      if (action.payload == true) {
+        return {
+          ...state
+        }
+      }
       return {
         ...state,
         currency: action.payload,
@@ -25,6 +31,13 @@ const settingsReducer = (state = initialState, action) => {
       return {
         ...state,
         locale: action.payload,
+      };
+      case 'SETTINGS_ADD_CURRENCYPRICE':
+        let currencyDict = state.currencyPrice
+        currencyDict[action.payload.currency] = action.payload.rate
+      return {
+        ...state,
+        currencyPrice: currencyDict,
       };
 
     default:
