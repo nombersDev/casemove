@@ -479,7 +479,7 @@ export default function settingsPage() {
                                         updateCurrency(e.target.value)
                                       }
                                     >
-                                      {currencyCode.map((code) => (
+                                      {currencyCode.sort().map((code) => (
                                         <option key={code}>{code}</option>
                                       ))}
                                     </select>
