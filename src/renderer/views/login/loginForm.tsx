@@ -88,7 +88,7 @@ export default function LoginForm({ isLock, replaceLock }) {
         openNotification(
           false,
           'Unknown error',
-          'Could be wrong credentials, a network error or something else.' +
+          'Could be wrong credentials, a network error, the account playing another game or something else. ' +
             responseStatus[1]
         );
         setUsername('');
@@ -196,7 +196,7 @@ export default function LoginForm({ isLock, replaceLock }) {
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
               The application needs to have an active Steam connection to manage
-              your CSGO items.
+              your CSGO items. You should not have any games open on the Steam account.
             </p>
           </div>
           <form className="mt-8 space-y-6" action="#" method="POST">

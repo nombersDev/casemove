@@ -112,13 +112,9 @@ function content() {
 
 
   inventoryFilter.forEach((projectRow) => {
-    try {
-      totalAmount +=
-        projectRow.combined_QTY *
-        pricesResult.prices[projectRow.item_name]?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency];
-    } catch {
-      totalAmount += 0;
-    }
+    let individualPrice = projectRow.combined_QTY *
+    pricesResult.prices[projectRow.item_name]?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency]
+    totalAmount += individualPrice = individualPrice ? individualPrice : 0
   });
   totalAmount = totalAmount.toFixed(0);
 

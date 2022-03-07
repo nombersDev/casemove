@@ -107,7 +107,7 @@ class runItems {
     this.prices = pricingData;
   }
   async makeSinglerequest(itemRow) {
-    let itemNamePricing = itemRow.item_name;
+    let itemNamePricing = itemRow.item_name.replaceAll('(Holo/Foil)', '(Holo-Foil)');
     if (itemRow.item_wear_name !== undefined) {
       itemNamePricing = itemRow.item_name + ' (' + itemRow.item_wear_name + ')';
     }
@@ -119,6 +119,9 @@ class runItems {
         skinport: this.prices[itemNamePricing]?.skinport?.starting_at,
         bitskins: this.prices[itemNamePricing]?.bitskins?.price,
       };
+      if (this.prices[itemNamePricing]?.steam?.last_7d == 0 && this.prices[itemNamePricing]?.buff163.starting_at?.price > 2000) {
+        pricingDict.steam_listing = 2000
+      }
 
       pricingEmitter.emit('result', pricingDict, itemRow);
     }

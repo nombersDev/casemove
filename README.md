@@ -4,13 +4,13 @@
 
 ----
 
-## Download Latest Version (Casemove 1.3.0)
+## Download Latest Version (Casemove 1.3.1)
 
 This is the latest stable version and can be downloaded from the [releases](https://github.com/nombersDev/casemove/releases) page, or directly from:
 
-- [Windows - (Casemove-1.3.0)](https://github.com/nombersDev/casemove/releases/download/1.3.0/Casemove.Setup.1.3.0.exe)
-- [Mac - (Casemove-1.3.0)](https://github.com/nombersDev/casemove/releases/download/1.3.0/Casemove-1.3.0.dmg)
-- [Mac ARM 64 (M1) - (Casemove-1.3.0)](https://github.com/nombersDev/casemove/releases/download/1.3.0/Casemove-1.3.0-arm64.dmg)
+- [Windows - (Casemove-1.3.1)](https://github.com/nombersDev/casemove/releases/download/1.3.1/Casemove.Setup.1.3.1.exe)
+- [Mac - (Casemove-1.3.1)](https://github.com/nombersDev/casemove/releases/download/1.3.1/Casemove-1.3.1.dmg)
+- [Mac ARM 64 (M1) - (Casemove-1.3.1)](https://github.com/nombersDev/casemove/releases/download/1.3.1/Casemove-1.3.1-arm64.dmg)
 
 https://user-images.githubusercontent.com/98760010/153054583-eddad769-a6df-473e-9338-efbdb3dd021a.mp4
 
@@ -20,13 +20,15 @@ Features include:
 
   * View your inventory
   * View your storage units contents
+  * View the Value of your inventory and storage units
   * Move items out of and into your storage units in bulk instead of clicking on the individual items
   * Rename your storage units
   * Sort, search and filter your inventory
   * Sort, search and filter your storage units contents
   * Download a file over your Storage units and inventory contents
   * Switch between multiple accounts easily
-  * Use your shared secret key instead of an auth code to log in  
+  * Use your shared secret key instead of an auth code to log in 
+ 
  
 ----
 
