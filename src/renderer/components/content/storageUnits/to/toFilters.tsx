@@ -78,7 +78,7 @@ function content() {
       }
     });
   }
-  if (storageRow[0].item_storage_total != toReducer.activeStoragesAmount && storageRow[0].item_storage_total != null) {
+  if (storageRow[0]?.item_storage_total != toReducer?.activeStoragesAmount && storageRow[0]?.item_storage_total != null) {
     dispatch(moveToSetStorageAmount(storageRow[0].item_storage_total))
 
   }

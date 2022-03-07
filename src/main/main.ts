@@ -308,7 +308,6 @@ ipcMain.on('login', async (event, username, password, shouldRemember, authcode =
       )})
   });
   user.once('error', (error) => {
-    console.log(error)
     event.reply('login-reply', [4, error])
   })
 

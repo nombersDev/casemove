@@ -312,7 +312,7 @@ class items {
     // Graffiti kit check
     if (storageRow['graffiti_tint'] !== undefined) {
       const graffitiKitIndex = storageRow['graffiti_tint'];
-      const graffitiKitResult = capitalizeWords(this.getGraffitiKitName(graffitiKitIndex).replace('_', ' '));
+      const graffitiKitResult = capitalizeWords(this.getGraffitiKitName(graffitiKitIndex).replaceAll('_', ' '));
       var finalName =  finalName + ' (' + graffitiKitResult + ')';
     }
 

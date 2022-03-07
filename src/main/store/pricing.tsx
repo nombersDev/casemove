@@ -119,6 +119,9 @@ class runItems {
         skinport: this.prices[itemNamePricing]?.skinport?.starting_at,
         bitskins: this.prices[itemNamePricing]?.bitskins?.price,
       };
+      if (this.prices[itemNamePricing]?.steam?.last_7d == 0 && this.prices[itemNamePricing]?.buff163.starting_at?.price > 2000) {
+        pricingDict.steam_listing = 2000
+      }
 
       pricingEmitter.emit('result', pricingDict, itemRow);
     }
