@@ -65,7 +65,7 @@ const navigation = [
 
 function AppContent() {
   SearchIcon;
-  //document.documentElement.classList.add('dark')
+  document.documentElement.classList.add('dark')
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -498,10 +498,10 @@ function AppContent() {
                 >
                   <button
                     type="button"
-                    className="inline-flex items-center px-6 py-3 border border-gray-200 dark:bg-dark-level-one   dark:border-opacity-0  text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
+                    className="inline-flex  dark:text-dark-white items-center px-6 py-3 border border-gray-200 dark:bg-dark-level-three   dark:border-opacity-0  text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
                   >
                     <GiftIcon
-                      className="mr-3 h-4 w-4 text-gray-500"
+                      className="mr-3  h-4 w-4 text-gray-500"
                       style={{ marginLeft: -25 }}
                       aria-hidden="true"
                     />
@@ -696,7 +696,7 @@ function AppContent() {
               </div>
             </div>
           </div>
-          <main className="flex-1">
+          <main className="flex-1 dark:bg-dark-level-one">
             <Router>
               <Switch>
                 <toMoveContext.Provider value={toMoveValue}>

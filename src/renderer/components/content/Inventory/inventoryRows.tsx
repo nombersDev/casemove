@@ -55,7 +55,7 @@ function content() {
         </div>
         <ul
           role="list"
-          className="mt-3 border-t border-gray-200 divide-y divide-gray-100"
+          className="mt-3 border-t border-gray-200 divide-y divide-gray-100 dark:divide-gray-500"
         >
           {inventoryToUse.map((project) => (
             <li key={project.item_id}>
@@ -84,33 +84,33 @@ function content() {
       <table className="min-w-full">
         <thead>
           <tr className=" border-gray-200 sticky top-0">
-            <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="table-cell px-6 py-3 border-b dark:border-opacity-50 dark:bg-dark-level-two border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               QTY
             </th>
-            <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               <span className="lg:pl-2">Product</span>
             </th>
-            <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Price
                 </th>
-            <th className="hidden xl:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="hidden xl:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Stickers/Patches
             </th>
-            <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               Tradehold
             </th>
-            <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               Moveable
             </th>
-            <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               Link
             </th>
-            <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 dark:border-opacity-50 dark:bg-dark-level-two text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               <span className="md:hidden">Link</span>
             </th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-100">
+        <tbody className="bg-white divide-y divide-gray-100 dark:bg-dark-level-one dark:divide-gray-500">
           {inventoryToUse.map((project) => (
             <tr
               key={project.item_id}
@@ -278,7 +278,7 @@ function content() {
                     {project.stickers.map((sticker, index) => (
                       <img
                         key={index}
-                        className="max-w-none h-8 w-8 rounded-full ring-2 object-cover ring-transparent bg-gradient-to-t from-gray-100 to-gray-300"
+                        className="max-w-none h-8 w-8 rounded-full ring-2 object-cover ring-transparent bg-gradient-to-t from-gray-100 to-gray-300 hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-green-600 transform hover:-translate-y-1 hover:scale-110"
                         src={
                           'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
                           sticker.sticker_url +

@@ -29,7 +29,7 @@ export default function UserGrid({clickOnProfile}) {
     updateFunction()
   }
   return (
-    <div className="overflow-x-auto h-screen">
+    <div className="overflow-x-auto h-screen dark:bg-dark-level-two">
       <div className="grid grid-cols-1 py-10 px-4 gap-4 overflow-y-auto">
         {getUsers.length == 0 ? (
           <div
@@ -61,7 +61,7 @@ export default function UserGrid({clickOnProfile}) {
             <div
               key={person.username}
               className={classNames(
-                'relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"'
+                'relative rounded-lg border dark:border-opacity-0 dark:border-none dark:bg-dark-level-four border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"'
               )}
             >
               <div className="flex-shrink-0">
@@ -72,17 +72,17 @@ export default function UserGrid({clickOnProfile}) {
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-medium text-gray-900 dark:text-dark-white">
                   {person.displayName}
                 </p>
-                <p className="text-sm text-gray-500 truncate">
+                <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                   {person.username}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => clickOnProfile(person.username)}
-                className="inline-flex items-center p-1 border border-transparent rounded-full hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-green-600 transform hover:-translate-y-1 hover:scale-110"
+                className="inline-flex items-center dark:text-dark-white p-1 border border-transparent rounded-full hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-green-600 transform hover:-translate-y-1 hover:scale-110"
               >
                 <CheckIcon className="h-5 w-5" aria-hidden="true" />
               </button>
@@ -90,7 +90,7 @@ export default function UserGrid({clickOnProfile}) {
                 type="button"
                 onClick={() => removeUsername(person.username)}
                 className={classNames(
-                  'inline-flex items-center p-1 border border-transparent rounded-full hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-red-600 transform hover:-translate-y-1 hover:scale-110'
+                  'inline-flex items-center p-1 border border-transparent rounded-full dark:text-dark-white hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-red-600 transform hover:-translate-y-1 hover:scale-110'
                 )}
               >
                 <TrashIcon className="h-5 w-5" aria-hidden="true" />

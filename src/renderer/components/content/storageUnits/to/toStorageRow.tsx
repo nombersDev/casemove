@@ -1,8 +1,11 @@
 import { LightningBoltIcon, TagIcon, XIcon } from '@heroicons/react/solid';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { moveToAddRemove } from 'renderer/store/actions/moveToActions';
 
 function content({ projectRow }) {
+  const [stickerHover, setStickerHover] = useState('');
   const dispatch = useDispatch();
   const toReducer = useSelector((state: any) => state.moveToReducer);
   const pricesResult = useSelector((state: any) => state.pricingReducer);
@@ -64,9 +67,15 @@ function content({ projectRow }) {
   if (pricesResult.prices[projectRow.item_name] == undefined) {
         window.electron.ipcRenderer.getPrice(projectRow)
   }
+  let marketHashName = projectRow.item_name;
+  if (projectRow.item_paint_wear != undefined) {
+    marketHashName =
+      projectRow.item_name + ' (' + projectRow.item_wear_name + ')';
+  }
+
   return (
     <>
-      <td className="px-6 py-3 max-w-0 w-full whitespace-nowrap overflow-hidden text-sm font-normal text-gray-900">
+      <td className="table-cell px-6 py-3 max-w-0 w-full whitespace-nowrap overflow-hidden text-sm font-normal text-gray-900 dark:text-dark-white">
         <div className="flex items-center space-x-3 lg:pl-2">
           <div
             className={classNames(
@@ -75,16 +84,24 @@ function content({ projectRow }) {
             )}
             aria-hidden="true"
           />
-          <div className="flex flex-shrink-0 -space-x-1">
-            <img
-              className="max-w-none h-11 w-11 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300"
-              src={
-                'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
-                projectRow.item_url +
-                '.png'
-              }
-            />
-          </div>
+          <Link
+            to={{
+              pathname: `https://steamcommunity.com/market/listings/730/${marketHashName}`,
+            }}
+            target="_blank"
+          >
+            <div className="flex flex-shrink-0 -space-x-1">
+              <img
+                className="max-w-none h-11 w-11 dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300"
+                src={
+                  'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
+                  projectRow.item_url +
+                  '.png'
+                }
+              />
+            </div>
+          </Link>
+
           <span>
             <span className="flex">
               {projectRow.item_name !== '' ? (
@@ -117,7 +134,7 @@ function content({ projectRow }) {
               {projectRow.item_name !== '' &&
               projectRow.item_customname !== null &&
               !projectRow.item_url.includes('casket') ? (
-                <TagIcon className="h-3 w-3  ml-1" />
+                <TagIcon className="h-3 w-3 ml-1" />
               ) : (
                 ''
               )}
@@ -135,9 +152,9 @@ function content({ projectRow }) {
           </span>
         </div>
       </td>
-      <td className="table-cell px-6 py-3 text-sm text-gray-500 font-medium">
+      <td className="table-cell px-6 py-3 text-sm text-gray-500 font-medium dark:bg-dark-level-one">
         <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
-          <div className="flex flex-shrink-0 -space-x-1 text-gray-500 font-normal">
+          <div className="flex flex-shrink-0 -space-x-1 text-gray-500 dark:text-gray-400 font-normal">
             {pricesResult.prices[projectRow.item_name] == undefined ||
             projectRow.combined_QTY == 1
               ? new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(pricesResult.prices[projectRow.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency])
@@ -145,34 +162,50 @@ function content({ projectRow }) {
           </div>
         </div>
         <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
-          <div className="flex flex-shrink-0 -space-x-1 text-gray-400 text-xs font-normal">
+          <div className="flex flex-shrink-0 -space-x-1 text-gray-500 text-xs font-normal">
             {pricesResult.prices[projectRow.item_name] == undefined
               ? ''
               : projectRow.combined_QTY == 1 ? '' :  new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(pricesResult.prices[projectRow.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency])}
           </div>
         </div>
       </td>
-      <td className="hidden md:table-cell px-6 py-3 text-sm text-gray-500 font-medium">
+      <td className="hidden md:table-cell px-6 py-3 text-sm text-gray-500 font-medium dark:bg-dark-level-one">
         <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
           <div className="flex flex-shrink-0 -space-x-1">
-            {projectRow.stickers?.map((sticker, index) => (
-              <img
-                key={index}
-                className="max-w-none h-8 w-8 rounded-full ring-2 object-cover ring-transparent bg-gradient-to-t from-gray-100 to-gray-300"
-                src={
-                  'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
-                  sticker.sticker_url +
-                  '.png'
-                }
-                alt={sticker.sticker_name}
-                title={sticker.sticker_name}
-              />
+          {projectRow.stickers?.map((sticker, index) => (
+              <Link
+                to={{
+                  pathname: `https://steamcommunity.com/market/listings/730/Sticker | ${sticker.sticker_name}`,
+                }}
+                target="_blank"
+              >
+                <img
+                  key={index}
+                  onMouseEnter={() =>
+                    setStickerHover(index + projectRow.item_id)
+                  }
+                  onMouseLeave={() => setStickerHover('')}
+                  className={classNames(
+                    stickerHover == index + projectRow.item_id
+                      ? 'transform-gpu hover:-translate-y-1 hover:scale-110'
+                      : '',
+                    'max-w-none h-8 w-8 rounded-full hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-green-600 ring-2 object-cover ring-transparent bg-gradient-to-t from-gray-100 to-gray-300 dark:from-gray-300 dark:to-gray-400'
+                  )}
+                  src={
+                    'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
+                    sticker.sticker_url +
+                    '.png'
+                  }
+                  alt={sticker.sticker_name}
+                  title={sticker.sticker_name}
+                />
+              </Link>
             ))}
           </div>
         </div>
       </td>
 
-      <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-center font-normal">
+      <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-center  dark:text-gray-400 font-normal dark:bg-dark-level-one">
         {projectRow.trade_unlock !== undefined
           ? Math.ceil(
               (projectRow.trade_unlock.getTime() - now.getTime()) /
@@ -180,14 +213,14 @@ function content({ projectRow }) {
             ) + ' days'
           : ''}
       </td>
-      <td className="table-cell px-6 py-3 text-sm text-gray-500 font-medium">
+      <td className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium dark:bg-dark-level-one">
         <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
           <div className="flex flex-shrink-0 -space-x-1 font-normal">
             {projectRow.combined_QTY}
           </div>
         </div>
       </td>
-      <td className="table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 hover:text-gray-200 text-right">
+      <td className="table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 hover:text-gray-200 text-right">
         <div className="flex justify-center rounded-full drop-shadow-lg">
           <div>
             <input
@@ -204,7 +237,7 @@ function content({ projectRow }) {
               }
               placeholder="0"
               onChange={(e) => returnField(e.target.value)}
-              className=" block w-full border rounded sm:text-sm text-gray-500 text-center border-gray-400"
+              className=" block w-full border rounded sm:text-sm text-gray-500 text-center border-gray-400 border-gray-400 dark:bg-dark-level-two dark:text-dark-white"
             />
           </div>
         </div>
@@ -212,7 +245,7 @@ function content({ projectRow }) {
       <td
         className={classNames(
           toReducer.activeStorages.length == 0 ? 'pointer-events-none' : '',
-          'table-cell px-6 py-3 text-sm text-gray-500 font-medium'
+          'table-cell px-6 py-3 text-sm text-gray-500 font-medium dark:bg-dark-level-one'
         )}
       >
         <button
@@ -227,7 +260,7 @@ function content({ projectRow }) {
           )}
         >
           <LightningBoltIcon
-            className="h-4 w-4 text-gray-400 hover:text-yellow-400"
+            className="h-4 w-4 text-gray-400 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-400"
             aria-hidden="true"
           />
         </button>
@@ -236,12 +269,12 @@ function content({ projectRow }) {
           className={classNames(isEmpty ? 'pointer-events-none hidden' : '')}
         >
           <XIcon
-            className="h-4 w-4 text-gray-400 hover:text-red-400  "
+            className="h-4 w-4 text-gray-400 dark:text-gray-500 hover:text-red-400 dark:hover:text-red-400  "
             aria-hidden="true"
           />
         </button>
       </td>
-      <td className="hidden md:px-6 py-3 whitespace-nowrap text-right text-sm font-medium"></td>
+      <td className="hidden md:px-6 py-3 whitespace-nowrap text-right text-sm font-medium dark:bg-dark-level-one"></td>
     </>
   );
 }

@@ -139,7 +139,7 @@ function content() {
       <Disclosure
         as="section"
         aria-labelledby="filter-heading"
-        className="relative z-10 grid items-center border-b dark:bg-dark-level-one dark:border-opacity-50"
+        className="relative z-10 grid items-center border-b dark:bg-dark-level-one dark:border-opacity-50 "
       >
         <div className="relative col-start-1 row-start-1 py-4 flex justify-between">
           <div className="max-w-7xl flex items-center space-x-6 divide-x divide-gray-200 text-sm px-4 sm:px-6 lg:px-8">
@@ -147,7 +147,7 @@ function content() {
               <Menu as="div" className="relative inline-block ">
                 <div className="flex items-center divide-x divide-gray-200">
                   <div>
-                    <Menu.Button className="group inline-flex justify-center items-center text-gray-500 hover:text-gray-900">
+                    <Menu.Button className="group inline-flex justify-center items-center text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-500">
                       {fromReducer.sortValue == 'Default'
                         ? 'Sort'
                         : fromReducer.sortValue}
@@ -168,7 +168,7 @@ function content() {
                   leaveFrom="transform opacity-100 scale-100"
                   leaveTo="transform opacity-0 scale-95"
                 >
-                  <Menu.Items className="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-2xl bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <Menu.Items className="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-2xl bg-white ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-dark-level-three">
                     <div className="py-1">
                       {sortOptions.map((option) => (
                         <Menu.Item key={option.name}>
@@ -177,10 +177,10 @@ function content() {
                               to=""
                               className={classNames(
                                 option.name == fromReducer.sortValue
-                                  ? 'font-medium text-gray-900 pointer-events-none'
-                                  : 'text-gray-500',
+                                  ? 'font-medium text-gray-900 dark:text-gray-400 pointer-events-none'
+                                  : 'text-gray-500 ',
                                 active && option.name != fromReducer.sortValue
-                                  ? 'bg-gray-100'
+                                  ? 'bg-gray-100 dark:bg-dark-level-four'
                                   : '',
                                 'block px-4 py-2 text-sm'
                               )}
@@ -199,7 +199,7 @@ function content() {
             <div className="pl-6">
               <button
                 type="button"
-                className="text-gray-500"
+                className="text-gray-500 dark:text-gray-400"
                 onClick={() => dispatch(moveFromClearAll())}
               >
                 Clear all
@@ -209,7 +209,7 @@ function content() {
             <label htmlFor="search" className="sr-only">
               Search items
             </label>
-            <div className="relative rounded-md">
+            <div className="relative rounded-md focus:outline-none focus:outline-none">
               <div
                 className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
                 aria-hidden="true"
@@ -224,7 +224,7 @@ function content() {
                 name="search"
                 id="search"
                 value={fromReducer.searchInput}
-                className="block w-full pb-0.5  focus:outline-none  pl-9 sm:text-sm border-gray-300 rounded-md h-9"
+                className="block w-full pb-0.5  focus:outline-none dark:text-dark-white pl-9 sm:text-sm border-gray-300 h-7 dark:bg-dark-level-one dark:rounded-none dark:bg-dark-level-one dark:rounded-none"
                 placeholder="Search items"
                 spellCheck="false"
                 onChange={(e) =>
@@ -244,11 +244,11 @@ function content() {
                     inventory.storageInventory.length == 0
                       ? 'pointer-events-none border-gray-100'
                       : 'hover:shadow-sm border-gray-200 ',
-                    'order-1 ml-3 inline-flex items-center px-4 py-2 border   text-sm font-medium rounded-md text-gray-500 bg-white hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0'
+                    'order-1 ml-3 inline-flex items-center px-4 py-2 border dark:bg-dark-level-three dark:border-none dark:border-opacity-0 dark:text-dark-white   text-sm font-medium rounded-md text-gray-500 bg-white hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0'
                   )}
                 >
                   <DocumentDownloadIcon
-                    className="mr-3 h-4 w-4 text-gray-500"
+                    className="mr-3 h-4 dark:text-dark-white w-4 text-gray-500"
                     aria-hidden="true"
                   />
                   Download
@@ -291,12 +291,12 @@ function content() {
                     fromReducer.totalItemsToMove == 0
                       ? 'pointer-events-none border-gray-100'
                       : 'shadow-sm border-gray-200',
-                    'order-1 ml-3 inline-flex items-center px-4 py-2 border   text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0'
+                    'order-1 ml-3 inline-flex items-center px-4 py-2 border  dark:bg-dark-level-three dark:border-none dark:border-opacity-0 dark:text-dark-white text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0'
                   )}
                 >
                   Move
                   <SaveAsIcon
-                    className="ml-3 h-4 w-4 text-gray-700"
+                    className="ml-3 dark:text-dark-white h-4 w-4 text-gray-700"
                     aria-hidden="true"
                   />
                 </Link>

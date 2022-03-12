@@ -17,9 +17,9 @@ function content() {
   return (
     <>
       {/* Page title & actions */}
-      <div className="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
+      <div className="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8 dark:border-opacity-50">
         <div className="flex-1 min-w-0">
-          <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate">
+          <h1 className="text-lg font-medium leading-6 text-gray-900 dark:text-dark-white  sm:truncate">
             Inventory
           </h1>
         </div>
@@ -27,13 +27,13 @@ function content() {
           <button
             type="button"
             onClick={() => refreshInventory()}
-            className=" order-0 inline-flex items-center px-4 py-2 border border-transparent hover:bg-gray-50 focus:outline-none sm:order-1 sm:ml-3"
+            className=" order-1 ml-3 inline-flex items-center px-4 py-2 border dark:hover:bg-dark-level-four dark:bg-dark-level-one dark:border-none dark:border-opacity-0  text-sm font-medium rounded-md text-gray-500 bg-white hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0"
           >
             {getLoadingButton ? (
               <LoadingButton />
             ) : (
               <RefreshIcon
-                className="h-4 w-4 text-gray-500"
+                className="h-4 w-4 text-gray-500 dark:text-dark-white"
                 aria-hidden="true"
               />
             )}

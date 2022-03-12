@@ -284,7 +284,7 @@ export default function LoginForm({ isLock, replaceLock }) {
 
                 <label
                   htmlFor="remember-me"
-                  className="ml-2 block text-sm text-gray-900"
+                  className="ml-2 block text-sm text-gray-900 dark:text-dark-white"
                 >
                   Remember for later
                 </label>
@@ -293,7 +293,7 @@ export default function LoginForm({ isLock, replaceLock }) {
               <div className="flex items-center">
                 <label
                   htmlFor="sharedSecret"
-                  className="mr-2 block text-sm text-gray-900"
+                  className="mr-2 block text-sm text-gray-900 dark:text-dark-white"
                 >
                   Show secret field
                 </label>

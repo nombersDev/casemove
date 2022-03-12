@@ -109,7 +109,7 @@ export default function MoveModal() {
     setID(modalData.modalPayload.itemID);
     runModal();
   }
-  const devMode = false;
+  const devMode = true;
 
   return (
     <Transition.Root
@@ -156,18 +156,18 @@ export default function MoveModal() {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
+            <div className="inline-block align-bottom bg-white bg-dark-level-two rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
               <div>
-                <div className="mx-auto flex items-center  justify-center h-14 w-14 rounded-full bg-blue-500">
-                  <span className="animate-ping absolute inline-flex h-14 w-14 rounded-full bg-blue-500 opacity-75"></span>
-                  <span className="text-white">
+                <div className="mx-auto flex items-center  justify-center h-14 w-14 rounded-full bg-blue-500 dark:bg-blue-700">
+                  <span className="animate-ping absolute inline-flex h-14 w-14 rounded-full dark:bg-blue-700 opacity-75"></span>
+                  <span className="text-white dark:text-dark-white">
                     {modalData.modalPayload['number']}
                   </span>
                 </div>
                 <div className="mt-3 text-center sm:mt-5">
                   <Dialog.Title
                     as="h3"
-                    className="text-lg leading-6 font-medium text-gray-900"
+                    className="text-lg leading-6 font-medium text-gray-900 dark:text-dark-white"
                   >
                     {modalData.modalPayload['name']}
                   </Dialog.Title>
@@ -194,7 +194,7 @@ export default function MoveModal() {
               <div className="mt-5 sm:mt-6">
                 <button
                   type="button"
-                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
+                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm dark:bg-dark-level-two dark:text-dark-white"
                   onClick={() => cancelMe()}
                 >
                   Cancel

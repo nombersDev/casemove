@@ -116,12 +116,12 @@ function content() {
             type="button"
             onClick={() => getAllStorages()}
             className=
-              'order-1 ml-3  order-1 inline-flex items-center px-4 py-2 hover:border hover:shadow-sm  text-sm font-medium rounded-md text-gray-700  hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0'
+              'order-1 ml-3 dark:text-gray-500 order-1 inline-flex items-center px-4 py-2 hover:border hover:shadow-sm dark:hover:bg-dark-level-four text-sm font-medium rounded-md text-gray-700  hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0'
 
           >
 
             <CheckIcon
-                    className=" h-4 w-4 text-gray-700 dark:text-dark-white"
+                    className=" h-4 w-4 text-gray-700 dark:text-dark-white "
                     aria-hidden="true"
                   />
           </Link>
@@ -130,7 +130,7 @@ function content() {
             type="button"
             onClick={() => unMarkAllStorages()}
             className=
-              'order-1 ml-3  order-1 inline-flex items-center px-4 py-2 hover:border hover:shadow-sm  text-sm font-medium rounded-md text-gray-700  hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0'
+              'order-1 ml-3  order-1 inline-flex items-center px-4 py-2 hover:border hover:shadow-sm dark:hover:bg-dark-level-four  text-sm font-medium rounded-md text-gray-700  hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0'
 
           >
 
@@ -143,7 +143,7 @@ function content() {
           <Link
             to=""
             type="button"
-            className="order-last inline-flex  items-center px-4 py-2 border border-transparent hover:bg-gray-50 focus:outline-none"
+            className="order-last inline-flex  items-center px-4 py-2 border border-transparent dark:hover:bg-dark-level-four hover:bg-gray-50 focus:outline-none"
             onClick={() => refreshInventory()}
           >
             {getLoadingButton ? (
@@ -162,14 +162,14 @@ function content() {
             checked={localHide}
             onChange={() => dispatch(moveFromSetHide())}
             className={classNames(
-              localHide ? 'bg-indigo-600' : 'bg-gray-200',
+              localHide ? 'bg-indigo-600 dark:bg-indigo-700' : 'bg-gray-200',
               'relative inline-flex mr-3 flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none'
             )}
           >
             <span
               className={classNames(
                 localHide ? 'translate-x-5' : 'translate-x-0',
-                'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
+                'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white  shadow transform ring-0 transition ease-in-out duration-200'
               )}
             >
               <span
@@ -268,7 +268,7 @@ function content() {
                       className={classNames(
                         fromSelector.activeStorages.includes(project.item_id)
                           ? ''
-                          : 'opacity-50',
+                          : 'opacity-50 dark:opacity-40',
                         'max-w-none h-11 w-11  object-cover'
                       )}
                       src={
@@ -338,7 +338,7 @@ function content() {
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="z-10 mx-3 origin-top-right absolute right-10 top-3 w-48 mt-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none">
+                      <Menu.Items className="z-10 mx-3 origin-top-right absolute dark:bg-dark-level-three right-10 top-3 w-48 mt-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none">
                         <div className="py-1">
                           <Menu.Item>
                             {({ active }) => (
@@ -356,9 +356,9 @@ function content() {
                                 }
                                 className={classNames(
                                   active
-                                    ? 'bg-gray-100 text-gray-900'
+                                    ? 'bg-gray-100 text-gray-900 dark:bg-dark-level-four'
                                     : 'text-gray-700',
-                                  'block px-4 py-2 text-sm'
+                                  'block px-4 py-2 text-sm dark:text-dark-white'
                                 )}
                               >
                                 {' '}
