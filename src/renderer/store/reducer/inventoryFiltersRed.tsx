@@ -1,5 +1,5 @@
 const initialState = {
-  inventoryFilter: [] as any,
+  inventoryFilter: ['1item_moveable'] as any,
   sortValue: 'Default',
   inventoryFiltered: [] as any,
   searchInput: '',

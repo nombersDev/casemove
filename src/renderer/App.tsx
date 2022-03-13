@@ -32,18 +32,20 @@ import LoginPage from './views/login/login';
 import { useDispatch, useSelector } from 'react-redux';
 import { signOut } from './store/actions/userStatsActions';
 import { handleUserEvent } from './store/handleMessage';
-import Logo from './components/content/shared/logo 2';
+import Logo from './components/content/shared/iconsLogo/logo 2';
 import ToContent from './components/content/storageUnits/to/toHolder';
 import { classNames } from './components/content/shared/inventoryFunctions';
 import { filterInventorySetSort } from './store/actions/filtersInventoryActions';
 import settingsPage from './views/settings/settings';
 import {
-  setCurrencyRate,
+  setDarkMode,
   setFastMove,
   setLocale,
+  setOS,
   setSourceValue,
 } from './store/actions/settings';
 import { pricing_addPrice } from './store/actions/pricingActions';
+import TitleBarWindows from './components/content/shared/titleBarWindows';
 DocumentDownloadIcon;
 
 //{ name: 'Reports', href: '/reports', icon: DocumentDownloadIcon, current: false }
@@ -65,7 +67,6 @@ const navigation = [
 
 function AppContent() {
   SearchIcon;
-  document.documentElement.classList.add('dark')
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -88,6 +89,12 @@ function AppContent() {
   const filterDetails = useSelector(
     (state: any) => state.inventoryFiltersReducer
   );
+
+  if (settingsData.darkmode) {
+    document.documentElement.classList.add('dark')
+  } else {
+    document.documentElement.classList.remove('dark')
+  }
 
   function updateAutomation(itemHref) {
     setSideMenuOption(itemHref);
@@ -123,6 +130,16 @@ function AppContent() {
   // First time setup
   async function setFirstTimeSettings() {
     if (settingsData.currencyPrice == {} || settingsData.source == undefined) {
+      // OS
+      await window.electron.store.get('os').then((returnValue) => {
+        console.log('OS', returnValue);
+        dispatch(setOS(returnValue));
+      });
+      // Darkmode
+      await window.electron.store.get('darkmode.value').then((returnValue) => {
+        console.log('darkmode.value', returnValue);
+        dispatch(setDarkMode(returnValue));
+      });
       // Fastmove
       console.log('Getting settings');
       let storedFastMove = await window.electron.store.get('fastmove');
@@ -143,13 +160,7 @@ function AppContent() {
         }
         dispatch(setSourceValue(valueToWrite));
       });
-      // Currency rate
-      await window.electron.ipcRenderer
-        .getCurrencyRate()
-        .then((returnValue) => {
-          console.log('currencyrate', returnValue);
-          dispatch(setCurrencyRate(returnValue[0], returnValue[1]));
-        });
+      
       await window.electron.store.get('locale').then((returnValue) => {
         dispatch(setLocale(returnValue));
       });
@@ -225,6 +236,7 @@ function AppContent() {
         ```
       */}
       <div className="min-h-full dark:bg-dark-level-one h-screen">
+        {settingsData.os != 'win32' ? '' : <TitleBarWindows />}
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
             as="div"
@@ -419,7 +431,7 @@ function AppContent() {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="z-10 mx-3 origin-top absolute right-0 left-0 mt-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none">
+                <Menu.Items className="z-10 mx-3 origin-top absolute right-0 left-0 mt-1 rounded-md shadow-lg bg-white dark:bg-dark-level-four ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 dark:divide-opacity-50 focus:outline-none">
                   <div className="py-1">
                     <Menu.Item>
                       {({ active }) => (
@@ -427,8 +439,8 @@ function AppContent() {
                           to="/settings"
                           className={classNames(
                             active
-                              ? 'bg-gray-100 text-gray-900'
-                              : 'text-gray-700',
+                              ? 'bg-gray-100 text-gray-900 dark:bg-dark-level-three dark:text-dark-white'
+                              : 'text-gray-700 dark:text-dark-white',
                             'block px-4 py-2 text-sm'
                           )}
                         >
@@ -445,8 +457,8 @@ function AppContent() {
                           onClick={() => logOut()}
                           className={classNames(
                             active
-                              ? 'bg-gray-100 text-gray-900'
-                              : 'text-gray-700',
+                            ? 'bg-gray-100 text-gray-900 dark:bg-dark-level-three dark:text-dark-white'
+                            : 'text-gray-700 dark:text-dark-white',
                             'block px-4 py-2 text-sm'
                           )}
                         >
@@ -578,10 +590,10 @@ function AppContent() {
         {/* Main column */}
         <div className="lg:pl-64 flex flex-col">
           {/* Search header */}
-          <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:hidden">
+          <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:hidden dark:bg-dark-level-two">
             <button
               type="button"
-              className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset lg:hidden"
+              className="px-4 border-r border-gray-200 text-gray-500 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-inset lg:hidden"
               onClick={() => setSidebarOpen(true)}
             >
               <span className="sr-only">Open sidebar</span>
@@ -598,7 +610,7 @@ function AppContent() {
                       className="inline-flex items-center bg-green-200 px-6 shadow-md py-3 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
                     >
                       <RefreshIcon
-                        className="mr-3 h-4 w-4 text-green-900"
+                        className="mr-3 h-4 w-4 text-green-900 "
                         style={{ marginLeft: -25 }}
                         aria-hidden="true"
                       />

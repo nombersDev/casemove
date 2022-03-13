@@ -29,7 +29,7 @@ export default function UserGrid({clickOnProfile}) {
     updateFunction()
   }
   return (
-    <div className="overflow-x-auto h-screen dark:bg-dark-level-two">
+    <div className="overflow-x-auto h-screen-fixed bg-gray-50 dark:bg-dark-level-two">
       <div className="grid grid-cols-1 py-10 px-4 gap-4 overflow-y-auto">
         {getUsers.length == 0 ? (
           <div

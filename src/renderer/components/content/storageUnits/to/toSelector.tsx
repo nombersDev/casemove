@@ -219,7 +219,7 @@ function content() {
                     </div>
                   </Link>
                   <Menu as="div" className="flex-shrink-0 pr-2">
-                    <Menu.Button className="w-8 h-8 inline-flex items-center justify-center text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600">
+                    <Menu.Button className="w-8 h-8 inline-flex items-center justify-center text-gray-400 rounded-full hover:text-gray-500">
                       <span className="sr-only">Open options</span>
                       <DotsVerticalIcon
                         className="w-5 h-5"

@@ -31,3 +31,15 @@ export const setCurrencyRate = (currency, rate) => {
       }
   }
 }
+export const setOS = (os) => {
+  return {
+      type: 'SETTINGS_SET_OS',
+      payload: os
+  }
+}
+export const setDarkMode = (darkmode) => {
+  return {
+      type: 'SETTINGS_SET_DARKMODE',
+      payload: darkmode
+  }
+}

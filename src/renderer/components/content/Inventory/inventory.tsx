@@ -27,7 +27,7 @@ function content() {
           <button
             type="button"
             onClick={() => refreshInventory()}
-            className=" order-1 ml-3 inline-flex items-center px-4 py-2 border dark:hover:bg-dark-level-four dark:bg-dark-level-one dark:border-none dark:border-opacity-0  text-sm font-medium rounded-md text-gray-500 bg-white hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0"
+            className=" order-1 ml-3 inline-flex items-center px-4 py-2 border dark:hover:bg-dark-level-four dark:bg-dark-level-one border-none dark:border-opacity-0  text-sm font-medium rounded-md text-gray-500 bg-white hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0"
           >
             {getLoadingButton ? (
               <LoadingButton />
@@ -54,7 +54,7 @@ function content() {
 
       {/* Projects table (small breakpoint and up) */}
       <div className="hidden sm:block">
-        <div className="align-middle inline-block min-w-full border-b border-gray-200">
+        <div className="align-middle inline-block min-w-full border-b border-gray-200 dark:border-opacity-50">
           <InventoryRowsComponent />
         </div>
       </div>

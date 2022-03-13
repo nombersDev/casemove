@@ -1,12 +1,13 @@
 import { LockClosedIcon } from '@heroicons/react/solid';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { LoadingButton } from 'renderer/components/content/shared/animations';
 import combineInventory, {
   classNames,
 } from 'renderer/components/content/shared/inventoryFunctions';
 import NotificationElement from 'renderer/components/content/shared/modals & notifcations/notification';
 import SteamLogo from 'renderer/components/content/shared/steamLogo';
+import { filterInventorySetSort } from 'renderer/store/actions/filtersInventoryActions';
 import { setInventoryAction } from 'renderer/store/actions/inventoryActions';
 import { setCurrencyRate, setLocale, setSourceValue } from 'renderer/store/actions/settings';
 import { signIn } from 'renderer/store/actions/userStatsActions';
@@ -27,6 +28,9 @@ export default function LoginForm({ isLock, replaceLock }) {
   const [storePassword, setStorePassword] = useState(true);
   const [getLoadingButton, setLoadingButton] = useState(false);
   const [secretEnabled, setSecretEnabled] = useState(false);
+  const filterDetails = useSelector(
+    (state: any) => state.inventoryFiltersReducer
+  );
   // Handle login
   const dispatch = useDispatch();
   // Return 1 = Success
@@ -151,6 +155,13 @@ export default function LoginForm({ isLock, replaceLock }) {
           combinedInventory: combined,
         })
       );
+      dispatch(
+        await filterInventorySetSort(
+          combined,
+          filterDetails,
+          filterDetails.sortValue
+        )
+      );
     } else {
       setAuthCode('');
     }
@@ -213,7 +224,7 @@ export default function LoginForm({ isLock, replaceLock }) {
                   spellCheck={false}
                   required
                   value={isLock == '' ? username : isLock}
-                  className="appearance-none dark:bg-dark-level-one dark:text-dark-white  dark:border-opacity-50 rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  className="appearance-none dark:bg-dark-level-one dark:text-dark-white dark:bg-dark-level-one  dark:border-opacity-50 rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                   placeholder="Username"
                 />
               </div>
@@ -309,7 +320,7 @@ export default function LoginForm({ isLock, replaceLock }) {
 
             <div>
               <button
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none dark:focus:ring-0 dark:focus:ring-offset-0 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 "
                 onClick={() => onSubmit()}
                 type="button"
               >
