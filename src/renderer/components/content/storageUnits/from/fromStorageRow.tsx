@@ -198,7 +198,7 @@ function content({ projectRow }) {
             {projectRow.stickers?.map((sticker, index) => (
               <Link
                 to={{
-                  pathname: `https://steamcommunity.com/market/listings/730/Sticker | ${sticker.sticker_name}`,
+                  pathname: `https://steamcommunity.com/market/listings/730/${sticker.sticker_type} | ${sticker.sticker_name}`,
                 }}
                 target="_blank"
               >
