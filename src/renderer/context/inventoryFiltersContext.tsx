@@ -30,7 +30,6 @@ export async function filterInventory(
   }
 
   // First and third check
-  console.log(filtersData);
 
   for (const [, value] of Object.entries(filtersData)) {
     let valued = value as String;

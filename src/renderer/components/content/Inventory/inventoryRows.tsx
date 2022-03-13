@@ -4,6 +4,7 @@ import {
   PencilIcon,
   TagIcon,
 } from '@heroicons/react/solid';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { setRenameModal } from 'renderer/store/actions/modalMove actions';
@@ -12,8 +13,10 @@ import RenameModal from '../shared/modals & notifcations/modalRename';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
+
 const now = new Date();
 function content() {
+  const [stickerHover, setStickerHover] = useState('');
   const inventory = useSelector((state: any) => state.inventoryReducer);
   const inventoryFilters = useSelector(
     (state: any) => state.inventoryFiltersReducer
@@ -55,7 +58,7 @@ function content() {
         </div>
         <ul
           role="list"
-          className="mt-3 border-t border-gray-200 divide-y divide-gray-100"
+          className="mt-3 border-t border-gray-200 divide-y divide-gray-100 dark:divide-gray-500"
         >
           {inventoryToUse.map((project) => (
             <li key={project.item_id}>
@@ -84,48 +87,48 @@ function content() {
       <table className="min-w-full">
         <thead>
           <tr className=" border-gray-200 sticky top-0">
-            <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-              QTY
-            </th>
-            <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               <span className="lg:pl-2">Product</span>
             </th>
-            <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Price
                 </th>
-            <th className="hidden xl:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="hidden xl:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Stickers/Patches
             </th>
-            <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               Tradehold
             </th>
-            <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="table-cell px-6 py-3 border-b dark:border-opacity-50 dark:bg-dark-level-two border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              QTY
+            </th>
+            <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               Moveable
             </th>
-            <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               Link
             </th>
-            <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 dark:border-opacity-50 dark:bg-dark-level-two text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               <span className="md:hidden">Link</span>
             </th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-100">
-          {inventoryToUse.map((project) => (
+        <tbody className="bg-white divide-y divide-gray-100 dark:bg-dark-level-one dark:divide-gray-500">
+          {inventoryToUse.map((projectRow) => (
             <tr
-              key={project.item_id}
+              key={projectRow.item_id}
               className={classNames(
-                project.item_name
+                projectRow.item_name
                   ?.toLowerCase()
                   .includes(
                     inventoryFilters.searchInput?.toLowerCase().trim()
                   ) ||
-                  project.item_customname
+                  projectRow.item_customname
                     ?.toLowerCase()
                     .includes(
                       inventoryFilters.searchInput?.toLowerCase().trim()
                     ) ||
-                    project.item_wear_name
+                    projectRow.item_wear_name
                       ?.toLowerCase()
                       .includes(
                         inventoryFilters.searchInput?.toLowerCase().trim()
@@ -136,16 +139,6 @@ function content() {
                 'hover:shadow-inner'
               )}
             >
-              <td className="table-cell px-6 py-3 whitespace-nowrap font-medium text-sm text-gray-500 text-right">
-                <div
-                  className={classNames(
-                    project.bgColorClass.replace('bg', 'border'),
-                    'bg-white border-2 font-medium text-black border-solid rounded-full w-8 h-8 flex items-center justify-center font-mono'
-                  )}
-                >
-                  {project.combined_QTY}
-                </div>
-              </td>
               <td className="px-6 py-3 max-w-0 w-full whitespace-nowrap overflow-hidden text-sm font-normal text-gray-900">
                 <div className="flex items-center space-x-3 lg:pl-2">
                   {/* Projects list (only on smallest breakpoint)
@@ -154,22 +147,43 @@ function content() {
                               aria-hidden="true"
                             /> */}
                   <div className="flex flex-shrink-0 -space-x-1">
-                    <img
-                      className="max-w-none h-11 w-11 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300"
-                      src={
-                        'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
-                        project.item_url +
-                        '.png'
-                      }
-                    />
+                  {
+            projectRow.item_moveable != true ? <div className="flex flex-shrink-0 -space-x-1">
+            <img
+              className="max-w-none h-11 w-11 dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300"
+              src={
+                'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
+                projectRow.item_url +
+                '.png'
+              }
+            />
+          </div> :
+          <Link
+          to={{
+            pathname: `https://steamcommunity.com/market/listings/730/${projectRow.item_paint_wear == undefined ? projectRow.item_name : projectRow.item_name + ' (' + projectRow.item_wear_name + ')'}`,
+          }}
+          target="_blank"
+        >
+          <div className="flex flex-shrink-0 -space-x-1">
+            <img
+              className="max-w-none h-11 w-11 dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300"
+              src={
+                'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
+                projectRow.item_url +
+                '.png'
+              }
+            />
+          </div>
+        </Link>
+          }
                   </div>
                   <span>
-                    <span className="flex">
-                      {project.item_name !== '' ? (
-                        project.item_customname !== null ? (
-                          project.item_customname
+                    <span className="flex dark:text-dark-white">
+                      {projectRow.item_name !== '' ? (
+                        projectRow.item_customname !== null ? (
+                          projectRow.item_customname
                         ) : (
-                          project.item_name
+                          projectRow.item_name
                         )
                       ) : (
                         <span>
@@ -185,7 +199,7 @@ function content() {
                             className="px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             onClick={() =>
                               navigator.clipboard.writeText(
-                                JSON.stringify(project)
+                                JSON.stringify(projectRow)
                               )
                             }
                           >
@@ -194,25 +208,25 @@ function content() {
                           </button>
                         </span>
                       )}
-                      {project.item_name !== '' &&
-                      project.item_customname !== null &&
-                      !project.item_url.includes('casket') ? (
+                      {projectRow.item_name !== '' &&
+                      projectRow.item_customname !== null &&
+                      !projectRow.item_url.includes('casket') ? (
                         <TagIcon className="h-3 w-3  ml-1" />
                       ) : (
                         ''
                       )}
 
-                      {project.item_url.includes('casket') ? (
+                      {projectRow.item_url.includes('casket') ? (
                         <Link
                           to=""
                           className="text-gray-500"
                           onClick={() =>
                             dispatch(
                               setRenameModal(
-                                project.item_id,
-                                project.item_customname !== null
-                                  ? project.item_customname
-                                  : project.item_name
+                                projectRow.item_id,
+                                projectRow.item_customname !== null
+                                  ? projectRow.item_customname
+                                  : projectRow.item_name
                               )
                             )
                           }
@@ -225,24 +239,24 @@ function content() {
                     </span>
                     <span
                       className="text-gray-500 "
-                      title={project.item_paint_wear}
+                      title={projectRow.item_paint_wear}
                     >
-                      {project.item_customname !== null
-                        ? project.item_storage_total !== undefined
-                          ? project.item_name +
+                      {projectRow.item_customname !== null
+                        ? projectRow.item_storage_total !== undefined
+                          ? projectRow.item_name +
                             ' (' +
-                            project.item_storage_total +
+                            projectRow.item_storage_total +
                             ')'
-                          : project.item_name
+                          : projectRow.item_name
                         : ''}
 
-                      {project.item_customname !== null &&
-                      project.item_paint_wear !== undefined
+                      {projectRow.item_customname !== null &&
+                      projectRow.item_paint_wear !== undefined
                         ? ' - '
                         : ''}
 
-                      {project.item_paint_wear !== undefined
-                        ? project.item_wear_name
+                      {projectRow.item_paint_wear !== undefined
+                        ? projectRow.item_wear_name
                         : ''}
                       {/*
                       {isShown == project.item_id  && project.item_paint_wear !== undefined?
@@ -254,55 +268,78 @@ function content() {
               </td>
               <td className="table-cell px-6 py-3 text-sm text-gray-500 font-medium">
                 <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
-                  <div className="flex flex-shrink-0 -space-x-1 text-gray-500 font-normal">
-                    {project.item_moveable ? pricesResult.prices[project.item_name] == undefined ||
-                    project.combined_QTY == 1
-                      ? new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(pricesResult.prices[project.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency] ? pricesResult.prices[project.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency] : 0)
-                      : new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(Math.round(project.combined_QTY * pricesResult.prices[project.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency])
+                  <div className="flex flex-shrink-0 -space-x-1 text-gray-500 dark:text-gray-400 font-normal">
+                    {projectRow.item_moveable ? pricesResult.prices[projectRow.item_name] == undefined ||
+                    projectRow.combined_QTY == 1
+                      ? new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(pricesResult.prices[projectRow.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency] ? pricesResult.prices[projectRow.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency] : 0)
+                      : new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(Math.round(projectRow.combined_QTY * pricesResult.prices[projectRow.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency])
                         ) : ''}
                   </div>
                 </div>
                 <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
-                  <div className="flex flex-shrink-0 -space-x-1 text-gray-400 text-xs font-normal">
-                    {pricesResult.prices[project.item_name] == undefined
+                  <div className="flex flex-shrink-0 -space-x-1 text-gray-500 text-xs font-normal">
+                    {pricesResult.prices[projectRow.item_name] == undefined
                       ? ''
-                      : project.combined_QTY == 1
+                      : projectRow.combined_QTY == 1
                       ? ''
-                      : new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(pricesResult.prices[project.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency])}
+                      : new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(pricesResult.prices[projectRow.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency])}
                   </div>
                 </div>
               </td>
-              <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 font-medium">
-                <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
-                  <div className="flex flex-shrink-0 -space-x-1">
-                    {project.stickers.map((sticker, index) => (
-                      <img
-                        key={index}
-                        className="max-w-none h-8 w-8 rounded-full ring-2 object-cover ring-transparent bg-gradient-to-t from-gray-100 to-gray-300"
-                        src={
-                          'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
-                          sticker.sticker_url +
-                          '.png'
-                        }
-                        alt={sticker.sticker_name}
-                        title={sticker.sticker_name}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </td>
+              <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
+        <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
+          <div className="flex flex-shrink-0 -space-x-1">
+            {projectRow.stickers?.map((sticker, index) => (
+              <Link
+                to={{
+                  pathname: `https://steamcommunity.com/market/listings/730/${sticker.sticker_type} | ${sticker.sticker_name}`,
+                }}
+                target="_blank"
+              >
+                <img
+                  key={index}
+                  onMouseEnter={() =>
+                    setStickerHover(index + projectRow.item_id)
+                  }
+                  onMouseLeave={() => setStickerHover('')}
+                  className={classNames(
+                    stickerHover == index + projectRow.item_id
+                      ? 'transform-gpu hover:-translate-y-1 hover:scale-110'
+                      : '',
+                    'max-w-none h-8 w-8 rounded-full hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-green-600 ring-2 object-cover ring-transparent bg-gradient-to-t from-gray-100 to-gray-300 dark:from-gray-300 dark:to-gray-400'
+                  )}
+                  src={
+                    'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
+                    sticker.sticker_url +
+                    '.png'
+                  }
+                  alt={sticker.sticker_name}
+                  title={sticker.sticker_name}
+                />
+              </Link>
+            ))}
+          </div>
+        </div>
+      </td>
 
-              <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-center">
-                {project.trade_unlock !== undefined
+              <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center">
+                {projectRow.trade_unlock !== undefined
                   ? Math.ceil(
-                      (project.trade_unlock.getTime() - now.getTime()) /
+                      (projectRow.trade_unlock.getTime() - now.getTime()) /
                         (1000 * 60 * 60 * 24)
                     ) + ' days'
                   : ''}
               </td>
-              <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-right">
+              <td className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
+        <div className="flex items-center space-x-2 justify-center rounded-full  drop-shadow-lg">
+          <div className="flex flex-shrink-0 -space-x-1 font-normal">
+            {projectRow.combined_QTY}
+          </div>
+        </div>
+      </td>
+              <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-right">
                 <div className="flex justify-center rounded-full drop-shadow-lg">
-                  {project.item_moveable == true ? (
+                  {projectRow.item_moveable == true ? (
                     <CheckCircleIcon
                       className="h-5 w-5 text-green-500"
                       aria-hidden="true"
@@ -316,18 +353,14 @@ function content() {
                 <div className="flex justify-center rounded-full drop-shadow-lg">
                   <Link
                     to={{
-                      pathname: `https://steamcommunity.com/profiles/${userDetails.steamID}/inventory/#730_2_${project.combined_ids[0]}`,
+                      pathname: `https://steamcommunity.com/profiles/${userDetails.steamID}/inventory/#730_2_${projectRow.combined_ids[0]}`,
                     }}
                     target="_blank"
                   >
-                    {project.combined_ids.length == 1 ? (
-                      <ExternalLinkIcon
-                        className="h-5 w-5 text-gray-500 group-hover:text-gray-100"
+                    <ExternalLinkIcon
+                        className="h-5 w-5 text-gray-500 dark:text-gray-400 group-hover:text-gray-100"
                         aria-hidden="true"
                       />
-                    ) : (
-                      ''
-                    )}
                   </Link>
                 </div>
               </td>

@@ -1,5 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
+
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
     myPing(message = 'ping') {
@@ -31,6 +32,7 @@ contextBridge.exposeInMainWorld('electron', {
         );
       });
     },
+    
 
     // User account
     deleteAccountDetails(username) {
@@ -62,6 +64,10 @@ contextBridge.exposeInMainWorld('electron', {
     // User commands
     logUserOut() {
       ipcRenderer.send('signOut');
+    },
+    // User commands
+    handleWindowsActions(action_type) {
+      ipcRenderer.send('windowsActions', action_type);
     },
     // USER CONNECTIONS
     loginUser(
@@ -202,7 +208,8 @@ contextBridge.exposeInMainWorld('electron', {
         'electron-store-get',
         'electron-store-set',
         'pricing',
-        'getPrice'
+        'getPrice',
+        'windowsActions'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
@@ -226,7 +233,8 @@ contextBridge.exposeInMainWorld('electron', {
         'electron-store-get',
         'electron-store-set',
         'pricing',
-        'getPrice'
+        'getPrice',
+        'windowsActions'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`

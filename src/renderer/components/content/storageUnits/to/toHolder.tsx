@@ -31,9 +31,9 @@ function StorageUnits() {
   return (
     <>
       {/* Page title & actions */}
-      <div className="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
+      <div className="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8 dark:border-opacity-50 ">
         <div className="flex-1 min-w-0">
-          <h1 className="text-lg font-medium leading-6 mt-2 mb-2 text-gray-900 sm:truncate">
+          <h1 className="text-lg font-medium dark:text-dark-white leading-6 mt-2 mb-2 text-gray-900 sm:truncate">
             Transfer to storage units
           </h1>
         </div>
@@ -46,38 +46,38 @@ function StorageUnits() {
       {/* Projects table (small breakpoint and up) */}
 
       <div className="hidden sm:block">
-        <div className="align-middle inline-block min-w-full border-b border-gray-200">
+        <div className="align-middle inline-block min-w-full border-b border-gray-200 dark:border-opacity-50 dark:text-gray-400">
           <table className="min-w-full">
             <thead>
               <tr className=" border-gray-200 sticky top-0">
-                <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 dark:border-opacity-50 dark:bg-dark-level-two text-left text-xs font-medium  uppercase tracking-wider">
                   <span className="lg:pl-2">Product</span>
                 </th>
-                <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 dark:border-opacity-50 dark:bg-dark-level-two text-center text-xs font-medium  uppercase tracking-wider">
                   Price
                 </th>
 
-                <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-center text-xs font-medium  uppercase tracking-wider">
                   Stickers/Patches
                 </th>
-                <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-center text-xs font-medium  uppercase tracking-wider">
                   Tradehold
                 </th>
-                <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 dark:border-opacity-50 dark:bg-dark-level-two text-center text-xs font-medium  uppercase tracking-wider">
                   QTY
                 </th>
-                <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-center text-xs font-medium  uppercase tracking-wider">
                   move
                 </th>
-                <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 dark:border-opacity-50 dark:bg-dark-level-two text-center text-xs font-medium  uppercase tracking-wider">
                   <span className="md:hidden">move</span>
                 </th>
-                <th className="md:hidden table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="md:hidden table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-center text-xs font-medium uppercase tracking-wider">
                   <span className="md:hidden"></span>
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-100">
+            <tbody className="bg-white divide-y divide-gray-100 dark:divide-gray-500 dark:bg-dark-level-one">
               {inventoryMoveable.map((project) => (
                 <tr
                   key={project.item_id}

@@ -37,7 +37,7 @@ function content() {
 
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8">
+    <div className="px-4 sm:px-6 lg:px-8 dark:bg-dark-level-one">
       <RenameModal />
       <div className="border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between ">
         <h2 className="text-gray-500 text-xs font-medium uppercase tracking-wide">
@@ -47,19 +47,19 @@ function content() {
           <Link
             to=""
             type="button"
-            className="order-0 inline-flex items-center px-4 py-2 border border-transparent hover:bg-gray-50 focus:outline-none sm:order-1 sm:ml-3"
+            className="order-last inline-flex  items-center px-4 py-2 border border-transparent dark:hover:bg-dark-level-four hover:bg-gray-50 focus:outline-none"
             onClick={() => refreshInventory()}
           >
-            <RefreshIcon className="h-4 w-4 text-gray-500" aria-hidden="true" />
+            <RefreshIcon className="h-4 w-4 text-gray-500 dark:text-dark-white" aria-hidden="true" />
           </Link>
-          <span className="mr-3 text-gray-500 text-xs font-medium uppercase tracking-wide">
+          <span className="mr-3 text-gray-500 text-xs dark:text-dark-white font-medium uppercase tracking-wide">
             Hide empty
           </span>
           <Switch
             checked={localHide}
             onChange={() => dispatch(moveToSetHide())}
             className={classNames(
-              localHide ? 'bg-indigo-600' : 'bg-gray-200',
+              localHide ? 'bg-indigo-600 dark:bg-indigo-700' : 'bg-gray-200',
               'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none'
             )}
           >
@@ -155,14 +155,14 @@ function content() {
                 >
                   <div
                     className={classNames(
-                      'flex-shrink-0 h-full  flex items-center justify-center w-16 text-white border-t border-l border-b border-gray-200 rounded-l-md'
+                      'flex-shrink-0 h-full  flex items-center justify-center w-16 dark:border-opacity-50 text-white border-t border-l border-b border-gray-200 rounded-l-md dark:bg-dark-level-two'
                     )}
                   >
                     <img
                       className={classNames(
                         toSelector.activeStorages.includes(project.item_id)
                           ? ''
-                          : 'opacity-50',
+                          : 'opacity-50 dark:opacity-40',
                         'max-w-none h-11 w-11  object-cover'
                       )}
                       src={
@@ -173,7 +173,7 @@ function content() {
                     />
                   </div>
                 </Link>
-                <div className="flex-1 flex items-center justify-between border-t border-r border-b border-gray-200 bg-white rounded-r-md truncate">
+                <div className="flex-1 dark:bg-dark-level-two dark:border-opacity-50 flex items-center justify-between border-t border-r border-b border-gray-200 bg-white rounded-r-md truncate">
                   <Link
                     to=""
                     onClick={() =>
@@ -189,7 +189,7 @@ function content() {
                     )}
                     key={project.item_id}
                   >
-                    <div className="flex-1 px-4 py-2 text-sm truncate">
+                    <div className="flex-1 px-4 py-2 text-sm truncate dark:text-dark-white">
                       {project.item_customname != null ? (
                         project.item_customname
                       ) : (
@@ -219,7 +219,7 @@ function content() {
                     </div>
                   </Link>
                   <Menu as="div" className="flex-shrink-0 pr-2">
-                    <Menu.Button className="w-8 h-8 bg-white inline-flex items-center justify-center text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600">
+                    <Menu.Button className="w-8 h-8 inline-flex items-center justify-center text-gray-400 rounded-full hover:text-gray-500">
                       <span className="sr-only">Open options</span>
                       <DotsVerticalIcon
                         className="w-5 h-5"
@@ -235,7 +235,7 @@ function content() {
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="z-10 mx-3 origin-top-right absolute right-10 top-3 w-48 mt-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none">
+                      <Menu.Items className="z-10 mx-3 origin-top-right absolute dark:bg-dark-level-three right-10 top-3 w-48 mt-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none">
                         <div className="py-1">
                           <Menu.Item>
                             {({ active }) => (
@@ -253,9 +253,9 @@ function content() {
                                 }
                                 className={classNames(
                                   active
-                                    ? 'bg-gray-100 text-gray-900'
+                                    ? 'bg-gray-100 text-gray-900 dark:bg-dark-level-four'
                                     : 'text-gray-700',
-                                  'block px-4 py-2 text-sm'
+                                  'block px-4 py-2 text-sm dark:text-dark-white'
                                 )}
                               >
                                 {' '}

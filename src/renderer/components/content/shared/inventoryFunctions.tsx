@@ -220,6 +220,7 @@ export async function filterInventory(
 export function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
+
 export async function sortDataFunction(sortValue, inventory) {
   // Check
   if (sortValue == 'Storages') {

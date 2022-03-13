@@ -2,6 +2,8 @@ const initialState = {
   fastMove: false,
   currency: 'USD',
   locale: 'EN-GB',
+  os: '',
+  darkmode: false,
   currencyPrice: {}
 };
 
@@ -31,6 +33,16 @@ const settingsReducer = (state = initialState, action) => {
       return {
         ...state,
         locale: action.payload,
+      };
+      case 'SETTINGS_SET_OS':
+      return {
+        ...state,
+        os: action.payload,
+      }; 
+      case 'SETTINGS_SET_DARKMODE':
+      return {
+        ...state,
+        darkmode: action.payload,
       };
       case 'SETTINGS_ADD_CURRENCYPRICE':
         let currencyDict = state.currencyPrice

@@ -1,7 +1,7 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, session } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, session, nativeTheme  } from 'electron';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import { fetchItems } from './steam/getCommands';
@@ -46,8 +46,6 @@ if (isDevelopment) {
   require('electron-debug')();
 }
 
-console.log()
-
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
   const forceDownload = !process.env.UPGRADE_EXTENSIONS;
@@ -74,11 +72,17 @@ const createWindow = async () => {
     return path.join(RESOURCES_PATH, ...paths);
   };
 
+  let frameValue = true
+  if (process.platform == 'win32') {
+    frameValue = false
+  }
+
   mainWindow = new BrowserWindow({
     show: false,
     width: 1124,
     height: 728,
-    minWidth: 750,
+    minWidth: 1030,
+    frame: frameValue,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -131,9 +135,31 @@ const createWindow = async () => {
 
 };
 
+
+
+
 /**
  * Add event listeners...
  */
+// Windows actions
+
+ipcMain.on('windowsActions', async (_event, message) => {
+  if (message == 'min') {
+    mainWindow?.minimize()
+  }
+  if (message == 'max') {
+    if (mainWindow?.isMaximized()) {
+      mainWindow.restore()
+    } else {
+      mainWindow?.maximize()
+    }
+  }
+  if (message == 'close') {
+    mainWindow?.close()
+  }
+  
+});
+
 let currentLocale = 'da-dk'
 
 app.on('window-all-closed', () => {
@@ -505,6 +531,24 @@ async function startEvents(csgo, user) {
 
 }
 
+// setValue('darkmode.hasSet', false)
+// Set dark mode
+async function darkModeSetup() {
+  getValue('darkmode.hasSet').then((returnValue) => {
+    console.log('hasSet', returnValue)
+    if (returnValue == false) {
+      if (nativeTheme.shouldUseDarkColors) {
+        setValue('darkmode.value', true)
+      } else {
+        setValue('darkmode.value', false)
+      }
+    }
+  })
+}
+darkModeSetup()
+
+// Set platform
+setValue('os', process.platform)
 
 // Kinda store
 ipcMain.on('electron-store-getAccountDetails', async (event) => {
