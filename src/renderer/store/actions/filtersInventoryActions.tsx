@@ -26,7 +26,7 @@ export const inventoryFilterSetSearch = (searchField) => {
   }
 }
 
-export async function filterInventoryAddOption(combinedInventory, state, filterString ) {
+export async function filterInventoryAddOption(combinedInventory, state, filterString, prices, pricingSource ) {
     let filterAlreadyExists = state.inventoryFilter.indexOf(filterString) > -1;
     // make a copy of the existing array
     let chosenFiltersCopy = state.inventoryFilter.slice();
@@ -36,11 +36,11 @@ export async function filterInventoryAddOption(combinedInventory, state, filterS
     } else {
         chosenFiltersCopy.push(filterString)
     }
-    const filteredInv = await filterInventory(combinedInventory, chosenFiltersCopy, state.sortValue)
+    const filteredInv = await filterInventory(combinedInventory, chosenFiltersCopy, state.sortValue, prices, pricingSource)
     return allButClear(chosenFiltersCopy, state.sortValue, filteredInv)
 }
 
-export async function filterInventorySetSort(combinedInventory, state, sortValue ) {
-    const filteredInv = await filterInventory(combinedInventory, state.inventoryFilter, sortValue)
+export async function filterInventorySetSort(combinedInventory, state, sortValue, prices, pricingSource ) {
+    const filteredInv = await filterInventory(combinedInventory, state.inventoryFilter, sortValue, prices, pricingSource)
     return allButClear(state.inventoryFilter, sortValue, filteredInv)
 }

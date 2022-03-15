@@ -10,7 +10,7 @@ export default function TitleBarWindows() {
   return (
     <>
       {/* Page title & actions */}
-      <div className="border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two flex justify-end dark:text-dark-white titleBarCustom">
+      <div className="border-b border-gray-200 dark:border-opacity-50 bg-white lg:fixed dark:bg-dark-level-two flex justify-end dark:text-dark-white titleBarCustom absolute w-full z-10">
       <div className="dark:text-dark-white">
       <button
         

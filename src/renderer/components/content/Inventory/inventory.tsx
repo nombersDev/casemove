@@ -4,9 +4,12 @@ import InventoryRowsComponent from './inventoryRows';
 import { useState } from 'react';
 import { LoadingButton } from '../shared/animations';
 import { RefreshIcon } from '@heroicons/react/solid';
+import { useSelector } from 'react-redux';
+import { classNames } from '../shared/inventoryFunctions';
 
 function content() {
   const [getLoadingButton, setLoadingButton] = useState(false);
+  const settingsData = useSelector((state: any) => state.settingsReducer);
   setLoadingButton;
 
   // Get the inventory
@@ -27,7 +30,8 @@ function content() {
           <button
             type="button"
             onClick={() => refreshInventory()}
-            className=" order-1 ml-3 inline-flex items-center px-4 py-2 border dark:hover:bg-dark-level-four dark:bg-dark-level-one border-none dark:border-opacity-0  text-sm font-medium rounded-md text-gray-500 bg-white hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0"
+            className={classNames(settingsData.darkmode ? 'focus:outline-none focus:bg-dark-level-four' : 'focus:outline-none focus:bg-gray-100', 'order-1 ml-3  order-1 inline-flex items-center px-4 py-2 hover:border hover:shadow-sm dark:hover:bg-dark-level-four  text-sm font-medium rounded-md text-gray-700  hover:bg-gray-50 sm:order-0 sm:ml-0')}
+
           >
             {getLoadingButton ? (
               <LoadingButton />

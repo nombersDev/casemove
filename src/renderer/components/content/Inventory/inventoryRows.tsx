@@ -2,11 +2,13 @@ import {
   CheckCircleIcon,
   ExternalLinkIcon,
   PencilIcon,
+  SelectorIcon,
   TagIcon,
 } from '@heroicons/react/solid';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { filterInventorySetSort } from 'renderer/store/actions/filtersInventoryActions';
 import { setRenameModal } from 'renderer/store/actions/modalMove actions';
 import RenameModal from '../shared/modals & notifcations/modalRename';
 
@@ -14,9 +16,11 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
+
 const now = new Date();
 function content() {
   const [stickerHover, setStickerHover] = useState('');
+  const [getInventory, setInventory] = useState([] as any);
   const inventory = useSelector((state: any) => state.inventoryReducer);
   const inventoryFilters = useSelector(
     (state: any) => state.inventoryFiltersReducer
@@ -26,6 +30,19 @@ function content() {
   const settingsData = useSelector((state: any) => state.settingsReducer);
 
   const dispatch = useDispatch();
+
+  // Sort function
+  async function onSortChange(sortValue) {
+    dispatch(
+      await filterInventorySetSort(
+        inventory.combinedInventory,
+        inventoryFilters,
+        sortValue,
+        pricesResult.prices,
+        settingsData?.source?.title
+      )
+    );
+  }
 
   let inventoryToUse = [] as any;
   if (
@@ -41,6 +58,13 @@ function content() {
       window.electron.ipcRenderer.getPrice(projectRow)
     }
   });
+  if (inventoryToUse != getInventory) {
+    if (inventoryFilters.sortBack == true && inventoryToUse.reverse() != getInventory ) {
+      setInventory(inventoryToUse)
+    } else {
+      setInventory(inventoryToUse)
+    }
+  }
 
 
 
@@ -60,7 +84,7 @@ function content() {
           role="list"
           className="mt-3 border-t border-gray-200 divide-y divide-gray-100 dark:divide-gray-500"
         >
-          {inventoryToUse.map((project) => (
+          {getInventory.map((project) => (
             <li key={project.item_id}>
               <a
                 href="#"
@@ -86,27 +110,59 @@ function content() {
 
       <table className="min-w-full">
         <thead>
-          <tr className=" border-gray-200 sticky top-0">
-            <th className="px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <span className="lg:pl-2">Product</span>
-            </th>
-            <th className="table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Price
+          <tr className=" border-gray-200 sticky top-7">
+          <th className="table-cell px-6 py-2 border-b border-gray-200 bg-gray-50 dark:border-opacity-50 dark:bg-dark-level-two text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <button onClick={() => onSortChange('Product name')}
+                  className='text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400'>
+                  <span className='flex justify-between'>Product  <SelectorIcon className='h-2'/></span>
+                    </button>
                 </th>
-            <th className="hidden xl:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Stickers/Patches
+                <th
+                className="table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
+                    <button onClick={() => onSortChange('Price')}
+                     className='text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400'>
+                      <span className='flex justify-between'>Price  <SelectorIcon className='h-2'/></span>
+                    </button>
+                </th>
+                <th
+                className="hidden xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
+
+                  <button onClick={() => onSortChange('Stickers')}
+                  className='text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400'>
+
+                  <span className='flex justify-between'>Stickers/Patches  <SelectorIcon className='h-2'/></span>
+                    </button>
+                </th>
+
+                
+                <th
+                  className="hidden md:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two  ">
+                    
+                    <button onClick={() => onSortChange('tradehold')}
+                  className='text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400'>
+
+                  <span className='flex justify-between'>Tradehold  <SelectorIcon className='h-2'/></span>
+                    </button>
+                </th>
+                <th 
+                  className="table-cell px-6 py-2 border-b border-gray-200 bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
+                  <button onClick={() => onSortChange('QTY')}
+                  className='text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400'>
+
+                  <span className='flex justify-between'>QTY  <SelectorIcon className='h-2'/></span>
+                    </button>
+                </th>
+            <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <button
+                  className='text-gray-500 dark:text-gray-400 pointer-events-none tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400'>
+                  Moveable
+                    </button>
             </th>
             <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Tradehold
-            </th>
-            <th className="table-cell px-6 py-3 border-b dark:border-opacity-50 dark:bg-dark-level-two border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-              QTY
-            </th>
-            <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Moveable
-            </th>
-            <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Link
+            <button
+                  className='text-gray-500 dark:text-gray-400 pointer-events-none tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400'>
+                  Link
+                    </button>
             </th>
             <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 dark:border-opacity-50 dark:bg-dark-level-two text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               <span className="md:hidden">Link</span>
@@ -114,7 +170,7 @@ function content() {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-100 dark:bg-dark-level-one dark:divide-gray-500">
-          {inventoryToUse.map((projectRow) => (
+          {getInventory.map((projectRow) => (
             <tr
               key={projectRow.item_id}
               className={classNames(

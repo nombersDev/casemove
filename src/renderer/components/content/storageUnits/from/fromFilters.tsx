@@ -1,9 +1,7 @@
 import { Link } from 'react-router-dom';
-import { Fragment } from 'react';
-import { Disclosure, Menu, Transition } from '@headlessui/react';
+import { Disclosure } from '@headlessui/react';
 import {
   ArchiveIcon,
-  ChevronDownIcon,
   DocumentDownloadIcon,
   SaveAsIcon,
   SearchIcon,
@@ -12,24 +10,15 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import {
   moveFromClearAll,
-  moveFromsetSearchField,
-  moveFromSetSortOption,
+  moveFromsetSearchField
 } from 'renderer/store/actions/moveFromActions';
 import {
   downloadReport,
-  sortDataFunction,
 } from '../../shared/inventoryFunctions';
-import { inventorySetStoragesData } from 'renderer/store/actions/inventoryActions';
 import MoveModal from '../../shared/modals & notifcations/modalMove';
 import { moveModalQuerySet } from 'renderer/store/actions/modalMove actions';
 import PricingAmount from '../../shared/filters/pricingAmount';
 
-const sortOptions = [
-  { name: 'Default' },
-  { name: 'Category' },
-  { name: 'Product name' },
-  { name: 'QTY' },
-];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -44,14 +33,7 @@ function content() {
 
   // States
 
-  async function onSortChange(sortValue) {
-    dispatch(moveFromSetSortOption(sortValue));
-    const storageResult = await sortDataFunction(
-      sortValue,
-      inventory.storageInventory
-    );
-    dispatch(inventorySetStoragesData(storageResult));
-  }
+ 
 
   async function moveItems() {
     let key = (Math.random() + 1).toString(36).substring(7);
@@ -139,64 +121,12 @@ function content() {
       <Disclosure
         as="section"
         aria-labelledby="filter-heading"
-        className="relative z-10 grid items-center border-b dark:bg-dark-level-one dark:border-opacity-50 "
+        className="relative grid items-center border-b dark:bg-dark-level-one dark:border-opacity-50 "
       >
         <div className="relative col-start-1 row-start-1 py-4 flex justify-between">
           <div className="max-w-7xl flex items-center space-x-6 divide-x divide-gray-200 text-sm px-4 sm:px-6 lg:px-8">
+            
             <div className="">
-              <Menu as="div" className="relative inline-block ">
-                <div className="flex items-center divide-x divide-gray-200">
-                  <div>
-                    <Menu.Button className="group inline-flex justify-center items-center text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-500">
-                      {fromReducer.sortValue == 'Default'
-                        ? 'Sort'
-                        : fromReducer.sortValue}
-                      <ChevronDownIcon
-                        className="flex-shrink-0 -mr-1 ml-1 h-5 w-5 text-gray-400 group-hover:text-gray-500"
-                        aria-hidden="true"
-                      />
-                    </Menu.Button>
-                  </div>
-                </div>
-
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-100"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-75"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
-                >
-                  <Menu.Items className="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-2xl bg-white ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-dark-level-three">
-                    <div className="py-1">
-                      {sortOptions.map((option) => (
-                        <Menu.Item key={option.name}>
-                          {({ active }) => (
-                            <Link
-                              to=""
-                              className={classNames(
-                                option.name == fromReducer.sortValue
-                                  ? 'font-medium text-gray-900 dark:text-gray-400 pointer-events-none'
-                                  : 'text-gray-500 ',
-                                active && option.name != fromReducer.sortValue
-                                  ? 'bg-gray-100 dark:bg-dark-level-four'
-                                  : '',
-                                'block px-4 py-2 text-sm'
-                              )}
-                              onClick={() => onSortChange(option.name)}
-                            >
-                              {option.name}
-                            </Link>
-                          )}
-                        </Menu.Item>
-                      ))}
-                    </div>
-                  </Menu.Items>
-                </Transition>
-              </Menu>
-            </div>
-            <div className="pl-6">
               <button
                 type="button"
                 className="text-gray-500 dark:text-gray-400"

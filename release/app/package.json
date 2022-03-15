@@ -1,7 +1,7 @@
 {
   "name": "casemove",
   "productName": "casemove",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "CSGO Storage unit manager that helps you move stuff. ",
   "main": "./dist/main/main.js",
   "author": {
