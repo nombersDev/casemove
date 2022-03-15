@@ -12,8 +12,8 @@ This is the latest stable version and can be downloaded from the [releases](http
 - [Mac - (Casemove-1.4.1)](https://github.com/nombersDev/casemove/releases/download/1.4.1/Casemove-1.4.1.dmg)
 - [Mac ARM 64 (M1) - (Casemove-1.4.1)](https://github.com/nombersDev/casemove/releases/download/1.4.1/Casemove-1.4.1-arm64.dmg)
 
-https://user-images.githubusercontent.com/98760010/153054583-eddad769-a6df-473e-9338-efbdb3dd021a.mp4
 
+https://user-images.githubusercontent.com/98760010/158389209-28a49a7c-42fe-4a31-b55a-9eea1d0229ed.mp4
 
 
 Features include:
