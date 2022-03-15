@@ -1,8 +1,6 @@
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
-import { Fragment } from 'react';
-import { Disclosure, Menu, Transition } from '@headlessui/react';
+import { Disclosure } from '@headlessui/react';
 import {
-  ChevronDownIcon,
   DocumentDownloadIcon,
   FilterIcon,
   SearchIcon,
@@ -10,7 +8,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import {
   filterInventoryAddOption,
-  filterInventorySetSort,
   filterInventoryClearAll,
   inventoryFilterSetSearch,
 } from 'renderer/store/actions/filtersInventoryActions';
@@ -38,12 +35,7 @@ const filters = {
     { value: '3econ/tools/casket', label: 'Storage Units' },
   ],
 };
-const sortOptions = [
-  { name: 'Default' },
-  { name: 'Category' },
-  { name: 'Product name' },
-  { name: 'QTY' },
-];
+
 
 function content() {
   const dispatch = useDispatch();
@@ -60,21 +52,13 @@ function content() {
       await filterInventoryAddOption(
         inventory.combinedInventory,
         inventoryFilters,
-        filterValue
+        filterValue,
+        pricesResult.prices,
+        settingsData?.source?.title
       )
     );
   }
-  // Sort function
-  async function onSort(Event, sortValue) {
-    Event.preventDefault();
-    dispatch(
-      await filterInventorySetSort(
-        inventory.combinedInventory,
-        inventoryFilters,
-        sortValue
-      )
-    );
-  }
+
 
   async function clear_all() {
     dispatch(filterInventoryClearAll());
@@ -154,7 +138,7 @@ function content() {
       <Disclosure
         as="section"
         aria-labelledby="filter-heading"
-        className="relative z-10 grid items-center border-b dark:border-opacity-50"
+        className="relative  grid items-center border-b dark:border-opacity-50"
       >
         <h2 id="filter-heading" className="sr-only">
           Filters
@@ -169,58 +153,6 @@ function content() {
                 />
                 {inventoryFilters.inventoryFilter.length} Filters
               </Disclosure.Button>
-            </div>
-            <div className="pl-6">
-              <Menu as="div" className="relative inline-block">
-                <div className="flex">
-                  <Menu.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-400">
-                    {inventoryFilters.sortValue == 'Default'
-                      ? 'Sort'
-                      : inventoryFilters.sortValue}
-                    <ChevronDownIcon
-                      className="flex-shrink-0 -mr-1 ml-1 h-5 w-5 text-gray-400 group-hover:text-gray-500"
-                      aria-hidden="true"
-                    />
-                  </Menu.Button>
-                </div>
-
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-100"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-75"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
-                >
-                  <Menu.Items className="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-2xl bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-                    <div className="py-1">
-                      {sortOptions.map((option) => (
-                        <Menu.Item key={option.name}>
-                          {({ active }) => (
-                            <Link
-                              to=""
-                              className={classNames(
-                                option.name == inventoryFilters.sortValue
-                                  ? 'font-medium text-gray-900 pointer-events-none'
-                                  : 'text-gray-500',
-                                active &&
-                                  option.name != inventoryFilters.sortValue
-                                  ? 'bg-gray-100'
-                                  : '',
-                                'block px-4 py-2 text-sm'
-                              )}
-                              onClick={(event) => onSort(event, option.name)}
-                            >
-                              {option.name}
-                            </Link>
-                          )}
-                        </Menu.Item>
-                      ))}
-                    </div>
-                  </Menu.Items>
-                </Transition>
-              </Menu>
             </div>
             <div className="pl-6">
               <button

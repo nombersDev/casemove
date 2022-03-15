@@ -5,7 +5,8 @@ const initialState = {
     totalItemsToMove: 0,
     searchInput: '',
     sortValue: 'Default',
-    doCancel: false
+    doCancel: false,
+    sortBack: false,
   };
 
   const moveFromReducer = (state = initialState, action) => {
@@ -14,6 +15,11 @@ const initialState = {
           return {
               ...state,
               doHide: !state.doHide
+           } 
+      case 'MOVE_FROM_SET_SORT_BACK':
+          return {
+              ...state,
+              sortBack: !state.sortBack
            } 
       case 'MOVE_FROM_ADD_TO':
         // Add to or remove from active storages
@@ -67,10 +73,18 @@ const initialState = {
               searchInput: action.payload.searchField
            } 
         case 'MOVE_FROM_SET_SORT':
-          return {
+          if (state.sortValue == action.payload.sortValue) {
+            return {
+              ...state, 
+              sortBack: !state.sortBack
+            }
+          } else {
+            return {
               ...state,
-              sortValue: action.payload.sortValue
+              sortValue: action.payload.sortValue,
+              sortBack: initialState.sortBack
            } 
+          }
         case 'MOVE_FROM_CLEAR_ALL':
           return {
               ...state,

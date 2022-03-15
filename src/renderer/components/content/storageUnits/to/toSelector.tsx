@@ -20,6 +20,7 @@ function content() {
 
   const inventory = useSelector((state: any) => state.inventoryReducer);
   const toSelector = useSelector((state: any) => state.moveToReducer);
+  const settingsData = useSelector((state: any) => state.settingsReducer);
   const localHide = toSelector.doHide;
 
   // Clear all filters
@@ -47,7 +48,7 @@ function content() {
           <Link
             to=""
             type="button"
-            className="order-last inline-flex  items-center px-4 py-2 border border-transparent dark:hover:bg-dark-level-four hover:bg-gray-50 focus:outline-none"
+            className={classNames(settingsData.darkmode ? 'focus:outline-none focus:bg-dark-level-four' : 'focus:outline-none focus:bg-gray-100', 'order-1 ml-3  order-1 inline-flex items-center px-4 py-2 hover:border hover:shadow-sm dark:hover:bg-dark-level-four  text-sm font-medium rounded-md text-gray-700  hover:bg-gray-50 sm:order-0 sm:ml-0')}
             onClick={() => refreshInventory()}
           >
             <RefreshIcon className="h-4 w-4 text-gray-500 dark:text-dark-white" aria-hidden="true" />

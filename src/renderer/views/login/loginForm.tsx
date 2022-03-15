@@ -15,6 +15,8 @@ import { getURL } from 'renderer/store/helpers/userStatusHelper';
 
 export default function LoginForm({ isLock, replaceLock }) {
   // Usestate
+  const pricesResult = useSelector((state: any) => state.pricingReducer);
+  const settingsData = useSelector((state: any) => state.settingsReducer);
   isLock;
   replaceLock;
   const [username, setUsername] = useState('');
@@ -159,7 +161,9 @@ export default function LoginForm({ isLock, replaceLock }) {
         await filterInventorySetSort(
           combined,
           filterDetails,
-          filterDetails.sortValue
+          filterDetails.sortValue,
+          pricesResult.prices,
+          settingsData?.source?.title
         )
       );
     } else {
@@ -320,7 +324,8 @@ export default function LoginForm({ isLock, replaceLock }) {
 
             <div>
               <button
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none dark:focus:ring-0 dark:focus:ring-offset-0 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 "
+                className={classNames(settingsData.darkmode ? 'focus:bg-indigo-700' : 'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500', 'group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 ')}
+
                 onClick={() => onSubmit()}
                 type="button"
               >

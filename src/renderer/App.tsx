@@ -86,6 +86,7 @@ function AppContent() {
   const userDetails = useSelector((state: any) => state.authReducer);
   const modalData = useSelector((state: any) => state.modalMoveReducer);
   const settingsData = useSelector((state: any) => state.settingsReducer);
+  const pricesResult = useSelector((state: any) => state.pricingReducer);
   const filterDetails = useSelector(
     (state: any) => state.inventoryFiltersReducer
   );
@@ -122,7 +123,9 @@ function AppContent() {
         await filterInventorySetSort(
           combinedInventory,
           filterDetails,
-          filterDetails.sortValue
+          filterDetails.sortValue,
+          pricesResult.prices,
+          settingsData?.source?.title
         )
       );
     }
@@ -235,8 +238,8 @@ function AppContent() {
         <body class="h-full">
         ```
       */}
-      <div className="min-h-full dark:bg-dark-level-one h-screen">
         {settingsData.os != 'win32' ? '' : <TitleBarWindows />}
+      <div className={classNames(settingsData.os == 'win32' ? 'pt-7' : '', "min-h-full dark:bg-dark-level-one h-screen")}>
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
             as="div"
@@ -287,7 +290,7 @@ function AppContent() {
                     </button>
                   </div>
                 </Transition.Child>
-                <div className="flex-shrink-0 flex items-center px-4">
+                <div className={classNames(settingsData.os == 'win32' ? 'pt-7' : '', "flex-shrink-0 flex items-center px-4")}>
                   <Logo />
                   <span className="">{shouldUpdate}</span>
                 </div>
@@ -363,7 +366,8 @@ function AppContent() {
 
         {/* Static sidebar for desktop */}
         <div className="hidden lg:flex lg:flex-col dark:bg-dark-level-two dark:border-opacity-50 lg:w-64 lg:fixed lg:inset-y-0 lg:border-r lg:border-gray-200 lg:pt-5 lg:pb-4 lg:bg-gray-100">
-          <div className="flex items-center flex-shrink-0 px-6">
+          
+          <div className={classNames(settingsData.os == 'win32' ? 'pt-7' : '', "flex items-center flex-shrink-0 px-6")}>
             <Logo />
           </div>
           {/* Sidebar component, swap this element with another sidebar if you like */}

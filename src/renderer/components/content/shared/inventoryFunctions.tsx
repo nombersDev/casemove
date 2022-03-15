@@ -66,13 +66,15 @@ export default function combineInventory(thisInventory) {
   return newInventory;
 }
 
-export async function getInventory(getInventoryData) {
+export async function getInventory(getInventoryData, prices, pricingSource) {
   var unfilteredInventory = await window.electron.ipcRenderer.runCommandTest(3);
   var combinedInventory = await combineInventory(unfilteredInventory);
   combinedInventory = await filterInventory(
     combinedInventory,
     getInventoryData['filters'],
-    getInventoryData['sort']
+    getInventoryData['sort'],
+    prices,
+    pricingSource
   );
   combinedInventory.forEach(function (item) {
     item['bgColorClass'] = 'bg-current';
@@ -145,7 +147,9 @@ export async function getStorageUnitData(storageID, storageName, prices) {
 export async function filterInventory(
   combinedInventory,
   filtersData,
-  sortData
+  sortData,
+  prices,
+  pricingSource
 ) {
   const thisInventory = [] as any;
   // First Categories
@@ -213,7 +217,7 @@ export async function filterInventory(
       });
     }
   }
-  combinedInventory = await sortDataFunction(sortData, combinedInventory);
+  combinedInventory = await sortDataFunction(sortData, combinedInventory, prices, pricingSource);
 
   return combinedInventory;
 }
@@ -221,69 +225,85 @@ export function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-export async function sortDataFunction(sortValue, inventory) {
+
+
+
+export async function sortDataFunction(sortValue, inventory, prices, pricingSource) {
+  function sortRun(valueOne, ValueTwo, useNaN = false) {
+    
+    if (valueOne < ValueTwo) {
+      return -1;
+    }
+    if (valueOne > ValueTwo) {
+      return 1;
+    }
+
+    if (useNaN && isNaN(valueOne)) {
+      return -1
+    }
+    return 0;
+
+  }
+
   // Check
   if (sortValue == 'Storages') {
     inventory.sort(function (a, b) {
-      if (a.item_customname < b.item_customname) {
-        return -1;
-      }
-      if (a.item_customname > b.item_customname) {
-        return 1;
-      }
-      return 0;
+      return sortRun(a.item_customname, b.item_customname)
     });
     return inventory;
   }
   // First sort by Name
   inventory.sort(function (a, b) {
-    if (a.item_name < b.item_name) {
-      return -1;
-    }
-    if (a.item_name > b.item_name) {
-      return 1;
-    }
-    return 0;
+    return sortRun(a.item_name.replaceAll('★', '').replaceAll(' ', ''), b.item_name.replaceAll('★', '').replaceAll(' ', ''))
   });
-  // Return Default
-  if (sortValue == 'Default') {
-    inventory.sort(function (a, b) {
-      if (a.position < b.position) {
-        return -1;
-      }
-      if (a.position > b.position) {
-        return 1;
-      }
-      return 0;
-    });
-    return inventory;
-  }
+  switch(sortValue) {
 
-  // Sort products
-  if (sortValue == 'Category') {
-    inventory.sort(function (a, b) {
-      if (a.category < b.category) {
-        return -1;
-      }
-      if (a.category > b.category) {
-        return 1;
-      }
-      return 0;
-    });
-    return inventory;
+    case 'Default':
+      inventory.sort(function (a, b) {
+        return sortRun(a.position, b.position)
+      });
+      return inventory;
+    
+    case 'Category':
+      inventory.sort(function (a, b) {
+        return sortRun(a.category, b.category)
+      });
+      return inventory;
+
+    case 'QTY':
+      inventory.sort(function (a, b) {
+        return -sortRun(a.combined_QTY, b.combined_QTY)
+      });
+      return inventory;
+    
+    case 'Price':
+      inventory.sort(function (a, b) {
+        return -sortRun(prices[a.item_name]?.[pricingSource] * a.combined_QTY, prices[b.item_name]?.[pricingSource] * b.combined_QTY)
+      });
+      return inventory;
+    
+    case 'Stickers':
+      inventory.sort(function (a, b) {
+        return -sortRun(a?.stickers?.length, b?.stickers?.length)
+      });
+      return inventory;
+    
+    case 'StorageName':
+      inventory.sort(function (a, b) {
+        return sortRun(a?.storage_name, b?.storage_name)
+      });
+      return inventory;
+
+    case 'tradehold':
+      const now = new Date();
+      inventory.sort(function (a, b) {
+        return sortRun(a?.trade_unlock?.getTime() - now.getTime(), b?.trade_unlock?.getTime() - now.getTime(), true)
+      });
+      return inventory;
+
+    default:
+      return inventory
   }
-  if (sortValue == 'QTY') {
-    inventory.sort(function (a, b) {
-      if (a.combined_QTY > b.combined_QTY) {
-        return -1;
-      }
-      if (a.combined_QTY < b.combined_QTY) {
-        return 1;
-      }
-      return 0;
-    });
-  }
-  return inventory;
 }
 
 export async function downloadReport(storageData) {

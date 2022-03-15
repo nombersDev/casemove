@@ -3,6 +3,12 @@ export const moveFromSetHide = () => {
         type: 'MOVE_FROM_SET_HIDE'
     }
 }
+
+export const moveFromSetSortBack = () => {
+    return {
+        type: 'MOVE_FROM_SET_SORT_BACK'
+    }
+}
 export const moveFromClearAll = () => {
     return {
         type: 'MOVE_FROM_CLEAR_ALL'
