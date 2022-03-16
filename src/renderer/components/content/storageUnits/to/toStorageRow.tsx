@@ -73,6 +73,13 @@ function content({ projectRow }) {
       projectRow.item_name + ' (' + projectRow.item_wear_name + ')';
   }
 
+  let totalFieldValue = 0
+  if (isEmpty == false) {
+    totalFieldValue = toReducer.totalToMove.filter(
+      (row) => row[0] == projectRow.item_id
+    )[0][2].length
+  }
+
   return (
     <>
       <td className="table-cell px-6 py-3 max-w-0 w-full whitespace-nowrap overflow-hidden text-sm font-normal text-gray-900 dark:text-dark-white">
@@ -169,7 +176,7 @@ function content({ projectRow }) {
           </div>
         </div>
       </td>
-      <td className="hidden md:table-cell px-6 py-3 text-sm text-gray-500 font-medium dark:bg-dark-level-one">
+      <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 font-medium dark:bg-dark-level-one">
         <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
           <div className="flex flex-shrink-0 -space-x-1">
           {projectRow.stickers?.map((sticker, index) => (
@@ -242,37 +249,39 @@ function content({ projectRow }) {
           </div>
         </div>
       </td>
-      <td
-        className={classNames(
-          toReducer.activeStorages.length == 0 ? 'pointer-events-none' : '',
-          'table-cell px-6 py-3 text-sm text-gray-500 font-medium dark:bg-dark-level-one'
-        )}
-      >
-        <button
+      <td className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
+        <div className='flex justify-center'>
+        <button 
           onClick={() => returnField(1000)}
           className={classNames(
             1000 -
               toReducer.activeStoragesAmount -
               toReducer.totalItemsToMove ==
-              0
-              ? 'pointer-events-none'
+              0 || totalFieldValue == projectRow.combined_QTY
+              ? 'pointer-events-none hidden'
               : ''
           )}
         >
           <LightningBoltIcon
-            className="h-4 w-4 text-gray-400 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-400"
+            className={classNames(isEmpty ? "h-5 w-5" : 'h-4 w-4', "text-gray-400 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-400" )}
             aria-hidden="true"
           />
         </button>
+        </div>
+        <div className='flex justify-center'>
         <button
           onClick={() => returnField(0)}
           className={classNames(isEmpty ? 'pointer-events-none hidden' : '')}
         >
           <XIcon
-            className="h-4 w-4 text-gray-400 dark:text-gray-500 hover:text-red-400 dark:hover:text-red-400  "
+            className={classNames(1000 -
+              toReducer.activeStoragesAmount -
+              toReducer.totalItemsToMove ==
+              0 || totalFieldValue == projectRow.combined_QTY ? "h-5 w-5" : 'h-4 w-4', "text-gray-400 dark:text-gray-500 hover:text-red-400 dark:hover:text-red-400  ")}
             aria-hidden="true"
           />
         </button>
+        </div>
       </td>
       <td className="hidden md:px-6 py-3 whitespace-nowrap text-right text-sm font-medium dark:bg-dark-level-one"></td>
     </>
