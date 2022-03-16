@@ -23,7 +23,6 @@ function content({ projectRow }) {
     let totalToGo = 1000 - inventory.inventory.length;
     for (const [, value] of Object.entries(fromReducer.totalToMove)) {
       let valued = value as any;
-      console.log(valued);
       if (valued[0] != projectRow.item_id) {
         totalToGo -= valued[2].length;
       }
@@ -69,6 +68,13 @@ function content({ projectRow }) {
     fromReducer.totalToMove.filter((row) => row[0] == projectRow.item_id)
       .length == 0;
   
+
+  let totalFieldValue = 0
+  if (isEmpty == false) {
+    totalFieldValue = fromReducer.totalToMove.filter(
+      (row) => row[0] == projectRow.item_id
+    )[0][2].length
+  }
   return (
     <>
       <td className="table-cell px-6 py-3 max-w-0 w-full whitespace-nowrap overflow-hidden text-sm font-normal text-gray-900 dark:text-dark-white">
@@ -261,9 +267,7 @@ function content({ projectRow }) {
               value={
                 isEmpty
                   ? ''
-                  : fromReducer.totalToMove.filter(
-                      (row) => row[0] == projectRow.item_id
-                    )[0][2].length
+                  : totalFieldValue
               }
               placeholder="0"
               onChange={(e) => returnField(e.target.value)}
@@ -273,29 +277,34 @@ function content({ projectRow }) {
         </div>
       </td>
       <td className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
-        <button
+        <div className='flex justify-center'>
+        <button 
           onClick={() => returnField(1000)}
           className={classNames(
             1000 - inventory.inventory.length - fromReducer.totalItemsToMove ==
-              0
-              ? 'pointer-events-none'
+              0 || totalFieldValue == projectRow.combined_QTY
+              ? 'pointer-events-none hidden'
               : ''
           )}
         >
           <LightningBoltIcon
-            className="h-4 w-4 text-gray-400 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-400"
+            className={classNames(isEmpty ? "h-5 w-5" : 'h-4 w-4', "text-gray-400 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-400" )}
             aria-hidden="true"
           />
         </button>
+        </div>
+        <div className='flex justify-center'>
         <button
           onClick={() => returnField(0)}
           className={classNames(isEmpty ? 'pointer-events-none hidden' : '')}
         >
           <XIcon
-            className="h-4 w-4 text-gray-400 dark:text-gray-500 hover:text-red-400 dark:hover:text-red-400  "
+            className={classNames(1000 - inventory.inventory.length - fromReducer.totalItemsToMove ==
+              0 || totalFieldValue == projectRow.combined_QTY ? "h-5 w-5" : 'h-4 w-4', "text-gray-400 dark:text-gray-500 hover:text-red-400 dark:hover:text-red-400  ")}
             aria-hidden="true"
           />
         </button>
+        </div>
       </td>
       <td className="hidden md:px-6 py-3 whitespace-nowrap text-right text-sm font-medium"></td>
     </>

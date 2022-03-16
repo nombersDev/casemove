@@ -103,6 +103,20 @@ function content() {
   }
 
 
+  // Get prices for storage units
+  let totalDict = {} as any
+  inventory.storageInventory.forEach((projectRow) => {
+    if (totalDict[projectRow.storage_id] == undefined) {
+      totalDict[projectRow.storage_id] = 0
+    }
+    
+    let pricingAmount = totalDict[projectRow.storage_id]
+    pricingAmount += projectRow.combined_QTY * pricesResult.prices[projectRow.item_name]?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency]
+    totalDict[projectRow.storage_id] = pricingAmount
+  });
+  console.log(totalDict)
+
+
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
@@ -317,6 +331,7 @@ function content() {
                       )}
                       <p className="text-gray-500">
                         {project.item_storage_total} Items
+                        {totalDict[project.item_id] != undefined ? ' | ' +new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency, minimumFractionDigits: 0 }).format(totalDict[project.item_id].toFixed(0)): project.storage_id}
                       </p>
                     </div>
                   </Link>

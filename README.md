@@ -4,13 +4,13 @@
 
 ----
 
-## Download Latest Version (Casemove 1.4.2)
+## Download Latest Version (Casemove 1.4.3)
 
 This is the latest stable version and can be downloaded from the [releases](https://github.com/nombersDev/casemove/releases) page, or directly from:
 
-- [Windows - (Casemove-1.4.2)](https://github.com/nombersDev/casemove/releases/download/1.4.2/Casemove.Setup.1.4.2.exe)
-- [Mac - (Casemove-1.4.2)](https://github.com/nombersDev/casemove/releases/download/1.4.2/Casemove-1.4.2.dmg)
-- [Mac ARM 64 (M1) - (Casemove-1.4.2)](https://github.com/nombersDev/casemove/releases/download/1.4.2/Casemove-1.4.2-arm64.dmg)
+- [Windows - (Casemove-1.4.3)](https://github.com/nombersDev/casemove/releases/download/1.4.3/Casemove.Setup.1.4.3.exe)
+- [Mac - (Casemove-1.4.3)](https://github.com/nombersDev/casemove/releases/download/1.4.3/Casemove-1.4.3.dmg)
+- [Mac ARM 64 (M1) - (Casemove-1.4.3)](https://github.com/nombersDev/casemove/releases/download/1.4.3/Casemove-1.4.3-arm64.dmg)
 
 
 https://user-images.githubusercontent.com/98760010/158389209-28a49a7c-42fe-4a31-b55a-9eea1d0229ed.mp4

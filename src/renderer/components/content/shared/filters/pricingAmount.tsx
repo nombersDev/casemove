@@ -1,6 +1,6 @@
 import { CashIcon } from '@heroicons/react/solid';
 
-export default function PricingAmount({totalAmount}) {
+export default function PricingAmount({totalAmount, pricingAmount = 0}) {
   return (
     <span className="mr-3 flex items-center text-gray-500 text-xs font-medium uppercase tracking-wide">
       <CashIcon
@@ -8,6 +8,11 @@ export default function PricingAmount({totalAmount}) {
         aria-hidden="true"
       />{' '}
       <span className="text-yellow-500">{totalAmount} </span>
+      {pricingAmount == 0 ? 
+      '' :
+      <span className="text-gray-400 dark:text-gray-500">&nbsp; ( {pricingAmount} ) </span>
+      }
+      
     </span>
   );
 }

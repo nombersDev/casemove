@@ -17,11 +17,14 @@ import {
   moveTosetSearchField,
   moveToSetStorageAmount,
 } from 'renderer/store/actions/moveToActions';
+import PricingAmount from '../../shared/filters/pricingAmount';
 doCancel;
 function content() {
   const dispatch = useDispatch();
+  const pricesResult = useSelector((state: any) => state.pricingReducer);
   const toReducer = useSelector((state: any) => state.moveToReducer);
   const inventory = useSelector((state: any) => state.inventoryReducer);
+  const settingsData = useSelector((state: any) => state.settingsReducer);
 
   async function moveItems() {
     let key = (Math.random() + 1).toString(36).substring(7);
@@ -63,6 +66,55 @@ function content() {
 
   }
 
+  let inventoryFilter = inventory.inventory.filter(function (row) {
+    if (
+      row.item_name
+        ?.toLowerCase()
+        .trim()
+        .includes(toReducer.searchInput?.toLowerCase().trim())
+    ) {
+      return true; // skip
+    }
+    if (
+      row.item_customname
+        ?.toLowerCase()
+        .trim()
+        .includes(toReducer.searchInput?.toLowerCase().trim())
+    ) {
+      return true; // skip
+    }
+    if (
+      row.item_wear_name
+        ?.toLowerCase()
+        .trim()
+        .includes(toReducer.searchInput?.toLowerCase().trim())
+    ) {
+      return true; // skip
+    }
+    if (toReducer.searchInput == undefined) {
+      return true; // skip
+    }
+    return false;
+  });
+
+  let totalAmount = 0 as any
+  let totalHighlighted = 0 as any
+  inventoryFilter.forEach((projectRow) => {
+    let filtered = toReducer.totalToMove.filter(row => row[0] == projectRow.item_id)
+    if (filtered.length > 0) {
+      totalHighlighted += pricesResult.prices[projectRow.item_name]?.[settingsData.source.title]  * settingsData.currencyPrice[settingsData.currency] * filtered[0][2].length
+      
+    }
+    if (pricesResult.prices[projectRow.item_name]?.[settingsData?.source?.title]) {
+      let individualPrice = projectRow.combined_QTY *
+    pricesResult.prices[projectRow.item_name]?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency]
+    totalAmount += individualPrice = individualPrice ? individualPrice : 0
+    }
+  });
+  totalHighlighted = totalHighlighted.toFixed(0)
+  totalAmount = totalAmount.toFixed(0);
+  console.log(totalAmount)
+
   return (
     <div className="bg-white mt-8 dark:bg-dark-level-one">
       {/* Filters */}
@@ -76,6 +128,7 @@ function content() {
       >
         <div className="relative col-start-1 row-start-1 py-4 flex justify-between">
           <div className="max-w-7xl flex items-center space-x-6 divide-x divide-gray-200 text-sm px-4 sm:px-6 lg:px-8">
+            
             <div className="">
               <button
                 type="button"
@@ -115,7 +168,11 @@ function content() {
           </div>
           <div className="flex justify-end justify-items-end max-w-7xl px-4 sm:px-6 lg:px-8 ">
             <div className="flex items-center divide-x divide-gray-200">
-              <div>
+            <div>
+              
+              <PricingAmount totalAmount={new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(totalAmount)} pricingAmount={totalHighlighted} />
+              </div>
+              <div className="pl-3">
                 <span className="mr-3 flex items-center text-gray-500 text-xs font-medium uppercase tracking-wide">
                   <ArchiveIcon
                     className="flex-none w-5 h-5 mr-2 text-gray-400 group-hover:text-gray-500"

@@ -92,12 +92,19 @@ function content() {
     return false;
   });
 
+  let totalHighlighted = 0 as any
 
   inventoryFilter.forEach((projectRow) => {
+    let filtered = fromReducer.totalToMove.filter(row => row[0] == projectRow.item_id)
+    if (filtered.length > 0) {
+      totalHighlighted += pricesResult.prices[projectRow.item_name]?.[settingsData.source.title]  * settingsData.currencyPrice[settingsData.currency] * filtered[0][2].length
+    }
+    // if (projectRow.item_id)
     let individualPrice = projectRow.combined_QTY *
     pricesResult.prices[projectRow.item_name]?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency]
     totalAmount += individualPrice = individualPrice ? individualPrice : 0
   });
+  totalHighlighted = totalHighlighted.toFixed(0)
   totalAmount = totalAmount.toFixed(0);
 
   // Send download
@@ -185,7 +192,9 @@ function content() {
                 </Link>
               </div>
               <div className="pl-3">
-                <PricingAmount totalAmount={new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(totalAmount)}/>
+                <PricingAmount totalAmount={new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(totalAmount)} pricingAmount={totalHighlighted}/>
+                
+                
               </div>
               <div className="pl-3">
                 <span className="mr-3 flex items-center text-gray-500 text-xs font-medium uppercase tracking-wide">
