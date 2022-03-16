@@ -1,6 +1,5 @@
 const CC = require('currency-converter-lt');
 
-
 async function setBackUp(currencyClass) {
   let rates = require('./backup/currency.json')
   currencyClass.setRates(rates.rates)
@@ -46,7 +45,7 @@ class currency {
         resolve(this.rates[exchangeTo])
       }
       this.currencyConverter.from('USD').to(exchangeTo).amount(100).convert().then((response) => {
-        resolve(response)
+        resolve(response / 100)
       }).catch(error => {
         console.log('error occurred', error)
         resolve(this.rates[exchangeTo])
@@ -54,6 +53,21 @@ class currency {
     });
   }
 }
+
+// const currencyClass = new currency()
+
+// sleep time expects milliseconds
+//function sleep (time) {
+//  return new Promise((resolve) => setTimeout(resolve, time));
+//}
+
+// Usage!
+//sleep(5000).then(() => {
+//    currencyClass.getRate('EUR').then((returnValue) => {
+//      console.log(returnValue)
+//    })
+//});
+
 
 module.exports = {
   currency
