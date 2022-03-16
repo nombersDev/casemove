@@ -3,10 +3,10 @@ const VDF = require('@node-steam/vdf');
 const axios = require('axios');
 
 
-const itemsLink =
-  'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/scripts/items/items_game.txt';
-const translationsLink =
-  'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/resource/csgo_english.txt';
+ const itemsLink =
+   'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/scripts/items/items_game.txt';
+ const translationsLink =
+   'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/resource/csgo_english.txt';
 
 function fileCatcher(endNote) {
   return `${csgo_install_directory}${endNote}`;
@@ -14,7 +14,7 @@ function fileCatcher(endNote) {
 
 async function fileGetError(items) {
   let csgoEnglish = require('./itemsBackupFiles/csgo_english.json')
-  items.setTranslations(csgoEnglish);
+  items.setTranslations(csgoEnglish, 'Error');
   let itemsGame = require('./itemsBackupFiles/items_game.json')
   items.setCSGOItems(itemsGame);
 }
@@ -36,7 +36,7 @@ async function getTranslations(items) {
       return finalDict;
     });
     returnValue['stickerkit_cs20_boost_holo']
-    items.setTranslations(returnValue);
+    items.setTranslations(returnValue, 'normal');
   } catch (err) {
     console.log('Error occurred during translation parsing')
     fileGetError(items)
@@ -91,6 +91,7 @@ class items {
   translation = {};
   csgoItems = {};
   constructor() {
+    fileGetError(this);
     getTranslations(this);
     updateItems(this);
   }
@@ -98,7 +99,8 @@ class items {
   setCSGOItems(value) {
     this.csgoItems = value;
   }
-  setTranslations(value) {
+  setTranslations(value, commandFrom) {
+    console.log(commandFrom)
     this.translation = value;
   }
 

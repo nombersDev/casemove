@@ -14,17 +14,10 @@ import * as fs from 'fs';
 import SteamTotp from 'steam-totp';
 import {storeUserAccount, getLoginDetails, deleteUserData, getValue, setValue} from './store/settings'
 import { pricingEmitter, runItems } from './store/pricing';
+import { currency } from './store/currency';
 
-const CC = require('currency-converter-lt');
 
-// Currency converter
-let currencyConverter = new CC({isDecimalComma:true});
-currencyConverter.from('USD').to('DKK').amount(100).convert().then((response) => {
-  if (!response.toString().includes('.')) {
-    currencyConverter = new CC();
-  }
-})
-
+const currencyClass = new currency()
 
 let mainWindow: BrowserWindow | null = null;
 ipcMain.on('ipc-example', async (event, arg) => {
@@ -157,7 +150,7 @@ ipcMain.on('windowsActions', async (_event, message) => {
   if (message == 'close') {
     mainWindow?.close()
   }
-  
+
 });
 
 let currentLocale = 'da-dk'
@@ -354,20 +347,12 @@ async function startEvents(csgo, user) {
   ipcMain.on('getPrice', async (_event, info) => {
     pricing.handleItem(info)
   })
-  let seenCurrencyRate = {}
   ipcMain.on('getCurrency', async (event) => {
     getValue('pricing.currency').then((returnValue) => {
-      if (seenCurrencyRate[returnValue] == undefined) {
-        currencyConverter.from('USD').to(returnValue).amount(100).convert().then((response) => {
-          console.log(returnValue, response)
-          response = response / 100
-          seenCurrencyRate[returnValue] = response
-          event.reply('getCurrency-reply', [returnValue, response])
-        })
-      } else {
-        event.reply('getCurrency-reply', [returnValue, seenCurrencyRate[returnValue]])
-      }
-
+      currencyClass.getRate(returnValue).then((response) => {
+        console.log(returnValue, response)
+        event.reply('getCurrency-reply', [returnValue, response])
+      })
     })
   })
 
