@@ -50,7 +50,7 @@ export default function MoveModal() {
             window.electron.ipcRenderer.moveToStorageUnit(
               modalData.modalPayload['storageID'],
               modalData.modalPayload['itemID'],
-              fastMode
+              true
             );
             await new Promise(r => setTimeout(r, 25));
           } else {
@@ -58,7 +58,7 @@ export default function MoveModal() {
               await window.electron.ipcRenderer.moveToStorageUnit(
                 modalData.modalPayload['storageID'],
                 modalData.modalPayload['itemID'],
-                fastMode
+                false
               );
             } catch {
               dispatch(moveModalAddToFail());
@@ -75,7 +75,7 @@ export default function MoveModal() {
             window.electron.ipcRenderer.moveFromStorageUnit(
               modalData.modalPayload['storageID'],
               modalData.modalPayload['itemID'],
-              fastMode
+              true
             );
             await new Promise(r => setTimeout(r, 25));
 
@@ -84,7 +84,7 @@ export default function MoveModal() {
               await window.electron.ipcRenderer.moveFromStorageUnit(
                modalData.modalPayload['storageID'],
                modalData.modalPayload['itemID'],
-               fastMode
+               false
              );
              // await new Promise(r => setTimeout(r, 25));
            } catch {
