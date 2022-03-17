@@ -184,19 +184,30 @@ app
     console.log('Currentlocal', currentLocale)
 
     if (process.env.NODE_ENV === 'development') {
+      let reactDevToolsPath = ''
+     // on windows
+     console.log(process.platform)
+     if (process.platform == 'win32') {
+      reactDevToolsPath = path.join(
+        os.homedir(),
+        '/AppData/Local/Google/Chrome/User Data/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/3.0.9_2'
+      )
 
-     // on macOS
-     let reactDevToolsPath = path.join(
-      os.homedir(),
-      '/AppData/Local/Google/Chrome/User Data/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/3.0.9_2'
-    )
+     }
+     
+    // On linux
+    if (process.platform == 'linux') {
+      reactDevToolsPath = path.join(
+        os.homedir(),
+        '/.config/google-chrome/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/3.0.9_0'
+      )
+    }
      // on macOS
      if (process.platform == 'darwin') {
       reactDevToolsPath = path.join(
         os.homedir(),
         '/Library/Application Support/Google/Chrome/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/3.0.9_0'
       )
-
     }
 
     await session.defaultSession.loadExtension(reactDevToolsPath);
