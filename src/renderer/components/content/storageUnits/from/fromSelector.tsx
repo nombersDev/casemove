@@ -13,6 +13,7 @@ import {
   moveFromRemoveCasket,
   moveFromSetHide,
 } from 'renderer/store/actions/moveFromActions';
+import { pricing_add_to_requested } from 'renderer/store/actions/pricingActions';
 import { LoadingButton } from '../../shared/animations';
 import EmptyComponent from '../../shared/emptyState';
 import {
@@ -49,7 +50,12 @@ function content() {
       dispatch(moveFromRemoveCasket(storageID));
     } else {
       dispatch(moveFromAddCasketToStorages(storageID));
-      let storageResult = await getStorageUnitData(storageID, storageName, pricesResult.prices);
+      let storageResult = await getStorageUnitData(storageID, storageName, pricesResult.prices, pricesResult.productsRequested);
+      let pricesRequested = storageResult[1]
+      if (pricesRequested.length > 0) {
+        dispatch(pricing_add_to_requested(pricesRequested))
+      }
+      storageResult = storageResult[0]
 
       dispatch(
         addStorageInventoryData(storageResult, storageID, fromReducer.sortValue)
@@ -85,6 +91,7 @@ function content() {
 
   // Get all storage unit data
   async function unMarkAllStorages() {
+    console.log('unmark')
     const casketResults = await inventory.inventory.filter(function (row) {
       if (!row.item_url.includes('casket')) {
         return false; // skip
@@ -240,7 +247,7 @@ function content() {
       }).length != 0 ? (
         <ul
           role="list"
-          className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 xl:grid-cols-4 mt-3"
+          className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-3"
         >
           {inventory.inventory
             .filter(function (row) {
@@ -305,7 +312,7 @@ function content() {
                     )}
                     key={project.item_id}
                   >
-                    <div className="flex-1 px-4 py-2 text-sm dark:text-dark-white truncate">
+                    <div className="flex-1 px-3 py-2 text-sm dark:text-dark-white truncate">
                       {project.item_customname != null ? (
                         project.item_customname
                       ) : (

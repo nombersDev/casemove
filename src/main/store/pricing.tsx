@@ -122,14 +122,31 @@ class runItems {
       if (this.prices[itemNamePricing]?.steam?.last_7d == 0 && this.prices[itemNamePricing]?.buff163.starting_at?.price > 2000) {
         pricingDict.steam_listing = 2000
       }
-
-      pricingEmitter.emit('result', pricingDict, itemRow);
+      itemRow['pricing'] = pricingDict
+      return itemRow
+    } else {
+      let pricingDict = {
+        buff163: 0,
+        steam_listing: 0,
+        skinport: 0,
+        bitskins: 0
+      }
+      itemRow['pricing'] = pricingDict
+      return itemRow
     }
+
   }
   async handleItem(itemRow) {
-    if (itemRow.item_name !== undefined && itemRow.item_moveable == true) {
-      this.makeSinglerequest(itemRow);
-    }
+    let returnRows = [] as any;
+    itemRow.forEach(element => {
+      if (element.item_name !== undefined && element.item_moveable == true) {
+        this.makeSinglerequest(element).then((returnValue) => {
+          returnRows.push(returnValue)
+        })
+      }
+    });
+    pricingEmitter.emit('result', itemRow);
+
   }
 }
 module.exports = {

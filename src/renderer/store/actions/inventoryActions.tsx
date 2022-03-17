@@ -27,6 +27,7 @@ export const inventorySetStoragesData = (storageData) => {
         }
     }
 }
+
 export const clearStorageIDData = (casketID) => {
     return {
         type: 'INVENTORY_STORAGES_CLEAR_CASKET',

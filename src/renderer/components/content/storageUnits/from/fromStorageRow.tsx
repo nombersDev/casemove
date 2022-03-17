@@ -6,6 +6,7 @@ import { moveFromAddRemove } from 'renderer/store/actions/moveFromActions';
 
 function content({ projectRow }) {
   const [stickerHover, setStickerHover] = useState('');
+  const [itemHover, setItemHover] = useState(false);
   const dispatch = useDispatch();
   const fromReducer = useSelector((state: any) => state.moveFromReducer);
   const inventory = useSelector((state: any) => state.inventoryReducer);
@@ -67,7 +68,7 @@ function content({ projectRow }) {
   const isEmpty =
     fromReducer.totalToMove.filter((row) => row[0] == projectRow.item_id)
       .length == 0;
-  
+
 
   let totalFieldValue = 0
   if (isEmpty == false) {
@@ -75,6 +76,14 @@ function content({ projectRow }) {
       (row) => row[0] == projectRow.item_id
     )[0][2].length
   }
+  console.log(pricesResult.prices[projectRow.item_name]?.[
+    settingsData?.source?.title
+  ], settingsData.currencyPrice[settingsData.currency])
+  projectRow.combined_QTY *
+                      pricesResult.prices[projectRow.item_name]?.[
+                        settingsData?.source?.title
+                      ] *
+                      settingsData.currencyPrice[settingsData.currency]
   return (
     <>
       <td className="table-cell px-6 py-3 max-w-0 w-full whitespace-nowrap overflow-hidden text-sm font-normal text-gray-900 dark:text-dark-white">
@@ -89,12 +98,15 @@ function content({ projectRow }) {
           <Link
             to={{
               pathname: `https://steamcommunity.com/market/listings/730/${marketHashName}`,
+
             }}
             target="_blank"
           >
             <div className="flex flex-shrink-0 -space-x-1">
               <img
-                className="max-w-none h-11 w-11 dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300"
+                onMouseEnter={() => setItemHover(true)}
+                onMouseLeave={() => setItemHover(false)}
+                className={classNames(itemHover ? 'transform-gpu hover:-translate-y-1 hover:scale-110' : '', "max-w-none h-11 w-11 transition duration-500 ease-in-out  dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300")}
                 src={
                   'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
                   projectRow.item_url +
@@ -278,7 +290,7 @@ function content({ projectRow }) {
       </td>
       <td className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
         <div className='flex justify-center'>
-        <button 
+        <button
           onClick={() => returnField(1000)}
           className={classNames(
             1000 - inventory.inventory.length - fromReducer.totalItemsToMove ==

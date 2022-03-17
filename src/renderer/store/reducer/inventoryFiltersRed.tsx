@@ -3,7 +3,8 @@ const initialState = {
   sortValue: 'Default',
   inventoryFiltered: [] as any,
   searchInput: '',
-  sortBack: false
+  sortBack: false,
+  categoryFilter: [] as any
 };
 
 const inventoryFiltersReducer = (state = initialState, action) => {
@@ -11,6 +12,7 @@ const inventoryFiltersReducer = (state = initialState, action) => {
     case 'ALL_BUT_CLEAR':
       if (state.sortValue == action.payload.sortValue) {
         return {
+          ...state,
           inventoryFilter: action.payload.inventoryFilter,
           sortValue: action.payload.sortValue,
           inventoryFiltered: action.payload.inventoryFiltered,
@@ -18,6 +20,7 @@ const inventoryFiltersReducer = (state = initialState, action) => {
         }
       } else {
         return {
+          ...state,
           inventoryFilter: action.payload.inventoryFilter,
           sortValue: action.payload.sortValue,
           inventoryFiltered: action.payload.inventoryFiltered,
@@ -33,6 +36,35 @@ const inventoryFiltersReducer = (state = initialState, action) => {
     case 'MOVE_FROM_CLEAR':
       return {
         ...initialState
+      }
+
+
+    case 'MOVE_FROM_CLEAR_ALL':
+      return {
+        ...state,
+        categoryFilter: []
+
+      }
+    case 'MOVE_TO_CLEAR_ALL':
+      return {
+        ...state,
+        categoryFilter: []
+      }
+
+    case 'INVENTORY_ADD_CATEGORY_FILTER':
+      console.log(action.payload)
+      console.log(state.categoryFilter)
+      console.log(state)
+      let newFilters = state.categoryFilter
+      if (newFilters.includes(action.payload)) {
+        newFilters.splice(newFilters.indexOf(action.payload), 1)
+      } else {
+        newFilters = [...newFilters, action.payload]
+      }
+      console.log(newFilters)
+      return {
+        ...state,
+        categoryFilter: newFilters
       }
     case 'INVENTORY_FILTERS_SET_SEARCH':
       return {

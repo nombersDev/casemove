@@ -116,7 +116,7 @@ const createWindow = async () => {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
-
+  
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 
@@ -125,6 +125,10 @@ const createWindow = async () => {
     event.preventDefault();
     shell.openExternal(url);
   });
+  
+  if (process.platform == 'linux') {
+    mainWindow.removeMenu()
+  }
 
 };
 
@@ -184,19 +188,30 @@ app
     console.log('Currentlocal', currentLocale)
 
     if (process.env.NODE_ENV === 'development') {
+      let reactDevToolsPath = ''
+     // on windows
+     console.log(process.platform)
+     if (process.platform == 'win32') {
+      reactDevToolsPath = path.join(
+        os.homedir(),
+        '/AppData/Local/Google/Chrome/User Data/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/3.0.9_0'
+      )
 
-     // on macOS
-     let reactDevToolsPath = path.join(
-      os.homedir(),
-      '/AppData/Local/Google/Chrome/User Data/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/3.0.9_2'
-    )
+     }
+     
+    // On linux
+    if (process.platform == 'linux') {
+      reactDevToolsPath = path.join(
+        os.homedir(),
+        '/.config/google-chrome/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/3.0.9_0'
+      )
+    }
      // on macOS
      if (process.platform == 'darwin') {
       reactDevToolsPath = path.join(
         os.homedir(),
         '/Library/Application Support/Google/Chrome/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/3.0.9_0'
       )
-
     }
 
     await session.defaultSession.loadExtension(reactDevToolsPath);
@@ -341,8 +356,8 @@ async function startEvents(csgo, user) {
 
   // Pricing
   const pricing = new runItems(user)
-  pricingEmitter.on('result', (data, itemRow) => {
-    mainWindow?.webContents.send('pricing', [data, itemRow])
+  pricingEmitter.on('result', (message) => {
+    mainWindow?.webContents.send('pricing', [message])
   });
   ipcMain.on('getPrice', async (_event, info) => {
     pricing.handleItem(info)

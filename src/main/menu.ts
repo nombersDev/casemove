@@ -30,7 +30,7 @@ export default class MenuBuilder {
       process.platform === 'darwin'
         ? this.buildDarwinTemplate()
         : this.buildDefaultTemplate();
-
+    
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
 

@@ -1,9 +1,8 @@
-export const pricing_addPrice = (priceResult, itemName) => {
+export const pricing_addPrice = (itemRows) => {
     return {
         type: 'PRICING_ADD_TO',
         payload: {
-            price: priceResult,
-            itemName: itemName
+            itemRows: itemRows
         }
     }
 }
@@ -21,6 +20,15 @@ export const pricing_add_storage_total = (amountToAdd) => {
       type: 'PRICING_ADD_STORAGE_TOTAL',
       payload: {
         storageAmount: amountToAdd
+      }
+  }
+}
+
+export const pricing_add_to_requested = (itemRows) => {
+  return {
+      type: 'PRICING_ADD_TO_REQUESTED',
+      payload: {
+        itemRows: itemRows
       }
   }
 }

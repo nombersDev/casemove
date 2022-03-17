@@ -115,9 +115,10 @@ export async function getStorageUnitDataReload(storageID, storageName) {
   return newStorageData;
 }
 
-export async function getStorageUnitData(storageID, storageName, prices) {
+export async function getStorageUnitData(storageID, storageName, prices, pricesRequested) {
 
   let newStorageData = [] as any;
+  let productsToGet = [] as any;
   let storageResult = await window.electron.ipcRenderer.getStorageUnitData(
     storageID
   );
@@ -135,13 +136,16 @@ export async function getStorageUnitData(storageID, storageName, prices) {
     }
     item['storage_id'] = storageID;
     item['storage_name'] = storageName;
-    if (prices[item.item_name] == undefined) {
-      window.electron.ipcRenderer.getPrice(item)
+    if (prices[item.item_name] == undefined && pricesRequested.includes(item.item_name) == false) {
+      productsToGet.push(item)
     }
     newStorageData.push(item);
 
   });
-  return newStorageData;
+  if (productsToGet.length > 0) {
+    window.electron.ipcRenderer.getPrice(productsToGet)
+  }
+  return [newStorageData, productsToGet];
 }
 
 export async function filterInventory(

@@ -240,7 +240,8 @@ class items {
     if (storageRow['music_index'] !== undefined) {
       const musicKitIndex = storageRow['music_index'];
       const musicKitResult = this.getMusicKits(musicKitIndex);
-      return this.getTranslation(musicKitResult['loc_name']);
+      const nameToUse = 'Music Kit | ' + this.getTranslation(musicKitResult['loc_name']);
+      return nameToUse
     }
 
 

@@ -3,9 +3,11 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { moveToAddRemove } from 'renderer/store/actions/moveToActions';
+import { pricing_add_to_requested } from 'renderer/store/actions/pricingActions';
 
 function content({ projectRow }) {
   const [stickerHover, setStickerHover] = useState('');
+  const [itemHover, setItemHover] = useState(false);
   const dispatch = useDispatch();
   const toReducer = useSelector((state: any) => state.moveToReducer);
   const pricesResult = useSelector((state: any) => state.pricingReducer);
@@ -64,8 +66,13 @@ function content({ projectRow }) {
   const isEmpty =
     toReducer.totalToMove.filter((row) => row[0] == projectRow.item_id)
       .length == 0;
-  if (pricesResult.prices[projectRow.item_name] == undefined) {
-        window.electron.ipcRenderer.getPrice(projectRow)
+  let pricesToGet = [] as any
+  if (pricesResult.prices[projectRow.item_name] == undefined && pricesResult.productsRequested.includes(projectRow.item_name) == false) {
+        pricesToGet.push(projectRow)
+  }
+  if (pricesToGet.length > 0) {
+    window.electron.ipcRenderer.getPrice(pricesToGet) 
+    dispatch(pricing_add_to_requested(pricesToGet))
   }
   let marketHashName = projectRow.item_name;
   if (projectRow.item_paint_wear != undefined) {
@@ -99,7 +106,9 @@ function content({ projectRow }) {
           >
             <div className="flex flex-shrink-0 -space-x-1">
               <img
-                className="max-w-none h-11 w-11 dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300"
+                onMouseEnter={() => setItemHover(true)}
+                onMouseLeave={() => setItemHover(false)}
+                className={classNames(itemHover ? 'transform-gpu hover:-translate-y-1 hover:scale-110' : '', "max-w-none h-11 w-11 transition duration-500 ease-in-out  dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300")}
                 src={
                   'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
                   projectRow.item_url +
@@ -251,7 +260,7 @@ function content({ projectRow }) {
       </td>
       <td className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
         <div className='flex justify-center'>
-        <button 
+        <button
           onClick={() => returnField(1000)}
           className={classNames(
             1000 -
