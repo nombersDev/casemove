@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { filterInventorySetSort } from 'renderer/store/actions/filtersInventoryActions';
 import { setRenameModal } from 'renderer/store/actions/modalMove actions';
+import { pricing_add_to_requested } from 'renderer/store/actions/pricingActions';
 import RenameModal from '../shared/modals & notifcations/modalRename';
 
 function classNames(...classes) {
@@ -56,12 +57,15 @@ function content() {
   }
   let pricesToGet = [] as any
   inventoryToUse.forEach(projectRow => {
-    if (pricesResult.prices[projectRow.item_name] == undefined) {
+    if (pricesResult.prices[projectRow.item_name] == undefined && pricesResult.productsRequested.includes(projectRow.item_name) == false) {
       pricesToGet.push(projectRow)
     }
   });
-
-  window.electron.ipcRenderer.getPrice(pricesToGet)
+  console.log(pricesToGet)
+  if (pricesToGet.length > 0) {
+    window.electron.ipcRenderer.getPrice(pricesToGet) 
+    dispatch(pricing_add_to_requested(pricesToGet))
+  }
   if (inventoryToUse != getInventory) {
     if (inventoryFilters.sortBack == true && inventoryToUse.reverse() != getInventory ) {
       setInventory(inventoryToUse)
@@ -236,7 +240,7 @@ function content() {
           <div className="flex flex-shrink-0 -space-x-1">
             <img
               onMouseEnter={() => setItemHover(projectRow.item_id)}
-              onMouseLeave={() => setItemHover(projectRow.item_id)}
+              onMouseLeave={() => setItemHover('')}
               className={classNames(itemHover == projectRow.item_id ? 'transform-gpu hover:-translate-y-1 hover:scale-110' : '', "max-w-none h-11 w-11 transition duration-500 ease-in-out  dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300")}
               src={
                 'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +

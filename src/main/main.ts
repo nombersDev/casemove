@@ -194,7 +194,7 @@ app
      if (process.platform == 'win32') {
       reactDevToolsPath = path.join(
         os.homedir(),
-        '/AppData/Local/Google/Chrome/User Data/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/3.0.9_2'
+        '/AppData/Local/Google/Chrome/User Data/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/3.0.9_0'
       )
 
      }

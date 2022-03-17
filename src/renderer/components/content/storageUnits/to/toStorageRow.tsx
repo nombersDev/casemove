@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { moveToAddRemove } from 'renderer/store/actions/moveToActions';
+import { pricing_add_to_requested } from 'renderer/store/actions/pricingActions';
 
 function content({ projectRow }) {
   const [stickerHover, setStickerHover] = useState('');
@@ -66,10 +67,13 @@ function content({ projectRow }) {
     toReducer.totalToMove.filter((row) => row[0] == projectRow.item_id)
       .length == 0;
   let pricesToGet = [] as any
-  if (pricesResult.prices[projectRow.item_name] == undefined) {
+  if (pricesResult.prices[projectRow.item_name] == undefined && pricesResult.productsRequested.includes(projectRow.item_name) == false) {
         pricesToGet.push(projectRow)
   }
-  window.electron.ipcRenderer.getPrice(pricesToGet)
+  if (pricesToGet.length > 0) {
+    window.electron.ipcRenderer.getPrice(pricesToGet) 
+    dispatch(pricing_add_to_requested(pricesToGet))
+  }
   let marketHashName = projectRow.item_name;
   if (projectRow.item_paint_wear != undefined) {
     marketHashName =

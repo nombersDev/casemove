@@ -23,6 +23,15 @@ export const pricing_add_storage_total = (amountToAdd) => {
       }
   }
 }
+
+export const pricing_add_to_requested = (itemRows) => {
+  return {
+      type: 'PRICING_ADD_TO_REQUESTED',
+      payload: {
+        itemRows: itemRows
+      }
+  }
+}
 export const pricing_clearAll = () => {
   return {
       type: 'PRICING_CLEAR'

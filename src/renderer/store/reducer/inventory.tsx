@@ -20,6 +20,13 @@ const initialState = {
               ...state,
               storageInventory: add_to_filtered
           }
+      case 'INVENTORY_STORAGES_CLEAR_CASKET':
+          const AddToFiltered = state.storageInventory.filter(id => id.storage_id != action.payload.casketID)
+
+          return {
+              ...state,
+              storageInventory: AddToFiltered
+          }
       case 'INVENTORY_STORAGES_SET_STORAGES':
           return {
               ...state,

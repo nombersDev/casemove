@@ -1,6 +1,7 @@
 const initialState = {
   prices: {} as any,
-  storageAmount: 0
+  storageAmount: 0,
+  productsRequested: [] as any,
 };
 
 const pricingReducer = (state = initialState, action) => {
@@ -22,6 +23,16 @@ const pricingReducer = (state = initialState, action) => {
       return {
         ...state,
         prices: currentPrices,
+      };
+
+    case 'PRICING_ADD_TO_REQUESTED':
+      let currentRequested = state.productsRequested;
+      action.payload.itemRows.forEach(element => {
+        currentRequested.push(element.item_name)
+      });
+      return {
+        ...state,
+        productsRequested: currentRequested,
       };
     case 'PRICING_REMOVE':
       let removeCurrentPrices = state.prices;

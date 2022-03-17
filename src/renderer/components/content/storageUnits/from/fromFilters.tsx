@@ -123,11 +123,19 @@ function content() {
   async function sendDownload() {
     inventoryFilter.forEach((element) => {
       element['item_price'] =
-        pricesResult.prices[element.item_name]?.[settingsData.source.title]  * settingsData.currencyPrice[settingsData.currency];
-      element['item_price_combined'] =
+      new Intl.NumberFormat(settingsData.locale, {
+        style: 'currency',
+        currency: settingsData.currency,
+      }).format(
+        pricesResult.prices[element.item_name]?.[settingsData.source.title]  * settingsData.currencyPrice[settingsData.currency]);
+      element['item_price_combined'] = new Intl.NumberFormat(settingsData.locale, {
+        style: 'currency',
+        currency: settingsData.currency,
+      }).format(
         element.combined_QTY *
-        pricesResult.prices[element.item_name]?.[settingsData.source.title]  * settingsData.currencyPrice[settingsData.currency]
+        pricesResult.prices[element.item_name]?.[settingsData.source.title]  * settingsData.currencyPrice[settingsData.currency])
     });
+    
     downloadReport(inventoryFilter);
   }
 
