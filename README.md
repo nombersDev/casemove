@@ -11,7 +11,9 @@ This is the latest stable version and can be downloaded from the [releases](http
 - [Windows - (Casemove-1.4.4)](https://github.com/nombersDev/casemove/releases/download/1.4.4/Casemove.Setup.1.4.4.exe)
 - [Mac - (Casemove-1.4.4)](https://github.com/nombersDev/casemove/releases/download/1.4.4/Casemove-1.4.4.dmg)
 - [Mac ARM 64 (M1) - (Casemove-1.4.4)](https://github.com/nombersDev/casemove/releases/download/1.4.4/Casemove-1.4.4-arm64.dmg)
+- [Linux AppImage - (Casemove-1.4.4)](https://github.com/nombersDev/casemove/releases/download/1.4.4/casemove-1.4.4.zip)
 
+Install the Linux version by unzipping the contents of the zip-file into a folder and click on the AppImage file. 
 
 https://user-images.githubusercontent.com/98760010/158389209-28a49a7c-42fe-4a31-b55a-9eea1d0229ed.mp4
 
