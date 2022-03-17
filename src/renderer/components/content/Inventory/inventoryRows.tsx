@@ -54,11 +54,14 @@ function content() {
   } else {
     inventoryToUse = inventoryFilters.inventoryFiltered;
   }
+  let pricesToGet = [] as any
   inventoryToUse.forEach(projectRow => {
     if (pricesResult.prices[projectRow.item_name] == undefined) {
-      window.electron.ipcRenderer.getPrice(projectRow)
+      pricesToGet.push(projectRow)
     }
   });
+
+  window.electron.ipcRenderer.getPrice(pricesToGet)
   if (inventoryToUse != getInventory) {
     if (inventoryFilters.sortBack == true && inventoryToUse.reverse() != getInventory ) {
       setInventory(inventoryToUse)

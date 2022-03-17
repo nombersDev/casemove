@@ -42,8 +42,8 @@ contextBridge.exposeInMainWorld('electron', {
     downloadFile(data) {
       ipcRenderer.send('download', data);
     },
-    getPrice(itemRow) {
-      ipcRenderer.send('getPrice', itemRow);
+    getPrice(itemRows) {
+      ipcRenderer.send('getPrice', itemRows);
     },
     getCurrencyRate() {
       return new Promise((resolve) => {

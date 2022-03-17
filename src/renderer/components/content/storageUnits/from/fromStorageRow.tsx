@@ -76,6 +76,14 @@ function content({ projectRow }) {
       (row) => row[0] == projectRow.item_id
     )[0][2].length
   }
+  console.log(pricesResult.prices[projectRow.item_name]?.[
+    settingsData?.source?.title
+  ], settingsData.currencyPrice[settingsData.currency])
+  projectRow.combined_QTY *
+                      pricesResult.prices[projectRow.item_name]?.[
+                        settingsData?.source?.title
+                      ] *
+                      settingsData.currencyPrice[settingsData.currency]
   return (
     <>
       <td className="table-cell px-6 py-3 max-w-0 w-full whitespace-nowrap overflow-hidden text-sm font-normal text-gray-900 dark:text-dark-white">

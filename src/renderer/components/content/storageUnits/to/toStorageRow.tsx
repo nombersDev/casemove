@@ -65,9 +65,11 @@ function content({ projectRow }) {
   const isEmpty =
     toReducer.totalToMove.filter((row) => row[0] == projectRow.item_id)
       .length == 0;
+  let pricesToGet = [] as any
   if (pricesResult.prices[projectRow.item_name] == undefined) {
-        window.electron.ipcRenderer.getPrice(projectRow)
+        pricesToGet.push(projectRow)
   }
+  window.electron.ipcRenderer.getPrice(pricesToGet)
   let marketHashName = projectRow.item_name;
   if (projectRow.item_paint_wear != undefined) {
     marketHashName =

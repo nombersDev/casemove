@@ -85,6 +85,7 @@ function content() {
 
   // Get all storage unit data
   async function unMarkAllStorages() {
+    console.log('unmark')
     const casketResults = await inventory.inventory.filter(function (row) {
       if (!row.item_url.includes('casket')) {
         return false; // skip

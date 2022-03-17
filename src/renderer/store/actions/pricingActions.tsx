@@ -1,9 +1,8 @@
-export const pricing_addPrice = (priceResult, itemName) => {
+export const pricing_addPrice = (itemRows) => {
     return {
         type: 'PRICING_ADD_TO',
         payload: {
-            price: priceResult,
-            itemName: itemName
+            itemRows: itemRows
         }
     }
 }

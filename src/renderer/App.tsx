@@ -224,7 +224,8 @@ function AppContent() {
   if (firstRun == false) {
     setFirstRun(true);
     window.electron.ipcRenderer.on('pricing', (message) => {
-      dispatch(pricing_addPrice(message[0], message[1].item_name));
+      console.log(message)
+      dispatch(pricing_addPrice(message[0]));
     });
   }
   return (

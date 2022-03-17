@@ -28,6 +28,7 @@ async function getLiveRates(currencyClass) {
 class currency {
   rates = {};
   currencyConverter
+  seenRates = {}
 
   constructor() {
     setBackUp(this)
@@ -47,10 +48,14 @@ class currency {
 
   getRate(exchangeTo) {
     return new Promise((resolve) => {
+      if (this.seenRates[exchangeTo] != undefined) {
+        resolve(this.seenRates[exchangeTo])
+      }
       if (this.currencyConverter == undefined) {
         resolve(this.rates[exchangeTo])
       }
       this.currencyConverter.from('USD').to(exchangeTo).amount(100).convert().then((response) => {
+        this.seenRates[exchangeTo] = response / 100
         resolve(response / 100)
       }).catch(error => {
         console.log('error occurred', error)

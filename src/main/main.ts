@@ -116,7 +116,7 @@ const createWindow = async () => {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
-
+  
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 
@@ -125,6 +125,10 @@ const createWindow = async () => {
     event.preventDefault();
     shell.openExternal(url);
   });
+  
+  if (process.platform == 'linux') {
+    mainWindow.removeMenu()
+  }
 
 };
 
@@ -352,8 +356,8 @@ async function startEvents(csgo, user) {
 
   // Pricing
   const pricing = new runItems(user)
-  pricingEmitter.on('result', (data, itemRow) => {
-    mainWindow?.webContents.send('pricing', [data, itemRow])
+  pricingEmitter.on('result', (message) => {
+    mainWindow?.webContents.send('pricing', [message])
   });
   ipcMain.on('getPrice', async (_event, info) => {
     pricing.handleItem(info)
