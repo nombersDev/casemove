@@ -30,10 +30,14 @@ function content() {
   const inventory = useSelector((state: any) => state.inventoryReducer);
   const pricesResult = useSelector((state: any) => state.pricingReducer);
   const settingsData = useSelector((state: any) => state.settingsReducer);
+  const inventoryFilters = useSelector(
+    (state: any) => state.inventoryFiltersReducer
+  );
+
 
   // States
 
- 
+
 
   async function moveItems() {
     let key = (Math.random() + 1).toString(36).substring(7);
@@ -62,6 +66,13 @@ function content() {
   // Calculate storage amount prices
   let totalAmount = 0 as any;
   let inventoryFilter = inventory.storageInventory.filter(function (row) {
+
+    if (
+      inventoryFilters.categoryFilter.length != 0 ) {
+       if (!inventoryFilters.categoryFilter?.includes(row.bgColorClass)) {
+         return false
+       }
+      }
     if (
       row.item_name
         ?.toLowerCase()
@@ -92,6 +103,8 @@ function content() {
     return false;
   });
 
+
+
   let totalHighlighted = 0 as any
 
   inventoryFilter.forEach((projectRow) => {
@@ -99,7 +112,6 @@ function content() {
     if (filtered.length > 0) {
       totalHighlighted += pricesResult.prices[projectRow.item_name]?.[settingsData.source.title]  * settingsData.currencyPrice[settingsData.currency] * filtered[0][2].length
     }
-    // if (projectRow.item_id)
     let individualPrice = projectRow.combined_QTY *
     pricesResult.prices[projectRow.item_name]?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency]
     totalAmount += individualPrice = individualPrice ? individualPrice : 0
@@ -132,7 +144,7 @@ function content() {
       >
         <div className="relative col-start-1 row-start-1 py-4 flex justify-between">
           <div className="max-w-7xl flex items-center space-x-6 divide-x divide-gray-200 text-sm px-4 sm:px-6 lg:px-8">
-            
+
             <div className="">
               <button
                 type="button"
@@ -193,8 +205,8 @@ function content() {
               </div>
               <div className="pl-3">
                 <PricingAmount totalAmount={new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(totalAmount)} pricingAmount={totalHighlighted}/>
-                
-                
+
+
               </div>
               <div className="pl-3">
                 <span className="mr-3 flex items-center text-gray-500 text-xs font-medium uppercase tracking-wide">

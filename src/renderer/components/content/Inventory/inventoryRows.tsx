@@ -20,6 +20,7 @@ function classNames(...classes) {
 const now = new Date();
 function content() {
   const [stickerHover, setStickerHover] = useState('');
+  const [itemHover, setItemHover] = useState('');
   const [getInventory, setInventory] = useState([] as any);
   const inventory = useSelector((state: any) => state.inventoryReducer);
   const inventoryFilters = useSelector(
@@ -192,6 +193,7 @@ function content() {
                   inventoryFilters.searchInput == undefined
                   ? ''
                   : 'hidden',
+                  inventoryFilters.categoryFilter.length != 0 ? inventoryFilters.categoryFilter?.includes(projectRow.bgColorClass) ? '' : 'hidden' : '',
                 'hover:shadow-inner'
               )}
             >
@@ -202,7 +204,15 @@ function content() {
                               className={classNames(project.bgColorClass, 'flex-shrink-0 w-2.5 h-2.5 rounded-full')}
                               aria-hidden="true"
                             /> */}
+                            <div
+            className={classNames(
+              projectRow.bgColorClass,
+              'flex-shrink-0 w-2.5 h-2.5 rounded-full'
+            )}
+            aria-hidden="true"
+          />
                   <div className="flex flex-shrink-0 -space-x-1">
+
                   {
             projectRow.item_moveable != true ? <div className="flex flex-shrink-0 -space-x-1">
             <img
@@ -222,7 +232,9 @@ function content() {
         >
           <div className="flex flex-shrink-0 -space-x-1">
             <img
-              className="max-w-none h-11 w-11 dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300"
+              onMouseEnter={() => setItemHover(projectRow.item_id)}
+              onMouseLeave={() => setItemHover(projectRow.item_id)}
+              className={classNames(itemHover == projectRow.item_id ? 'transform-gpu hover:-translate-y-1 hover:scale-110' : '', "max-w-none h-11 w-11 transition duration-500 ease-in-out  dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300")}
               src={
                 'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
                 projectRow.item_url +

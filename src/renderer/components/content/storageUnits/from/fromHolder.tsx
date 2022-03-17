@@ -19,6 +19,9 @@ function StorageUnits() {
   const pricesResult = useSelector((state: any) => state.pricingReducer);
   const settingsData = useSelector((state: any) => state.settingsReducer);
   const [getStorage, setStorage] = useState(inventory.storageInventory);
+  const inventoryFilters = useSelector(
+    (state: any) => state.inventoryFiltersReducer
+  );
 
 
   async function onSortChange(sortValue) {
@@ -140,6 +143,7 @@ function StorageUnits() {
                           .includes(fromReducer.searchInput?.toLowerCase().trim())
                       ? ''
                       : 'hidden',
+                      inventoryFilters.categoryFilter.length != 0 ? inventoryFilters.categoryFilter?.includes(project.bgColorClass) ? '' : 'hidden' : '',
                     'hover:shadow-inner'
                   )}
                 >

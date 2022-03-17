@@ -35,7 +35,7 @@ import { handleUserEvent } from './store/handleMessage';
 import Logo from './components/content/shared/iconsLogo/logo 2';
 import ToContent from './components/content/storageUnits/to/toHolder';
 import { classNames } from './components/content/shared/inventoryFunctions';
-import { filterInventorySetSort } from './store/actions/filtersInventoryActions';
+import { filterInventorySetSort, inventoryAddCategoryFilter } from './store/actions/filtersInventoryActions';
 import settingsPage from './views/settings/settings';
 import {
   setDarkMode,
@@ -163,7 +163,7 @@ function AppContent() {
         }
         dispatch(setSourceValue(valueToWrite));
       });
-      
+
       await window.electron.store.get('locale').then((returnValue) => {
         dispatch(setLocale(returnValue));
       });
@@ -227,7 +227,6 @@ function AppContent() {
       dispatch(pricing_addPrice(message[0], message[1].item_name));
     });
   }
-
   return (
     <>
       {/*
@@ -340,6 +339,7 @@ function AppContent() {
                           <a
                             key={team.name}
                             href={team.href}
+
                             className="group flex items-center px-3 py-2 text-base leading-5 font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-50"
                           >
                             <span
@@ -366,7 +366,7 @@ function AppContent() {
 
         {/* Static sidebar for desktop */}
         <div className="hidden lg:flex lg:flex-col dark:bg-dark-level-two dark:border-opacity-50 lg:w-64 lg:fixed lg:inset-y-0 lg:border-r lg:border-gray-200 lg:pt-5 lg:pb-4 lg:bg-gray-100">
-          
+
           <div className={classNames(settingsData.os == 'win32' ? 'pt-7' : '', "flex items-center flex-shrink-0 px-6")}>
             <Logo />
           </div>
@@ -570,9 +570,16 @@ function AppContent() {
                   aria-labelledby="desktop-teams-headline"
                 >
                   {itemCategories.map((team) => (
-                    <a
+                    <div className={classNames(
+                      filterDetails.categoryFilter?.includes(team.bgColorClass) ? 'bg-gray-200 dark:bg-dark-level-three' : '',"w-full")}>
+
+                    <button
                       key={team.name}
-                      className="group flex items-center px-3 py-2 dark:text-dark-white text-sm font-medium text-gray-700 rounded-md"
+                      onClick={() => dispatch(inventoryAddCategoryFilter(team.bgColorClass))}
+                      className={classNames(userDetails.isLoggedIn == false ? 'pointer-events-none' : '',
+                        "group flex items-center px-3 py-2 dark:text-dark-white text-sm font-medium text-gray-700 rounded-md"
+                      )}
+
                     >
                       <span
                         className={classNames(
@@ -582,7 +589,8 @@ function AppContent() {
                         aria-hidden="true"
                       />
                       <span className="truncate">{team.name}</span>
-                    </a>
+                    </button>
+                    </div>
                   ))}
                 </div>
               </div>

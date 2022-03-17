@@ -26,6 +26,14 @@ export const inventoryFilterSetSearch = (searchField) => {
   }
 }
 
+export const inventoryAddCategoryFilter = (filterToAdd) => {
+  return {
+      type: 'INVENTORY_ADD_CATEGORY_FILTER',
+      payload: filterToAdd
+  }
+}
+
+
 export async function filterInventoryAddOption(combinedInventory, state, filterString, prices, pricingSource ) {
     let filterAlreadyExists = state.inventoryFilter.indexOf(filterString) > -1;
     // make a copy of the existing array

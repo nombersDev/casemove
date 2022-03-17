@@ -20,6 +20,9 @@ function StorageUnits() {
   const settingsData = useSelector((state: any) => state.settingsReducer);
   const [getStorage, setStorage] = useState(inventory.storageInventory);
   getStorage;
+  const inventoryFilters = useSelector(
+    (state: any) => state.inventoryFiltersReducer
+  );
 
   async function onSortChange(sortValue) {
     dispatch(moveToSetSortOption(sortValue));
@@ -144,7 +147,8 @@ function StorageUnits() {
                           .includes(toReducer.searchInput?.toLowerCase().trim())
                       ? ''
                       : 'hidden',
-                    'hover:shadow-inner'
+                      inventoryFilters.categoryFilter.length != 0 ? inventoryFilters.categoryFilter?.includes(project.bgColorClass) ? '' : 'hidden' : '',
+                      'hover:shadow-inner'
                   )}
                 >
                   <StorageRow projectRow={project} />
