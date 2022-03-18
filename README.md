@@ -15,7 +15,9 @@ This is the latest stable version and can be downloaded from the [releases](http
 
 Install the Linux version by unzipping the contents of the zip-file into a folder and click on the AppImage file. 
 
-https://user-images.githubusercontent.com/98760010/158389209-28a49a7c-42fe-4a31-b55a-9eea1d0229ed.mp4
+
+
+https://user-images.githubusercontent.com/98760010/158956768-69b572f1-43b4-4ab4-a792-77f7a739579f.mp4
 
 
 Features include:
