@@ -13,6 +13,8 @@ import {
 } from 'renderer/store/actions/filtersInventoryActions';
 import { classNames, downloadReport } from '../shared/inventoryFunctions';
 import PricingAmount from '../shared/filters/pricingAmount';
+import MoveLeft from '../shared/filters/inventoryAmount';
+import AccountAmount from '../shared/filters/accountAmount';
 const filters = {
   onlyMoveable: [
     { value: '1trade_unlock', label: 'Active tradehold' },
@@ -115,6 +117,7 @@ function content() {
     }
   });
   totalAmount = totalAmount.toFixed(0);
+
 
   // Download function
   async function sendDownload() {
@@ -219,6 +222,14 @@ function content() {
               </div>
               <div className="pl-3">
                 <PricingAmount totalAmount={new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(totalAmount)} />
+              </div>
+              <div className="pl-3">
+
+                <MoveLeft totalAmount={inventory.inventory.length} textToWrite="Total" />
+              </div>
+              <div className="pl-3">
+
+                <AccountAmount totalAmount={inventory.totalAccountItems} textToWrite="Total" />
               </div>
             </div>
           </div>

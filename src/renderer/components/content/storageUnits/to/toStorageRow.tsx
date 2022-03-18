@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { moveToAddRemove } from 'renderer/store/actions/moveToActions';
 import { pricing_add_to_requested } from 'renderer/store/actions/pricingActions';
 
-function content({ projectRow }) {
+function content({ projectRow, index }) {
   const [stickerHover, setStickerHover] = useState('');
   const [itemHover, setItemHover] = useState(false);
   const dispatch = useDispatch();
@@ -71,7 +71,7 @@ function content({ projectRow }) {
         pricesToGet.push(projectRow)
   }
   if (pricesToGet.length > 0) {
-    window.electron.ipcRenderer.getPrice(pricesToGet) 
+    window.electron.ipcRenderer.getPrice(pricesToGet)
     dispatch(pricing_add_to_requested(pricesToGet))
   }
   let marketHashName = projectRow.item_name;
@@ -262,6 +262,7 @@ function content({ projectRow }) {
         <div className='flex justify-center'>
         <button
           onClick={() => returnField(1000)}
+          id={`fire-${index}`}
           className={classNames(
             1000 -
               toReducer.activeStoragesAmount -
@@ -280,6 +281,7 @@ function content({ projectRow }) {
         <div className='flex justify-center'>
         <button
           onClick={() => returnField(0)}
+          id={`removeX-${index}`}
           className={classNames(isEmpty ? 'pointer-events-none hidden' : '')}
         >
           <XIcon
