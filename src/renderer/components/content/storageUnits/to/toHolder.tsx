@@ -213,13 +213,13 @@ function StorageUnits() {
                           toReducer.totalItemsToMove ==
                           0 ||
                           toReducer.totalToMove.length == inventoryFilters.inventoryFiltered.length
-                          ? 'pointer-events-none dark:text-gray-600'
-                          : 'text-gray-400'
+                          ? 'pointer-events-none text-gray-200 dark:text-gray-600'
+                          : 'text-gray-600 dark:text-gray-400'
                       )}
                     >
                       <FireIcon
                         className={classNames(
-                          ' h-4 w-4 text-gray-400 dark:text-current hover:text-yellow-400 dark:hover:text-yellow-400'
+                          ' h-4 w-4 text-current dark:text-current hover:text-yellow-400 dark:hover:text-yellow-400'
                         )}
                         aria-hidden="true"
                       />
@@ -228,13 +228,13 @@ function StorageUnits() {
                       onClick={() => removeFire()}
                       className={classNames(
                         toReducer.totalToMove.length == 0
-                          ? 'pointer-events-none dark:text-gray-600'
-                          : 'text-gray-400'
+                          ? 'pointer-events-none text-gray-200 dark:text-gray-600'
+                          : 'text-gray-600 dark:text-gray-400'
                       )}
                     >
                       <BanIcon
                         className={classNames(
-                          ' h-4 w-4 text-gray-400 dark:text-current hover:text-red-400 dark:hover:text-red-400'
+                          ' h-4 w-4 text-current dark:text-current hover:text-red-400 dark:hover:text-red-400'
                         )}
                         aria-hidden="true"
                       />
