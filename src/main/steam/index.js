@@ -240,7 +240,17 @@ class items {
     if (storageRow['music_index'] !== undefined) {
       const musicKitIndex = storageRow['music_index'];
       const musicKitResult = this.getMusicKits(musicKitIndex);
-      const nameToUse = 'Music Kit | ' + this.getTranslation(musicKitResult['loc_name']);
+      let nameToUse = 'Music Kit | ' + this.getTranslation(musicKitResult['loc_name']);
+      if (storageRow['attribute'] !== undefined) {
+        for (const [, value] of Object.entries(storageRow['attribute'])) {
+          if (
+            value['def_index'] == 80 &&
+            nameToUse.includes('StatTrak™') == false
+          ) {
+            nameToUse = 'StatTrak™ ' + nameToUse;
+          }
+        }
+      }
       return nameToUse
     }
 
