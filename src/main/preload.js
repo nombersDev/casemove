@@ -32,11 +32,16 @@ contextBridge.exposeInMainWorld('electron', {
         );
       });
     },
-    
+
 
     // User account
     deleteAccountDetails(username) {
       ipcRenderer.send('electron-store-deleteAccountDetails', username);
+    },
+
+    // User account
+    setAccountPosition(username, indexPosition) {
+      ipcRenderer.send('electron-store-setAccountPosition', username, indexPosition);
     },
 
     downloadFile(data) {

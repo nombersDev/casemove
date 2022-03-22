@@ -234,7 +234,7 @@ export function classNames(...classes) {
 
 export async function sortDataFunction(sortValue, inventory, prices, pricingSource) {
   function sortRun(valueOne, ValueTwo, useNaN = false) {
-    
+
     if (valueOne < ValueTwo) {
       return -1;
     }
@@ -267,7 +267,7 @@ export async function sortDataFunction(sortValue, inventory, prices, pricingSour
         return sortRun(a.position, b.position)
       });
       return inventory;
-    
+
     case 'Category':
       inventory.sort(function (a, b) {
         return sortRun(a.category, b.category)
@@ -279,19 +279,26 @@ export async function sortDataFunction(sortValue, inventory, prices, pricingSour
         return -sortRun(a.combined_QTY, b.combined_QTY)
       });
       return inventory;
-    
+
     case 'Price':
       inventory.sort(function (a, b) {
         return -sortRun(prices[a.item_name]?.[pricingSource] * a.combined_QTY, prices[b.item_name]?.[pricingSource] * b.combined_QTY)
       });
       return inventory;
-    
+
     case 'Stickers':
       inventory.sort(function (a, b) {
         return -sortRun(a?.stickers?.length, b?.stickers?.length)
       });
       return inventory;
-    
+
+    case 'wearValue':
+      inventory.sort(function (a, b) {
+        return -sortRun(a.item_paint_wear, b.item_paint_wear)
+      });
+      return inventory;
+
+
     case 'StorageName':
       inventory.sort(function (a, b) {
         return sortRun(a?.storage_name, b?.storage_name)

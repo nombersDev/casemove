@@ -4,6 +4,12 @@ export const setFastMove = (valueToSet) => {
         payload: valueToSet
     }
 }
+export const setColumns = (valueToSet) => {
+  return {
+      type: 'SETTINGS_SET_COLUMNS',
+      payload: valueToSet
+  }
+}
 export const setCurrencyValue = (valueToSet) => {
   return {
       type: 'SETTINGS_SET_CURRENCY',

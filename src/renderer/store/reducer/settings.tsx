@@ -4,6 +4,7 @@ const initialState = {
   locale: 'EN-GB',
   os: '',
   darkmode: false,
+  columns: ["Price", "Stickers/patches", "Storage", "Tradehold"],
   currencyPrice: {}
 };
 
@@ -13,6 +14,11 @@ const settingsReducer = (state = initialState, action) => {
       return {
         ...state,
         fastMove: action.payload,
+      };
+    case 'SETTINGS_SET_COLUMNS':
+      return {
+        ...state,
+        columns: action.payload,
       };
     case 'SETTINGS_SET_CURRENCY':
       if (action.payload == true) {
@@ -38,7 +44,7 @@ const settingsReducer = (state = initialState, action) => {
       return {
         ...state,
         os: action.payload,
-      }; 
+      };
       case 'SETTINGS_SET_DARKMODE':
       return {
         ...state,

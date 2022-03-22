@@ -213,11 +213,33 @@ class items {
       } else {
         returnDict['stickers'] = [];
       }
+
+      if (value?.rarity == 6 || value?.quality == 3 || returnDict['item_name'].includes('StatTrak™') || !returnDict['item_url'].includes('econ/default_generated')) {
+        returnDict['tradeUp'] = false
+      } else {
+        returnDict['rarity'] = value.rarity
+        returnDict['rarityName'] = this.handleError(this.itemProcessorGetRarityName, [value.rarity])
+        returnDict['tradeUp'] = true
+      }
       // console.log(value, returnDict)
       returnList.push(returnDict);
+      console.log(returnDict, value)
     }
     return returnList;
   }
+
+  itemProcessorGetRarityName(rarity) {
+    const rarityDict = {
+      1: "Consumer Grade",
+      2: "Industrial Grade",
+      3: "Mil-Spec",
+      4: "Restricted",
+      5: "Classified",
+      6: "Covert"
+    }
+    return rarityDict[rarity]
+  }
+
 
   itemProcessorHasStickersApplied(returnDict, storageRow) {
     if (returnDict['item_url'].includes('econ/characters') || returnDict['item_url'].includes('econ/default_generated') || returnDict['item_url'].includes('weapons/base_weapons')) {
@@ -241,16 +263,10 @@ class items {
       const musicKitIndex = storageRow['music_index'];
       const musicKitResult = this.getMusicKits(musicKitIndex);
       let nameToUse = 'Music Kit | ' + this.getTranslation(musicKitResult['loc_name']);
-      if (storageRow['attribute'] !== undefined) {
-        for (const [, value] of Object.entries(storageRow['attribute'])) {
-          if (
-            value['def_index'] == 80 &&
-            nameToUse.includes('StatTrak™') == false
-          ) {
-            nameToUse = 'StatTrak™ ' + nameToUse;
-          }
-        }
+      if (storageRow.kill_eater_score_type != undefined) {
+        nameToUse = 'StatTrak™ ' + nameToUse;
       }
+
       return nameToUse
     }
 
@@ -313,14 +329,9 @@ class items {
           var finalName = 'Souvenir ' + finalName;
         }
       }
-      for (const [, value] of Object.entries(storageRow['attribute'])) {
-        if (
-          value['def_index'] == 80 &&
-          finalName.includes('StatTrak™') == false
-        ) {
-          var finalName = 'StatTrak™ ' + finalName;
-        }
-      }
+    }
+    if (storageRow.kill_eater_score_type != undefined) {
+      finalName = 'StatTrak™ ' + finalName;
     }
     // Graffiti kit check
     if (storageRow['graffiti_tint'] !== undefined) {

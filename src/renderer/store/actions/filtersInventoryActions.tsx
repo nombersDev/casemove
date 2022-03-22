@@ -32,7 +32,12 @@ export const inventoryAddCategoryFilter = (filterToAdd) => {
       payload: filterToAdd
   }
 }
-
+export const inventoryAddRarityFilter = (filterToAdd) => {
+  return {
+      type: 'INVENTORY_ADD_RARITY_FILTER',
+      payload: filterToAdd
+  }
+}
 
 export async function filterInventoryAddOption(combinedInventory, state, filterString, prices, pricingSource ) {
     let filterAlreadyExists = state.inventoryFilter.indexOf(filterString) > -1;

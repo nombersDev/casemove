@@ -12,7 +12,7 @@ import {isLoggedInElsewhere} from './steam/steam'
 import {getGithubVersion} from './scripts/versionHelper'
 import * as fs from 'fs';
 import SteamTotp from 'steam-totp';
-import {storeUserAccount, getLoginDetails, deleteUserData, getValue, setValue} from './store/settings'
+import {storeUserAccount, getLoginDetails, deleteUserData, getValue, setValue, setAccountPosition} from './store/settings'
 import { pricingEmitter, runItems } from './store/pricing';
 import { currency } from './store/currency';
 
@@ -73,8 +73,9 @@ const createWindow = async () => {
   mainWindow = new BrowserWindow({
     show: false,
     width: 1124,
-    height: 728,
+    height: 850,
     minWidth: 1030,
+    minHeight: 800,
     frame: frameValue,
     icon: getAssetPath('icon.png'),
     webPreferences: {
@@ -116,7 +117,7 @@ const createWindow = async () => {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
-  
+
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 
@@ -125,7 +126,7 @@ const createWindow = async () => {
     event.preventDefault();
     shell.openExternal(url);
   });
-  
+
   if (process.platform == 'linux') {
     mainWindow.removeMenu()
   }
@@ -198,7 +199,7 @@ app
       )
 
      }
-     
+
     // On linux
     if (process.platform == 'linux') {
       reactDevToolsPath = path.join(
@@ -547,6 +548,7 @@ async function darkModeSetup() {
 }
 darkModeSetup()
 
+
 // Set platform
 setValue('os', process.platform)
 
@@ -558,6 +560,10 @@ ipcMain.on('electron-store-getAccountDetails', async (event) => {
 
 ipcMain.on('electron-store-deleteAccountDetails', async (_event, username) => {
   deleteUserData(username)
+});
+
+ipcMain.on('electron-store-setAccountPosition', async (_event, username, position) => {
+  setAccountPosition(username, position)
 });
 
 // Store IPC

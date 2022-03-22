@@ -10,6 +10,7 @@ import {
 } from 'renderer/store/actions/settings';
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid';
 import { classNames } from 'renderer/components/content/shared/inventoryFunctions';
+import ColumnsDropDown from 'renderer/components/content/shared/dropdownRows';
 
 const sources = [
   {
@@ -196,7 +197,7 @@ export default function settingsPage() {
   }
   const [fastMoveStatus, setFastMoveStatus] = useState(settingsData.fastMove);
 
-  // Fastmove
+  // Dark mode
   async function updateDarkMode() {
     const correctValue = !(await window.electron.store.get('darkmode.value'));
     setDarkModeStatus(correctValue);
@@ -205,6 +206,7 @@ export default function settingsPage() {
     dispatch(setDarkMode(correctValue));
   }
   const [darkModeStatus, setDarkModeStatus] = useState(settingsData.darkmode);
+
 
   // Pricing - currency
   async function updateCurrency(valueToSet) {
@@ -414,6 +416,22 @@ export default function settingsPage() {
                                       </span>
                                     </span>
                                   </Switch>
+                                </span>
+                              </dd>
+                            </div>
+                            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+
+                              <dt className="text-sm font-medium text-gray-900 dark:text-dark-white">
+                              Columns <br />
+                                <span className="text-gray-400">
+                                  {' '}
+                                  Select which columns to display
+                                </span>
+                              </dt>
+                              <dd className="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                <span className="flex-grow"></span>
+                                <span className="flex items-center ml-4 flex-shrink-0">
+                                  <ColumnsDropDown />
                                 </span>
                               </dd>
                             </div>

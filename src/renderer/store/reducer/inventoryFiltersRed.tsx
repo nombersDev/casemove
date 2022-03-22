@@ -4,7 +4,8 @@ const initialState = {
   inventoryFiltered: [] as any,
   searchInput: '',
   sortBack: false,
-  categoryFilter: [] as any
+  categoryFilter: [] as any,
+  rarityFilter: [] as any
 };
 
 const inventoryFiltersReducer = (state = initialState, action) => {
@@ -65,6 +66,18 @@ const inventoryFiltersReducer = (state = initialState, action) => {
       return {
         ...state,
         categoryFilter: newFilters
+      }
+    case 'INVENTORY_ADD_RARITY_FILTER':
+      console.log(action.payload)
+      let newRarity = state.rarityFilter
+      if (newRarity.includes(action.payload)) {
+        newRarity.splice(newRarity.indexOf(action.payload), 1)
+      } else {
+        newRarity = [...newRarity, action.payload]
+      }
+      return {
+        ...state,
+        rarityFilter: newRarity
       }
     case 'INVENTORY_FILTERS_SET_SEARCH':
       return {
