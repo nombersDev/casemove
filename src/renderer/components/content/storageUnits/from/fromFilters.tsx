@@ -135,7 +135,7 @@ function content() {
         element.combined_QTY *
         pricesResult.prices[element.item_name]?.[settingsData.source.title]  * settingsData.currencyPrice[settingsData.currency])
     });
-    
+
     downloadReport(inventoryFilter);
   }
 

@@ -3,7 +3,7 @@ async function setCollections(currencyClass) {
   let collections = require('./backup/collections.json')
 
   const directory = {}
-  for (const [key, value] of Object.entries(collections)) { 
+  for (const [key, value] of Object.entries(collections)) {
     // @ts-ignore
     const keys = Object.keys(value)
     keys.forEach(element => {
@@ -38,13 +38,13 @@ class tradeUps {
   }
 
   // Get rarity
-  getRarity(min_wear, max_wear, averageFloat) {  
-    for (const [key, value] of Object.entries(this.rarityLevels)) { 
+  getRarity(min_wear, max_wear, averageFloat) {
+    for (const [key, value] of Object.entries(this.rarityLevels)) {
         // @ts-ignore
         let chance = (value - min_wear) / (max_wear - min_wear)
         if (chance > averageFloat) {
             return key
-        } 
+        }
     }
     return "Battle-Scarred"
   }
@@ -54,7 +54,7 @@ class tradeUps {
     let i = 1
     while (true) {
         let listOfPossibilites = []
-        for (const [key, value] of Object.entries(this.collections[collection])) { 
+        for (const [key, value] of Object.entries(this.collections[collection])) {
             // @ts-ignore
             if (value.best_quality == quality + i) {
                 // @ts-ignore
@@ -75,7 +75,7 @@ class tradeUps {
     return new Promise((resolve) => {
        if (arrayOfItems.length != 10) {
            resolve(false)
-       } 
+       }
        let finalResult = []
        let average = 0
        let possibleSkins = []
@@ -102,14 +102,14 @@ class tradeUps {
            // @ts-ignore
            let percentageChance = 100 / (possibleSkins.length / possibleSkins.filter(function(item){ return item == element; }).length)
            let objectToWrite = {
-            "product": element,
-            "skin_rarity": skinRarity,
+            "item_name": element,
+            "item_wear_name": skinRarity,
             "percentage": percentageChance.toFixed(2),
             "image": relevantObject['image']
         }
            // @ts-ignore
            finalResult.push(objectToWrite)
-           
+
        });
 
        resolve(finalResult)
@@ -130,5 +130,4 @@ module.exports = {
     tradeUps
   };
   export { tradeUps };
-  
-  
+

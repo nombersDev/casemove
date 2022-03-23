@@ -223,7 +223,6 @@ class items {
       }
       // console.log(value, returnDict)
       returnList.push(returnDict);
-      console.log(returnDict, value)
     }
     return returnList;
   }
