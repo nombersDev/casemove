@@ -15,9 +15,12 @@ import SteamTotp from 'steam-totp';
 import {storeUserAccount, getLoginDetails, deleteUserData, getValue, setValue, setAccountPosition} from './store/settings'
 import { pricingEmitter, runItems } from './store/pricing';
 import { currency } from './store/currency';
+import { tradeUps } from './store/tradeup';
 
 
 const currencyClass = new currency()
+
+let tradeUpClass = new tradeUps()
 
 let mainWindow: BrowserWindow | null = null;
 ipcMain.on('ipc-example', async (event, arg) => {
@@ -124,7 +127,8 @@ const createWindow = async () => {
   // Open urls in the user's browser
   mainWindow.webContents.on('new-window', (event, url) => {
     event.preventDefault();
-    shell.openExternal(url);
+    console.log(url)
+    shell.openExternal(url.replaceAll('http://localhost:1212/#/', ''));
   });
 
   if (process.platform == 'linux') {
@@ -531,6 +535,20 @@ async function startEvents(csgo, user) {
 
 
 }
+
+// Get tradeup
+// Get storage unit contents
+ipcMain.on('getTradeUpPossible', async (event, itemsToGet) => {
+  console.log(itemsToGet)
+  tradeUpClass.getPotentitalOutcome(itemsToGet).then((returnValue) => {
+    console.log(returnValue)
+    event.reply('getTradeUpPossible-reply', returnValue)
+  })
+
+  
+
+});
+
 
 // setValue('darkmode.hasSet', false)
 // Set dark mode

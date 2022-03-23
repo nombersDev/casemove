@@ -1,19 +1,25 @@
-import { RefreshIcon } from "@heroicons/react/solid";
-import { useState } from "react";
+import { BeakerIcon, CheckCircleIcon, VariableIcon } from "@heroicons/react/solid";
 import { useSelector } from "react-redux";
-import { LoadingButton } from "renderer/components/content/shared/animations";
+import { HashRouter as Router, Route } from 'react-router-dom';
+import PricingAmount from "renderer/components/content/shared/filters/pricingAmount";
 import { classNames } from "renderer/components/content/shared/inventoryFunctions";
 import TradeUpPicker from "./inventoryPickers";
+import TradeUpSideBar from "./sideBar";
 
-export default function settingsPage() {
-  const [getLoadingButton, setLoadingButton] = useState(false);
-  const settingsData = useSelector((state: any) => state.settingsReducer);
-  setLoadingButton
-
-  // Get the inventory
-  async function refreshInventory() {
-    window.electron.ipcRenderer.refreshInventory();
-  }
+function settingsContent() {
+  
+  const tradeUpData = useSelector((state: any) => state.tradeUpReducer);
+    const pricesResult = useSelector((state: any) => state.pricingReducer);
+    const settingsData = useSelector((state: any) => state.settingsReducer);
+    
+    let totalFloat = 0
+    let totalPrice = 0
+    tradeUpData.tradeUpProducts.forEach(element => {
+        totalFloat += element.item_paint_wear
+        console.log(element)
+        totalPrice += pricesResult.prices[element.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency] 
+    });
+    totalFloat = totalFloat / tradeUpData.tradeUpProducts.length
 
 
   return (
@@ -34,28 +40,57 @@ export default function settingsPage() {
             </h1>
           </div>
           <div className="mt-4 flex sm:mt-0 sm:ml-4">
-          <button
-            type="button"
-            onClick={() => refreshInventory()}
-            className={classNames(settingsData.darkmode ? 'focus:outline-none focus:bg-dark-level-four' : 'focus:outline-none focus:bg-gray-100', 'order-1 ml-3  order-1 inline-flex items-center px-4 py-2 hover:border hover:shadow-sm dark:hover:bg-dark-level-four  text-sm font-medium rounded-md text-gray-700  hover:bg-gray-50 sm:order-0 sm:ml-0')}
-
-          >
-            {getLoadingButton ? (
-              <LoadingButton />
-            ) : (
-              <RefreshIcon
-                className="h-4 w-4 text-gray-500 dark:text-dark-white"
-                aria-hidden="true"
-              />
-            )}
-          </button>
+          <div className="-ml-4 -mt-4 flex justify-between items-center flex-wrap sm:flex-nowrap">
+        <div className="ml-4 mt-4">
+          <div className="flex items-center">
+          
+           
+            
+          </div>
+        </div>
+        
+        <div className="ml-4 mt-4 flex-shrink-0 flex">
+        <span className="mr-3 flex items-center text-gray-500 text-xs font-medium uppercase tracking-wide">
+        <VariableIcon
+      className="flex-none w-5 h-5 mr-2 text-gray-400 group-hover:text-gray-500 "
+      aria-hidden="true"
+    />{' '}
+    <span className="text-green-500 mr-2 uppercase">
+      {totalFloat.toString()?.substr(0, 9)}
+    </span>
+              
+          
+    </span>
+        
+        <PricingAmount totalAmount={new Intl.NumberFormat(settingsData.locale, {
+                              style: 'currency',
+                              currency: settingsData.currency,
+                            }).format(totalPrice)}/>
+          <span className="flex items-center text-gray-500 text-xs font-medium uppercase tracking-wide">
+    <BeakerIcon
+      className="flex-none w-5 h-5 mr-2 text-gray-400 group-hover:text-gray-500"
+      aria-hidden="true"
+    />{' '}
+    <span className="text-blue-500 mr-2">
+      {tradeUpData.tradeUpProducts.length} Items
+    </span>
+    
+    <span className="text-blue-500 pl-2 border-l border-gray-400">
+        <CheckCircleIcon 
+      className={classNames(tradeUpData.tradeUpProducts.length == 10 ? 'text-green-500' : 'text-gray-500', "flex-none w-5 h-5 group-hover:text-gray-500")} aria-hidden="true"/>
+      
+      </span>
+    </span>
+        </div>
+      </div>
+          
         </div>
         </div>
 
         {/* Content area */}
 
         <div className="">
-        <div className="flex-1 relative z-0 flex  h-screen-fixed">
+        <div className="flex-1 relative z-0 flex  h-screen-fixed ">
             <main className="flex-1 relative z-0 overflow-y-auto absolute">
               {/* Start main area*/}
               <div className="inset-0">
@@ -63,9 +98,10 @@ export default function settingsPage() {
               </div>
               {/* End main area */}
             </main>
-            <aside className="hidden absolute relative xl:flex xl:flex-col flex-shrink-0 w-96 border-l dark:border-opacity-50  border-gray-200 overflow-y-auto">
+            <aside className="hidden absolute relative xl:flex xl:flex-col bg-gray-50 flex-shrink-0 w-96 border-l dark:border-opacity-50  border-gray-200 overflow-y-auto dark:bg-dark-level-one">
               {/* Start secondary column (hidden on smaller screens) */}
-              <div className="inset-0 py-6 px-4 sm:px-6 lg:px-8">
+              <div className="">
+              <TradeUpSideBar />
               </div>
               {/* End secondary column */}
             </aside>
@@ -74,5 +110,12 @@ export default function settingsPage() {
         </div>
       </div>
     </>
+  );
+}
+export default function TradeupPage() {
+  return (
+    <Router>
+      <Route path="/tradeup" component={settingsContent} />
+    </Router>
   );
 }

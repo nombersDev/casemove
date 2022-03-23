@@ -33,6 +33,21 @@ contextBridge.exposeInMainWorld('electron', {
       });
     },
 
+    // User account
+    getPossibleOutcomes(resultsToGet) {
+      console.log(resultsToGet)
+      return new Promise((resolve) => {
+        ipcRenderer.send('getTradeUpPossible', resultsToGet);
+        ipcRenderer.once(
+          'getTradeUpPossible-reply',
+          (evt, message) => {
+            console.log(message)
+            resolve(message);
+          }
+        );
+      });
+    },
+
 
     // User account
     deleteAccountDetails(username) {
@@ -214,7 +229,8 @@ contextBridge.exposeInMainWorld('electron', {
         'electron-store-set',
         'pricing',
         'getPrice',
-        'windowsActions'
+        'windowsActions',
+        'getTradeUpPossible'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
@@ -239,7 +255,8 @@ contextBridge.exposeInMainWorld('electron', {
         'electron-store-set',
         'pricing',
         'getPrice',
-        'windowsActions'
+        'windowsActions',
+        'getTradeUpPossible'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`

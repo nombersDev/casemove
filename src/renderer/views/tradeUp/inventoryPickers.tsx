@@ -1,11 +1,11 @@
-import { PencilIcon, SelectorIcon, TagIcon } from '@heroicons/react/solid';
+import { BeakerIcon, PencilIcon, SelectorIcon, TagIcon } from '@heroicons/react/solid';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import itemRarities from 'renderer/components/content/shared/rarities';
 import { filterInventorySetSort } from 'renderer/store/actions/filtersInventoryActions';
 import { setRenameModal } from 'renderer/store/actions/modalMove actions';
-import { pricing_add_to_requested } from 'renderer/store/actions/pricingActions';
+import { tradeUpAddRemove } from 'renderer/store/actions/tradeUpActions';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -21,6 +21,7 @@ function content() {
   );
   const pricesResult = useSelector((state: any) => state.pricingReducer);
   const settingsData = useSelector((state: any) => state.settingsReducer);
+  const tradeUpData = useSelector((state: any) => state.tradeUpReducer);
 
   const dispatch = useDispatch();
 
@@ -38,28 +39,9 @@ function content() {
   }
 
   let inventoryToUse = [] as any;
-  if (
-    inventoryFilters.inventoryFiltered.length == 0 &&
-    inventoryFilters.inventoryFilter.length == 0
-  ) {
-    inventoryToUse = inventory.combinedInventory;
-  } else {
-    inventoryToUse = inventoryFilters.inventoryFiltered;
-  }
-  let pricesToGet = [] as any;
-  inventoryToUse.forEach((projectRow) => {
-    if (
-      pricesResult.prices[projectRow.item_name] == undefined &&
-      pricesResult.productsRequested.includes(projectRow.item_name) == false
-    ) {
-      pricesToGet.push(projectRow);
-    }
-  });
-  console.log(pricesToGet);
-  if (pricesToGet.length > 0) {
-    window.electron.ipcRenderer.getPrice(pricesToGet);
-    dispatch(pricing_add_to_requested(pricesToGet));
-  }
+  
+  inventoryToUse = inventory.inventory;
+  
   if (inventoryToUse != getInventory) {
     if (
       inventoryFilters.sortBack == true &&
@@ -72,6 +54,15 @@ function content() {
   }
 
   inventoryToUse = inventoryToUse.filter(function (item) {
+    if (tradeUpData.tradeUpProducts.includes(item)) {
+      return false;
+    }
+    if (tradeUpData.tradeUpProducts.length != 0) {
+      let restrictRarity = tradeUpData.tradeUpProducts[0].rarityName
+      if (item.rarityName != restrictRarity) {
+        return false
+      }
+    }
     if (item.tradeUp) {
       return true;
     }
@@ -86,7 +77,12 @@ function content() {
     element['rarityColor'] =itemR[element.rarityName]
   });
 
+  // Is it full ?
+  const isFull = tradeUpData.tradeUpProducts.length == 10
+
   console.log(inventoryToUse);
+
+  
 
   return (
     <>
@@ -129,7 +125,7 @@ function content() {
         <thead>
           <tr
             className={classNames(
-              settingsData.os == 'win32' ? 'top-7' : 'top-0',
+              settingsData.os == 'win32' ? 'top-0' : 'top-0',
               'border-gray-200 sticky'
             )}
           >
@@ -176,6 +172,11 @@ function content() {
                 </span>
               </button>
             </th>
+            <th className="hidden xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
+            <span className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Move
+                </span>
+            </th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-100 dark:bg-dark-level-one dark:divide-gray-500">
@@ -213,11 +214,6 @@ function content() {
             >
               <td className="px-6 py-3 max-w-0 w-full whitespace-nowrap overflow-hidden text-sm font-normal text-gray-900">
                 <div className="flex items-center space-x-3 lg:pl-2">
-                  {/* Projects list (only on smallest breakpoint)
-                            <div
-                              className={classNames(project.bgColorClass, 'flex-shrink-0 w-2.5 h-2.5 rounded-full')}
-                              aria-hidden="true"
-                            /> */}
                   <div
                     className={classNames(
                       projectRow.rarityColor,
@@ -239,7 +235,8 @@ function content() {
                       </div>
                     ) : (
                       <Link
-                        to={{
+                        to={
+                          {
                           pathname: `https://steamcommunity.com/market/listings/730/${
                             projectRow.item_paint_wear == undefined
                               ? projectRow.item_name
@@ -461,13 +458,24 @@ function content() {
                 </div>
               </td>
 
-              <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
-                <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
-                  <div className="flex flex-shrink-0 -space-x-1">
-                    {projectRow.item_paint_wear?.toString()?.substr(0, 9)}
-                  </div>
-                </div>
+              <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-normal ">
+              {projectRow.item_paint_wear?.toString()?.substr(0, 9)}
               </td>
+              <td className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
+        <div className={classNames(isFull ? 'hidden' : '', 'flex justify-center')}>
+          <button
+          onClick={() => dispatch(tradeUpAddRemove(projectRow))}
+            
+          >
+            <BeakerIcon
+              className={classNames(
+                'text-gray-400 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-400 h-5'
+              )}
+              aria-hidden="true"
+            />
+          </button>
+        </div>
+      </td>
 
               <td className="hidden md:px-6 py-3 whitespace-nowrap text-right text-sm font-medium"></td>
             </tr>

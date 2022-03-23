@@ -24,6 +24,7 @@ import {
   DocumentDownloadIcon,
   XIcon,
   MenuAlt1Icon,
+  BeakerIcon,
 } from '@heroicons/react/outline';
 import itemCategories from './components/content/shared/categories';
 import { toMoveContext } from './context/toMoveContext';
@@ -65,7 +66,8 @@ const navigation = [
     icon: UploadIcon,
     current: false,
   },
-  { name: 'Inventory', href: '/inventory', icon: ArchiveIcon, current: false }
+  { name: 'Inventory', href: '/inventory', icon: ArchiveIcon, current: false },
+  { name: 'Trade up', href: '/tradeup', icon: BeakerIcon, current: false }
 ];
 // { name: 'Trade up', href: '/tradeup', icon: BeakerIcon, current: false }
 // { name: 'Trade-Up', href: '/inventory', icon: BeakerIcon, current: false },

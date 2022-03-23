@@ -8,6 +8,7 @@ export default function UserGrid({ clickOnProfile }) {
   const [getUsers, setUsers] = useState([] as any);
   async function updateFunction() {
     let doUpdate = await window.electron.ipcRenderer.getAccountDetails();
+    console.log(doUpdate)
     let valueToUse = []
     await window.electron.store.get('accountKeyList').then((returnValue) => {
       console.log('accountKeyList', returnValue);
@@ -18,30 +19,32 @@ export default function UserGrid({ clickOnProfile }) {
       doUpdate = {};
     }
     console.log(valueToUse)
-    let seenValues = []
-    if (valueToUse == undefined) {
-      for (const [key, value] of Object.entries(doUpdate)) {
-        let userObject = value as any;
-        userObject['username'] = key;
-        finalList.push(userObject);
-      }
-      setUsers(finalList);
-    } else {
+    let seenValues = [] as any
+    if (valueToUse != undefined) {
       valueToUse.forEach(element => {
         if (seenValues.includes(element) == false) {
           seenValues.push(element)
         }
       });
-      console.log(doUpdate)
-      valueToUse.forEach(element => {
+      for (const [key, value] of Object.entries(doUpdate)) {
+        let userObject = value as any;
+        userObject['username'] = key;
+        console.log(key)
+        if (!seenValues.includes(userObject['username'])) {
+          finalList.push(userObject);
+        }
+      }
+      seenValues.reverse()
+      seenValues.forEach(element => {
         if (doUpdate[element] != undefined) {
           let userObject = doUpdate[element] as any;
           userObject['username'] = element;
-          finalList.push(userObject);
+          finalList.splice(0, 0, userObject)
         }
 
       });
     }
+    console.log(finalList)
     setUsers(finalList)
 
   }
