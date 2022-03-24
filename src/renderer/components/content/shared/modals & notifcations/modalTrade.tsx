@@ -28,8 +28,8 @@ export default function TradeModal() {
   console.log(modalData.moveOpen)
 
   async function confirmContract() {
-    console.log(inventory.inventory)
-    window.electron.ipcRenderer.tradeOrder(tradeUpData.tradeUpProductsIDS)
+    console.log(tradeUpData.tradeUpProducts[0]?.rarity)
+    window.electron.ipcRenderer.tradeOrder(tradeUpData.tradeUpProductsIDS, tradeUpData.tradeUpProducts[0]?.rarity - 1)
 
     let idsToGet = [] as any
     inventory.inventory.forEach(element => {

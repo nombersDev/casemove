@@ -55,13 +55,12 @@ const initialState = {
               ...state,
               possibleOutcomes: action.payload
            }
-
-
         case 'TRADEUP_RESET':
-        return {
-          ...state,
-          possibleOutcomes: initialState.possibleOutcomes
-        }
+            return {
+              ...initialState
+            }
+
+      
 
         case 'SIGN_OUT':
         return {

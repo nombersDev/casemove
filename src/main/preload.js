@@ -49,10 +49,8 @@ contextBridge.exposeInMainWorld('electron', {
     },
 
     // User account
-    tradeOrder(idsToProcess) {
-      let tradeupPayLoad = new ByteBuffer(2+2+idsToProcess.length*8,ByteBuffer.LITTLE_ENDIAN);
-      tradeupPayLoad.append('01000A00','hex');
-      ipcRenderer.send('processTradeOrder', tradeupPayLoad);
+    tradeOrder(idsToProcess, idToUse) {
+      ipcRenderer.send('processTradeOrder', idsToProcess, idToUse);
     },
 
 

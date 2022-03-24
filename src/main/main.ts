@@ -31,6 +31,7 @@ import { pricingEmitter, runItems } from './store/pricing';
 import { currency } from './store/currency';
 import { tradeUps } from './store/tradeup';
 
+var ByteBuffer = require("bytebuffer");
 const currencyClass = new currency();
 
 let tradeUpClass = new tradeUps();
@@ -389,9 +390,25 @@ async function startEvents(csgo, user) {
       event.reply('getTradeUpPossible-reply', returnValue);
     });
   });
-  ipcMain.on('processTradeOrder', async (_event, tradeupPayLoad) => {
-    // console.log(tradeupPayLoad)
-    csgo._send(1002, null, tradeupPayLoad)
+  ipcMain.on('processTradeOrder', async (_event, idsToProcess, rarityToUse) => {
+    const rarObject = {
+      0: "00000A00",
+      1: "01000A00",
+      2: "02000A00",
+      3: "03000A00",
+      4: "04000A00"
+    }
+    let idsToUse = [] as any
+    idsToProcess.forEach(element => {
+      idsToUse.push(parseInt(element))
+    });
+    let tradeupPayLoad = new ByteBuffer(1+2+idsToUse.length*8, ByteBuffer.LITTLE_ENDIAN);
+    console.log(rarObject[rarityToUse])
+    tradeupPayLoad.append(rarObject[rarityToUse],'hex');
+    for( let id of idsToUse){
+      tradeupPayLoad.writeUint64(id);
+    }
+    console.log(await csgo._send(1002, null, tradeupPayLoad))
 
   });
   ipcMain.on('getCurrency', async (event) => {
