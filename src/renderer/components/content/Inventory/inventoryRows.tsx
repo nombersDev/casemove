@@ -36,6 +36,7 @@ function content() {
   async function onSortChange(sortValue) {
     dispatch(
       await filterInventorySetSort(
+        inventory.inventory,
         inventory.combinedInventory,
         inventoryFilters,
         sortValue,

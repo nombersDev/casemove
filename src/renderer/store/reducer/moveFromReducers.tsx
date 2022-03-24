@@ -15,17 +15,17 @@ const initialState = {
           return {
               ...state,
               doHide: !state.doHide
-           } 
+           }
       case 'MOVE_FROM_SET_SORT_BACK':
           return {
               ...state,
               sortBack: !state.sortBack
-           } 
+           }
       case 'MOVE_FROM_ADD_TO':
         // Add to or remove from active storages
         let casketAlreadyExists = state.activeStorages.indexOf(action.payload.casketID) > -1;
         let chosenActiveCopy = state.activeStorages.slice();
-        
+
         if (casketAlreadyExists) {
             chosenActiveCopy = chosenActiveCopy.filter(id => id != action.payload.casketID)
         } else {
@@ -39,9 +39,9 @@ const initialState = {
           return {
             ...initialState
           }
-       case 'MOVE_FROM_TOTAL_TO_ADD': 
+       case 'MOVE_FROM_TOTAL_TO_ADD':
         let toMoveAlreadyExists = state.totalToMove.filter(row => row[0] != action.payload.itemID)
-        
+
         if (action.payload.toMove.length > 0) {
             toMoveAlreadyExists.push([action.payload.itemID, action.payload.casketID, action.payload.toMove, action.payload.itemName])
         }
@@ -54,9 +54,9 @@ const initialState = {
             totalToMove: toMoveAlreadyExists,
             totalItemsToMove: newTotalItemsToMove
         }
-        case 'MOVE_FROM_ALL_CASKET_RESULTS': 
+        case 'MOVE_FROM_ALL_CASKET_RESULTS':
         let allCasketResults = state.totalToMove.filter(row => row[1] != action.payload.casketID)
-        
+
         let allCasketToRemoveTotal = 0
         allCasketResults.forEach(element => {
             allCasketToRemoveTotal += element[2].length
@@ -71,11 +71,16 @@ const initialState = {
           return {
               ...state,
               searchInput: action.payload.searchField
+           }
+           case 'MOVE_FROM_SET_SEARCH':
+          return {
+              ...state,
+              searchInput: action.payload.searchField
            } 
         case 'MOVE_FROM_SET_SORT':
           if (state.sortValue == action.payload.sortValue) {
             return {
-              ...state, 
+              ...state,
               sortBack: !state.sortBack
             }
           } else {
@@ -83,7 +88,7 @@ const initialState = {
               ...state,
               sortValue: action.payload.sortValue,
               sortBack: initialState.sortBack
-           } 
+           }
           }
         case 'MOVE_FROM_CLEAR_ALL':
           return {
@@ -92,22 +97,22 @@ const initialState = {
               totalItemsToMove: 0,
               searchInput: '',
               sortValue: 'Default'
-           } 
+           }
         case 'DO_CANCEL':
           return {
               ...state,
               doCancel: action.payload.doCancel
-           } 
-        case 'SIGN_OUT': 
+           }
+        case 'SIGN_OUT':
         return {
           ...initialState
         }
 
 
-        
+
       default:
         return {...state}
-      
+
     }
   };
 

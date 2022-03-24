@@ -52,6 +52,7 @@ function content() {
   async function addRemoveFilter(filterValue: string) {
     dispatch(
       await filterInventoryAddOption(
+        inventory.inventory,
         inventory.combinedInventory,
         inventoryFilters,
         filterValue,

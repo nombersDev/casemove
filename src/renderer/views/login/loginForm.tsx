@@ -159,6 +159,7 @@ export default function LoginForm({ isLock, replaceLock }) {
       );
       dispatch(
         await filterInventorySetSort(
+          responseStatus[1][3],
           combined,
           filterDetails,
           filterDetails.sortValue,

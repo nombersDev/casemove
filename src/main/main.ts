@@ -389,6 +389,11 @@ async function startEvents(csgo, user) {
       event.reply('getTradeUpPossible-reply', returnValue);
     });
   });
+  ipcMain.on('processTradeOrder', async (_event, tradeupPayLoad) => {
+    console.log(tradeupPayLoad)
+    // csgo._send(1002, null, tradeupPayLoad)
+
+  });
   ipcMain.on('getCurrency', async (event) => {
     getValue('pricing.currency').then((returnValue) => {
       currencyClass.getRate(returnValue).then((response) => {

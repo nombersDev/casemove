@@ -2,7 +2,7 @@ const initialState = {
     inventory: [] as any,
     combinedInventory: [] as any,
     storageInventory: [] as any,
-    totalAccountItems: 0 as any
+    totalAccountItems: 0 as any,
   };
 
   const inventoryReducer = (state = initialState, action) => {

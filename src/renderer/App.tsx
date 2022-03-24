@@ -94,6 +94,7 @@ function AppContent() {
   const modalData = useSelector((state: any) => state.modalMoveReducer);
   const settingsData = useSelector((state: any) => state.settingsReducer);
   const pricesResult = useSelector((state: any) => state.pricingReducer);
+  const inventoryData = useSelector((state: any) => state.inventoryReducer);
   const filterDetails = useSelector(
     (state: any) => state.inventoryFiltersReducer
   );
@@ -113,6 +114,8 @@ function AppContent() {
     setSideMenuOption(location.pathname);
   }
 
+  console.log(currentSideMenuOption)
+
   // Log out of session
   const dispatch = useDispatch();
 
@@ -128,6 +131,7 @@ function AppContent() {
       );
       dispatch(
         await filterInventorySetSort(
+          inventoryData.inventory,
           combinedInventory,
           filterDetails,
           filterDetails.sortValue,

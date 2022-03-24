@@ -2,19 +2,16 @@ import { BeakerIcon, PencilIcon, SelectorIcon, TagIcon } from '@heroicons/react/
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { classNames } from 'renderer/components/content/shared/inventoryFunctions';
 import itemRarities from 'renderer/components/content/shared/rarities';
 import { filterInventorySetSort } from 'renderer/store/actions/filtersInventoryActions';
 import { setRenameModal } from 'renderer/store/actions/modalMove actions';
 import { tradeUpAddRemove } from 'renderer/store/actions/tradeUpActions';
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
 
 function content() {
   const [stickerHover, setStickerHover] = useState('');
   const [itemHover, setItemHover] = useState('');
-  const [getInventory, setInventory] = useState([] as any);
   const inventory = useSelector((state: any) => state.inventoryReducer);
   const inventoryFilters = useSelector(
     (state: any) => state.inventoryFiltersReducer
@@ -29,6 +26,7 @@ function content() {
   async function onSortChange(sortValue) {
     dispatch(
       await filterInventorySetSort(
+        inventory.inventory,
         inventory.combinedInventory,
         inventoryFilters,
         sortValue,
@@ -39,22 +37,18 @@ function content() {
   }
 
   let inventoryToUse = [] as any;
-  
   inventoryToUse = inventory.inventory;
-  
-  if (inventoryToUse != getInventory) {
-    if (
-      inventoryFilters.sortBack == true &&
-      inventoryToUse.reverse() != getInventory
-    ) {
-      setInventory(inventoryToUse);
-    } else {
-      setInventory(inventoryToUse);
-    }
+  if (inventoryFilters.tradeUpInventory.length != 0) {
+    inventoryToUse = inventoryFilters.tradeUpInventory
   }
 
+
+
   inventoryToUse = inventoryToUse.filter(function (item) {
-    if (tradeUpData.tradeUpProducts.includes(item)) {
+    if (tradeUpData.MinFloat > item.item_paint_wear || tradeUpData.MaxFloat < item.item_paint_wear) {
+      return false;
+    }
+    if (tradeUpData.tradeUpProductsIDS.includes(item.item_id)) {
       return false;
     }
     if (tradeUpData.tradeUpProducts.length != 0) {
@@ -76,51 +70,14 @@ function content() {
   inventoryToUse.forEach(element => {
     element['rarityColor'] =itemR[element.rarityName]
   });
+  // Is it full ?
 
   // Is it full ?
   const isFull = tradeUpData.tradeUpProducts.length == 10
 
-  console.log(inventoryToUse);
-
-  
 
   return (
     <>
-      {/* Projects list (only on smallest breakpoint) */}
-      <div className="mt-10 sm:hidden">
-        <div className="px-4 sm:px-6">
-          <h2 className="text-gray-500 text-xs font-medium uppercase tracking-wide">
-            Product details
-          </h2>
-        </div>
-        <ul
-          role="list"
-          className="mt-3 border-t border-gray-200 divide-y divide-gray-100 dark:divide-gray-500"
-        >
-          {inventoryToUse.map((project) => (
-            <li key={project.item_id}>
-              <a
-                href="#"
-                className="group flex items-center justify-between px-4 py-4 hover:bg-gray-50 sm:px-6"
-              >
-                <span className="flex items-center truncate space-x-3">
-                  <span
-                    className={classNames(
-                      project.rarityColor,
-                      'w-2.5 h-2.5 flex-shrink-0 rounded-full'
-                    )}
-                    aria-hidden="true"
-                  />
-                  <span className="font-medium truncate text-sm leading-6">
-                    {project.item_name}
-                  </span>
-                </span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-
       <table className="min-w-full">
         <thead>
           <tr
@@ -140,7 +97,7 @@ function content() {
               </button>
             </th>
 
-            <th className="table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
+            <th className="hidden xl:table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
               <button
                 onClick={() => onSortChange('Price')}
                 className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
@@ -162,7 +119,7 @@ function content() {
               </button>
             </th>
 
-            <th className="hidden xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
+            <th className="hidden lg:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
               <button
                 onClick={() => onSortChange('wearValue')}
                 className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
@@ -172,7 +129,7 @@ function content() {
                 </span>
               </button>
             </th>
-            <th className="hidden xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
+            <th className="hidden lg:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
             <span className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400">
                   Move
                 </span>
@@ -360,52 +317,10 @@ function content() {
                 </div>
               </td>
               {settingsData.columns.includes('Price') ? (
-                <td className="table-cell px-6 py-3 text-sm text-gray-500 font-medium">
+                <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 font-medium">
                   <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
                     <div className="flex flex-shrink-0 -space-x-1 text-gray-500 dark:text-gray-400 font-normal">
-                      {projectRow.item_moveable
-                        ? pricesResult.prices[projectRow.item_name] ==
-                            undefined || projectRow.combined_QTY == 1
-                          ? new Intl.NumberFormat(settingsData.locale, {
-                              style: 'currency',
-                              currency: settingsData.currency,
-                            }).format(
-                              pricesResult.prices[projectRow.item_name]?.[
-                                settingsData?.source?.title
-                              ] *
-                                settingsData.currencyPrice[
-                                  settingsData.currency
-                                ]
-                                ? pricesResult.prices[projectRow.item_name]?.[
-                                    settingsData?.source?.title
-                                  ] *
-                                    settingsData.currencyPrice[
-                                      settingsData.currency
-                                    ]
-                                : 0
-                            )
-                          : new Intl.NumberFormat(settingsData.locale, {
-                              style: 'currency',
-                              currency: settingsData.currency,
-                            }).format(
-                              Math.round(
-                                projectRow.combined_QTY *
-                                  pricesResult.prices[projectRow.item_name]?.[
-                                    settingsData?.source?.title
-                                  ] *
-                                  settingsData.currencyPrice[
-                                    settingsData.currency
-                                  ]
-                              )
-                            )
-                        : ''}
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
-                    <div className="flex flex-shrink-0 -space-x-1 text-gray-500 text-xs font-normal">
-                      {pricesResult.prices[projectRow.item_name] == undefined
-                        ? ''
-                        : projectRow.combined_QTY == 1
+                    {pricesResult.prices[projectRow.item_name] == undefined
                         ? ''
                         : new Intl.NumberFormat(settingsData.locale, {
                             style: 'currency',
@@ -418,6 +333,7 @@ function content() {
                           )}
                     </div>
                   </div>
+
                 </td>
               ) : (
                 ''
@@ -458,14 +374,14 @@ function content() {
                 </div>
               </td>
 
-              <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-normal ">
+              <td className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-normal ">
               {projectRow.item_paint_wear?.toString()?.substr(0, 9)}
               </td>
               <td className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
         <div className={classNames(isFull ? 'hidden' : '', 'flex justify-center')}>
           <button
           onClick={() => dispatch(tradeUpAddRemove(projectRow))}
-            
+
           >
             <BeakerIcon
               className={classNames(

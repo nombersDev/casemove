@@ -1,4 +1,3 @@
-
 async function setCollections(currencyClass) {
   let collections = require('./backup/collections.json')
 
@@ -105,7 +104,7 @@ class tradeUps {
             "item_name": element,
             "item_wear_name": skinRarity,
             "percentage": percentageChance.toFixed(2),
-            "image": relevantObject['image']
+            "image": relevantObject['imageURL']
         }
            // @ts-ignore
            finalResult.push(objectToWrite)

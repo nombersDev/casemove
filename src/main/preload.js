@@ -48,6 +48,13 @@ contextBridge.exposeInMainWorld('electron', {
       });
     },
 
+    // User account
+    tradeOrder(idsToProcess) {
+      let tradeupPayLoad = new ByteBuffer(2+2+itemIDs.length*8,ByteBuffer.LITTLE_ENDIAN);
+      tradeupPayLoad.append('01000A00','hex');
+      ipcRenderer.send('processTradeOrder', tradeupPayLoad);
+    },
+
 
     // User account
     deleteAccountDetails(username) {
@@ -230,7 +237,8 @@ contextBridge.exposeInMainWorld('electron', {
         'pricing',
         'getPrice',
         'windowsActions',
-        'getTradeUpPossible'
+        'getTradeUpPossible',
+        'processTradeOrder'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
@@ -256,7 +264,8 @@ contextBridge.exposeInMainWorld('electron', {
         'pricing',
         'getPrice',
         'windowsActions',
-        'getTradeUpPossible'
+        'getTradeUpPossible',
+        'processTradeOrder'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
