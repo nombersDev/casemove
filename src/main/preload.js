@@ -1,5 +1,5 @@
 const { contextBridge, ipcRenderer } = require('electron');
-
+var ByteBuffer = require("bytebuffer");
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
@@ -50,7 +50,7 @@ contextBridge.exposeInMainWorld('electron', {
 
     // User account
     tradeOrder(idsToProcess) {
-      let tradeupPayLoad = new ByteBuffer(2+2+itemIDs.length*8,ByteBuffer.LITTLE_ENDIAN);
+      let tradeupPayLoad = new ByteBuffer(2+2+idsToProcess.length*8,ByteBuffer.LITTLE_ENDIAN);
       tradeupPayLoad.append('01000A00','hex');
       ipcRenderer.send('processTradeOrder', tradeupPayLoad);
     },

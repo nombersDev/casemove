@@ -10,7 +10,6 @@ import { HashRouter as Router, Route } from 'react-router-dom';
 import PricingAmount from 'renderer/components/content/shared/filters/pricingAmount';
 import { classNames } from 'renderer/components/content/shared/inventoryFunctions';
 import TradeModal from 'renderer/components/content/shared/modals & notifcations/modalTrade';
-import TradeResultModal from 'renderer/components/content/shared/modals & notifcations/modalTradeResult';
 import { setTradeMove } from 'renderer/store/actions/modalTrade';
 import TradeUpPicker from './inventoryPickers';
 import TradeUpSideBar from './sideBar';
@@ -47,7 +46,6 @@ function settingsContent() {
 
   return (
     <>
-    <TradeResultModal />
     <TradeModal />
       {/*
         This example requires updating your template:

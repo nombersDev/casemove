@@ -28,8 +28,14 @@ export default function TradeModal() {
   console.log(modalData.moveOpen)
 
   async function confirmContract() {
+    console.log(inventory.inventory)
     window.electron.ipcRenderer.tradeOrder(tradeUpData.tradeUpProductsIDS)
-    dispatch(setTradeConfirm(inventory.Inventory))
+
+    let idsToGet = [] as any
+    inventory.inventory.forEach(element => {
+      idsToGet.push(element.item_id)
+    });
+    dispatch(setTradeConfirm(idsToGet))
   }
 
   const [activeHover, setActiveHover] = useState('')

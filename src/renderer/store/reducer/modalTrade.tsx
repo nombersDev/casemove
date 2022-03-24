@@ -1,7 +1,8 @@
 const initialState = {
     moveOpen: false,
     openResult: false,
-    inventoryFirst: [] as any
+    inventoryFirst: [] as any,
+    rowToMatch: {}
   };
 
   const modalTradeReducer = (state = initialState, action) => {
@@ -16,6 +17,18 @@ const initialState = {
           ...state,
           moveOpen: false,
           inventoryFirst: action.payload.inventory
+        }
+
+      case 'TRADE_MODAL_MATCH_FOUND':
+        return {
+          ...state,
+          openResult: true,
+          inventoryFirst: initialState.inventoryFirst,
+          rowToMatch: action.payload.matchRow
+        }
+      case 'TRADE_MODAL_RESET':
+        return {
+          ...initialState
         }
       case 'TRADE_MODAL_OPEN_RESULT':
       if (state.moveOpen == true) {

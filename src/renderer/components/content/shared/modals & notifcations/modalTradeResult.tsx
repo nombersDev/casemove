@@ -1,9 +1,9 @@
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { useDispatch, useSelector } from 'react-redux';
-import { InboxInIcon } from '@heroicons/react/solid';
 import { classNames } from '../inventoryFunctions';
 import { setTradeMoveResult } from 'renderer/store/actions/modalTrade';
+import { tradeUpResetPossible } from 'renderer/store/actions/tradeUpActions';
 
 export default function TradeResultModal() {
   const dispatch = useDispatch();
@@ -11,6 +11,11 @@ export default function TradeResultModal() {
   const modalData = useSelector((state: any) => state.modalTradeReducer);
 
   let devMode = false;
+
+  async function setDone() {
+    dispatch(setTradeMoveResult())
+    dispatch(tradeUpResetPossible())
+  }
 
 
   return (
@@ -51,19 +56,22 @@ export default function TradeResultModal() {
           >
             <div className="inline-block align-bottom dark:bg-dark-level-two bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
               <div>
-                <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 dark:bg-yellow-500">
-                  <InboxInIcon className="h-6 w-6 text-yellow-600 dark:text-yellow-800" aria-hidden="true" />
-                </div>
+                <div className='flex items-center justify-center'>
+              <img
+                          className="max-w-none h-16 w-16 dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300"
+                          src={
+                            'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
+                            modalData.rowToMatch?.item_url +
+                            '.png'
+                          }
+                        /></div>
                 <div className="mt-3 text-center sm:mt-5">
                   <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900 dark:text-dark-white
                   ">
-                    Review Trade Up Contract
+                    {modalData.rowToMatch.item_name} 
                   </Dialog.Title>
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eius aliquam laudantium explicabo
-                      pariatur iste dolorem animi vitae error totam. At sapiente aliquam accusamus facere veritatis.
-                    </p>
+                  <div className="mt-2 dark:text-gray-400 text-lg">
+                   Trade Up Contract Reward
                   </div>
                 </div>
               </div>
@@ -72,7 +80,7 @@ export default function TradeResultModal() {
                 <button
                   type="button"
                   className={classNames(settingsData.darkmode ? '' : 'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500', "dark:bg-dark-level-two dark:text-dark-white mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:col-start-1 sm:text-sm")}
-                  onClick={() => dispatch(setTradeMoveResult())}
+                  onClick={() => setDone()}
                 >
                   Done
                 </button>

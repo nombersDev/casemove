@@ -50,6 +50,8 @@ import { pricing_addPrice } from './store/actions/pricingActions';
 import TitleBarWindows from './components/content/shared/titleBarWindows';
 import TradeupPage from './views/tradeUp/tradeUp';
 import itemRarities from './components/content/shared/rarities';
+import { setTradeFoundMatch } from './store/actions/modalTrade';
+import TradeResultModal from './components/content/shared/modals & notifcations/modalTradeResult';
 DocumentDownloadIcon;
 
 //{ name: 'Reports', href: '/reports', icon: DocumentDownloadIcon, current: false }
@@ -95,6 +97,8 @@ function AppContent() {
   const settingsData = useSelector((state: any) => state.settingsReducer);
   const pricesResult = useSelector((state: any) => state.pricingReducer);
   const inventoryData = useSelector((state: any) => state.inventoryReducer);
+  const tradeUpData = useSelector((state: any) => state.modalTradeReducer);
+  const inventory = useSelector((state: any) => state.inventoryReducer);
   const filterDetails = useSelector(
     (state: any) => state.inventoryFiltersReducer
   );
@@ -250,6 +254,19 @@ function AppContent() {
     });
   }
 
+  // Trade up
+  async function handleTradeUp() {
+    inventory.inventory.forEach(element => {
+      if (!tradeUpData.inventoryFirst.includes(element.item_id)) {
+        dispatch(setTradeFoundMatch(element))
+      } 
+    }) 
+  }
+  if (tradeUpData.inventoryFirst.length != 0) {
+    handleTradeUp()
+  }
+
+
   return (
     <>
       {/*
@@ -260,6 +277,8 @@ function AppContent() {
         <body class="h-full">
         ```
       */}
+      
+      <TradeResultModal />
         {settingsData.os != 'win32' ? '' : <TitleBarWindows />}
       <div className={classNames(settingsData.os == 'win32' ? 'pt-7' : '', "min-h-full dark:bg-dark-level-one h-screen")}>
         <Transition.Root show={sidebarOpen} as={Fragment}>
