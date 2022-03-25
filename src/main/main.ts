@@ -7,7 +7,6 @@ import {
   shell,
   ipcMain,
   session,
-  nativeTheme,
 } from 'electron';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
@@ -337,24 +336,27 @@ ipcMain.on(
                 fetchItemClass
                   .convertInventory(csgo.inventory)
                   .then((returnValue) => {
-                    const returnPackage = [
-                      user.logOnResult.client_supplied_steamid,
-                      displayName,
-                      csgo.haveGCSession,
-                      returnValue,
-                    ];
-                    startEvents(csgo, user);
-                    if (shouldRemember) {
-                      storeUserAccount(
-                        username,
-                        displayName,
-                        password,
+                    tradeUpClass.getTradeUp(returnValue).then((newReturnValue:any) => {
+                      const returnPackage = [
                         user.logOnResult.client_supplied_steamid,
-                        secretKey
-                      );
-                    }
+                        displayName,
+                        csgo.haveGCSession,
+                        newReturnValue,
+                      ];
+                      startEvents(csgo, user);
+                      if (shouldRemember) {
+                        storeUserAccount(
+                          username,
+                          displayName,
+                          password,
+                          user.logOnResult.client_supplied_steamid,
+                          secretKey
+                        );
+                      }
 
-                    event.reply('login-reply', [1, returnPackage]);
+                      event.reply('login-reply', [1, returnPackage]);
+                    });
+
                   });
               }
             });
@@ -396,8 +398,13 @@ async function startEvents(csgo, user) {
       1: "01000A00",
       2: "02000A00",
       3: "03000A00",
-      4: "04000A00"
-    }
+      4: "04000A00",
+      10: '0a000a00',
+      11: '0b000a00',
+      12: '0c000a00',
+      13: '0d000a00',
+      14: '0e000a00',
+    };
     let idsToUse = [] as any
     idsToProcess.forEach(element => {
       idsToUse.push(parseInt(element))
@@ -426,11 +433,14 @@ async function startEvents(csgo, user) {
     if (!Object.keys(item).includes('casket_id')) {
       console.log('Item' + item.itemid + ' was removed');
       fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
-        mainWindow?.webContents.send('userEvents', [
-          1,
-          'itemRemoved',
-          [item, returnValue],
-        ]);
+        tradeUpClass.getTradeUp(returnValue).then((newReturnValue:any) => {
+          mainWindow?.webContents.send('userEvents', [
+            1,
+            'itemRemoved',
+            [item, newReturnValue],
+          ]);
+
+        })
       });
     }
   });
@@ -438,11 +448,13 @@ async function startEvents(csgo, user) {
   csgo.on('itemChanged', (item) => {
     console.log('Item' + item.itemid + ' was changed');
     fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
-      mainWindow?.webContents.send('userEvents', [
-        1,
-        'itemChanged',
-        [item, returnValue],
-      ]);
+      tradeUpClass.getTradeUp(returnValue).then((newReturnValue:any) => {
+        mainWindow?.webContents.send('userEvents', [
+          1,
+          'itemChanged',
+          [item, newReturnValue],
+        ]);
+      });
     });
   });
 
@@ -450,11 +462,13 @@ async function startEvents(csgo, user) {
     if (!Object.keys(item).includes('casket_id')) {
       console.log('Item' + item.itemid + ' was acquired');
       fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
-        mainWindow?.webContents.send('userEvents', [
-          1,
-          'itemAcquired',
-          [item, returnValue],
-        ]);
+        tradeUpClass.getTradeUp(returnValue).then((newReturnValue:any) => {
+          mainWindow?.webContents.send('userEvents', [
+            1,
+            'itemAcquired',
+            [item, newReturnValue],
+          ]);
+        });
       });
     }
   });
@@ -493,11 +507,14 @@ async function startEvents(csgo, user) {
   // Get commands from Renderer
   ipcMain.on('refreshInventory', async () => {
     fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
-      mainWindow?.webContents.send('userEvents', [
-        1,
-        'itemAcquired',
-        [{}, returnValue],
-      ]);
+      tradeUpClass.getTradeUp(returnValue).then((newReturnValue) => {
+        mainWindow?.webContents.send('userEvents', [
+          1,
+          'itemAcquired',
+          [{}, newReturnValue],
+        ]);
+
+      })
     });
   });
   // Retry connection
@@ -564,8 +581,10 @@ async function startEvents(csgo, user) {
   ipcMain.on('getCasketContents', async (event, casketID) => {
     await csgo.getCasketContents(casketID, async function (err, items) {
       fetchItemClass.convertStorageData(items).then((returnValue) => {
-        event.reply('getCasketContent-reply', [1, returnValue]);
-        console.log('Casket contains: ', returnValue.length);
+        tradeUpClass.getTradeUp(returnValue).then((newReturnValue:any) => {
+          event.reply('getCasketContent-reply', [1, newReturnValue]);
+          console.log('Casket contains: ', newReturnValue.length);
+        });
       });
 
       if (err) {
@@ -607,13 +626,8 @@ async function startEvents(csgo, user) {
 // Set dark mode
 async function darkModeSetup() {
   getValue('darkmode.hasSet').then((returnValue) => {
-    console.log('hasSet', returnValue);
     if (returnValue == false) {
-      if (nativeTheme.shouldUseDarkColors) {
-        setValue('darkmode.value', true);
-      } else {
-        setValue('darkmode.value', false);
-      }
+      setValue('darkmode.value', false);
     }
   });
 }

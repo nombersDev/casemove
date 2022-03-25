@@ -6,6 +6,7 @@ import { classNames } from 'renderer/components/content/shared/inventoryFunction
 import itemRarities from 'renderer/components/content/shared/rarities';
 import { filterInventorySetSort } from 'renderer/store/actions/filtersInventoryActions';
 import { setRenameModal } from 'renderer/store/actions/modalMove actions';
+import { pricing_add_to_requested } from 'renderer/store/actions/pricingActions';
 import { tradeUpAddRemove } from 'renderer/store/actions/tradeUpActions';
 
 
@@ -36,15 +37,13 @@ function content() {
     );
   }
 
-  let inventoryToUse = [] as any;
-  inventoryToUse = inventory.inventory;
-  if (inventoryFilters.tradeUpInventory.length != 0) {
-    inventoryToUse = inventoryFilters.tradeUpInventory
-  }
-
+  let inventoryToUse = [...inventory.inventory];
 
 
   inventoryToUse = inventoryToUse.filter(function (item) {
+    if (!item.tradeUpConfirmed) {
+      return false;
+    }
     if (tradeUpData.MinFloat > item.item_paint_wear || tradeUpData.MaxFloat < item.item_paint_wear) {
       return false;
     }
@@ -53,10 +52,15 @@ function content() {
     }
     if (tradeUpData.tradeUpProducts.length != 0) {
       let restrictRarity = tradeUpData.tradeUpProducts[0].rarityName
+      let restrictStattrak = tradeUpData.tradeUpProducts[0].stattrak
       if (item.rarityName != restrictRarity) {
         return false
       }
+      if (item.stattrak != restrictStattrak) {
+        return false
+      }
     }
+
     if (item.tradeUp) {
       return true;
     }
@@ -70,10 +74,28 @@ function content() {
   inventoryToUse.forEach(element => {
     element['rarityColor'] =itemR[element.rarityName]
   });
-  // Is it full ?
+
+
+  // Prices
+  let pricesToGet = [] as any;
+  inventoryToUse.forEach((projectRow) => {
+    if (
+      pricesResult.prices[projectRow.item_name] == undefined &&
+      pricesResult.productsRequested.includes(projectRow.item_name) == false
+    ) {
+      pricesToGet.push(projectRow);
+    }
+  });
+  if (pricesToGet.length > 0) {
+    window.electron.ipcRenderer.getPrice(pricesToGet);
+    dispatch(pricing_add_to_requested(pricesToGet));
+  }
 
   // Is it full ?
   const isFull = tradeUpData.tradeUpProducts.length == 10
+  if (inventoryFilters.sortBack) {
+    inventoryToUse.reverse()
+  }
 
 
   return (

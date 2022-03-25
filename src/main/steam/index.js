@@ -214,12 +214,16 @@ class items {
         returnDict['stickers'] = [];
       }
 
-      if (value?.rarity == 6 || value?.quality == 3 || returnDict['item_name'].includes('StatTrak™') || !returnDict['item_url'].includes('econ/default_generated')) {
+      if (value?.rarity == 6 || value?.quality == 3 || returnDict['item_name'].includes('Souvenir') || !returnDict['item_url'].includes('econ/default_generated')) {
         returnDict['tradeUp'] = false
       } else {
         returnDict['rarity'] = value.rarity
         returnDict['rarityName'] = this.handleError(this.itemProcessorGetRarityName, [value.rarity])
         returnDict['tradeUp'] = true
+      }
+      returnDict['stattrak'] = false
+      if (value.kill_eater_score_type != undefined) {
+        returnDict['stattrak'] = true
       }
       // console.log(value, returnDict)
       returnList.push(returnDict);

@@ -29,7 +29,11 @@ export default function TradeModal() {
 
   async function confirmContract() {
     console.log(tradeUpData.tradeUpProducts[0]?.rarity)
-    window.electron.ipcRenderer.tradeOrder(tradeUpData.tradeUpProductsIDS, tradeUpData.tradeUpProducts[0]?.rarity - 1)
+    let rarityToUse = tradeUpData.tradeUpProducts[0]?.rarity - 1
+    if (tradeUpData.tradeUpProducts[0]?.stattrak) {
+      rarityToUse += 10
+    }
+    window.electron.ipcRenderer.tradeOrder(tradeUpData.tradeUpProductsIDS, rarityToUse)
 
     let idsToGet = [] as any
     inventory.inventory.forEach(element => {
@@ -96,8 +100,7 @@ export default function TradeModal() {
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eius aliquam laudantium explicabo
-                      pariatur iste dolorem animi vitae error totam. At sapiente aliquam accusamus facere veritatis.
+                      The following items will be removed from your inventory if you confirm the contract. Please note that the prices are based on the 7-day average SCM prices regardless of your pricing settings.
                     </p>
                   </div>
                   <ul role="list" className="mt-3 grid grid-cols-2 gap-2 ">
@@ -119,7 +122,7 @@ export default function TradeModal() {
               <div className="flex-1 dark:bg-dark-level-two dark:border-opacity-50 flex items-center justify-between border-t border-r border-b border-gray-200 bg-white rounded-r-md truncate">
                 <div className="flex-1 px-4 py-2 text-sm truncate">
                   <div className="flex justify-between">
-                    <span className="text-xs font-light hover:text-gray-600 dark:text-dark-white text-dark-white">
+                    <span className="text-xs font-light text-gray-600 dark:text-dark-white">
                       {project.item_name} -{' '}
                           {rarityShort[project.item_wear_name]}
                     </span>
@@ -127,7 +130,7 @@ export default function TradeModal() {
                   </div>
 
                   <div className="flex justify-between">
-                  <p className="text-gray-500">
+                  <p className="text-gray-400 dark:text-gray-500">
                         {new Intl.NumberFormat(settingsData.locale, {
                             style: 'currency',
                             currency: settingsData.currency,
@@ -139,7 +142,7 @@ export default function TradeModal() {
                           )}
 
                       </p>
-                      <p className="text-gray-500">
+                      <p className="text-gray-400 dark:text-gray-500">
 
                       {project.item_paint_wear?.toString()?.substr(0, 9)}
 

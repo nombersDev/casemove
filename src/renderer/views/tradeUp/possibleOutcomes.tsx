@@ -1,4 +1,5 @@
 import { CashIcon } from '@heroicons/react/solid';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { classNames } from 'renderer/components/content/shared/inventoryFunctions';
@@ -16,6 +17,7 @@ export default function PossibleOutcomes() {
   const pricesResult = useSelector((state: any) => state.pricingReducer);
   const tradeUpData = useSelector((state: any) => state.tradeUpReducer);
   const settingsData = useSelector((state: any) => state.settingsReducer);
+  const [outcomesRequested, setOutcomesRequested] = useState(false);
   const dispatch = useDispatch();
 
   let totalPrice = 0;
@@ -41,14 +43,19 @@ export default function PossibleOutcomes() {
   if (
     tradeUpData.tradeUpProducts.length == 10 &&
     tradeUpData.possibleOutcomes.length == 0
-  ) {
+  ) { if (outcomesRequested == false) {
     window.electron.ipcRenderer
       .getPossibleOutcomes(tradeUpData.tradeUpProducts)
       .then((messageValue) => {
         console.log(messageValue);
         dispatch(tradeUpSetPossible(messageValue));
       });
+    setOutcomesRequested(true);
+  } else {
+    setOutcomesRequested(false)
   }
+  }
+
   return (
     <div>
       <h2 className="text-gray-500  text-xs font-medium uppercase tracking-wide dark:text-gray-400">
@@ -119,9 +126,7 @@ export default function PossibleOutcomes() {
         <ul role="list" className="mt-3 grid grid-cols-1 gap-5 sm:gap-6 ">
           <li key={9999} className="col-span-1 flex shadow-sm rounded-md">
             <div className=" flex-shrink-0 h-full  flex items-center justify-center w-16 dark:border-opacity-50 text-white border-t border-l border-b border-gray-200 rounded-l-md border-dotted dark:bg-dark-level-two border-r">
-              <div
-                className="max-w-none h-11 w-11  object-cover"
-              />
+              <div className="max-w-none h-11 w-11  object-cover" />
             </div>
             <div className="flex-1 dark:bg-dark-level-two border-dotted dark:border-opacity-50 flex items-center justify-between border-t border-r border-b border-gray-200 bg-white rounded-r-md truncate">
               <div className="flex-1 px-4 py-2 text-sm truncate">
@@ -129,20 +134,14 @@ export default function PossibleOutcomes() {
                   <span className="text-gray-900 font-medium hover:text-gray-600 dark:text-dark-white">
                     Add 10 to see the results
                   </span>
-
                 </div>
                 <div className="flex justify-start">
-                  <p className="text-gray-500">
-
-                  </p>
+                  <p className="text-gray-500"></p>
                   <div className="flex items-center">
                     <p className="text-gray-500">
                       Prices are the SCM 7 day average
                     </p>
-                    <p className="text-gray-500">
-
-
-                    </p>
+                    <p className="text-gray-500"></p>
                   </div>
                 </div>
               </div>

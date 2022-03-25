@@ -23,14 +23,13 @@ export default function TradeUpSideBar() {
       break;
     }
   }
-  console.log(productsToUse);
 
   return (
     <div>
       <div className="px-4 py-5 border-b border-gray-200 sm:px-6 dark:bg-dark-level-two dark:border-opacity-50 items-center">
         <div className="flex justify-center items-center">
         <div className="">
-              <div className="flex items-center flex-wrap">
+              <div className="flex items-center flex-nowrap">
                 {productsToUse.map((projectRow) => (
                   <div
                     className="flex flex-shrink-0 -space-x-1"
@@ -45,6 +44,7 @@ export default function TradeUpSideBar() {
                     />
                     ) : (
                       <button
+                        title={projectRow.item_paint_wear?.toString()?.substr(0, 9)}
                         onClick={() => dispatch(tradeUpAddRemove(projectRow))}
                       >
                         <img

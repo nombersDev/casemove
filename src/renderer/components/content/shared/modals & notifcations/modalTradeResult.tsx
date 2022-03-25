@@ -68,9 +68,9 @@ export default function TradeResultModal() {
                 <div className="mt-3 text-center sm:mt-5">
                   <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900 dark:text-dark-white
                   ">
-                    {modalData.rowToMatch.item_name} 
+                    {modalData.rowToMatch.item_name}
                   </Dialog.Title>
-                  <div className="mt-2 dark:text-gray-400 text-lg">
+                  <div className="mt-2 text-gray-400 dark:text-gray-400 text-lg">
                    Trade Up Contract Reward
                   </div>
                 </div>

@@ -42,7 +42,6 @@ function settingsContent() {
       individualPrice * (element.percentage / 100)
     );
   });
-  console.log(totalEV);
 
   return (
     <>
@@ -75,7 +74,7 @@ function settingsContent() {
                   IconToUse={VariableIcon}
                   colorOf={'text-gray-500'}
                 />
-                <span className="text-blue-500 pl-2 border-l border-gray-400" />
+                <span className="text-blue-500 pl-2 border-l border-gray-200 dark:border-gray-400" />
 
                 <PricingAmount
                   totalAmount={new Intl.NumberFormat(settingsData.locale, {
@@ -114,7 +113,7 @@ function settingsContent() {
 
                 />
                 <span className="flex items-center text-gray-500 text-xs font-medium">
-                  <span className="text-blue-500 pl-2 border-l border-gray-400">
+                  <span className="text-blue-500 pl-2 border-l border-gray-200 dark:border-gray-400">
                   <button
                   type="button"
                   onClick={() => dispatch(setTradeMove())}

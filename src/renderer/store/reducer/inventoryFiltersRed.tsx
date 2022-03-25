@@ -2,7 +2,6 @@ const initialState = {
   inventoryFilter: ['1item_moveable'] as any,
   sortValue: 'Default',
   inventoryFiltered: [] as any,
-  tradeUpInventory: [] as any,
   searchInput: '',
   sortBack: false,
   categoryFilter: [] as any,
@@ -12,16 +11,12 @@ const initialState = {
 const inventoryFiltersReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'ALL_BUT_CLEAR':
-      if (state.sortBack) {
-        action.payload.tradeUpInventory.reverse()
-      }
       if (state.sortValue == action.payload.sortValue) {
         return {
           ...state,
           inventoryFilter: action.payload.inventoryFilter,
           sortValue: action.payload.sortValue,
           inventoryFiltered: action.payload.inventoryFiltered,
-          tradeUpInventory: action.payload.tradeUpInventory,
           sortBack: !state.sortBack
         }
       } else {

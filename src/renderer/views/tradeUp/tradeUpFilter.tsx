@@ -81,11 +81,11 @@ export default function TradeUpFilters() {
             <div className="flex items-center justify-end">
             <p className="text-gray-500 dark:text-gray-400 pr-3">{tradeUpData.MinFloat} min </p>
 
-            <input type="range" min="0" max="1" value={tradeUpData.MinFloat} step="0.01" onChange={(e) => updateMin(e.target.value)} className="bg-dark-level-three h-2 appearance-none" />
+            <input type="range" min="0" max="1" value={tradeUpData.MinFloat} step="0.01" onChange={(e) => updateMin(e.target.value)} className=" dark:bg-dark-level-three h-2 dark:appearance-none" />
             </div>
             <div className="flex items-center justify-end">
             <p className="text-gray-500 dark:text-gray-400 pr-3">{tradeUpData.MaxFloat} max </p>
-            <input type="range" min="0" max="1" value={tradeUpData.MaxFloat} step="0.01" onChange={(e) => updateMax(e.target.value)} className="bg-dark-level-three h-2 appearance-none" />
+            <input type="range" min="0" max="1" value={tradeUpData.MaxFloat} step="0.01" onChange={(e) => updateMax(e.target.value)} className=" dark:bg-dark-level-three h-2 dark:appearance-none" />
             </div>
             </div>
             </div>
