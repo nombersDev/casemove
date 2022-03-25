@@ -148,6 +148,17 @@ class runItems {
     pricingEmitter.emit('result', itemRow);
 
   }
+
+  async handleTradeUp(itemRow) {
+    let returnRows = [] as any;
+    itemRow.forEach(element => {
+      this.makeSinglerequest(element).then((returnValue) => {
+        returnRows.push(returnValue)
+      })
+    });
+    pricingEmitter.emit('result', itemRow);
+
+  }
 }
 module.exports = {
   runItems,

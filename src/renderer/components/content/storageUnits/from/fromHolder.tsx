@@ -158,6 +158,8 @@ function StorageUnits() {
                     </span>
                   </button>
                 </th>
+
+              {settingsData.columns.includes('Price') ?
                 <th className="table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
                   <button
                     onClick={() => onSortChange('Price')}
@@ -167,18 +169,33 @@ function StorageUnits() {
                       Price <SelectorIcon className="h-2" />
                     </span>
                   </button>
-                </th>
+                </th> : '' }
+                {settingsData.columns.includes('Stickers/patches') ?
                 <th className="hidden xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
+                <button
+                  onClick={() => onSortChange('Stickers')}
+                  className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
+                >
+                  <span className="flex justify-between">
+                    Stickers/Patches <SelectorIcon className="h-2" />
+                  </span>
+                </button>
+              </th> : ''}
+
+              {settingsData.columns.includes('Float') ?
+              <th className="hidden xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
                   <button
-                    onClick={() => onSortChange('Stickers')}
+                    onClick={() => onSortChange('wearValue')}
                     className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
                   >
                     <span className="flex justify-between">
-                      Stickers/Patches <SelectorIcon className="h-2" />
+                    Float <SelectorIcon className="h-2" />
                     </span>
                   </button>
-                </th>
+                </th> : '' }
 
+
+                {settingsData.columns.includes('Storage') ?
                 <th className="hidden md:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
                   <button
                     onClick={() => onSortChange('StorageName')}
@@ -188,7 +205,9 @@ function StorageUnits() {
                       Storage <SelectorIcon className="h-2" />
                     </span>
                   </button>
-                </th>
+                </th> : '' }
+
+                {settingsData.columns.includes('Tradehold') ?
                 <th className="hidden md:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two  ">
                   <button
                     onClick={() => onSortChange('tradehold')}
@@ -198,7 +217,7 @@ function StorageUnits() {
                       Tradehold <SelectorIcon className="h-2" />
                     </span>
                   </button>
-                </th>
+                </th> : '' }
                 <th className="table-cell px-6 py-2 border-b border-gray-200 bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
                   <button
                     onClick={() => onSortChange('QTY')}

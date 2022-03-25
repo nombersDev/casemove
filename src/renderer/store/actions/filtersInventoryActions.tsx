@@ -1,13 +1,14 @@
 import { filterInventory } from "renderer/components/content/shared/inventoryFunctions"
 
 
-const allButClear = (filterString: any, sortValue, inventoryFiltered) => {
+const allButClear = (filterString: any, sortValue, inventoryFiltered, tradeUpInventory) => {
     return {
         type: 'ALL_BUT_CLEAR',
         payload: {
             inventoryFilter: filterString,
             sortValue: sortValue,
-            inventoryFiltered: inventoryFiltered
+            inventoryFiltered: inventoryFiltered,
+            tradeUpInventory: tradeUpInventory
 
         }
     }
@@ -32,9 +33,14 @@ export const inventoryAddCategoryFilter = (filterToAdd) => {
       payload: filterToAdd
   }
 }
+export const inventoryAddRarityFilter = (filterToAdd) => {
+  return {
+      type: 'INVENTORY_ADD_RARITY_FILTER',
+      payload: filterToAdd
+  }
+}
 
-
-export async function filterInventoryAddOption(combinedInventory, state, filterString, prices, pricingSource ) {
+export async function filterInventoryAddOption(inventory, combinedInventory, state, filterString, prices, pricingSource ) {
     let filterAlreadyExists = state.inventoryFilter.indexOf(filterString) > -1;
     // make a copy of the existing array
     let chosenFiltersCopy = state.inventoryFilter.slice();
@@ -45,10 +51,12 @@ export async function filterInventoryAddOption(combinedInventory, state, filterS
         chosenFiltersCopy.push(filterString)
     }
     const filteredInv = await filterInventory(combinedInventory, chosenFiltersCopy, state.sortValue, prices, pricingSource)
-    return allButClear(chosenFiltersCopy, state.sortValue, filteredInv)
+    const tradeUp = await filterInventory(inventory, [], state.sortValue, prices, pricingSource)
+    return allButClear(chosenFiltersCopy, state.sortValue, filteredInv, tradeUp)
 }
 
-export async function filterInventorySetSort(combinedInventory, state, sortValue, prices, pricingSource ) {
+export async function filterInventorySetSort(inventory, combinedInventory, state, sortValue, prices, pricingSource ) {
     const filteredInv = await filterInventory(combinedInventory, state.inventoryFilter, sortValue, prices, pricingSource)
-    return allButClear(state.inventoryFilter, sortValue, filteredInv)
+    const tradeUp = await filterInventory(inventory, [], sortValue, prices, pricingSource)
+    return allButClear(state.inventoryFilter, sortValue, filteredInv, tradeUp)
 }

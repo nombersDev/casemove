@@ -2,20 +2,19 @@ const fs = require('fs');
 const VDF = require('@node-steam/vdf');
 const axios = require('axios');
 
-
- const itemsLink =
-   'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/scripts/items/items_game.txt';
- const translationsLink =
-   'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/resource/csgo_english.txt';
+const itemsLink =
+  'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/scripts/items/items_game.txt';
+const translationsLink =
+  'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/resource/csgo_english.txt';
 
 function fileCatcher(endNote) {
   return `${csgo_install_directory}${endNote}`;
 }
 
 async function fileGetError(items) {
-  let csgoEnglish = require('./itemsBackupFiles/csgo_english.json')
+  let csgoEnglish = require('./itemsBackupFiles/csgo_english.json');
   items.setTranslations(csgoEnglish, 'Error');
-  let itemsGame = require('./itemsBackupFiles/items_game.json')
+  let itemsGame = require('./itemsBackupFiles/items_game.json');
   items.setCSGOItems(itemsGame);
 }
 
@@ -35,24 +34,24 @@ async function getTranslations(items) {
 
       return finalDict;
     });
-    returnValue['stickerkit_cs20_boost_holo']
+    returnValue['stickerkit_cs20_boost_holo'];
     items.setTranslations(returnValue, 'normal');
   } catch (err) {
-    console.log('Error occurred during translation parsing')
-    fileGetError(items)
+    console.log('Error occurred during translation parsing');
+    fileGetError(items);
   }
 }
 
 function updateItemsLoop(jsonData, keyToRun) {
-  const returnDict = {}
+  const returnDict = {};
   for (const [key, value] of Object.entries(jsonData['items_game'])) {
-      if (key == keyToRun) {
-          for (const [subKey, subValue] of Object.entries(value)) {
-              returnDict[subKey] = subValue
-          }
+    if (key == keyToRun) {
+      for (const [subKey, subValue] of Object.entries(value)) {
+        returnDict[subKey] = subValue;
       }
+    }
   }
-  return returnDict
+  return returnDict;
 }
 
 async function updateItems(items) {
@@ -70,21 +69,24 @@ async function updateItems(items) {
       dict_to_write['paint_kits'] = updateItemsLoop(jsonData, 'paint_kits');
       dict_to_write['prefabs'] = updateItemsLoop(jsonData, 'prefabs');
       dict_to_write['sticker_kits'] = updateItemsLoop(jsonData, 'sticker_kits');
-      dict_to_write['music_kits'] = updateItemsLoop(jsonData, 'music_definitions');
-      dict_to_write['graffiti_tints'] = updateItemsLoop(jsonData, 'graffiti_tints');
+      dict_to_write['music_kits'] = updateItemsLoop(
+        jsonData,
+        'music_definitions'
+      );
+      dict_to_write['graffiti_tints'] = updateItemsLoop(
+        jsonData,
+        'graffiti_tints'
+      );
 
       return dict_to_write;
     });
     // Validate data
-    returnValue['items'][1209]
+    returnValue['items'][1209];
     items.setCSGOItems(returnValue);
-
   } catch (err) {
-    console.log('Error occurred during items parsing')
-    fileGetError(items)
-
+    console.log('Error occurred during items parsing');
+    fileGetError(items);
   }
-
 }
 
 class items {
@@ -100,7 +102,7 @@ class items {
     this.csgoItems = value;
   }
   setTranslations(value, commandFrom) {
-    console.log(commandFrom)
+    console.log(commandFrom);
     this.translation = value;
   }
 
@@ -118,7 +120,7 @@ class items {
 
     for (const [key, value] of Object.entries(inventoryResult)) {
       if (value['def_index'] == undefined) {
-        continue
+        continue;
       }
       let musicIndexBytes = getAttributeValueBytes(value, 166);
       if (musicIndexBytes) {
@@ -147,9 +149,8 @@ class items {
         console.log('Error');
         try {
           console.log(value, this.get_def_index(value['def_index']));
-        }
-        catch (err) {
-          console.log(value)
+        } catch (err) {
+          console.log(value);
         }
       }
       returnDict['item_customname'] = value['custom_name'];
@@ -196,7 +197,7 @@ class items {
         this.itemProcessorHasStickersApplied,
         [returnDict, value]
       );
-      returnDict['def_index'] = value['def_index']
+      returnDict['def_index'] = value['def_index'];
 
       if (returnDict['item_has_stickers']) {
         const stickerList = [];
@@ -205,13 +206,33 @@ class items {
         )) {
           stickerList.push(
             this.handleError(this.stickersProcessData, [stickersValue])
-
-
           );
         }
         returnDict['stickers'] = stickerList;
       } else {
         returnDict['stickers'] = [];
+      }
+
+      if (
+        value?.rarity == 6 ||
+        value?.quality == 3 ||
+        returnDict['item_name'].includes('Souvenir') ||
+        !returnDict['item_url'].includes('econ/default_generated')
+      ) {
+        returnDict['tradeUp'] = false;
+      } else {
+        returnDict['rarity'] = value.rarity;
+        returnDict['rarityName'] = this.handleError(
+          this.itemProcessorGetRarityName,
+          [value.rarity]
+        );
+        returnDict['tradeUp'] = true;
+      }
+      returnDict['stattrak'] = false;
+      if (this.isStatTrak(value)) {
+
+        returnDict['stattrak'] = true;
+        returnDict['item_name'] = 'StatTrak™ ' + returnDict['item_name']
       }
       // console.log(value, returnDict)
       returnList.push(returnDict);
@@ -219,10 +240,40 @@ class items {
     return returnList;
   }
 
+  itemProcessorGetRarityName(rarity) {
+    const rarityDict = {
+      1: 'Consumer Grade',
+      2: 'Industrial Grade',
+      3: 'Mil-Spec',
+      4: 'Restricted',
+      5: 'Classified',
+      6: 'Covert',
+    };
+    return rarityDict[rarity];
+  }
+
   itemProcessorHasStickersApplied(returnDict, storageRow) {
-    if (returnDict['item_url'].includes('econ/characters') || returnDict['item_url'].includes('econ/default_generated') || returnDict['item_url'].includes('weapons/base_weapons')) {
+    if (
+      returnDict['item_url'].includes('econ/characters') ||
+      returnDict['item_url'].includes('econ/default_generated') ||
+      returnDict['item_url'].includes('weapons/base_weapons')
+    ) {
       if (storageRow['stickers'] !== undefined) {
         return true;
+      }
+    }
+    return false;
+  }
+
+  isStatTrak(storageRow) {
+    if (storageRow['attribute'] !== undefined) {
+      for (const [, value] of Object.entries(storageRow['attribute'])) {
+
+        if (
+          value['def_index'] == 80
+        ) {
+          return true
+        }
       }
     }
     return false
@@ -233,28 +284,19 @@ class items {
 
     // Check if CSGO Case Key
     if (imageURL == 'econ/tools/weapon_case_key') {
-      return 'CS:GO Case Key'
+      return 'CS:GO Case Key';
     }
 
     // Music kit check
     if (storageRow['music_index'] !== undefined) {
       const musicKitIndex = storageRow['music_index'];
       const musicKitResult = this.getMusicKits(musicKitIndex);
-      let nameToUse = 'Music Kit | ' + this.getTranslation(musicKitResult['loc_name']);
-      if (storageRow['attribute'] !== undefined) {
-        for (const [, value] of Object.entries(storageRow['attribute'])) {
-          if (
-            value['def_index'] == 80 &&
-            nameToUse.includes('StatTrak™') == false
-          ) {
-            nameToUse = 'StatTrak™ ' + nameToUse;
-          }
-        }
-      }
-      return nameToUse
+      let nameToUse =
+        'Music Kit | ' + this.getTranslation(musicKitResult['loc_name']);
+
+
+      return nameToUse;
     }
-
-
 
     // Main checks
     // Get first string
@@ -313,25 +355,20 @@ class items {
           var finalName = 'Souvenir ' + finalName;
         }
       }
-      for (const [, value] of Object.entries(storageRow['attribute'])) {
-        if (
-          value['def_index'] == 80 &&
-          finalName.includes('StatTrak™') == false
-        ) {
-          var finalName = 'StatTrak™ ' + finalName;
-        }
-      }
     }
+
     // Graffiti kit check
     if (storageRow['graffiti_tint'] !== undefined) {
       const graffitiKitIndex = storageRow['graffiti_tint'];
-      const graffitiKitResult = capitalizeWords(this.getGraffitiKitName(graffitiKitIndex).replaceAll('_', ' '));
-      var finalName =  finalName + ' (' + graffitiKitResult + ')';
+      const graffitiKitResult = capitalizeWords(
+        this.getGraffitiKitName(graffitiKitIndex).replaceAll('_', ' ')
+      );
+      var finalName = finalName + ' (' + graffitiKitResult + ')';
     }
 
     // Star
     if (storageRow['quality'] == 3) {
-      var finalName =  '★ ' + finalName;
+      var finalName = '★ ' + finalName;
     }
 
     return finalName;
@@ -463,13 +500,14 @@ class items {
   }
 
   getGraffitiKitName(graffitiID) {
-    for (const [key, value] of Object.entries(this.csgoItems['graffiti_tints'])) {
+    for (const [key, value] of Object.entries(
+      this.csgoItems['graffiti_tints']
+    )) {
       if (value.id == graffitiID) {
-        return key
+        return key;
       }
     }
   }
-
 
   getStickerDetails(stickerID) {
     return this.csgoItems['sticker_kits'][stickerID];
@@ -509,6 +547,8 @@ function getAttributeValueBytes(item, attribDefIndex) {
 }
 
 function capitalizeWords(string) {
-  return string.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
-};
+  return string.replace(/(?:^|\s)\S/g, function (a) {
+    return a.toUpperCase();
+  });
+}
 module.exports = items;

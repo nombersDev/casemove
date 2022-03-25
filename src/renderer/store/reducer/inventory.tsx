@@ -2,7 +2,7 @@ const initialState = {
     inventory: [] as any,
     combinedInventory: [] as any,
     storageInventory: [] as any,
-    totalAccountItems: 0 as any
+    totalAccountItems: 0 as any,
   };
 
   const inventoryReducer = (state = initialState, action) => {
@@ -10,7 +10,6 @@ const initialState = {
       case 'INVENTORY_SET_INVENTORY':
         let storageTotal = 0
          action.payload.inventory.forEach(element => {
-           console.log(element)
            storageTotal += 1
            if (element.item_url == "econ/tools/casket") {
              storageTotal += element.item_storage_total

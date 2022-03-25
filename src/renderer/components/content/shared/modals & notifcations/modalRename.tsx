@@ -21,6 +21,8 @@ export default function RenameModal() {
     );
     dispatch(closeRenameModal());
   }
+  renameStorageUnit
+
 
   const [inputState, setInputState] = useState('');
   return (
@@ -98,8 +100,8 @@ export default function RenameModal() {
                   className={classNames(
                     inputState.length == 0
                       ? 'pointer-events-none	bg-indigo-300 dark:bg-dark-level-three'
-                      : 'bg-indigo-600',
-                    'w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm'
+                      : 'bg-indigo-600', settingsData.darkmode ? '' : 'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500',
+                    'w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white  sm:col-start-2 sm:text-sm'
                   )}
                   onClick={() => renameStorageUnit(inputState)}
                 >

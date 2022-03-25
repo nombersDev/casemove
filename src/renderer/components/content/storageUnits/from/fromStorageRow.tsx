@@ -69,15 +69,13 @@ function content({ projectRow, index }) {
     fromReducer.totalToMove.filter((row) => row[0] == projectRow.item_id)
       .length == 0;
 
-
-  let totalFieldValue = 0
+  let totalFieldValue = 0;
   if (isEmpty == false) {
     totalFieldValue = fromReducer.totalToMove.filter(
       (row) => row[0] == projectRow.item_id
-    )[0][2].length
+    )[0][2].length;
   }
-
-
+  console.log(projectRow)
 
   return (
     <>
@@ -93,7 +91,6 @@ function content({ projectRow, index }) {
           <Link
             to={{
               pathname: `https://steamcommunity.com/market/listings/730/${marketHashName}`,
-
             }}
             target="_blank"
           >
@@ -101,7 +98,12 @@ function content({ projectRow, index }) {
               <img
                 onMouseEnter={() => setItemHover(true)}
                 onMouseLeave={() => setItemHover(false)}
-                className={classNames(itemHover ? 'transform-gpu hover:-translate-y-1 hover:scale-110' : '', "max-w-none h-11 w-11 transition duration-500 ease-in-out  dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300")}
+                className={classNames(
+                  itemHover
+                    ? 'transform-gpu hover:-translate-y-1 hover:scale-110'
+                    : '',
+                  'max-w-none h-11 w-11 transition duration-500 ease-in-out  dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300'
+                )}
                 src={
                   'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
                   projectRow.item_url +
@@ -161,6 +163,8 @@ function content({ projectRow, index }) {
           </span>
         </div>
       </td>
+
+      {settingsData.columns.includes('Price') ?
       <td className="table-cell px-6 py-3 text-sm text-gray-500 font-medium">
         <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
           <div className="flex flex-shrink-0 -space-x-1 text-gray-500 dark:text-gray-400 font-normal">
@@ -204,50 +208,63 @@ function content({ projectRow, index }) {
                 )}
           </div>
         </div>
-      </td>
-      <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
-        <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
-          <div className="flex flex-shrink-0 -space-x-1">
-            {projectRow.stickers?.map((sticker, index) => (
-              <Link
-                to={{
-                  pathname: `https://steamcommunity.com/market/listings/730/${sticker.sticker_type} | ${sticker.sticker_name}`,
-                }}
-                target="_blank"
-              >
-                <img
-                  key={index}
-                  onMouseEnter={() =>
-                    setStickerHover(index + projectRow.item_id)
-                  }
-                  onMouseLeave={() => setStickerHover('')}
-                  className={classNames(
-                    stickerHover == index + projectRow.item_id
-                      ? 'transform-gpu hover:-translate-y-1 hover:scale-110'
-                      : '',
-                    'max-w-none h-8 w-8 rounded-full hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-green-600 ring-2 object-cover ring-transparent bg-gradient-to-t from-gray-100 to-gray-300 dark:from-gray-300 dark:to-gray-400'
-                  )}
-                  src={
-                    'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
-                    sticker.sticker_url +
-                    '.png'
-                  }
-                  alt={sticker.sticker_name}
-                  title={sticker.sticker_name}
-                />
-              </Link>
-            ))}
+      </td> : '' }
+        {settingsData.columns.includes('Stickers/patches') ?
+        <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
+          <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
+            <div className="flex flex-shrink-0 -space-x-1">
+              {projectRow.stickers?.map((sticker, index) => (
+                <Link
+                  to={{
+                    pathname: `https://steamcommunity.com/market/listings/730/${sticker.sticker_type} | ${sticker.sticker_name}`,
+                  }}
+                  target="_blank"
+                >
+                  <img
+                    key={index}
+                    onMouseEnter={() =>
+                      setStickerHover(index + projectRow.item_id)
+                    }
+                    onMouseLeave={() => setStickerHover('')}
+                    className={classNames(
+                      stickerHover == index + projectRow.item_id
+                        ? 'transform-gpu hover:-translate-y-1 hover:scale-110'
+                        : '',
+                      'max-w-none h-8 w-8 rounded-full hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-green-600 ring-2 object-cover ring-transparent bg-gradient-to-t from-gray-100 to-gray-300 dark:from-gray-300 dark:to-gray-400'
+                    )}
+                    src={
+                      'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
+                      sticker.sticker_url +
+                      '.png'
+                    }
+                    alt={sticker.sticker_name}
+                    title={sticker.sticker_name}
+                  />
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      </td>
+        </td> : '' }
+
+        {settingsData.columns.includes('Float') ?
+        <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
+          <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
+            <div className="flex flex-shrink-0 -space-x-1">
+              {projectRow.item_paint_wear?.toString()?.substr(0, 9)}
+            </div>
+          </div>
+        </td> : '' }
+
+      {settingsData.columns.includes('Storage') ?
       <td className="hidden md:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
         <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
           <div className="flex flex-shrink-0 -space-x-1 font-normal">
             {projectRow.storage_name}
           </div>
         </div>
-      </td>
+      </td> : '' }
 
+      {settingsData.columns.includes('Tradehold') ?
       <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center font-normal">
         {projectRow.trade_unlock !== undefined
           ? Math.ceil(
@@ -255,7 +272,7 @@ function content({ projectRow, index }) {
                 (1000 * 60 * 60 * 24)
             ) + ' days'
           : ''}
-      </td>
+      </td> : '' }
       <td className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
         <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
           <div className="flex flex-shrink-0 -space-x-1 font-normal">
@@ -271,11 +288,7 @@ function content({ projectRow, index }) {
               name="postal-code"
               id="postal-code"
               autoComplete="off"
-              value={
-                isEmpty
-                  ? ''
-                  : totalFieldValue
-              }
+              value={isEmpty ? '' : totalFieldValue}
               placeholder="0"
               onChange={(e) => returnField(e.target.value)}
               className=" block w-full border rounded sm:text-sm text-gray-500 text-center border-gray-400 dark:bg-dark-level-two dark:text-dark-white"
@@ -284,35 +297,49 @@ function content({ projectRow, index }) {
         </div>
       </td>
       <td className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
-        <div className='flex justify-center'>
-        <button
-          onClick={() => returnField(1000)}
-          id={`fire-${index}`}
-          className={classNames(
-            1000 - inventory.inventory.length - fromReducer.totalItemsToMove ==
-              0 || totalFieldValue == projectRow.combined_QTY
-              ? 'pointer-events-none hidden'
-              : `fireButton`
-          )}
-        >
-          <LightningBoltIcon
-            className={classNames(isEmpty ? "h-5 w-5" : 'h-4 w-4', "text-gray-400 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-400" )}
-            aria-hidden="true"
-          />
-        </button>
+        <div className="flex justify-center">
+          <button
+            onClick={() => returnField(1000)}
+            id={`fire-${index}`}
+            className={classNames(
+              1000 -
+                inventory.inventory.length -
+                fromReducer.totalItemsToMove ==
+                0 || totalFieldValue == projectRow.combined_QTY
+                ? 'pointer-events-none hidden'
+                : `fireButton`
+            )}
+          >
+            <LightningBoltIcon
+              className={classNames(
+                isEmpty ? 'h-5 w-5' : 'h-4 w-4',
+                'text-gray-400 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-400'
+              )}
+              aria-hidden="true"
+            />
+          </button>
         </div>
-        <div className='flex justify-center'>
-        <button
-          onClick={() => returnField(0)}
-          className={classNames(isEmpty ? 'pointer-events-none hidden' : 'removeXButton')}
-          id={`removeX-${index}`}
-        >
-          <XIcon
-            className={classNames(1000 - inventory.inventory.length - fromReducer.totalItemsToMove ==
-              0 || totalFieldValue == projectRow.combined_QTY ? "h-5 w-5" : 'h-4 w-4', "text-gray-400 dark:text-gray-500 hover:text-red-400 dark:hover:text-red-400  ")}
-            aria-hidden="true"
-          />
-        </button>
+        <div className="flex justify-center">
+          <button
+            onClick={() => returnField(0)}
+            className={classNames(
+              isEmpty ? 'pointer-events-none hidden' : 'removeXButton'
+            )}
+            id={`removeX-${index}`}
+          >
+            <XIcon
+              className={classNames(
+                1000 -
+                  inventory.inventory.length -
+                  fromReducer.totalItemsToMove ==
+                  0 || totalFieldValue == projectRow.combined_QTY
+                  ? 'h-5 w-5'
+                  : 'h-4 w-4',
+                'text-gray-400 dark:text-gray-500 hover:text-red-400 dark:hover:text-red-400  '
+              )}
+              aria-hidden="true"
+            />
+          </button>
         </div>
       </td>
       <td className="hidden md:px-6 py-3 whitespace-nowrap text-right text-sm font-medium"></td>

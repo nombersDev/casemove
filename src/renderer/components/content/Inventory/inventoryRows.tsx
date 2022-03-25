@@ -17,7 +17,6 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-
 const now = new Date();
 function content() {
   const [stickerHover, setStickerHover] = useState('');
@@ -37,6 +36,7 @@ function content() {
   async function onSortChange(sortValue) {
     dispatch(
       await filterInventorySetSort(
+        inventory.inventory,
         inventory.combinedInventory,
         inventoryFilters,
         sortValue,
@@ -55,27 +55,29 @@ function content() {
   } else {
     inventoryToUse = inventoryFilters.inventoryFiltered;
   }
-  let pricesToGet = [] as any
-  inventoryToUse.forEach(projectRow => {
-    if (pricesResult.prices[projectRow.item_name] == undefined && pricesResult.productsRequested.includes(projectRow.item_name) == false) {
-      pricesToGet.push(projectRow)
+  let pricesToGet = [] as any;
+  inventoryToUse.forEach((projectRow) => {
+    if (
+      pricesResult.prices[projectRow.item_name] == undefined &&
+      pricesResult.productsRequested.includes(projectRow.item_name) == false
+    ) {
+      pricesToGet.push(projectRow);
     }
   });
-  console.log(pricesToGet)
   if (pricesToGet.length > 0) {
-    window.electron.ipcRenderer.getPrice(pricesToGet) 
-    dispatch(pricing_add_to_requested(pricesToGet))
+    window.electron.ipcRenderer.getPrice(pricesToGet);
+    dispatch(pricing_add_to_requested(pricesToGet));
   }
   if (inventoryToUse != getInventory) {
-    if (inventoryFilters.sortBack == true && inventoryToUse.reverse() != getInventory ) {
-      setInventory(inventoryToUse)
+    if (
+      inventoryFilters.sortBack == true &&
+      inventoryToUse.reverse() != getInventory
+    ) {
+      setInventory(inventoryToUse);
     } else {
-      setInventory(inventoryToUse)
+      setInventory(inventoryToUse);
     }
   }
-
-
-
 
   return (
     <>
@@ -118,59 +120,102 @@ function content() {
 
       <table className="min-w-full">
         <thead>
-          <tr className={classNames(settingsData.os == 'win32' ? 'top-7' : 'top-0', 'border-gray-200 sticky')}>
-          <th className="table-cell px-6 py-2 border-b border-gray-200 bg-gray-50 dark:border-opacity-50 dark:bg-dark-level-two text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  <button onClick={() => onSortChange('Product name')}
-                  className='text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400'>
-                  <span className='flex justify-between'>Product  <SelectorIcon className='h-2'/></span>
-                    </button>
-                </th>
-                <th
-                className="table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
-                    <button onClick={() => onSortChange('Price')}
-                     className='text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400'>
-                      <span className='flex justify-between'>Price  <SelectorIcon className='h-2'/></span>
-                    </button>
-                </th>
-                <th
-                className="hidden xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
+          <tr
+            className={classNames(
+              settingsData.os == 'win32' ? 'top-7' : 'top-0',
+              'border-gray-200 sticky'
+            )}
+          >
+            <th className="table-cell px-6 py-2 border-b border-gray-200 bg-gray-50 dark:border-opacity-50 dark:bg-dark-level-two text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <button
+                onClick={() => onSortChange('Product name')}
+                className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
+              >
+                <span className="flex justify-between">
+                  Product <SelectorIcon className="h-2" />
+                </span>
+              </button>
+            </th>
 
-                  <button onClick={() => onSortChange('Stickers')}
-                  className='text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400'>
+            {settingsData.columns.includes('Price') ? (
+              <th className="table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
+                <button
+                  onClick={() => onSortChange('Price')}
+                  className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
+                >
+                  <span className="flex justify-between">
+                    Price <SelectorIcon className="h-2" />
+                  </span>
+                </button>
+              </th>
+            ) : (
+              ''
+            )}
 
-                  <span className='flex justify-between'>Stickers/Patches  <SelectorIcon className='h-2'/></span>
-                    </button>
-                </th>
+            {settingsData.columns.includes('Stickers/patches') ? (
+              <th className="hidden xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
+                <button
+                  onClick={() => onSortChange('Stickers')}
+                  className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
+                >
+                  <span className="flex justify-between">
+                    Stickers/Patches <SelectorIcon className="h-2" />
+                  </span>
+                </button>
+              </th>
+            ) : (
+              ''
+            )}
 
+            {settingsData.columns.includes('Float') ? (
+              <th className="hidden xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
+                <button
+                  onClick={() => onSortChange('wearValue')}
+                  className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
+                >
+                  <span className="flex justify-between">
+                    Float <SelectorIcon className="h-2" />
+                  </span>
+                </button>
+              </th>
+            ) : (
+              ''
+            )}
 
-                <th
-                  className="hidden md:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two  ">
+            {settingsData.columns.includes('Tradehold') ? (
+              <th className="hidden md:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two  ">
+                <button
+                  onClick={() => onSortChange('tradehold')}
+                  className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
+                >
+                  <span className="flex justify-between">
+                    Tradehold <SelectorIcon className="h-2" />
+                  </span>
+                </button>
+              </th>
+            ) : (
+              ''
+            )}
 
-                    <button onClick={() => onSortChange('tradehold')}
-                  className='text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400'>
-
-                  <span className='flex justify-between'>Tradehold  <SelectorIcon className='h-2'/></span>
-                    </button>
-                </th>
-                <th
-                  className="table-cell px-6 py-2 border-b border-gray-200 bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
-                  <button onClick={() => onSortChange('QTY')}
-                  className='text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400'>
-
-                  <span className='flex justify-between'>QTY  <SelectorIcon className='h-2'/></span>
-                    </button>
-                </th>
-            <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-            <button
-                  className='text-gray-500 dark:text-gray-400 pointer-events-none tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400'>
-                  Moveable
-                    </button>
+            <th className="table-cell px-6 py-2 border-b border-gray-200 bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
+              <button
+                onClick={() => onSortChange('QTY')}
+                className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
+              >
+                <span className="flex justify-between">
+                  QTY <SelectorIcon className="h-2" />
+                </span>
+              </button>
             </th>
             <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-            <button
-                  className='text-gray-500 dark:text-gray-400 pointer-events-none tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400'>
-                  Link
-                    </button>
+              <button className="text-gray-500 dark:text-gray-400 pointer-events-none tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400">
+                Moveable
+              </button>
+            </th>
+            <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <button className="text-gray-500 dark:text-gray-400 pointer-events-none tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400">
+                Link
+              </button>
             </th>
             <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 dark:border-opacity-50 dark:bg-dark-level-two text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               <span className="md:hidden">Link</span>
@@ -192,15 +237,21 @@ function content() {
                     .includes(
                       inventoryFilters.searchInput?.toLowerCase().trim()
                     ) ||
-                    projectRow.item_wear_name
-                      ?.toLowerCase()
-                      .includes(
-                        inventoryFilters.searchInput?.toLowerCase().trim()
-                      ) ||
+                  projectRow.item_wear_name
+                    ?.toLowerCase()
+                    .includes(
+                      inventoryFilters.searchInput?.toLowerCase().trim()
+                    ) ||
                   inventoryFilters.searchInput == undefined
                   ? ''
                   : 'hidden',
-                  inventoryFilters.categoryFilter.length != 0 ? inventoryFilters.categoryFilter?.includes(projectRow.bgColorClass) ? '' : 'hidden' : '',
+                inventoryFilters.categoryFilter.length != 0
+                  ? inventoryFilters.categoryFilter?.includes(
+                      projectRow.bgColorClass
+                    )
+                    ? ''
+                    : 'hidden'
+                  : '',
                 'hover:shadow-inner'
               )}
             >
@@ -211,46 +262,60 @@ function content() {
                               className={classNames(project.bgColorClass, 'flex-shrink-0 w-2.5 h-2.5 rounded-full')}
                               aria-hidden="true"
                             /> */}
-                            <div
-            className={classNames(
-              projectRow.bgColorClass,
-              'flex-shrink-0 w-2.5 h-2.5 rounded-full'
-            )}
-            aria-hidden="true"
-          />
+                  <div
+                    className={classNames(
+                      projectRow.bgColorClass,
+                      'flex-shrink-0 w-2.5 h-2.5 rounded-full'
+                    )}
+                    aria-hidden="true"
+                  />
                   <div className="flex flex-shrink-0 -space-x-1">
-
-                  {
-            projectRow.item_moveable != true ? <div className="flex flex-shrink-0 -space-x-1">
-            <img
-              className="max-w-none h-11 w-11 dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300"
-              src={
-                'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
-                projectRow.item_url +
-                '.png'
-              }
-            />
-          </div> :
-          <Link
-          to={{
-            pathname: `https://steamcommunity.com/market/listings/730/${projectRow.item_paint_wear == undefined ? projectRow.item_name : projectRow.item_name + ' (' + projectRow.item_wear_name + ')'}`,
-          }}
-          target="_blank"
-        >
-          <div className="flex flex-shrink-0 -space-x-1">
-            <img
-              onMouseEnter={() => setItemHover(projectRow.item_id)}
-              onMouseLeave={() => setItemHover('')}
-              className={classNames(itemHover == projectRow.item_id ? 'transform-gpu hover:-translate-y-1 hover:scale-110' : '', "max-w-none h-11 w-11 transition duration-500 ease-in-out  dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300")}
-              src={
-                'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
-                projectRow.item_url +
-                '.png'
-              }
-            />
-          </div>
-        </Link>
-          }
+                    {projectRow.item_moveable != true ? (
+                      <div className="flex flex-shrink-0 -space-x-1">
+                        <img
+                          className="max-w-none h-11 w-11 dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300"
+                          src={
+                            'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
+                            projectRow.item_url +
+                            '.png'
+                          }
+                        />
+                      </div>
+                    ) : (
+                      <Link
+                        to={{
+                          pathname: `https://steamcommunity.com/market/listings/730/${
+                            projectRow.item_paint_wear == undefined
+                              ? projectRow.item_name
+                              : projectRow.item_name +
+                                ' (' +
+                                projectRow.item_wear_name +
+                                ')'
+                          }`,
+                        }}
+                        target="_blank"
+                      >
+                        <div className="flex flex-shrink-0 -space-x-1">
+                          <img
+                            onMouseEnter={() =>
+                              setItemHover(projectRow.item_id)
+                            }
+                            onMouseLeave={() => setItemHover('')}
+                            className={classNames(
+                              itemHover == projectRow.item_id
+                                ? 'transform-gpu hover:-translate-y-1 hover:scale-110'
+                                : '',
+                              'max-w-none h-11 w-11 transition duration-500 ease-in-out  dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300'
+                            )}
+                            src={
+                              'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
+                              projectRow.item_url +
+                              '.png'
+                            }
+                          />
+                        </div>
+                      </Link>
+                    )}
                   </div>
                   <span>
                     <span className="flex dark:text-dark-white">
@@ -341,77 +406,139 @@ function content() {
                   </span>
                 </div>
               </td>
-              <td className="table-cell px-6 py-3 text-sm text-gray-500 font-medium">
-                <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
-                  <div className="flex flex-shrink-0 -space-x-1 text-gray-500 dark:text-gray-400 font-normal">
-                    {projectRow.item_moveable ? pricesResult.prices[projectRow.item_name] == undefined ||
-                    projectRow.combined_QTY == 1
-                      ? new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(pricesResult.prices[projectRow.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency] ? pricesResult.prices[projectRow.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency] : 0)
-                      : new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(Math.round(projectRow.combined_QTY * pricesResult.prices[projectRow.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency])
-                        ) : ''}
+              {settingsData.columns.includes('Price') ? (
+                <td className="table-cell px-6 py-3 text-sm text-gray-500 font-medium">
+                  <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
+                    <div className="flex flex-shrink-0 -space-x-1 text-gray-500 dark:text-gray-400 font-normal">
+                      {projectRow.item_moveable
+                        ? pricesResult.prices[projectRow.item_name] ==
+                            undefined || projectRow.combined_QTY == 1
+                          ? new Intl.NumberFormat(settingsData.locale, {
+                              style: 'currency',
+                              currency: settingsData.currency,
+                            }).format(
+                              pricesResult.prices[projectRow.item_name]?.[
+                                settingsData?.source?.title
+                              ] *
+                                settingsData.currencyPrice[
+                                  settingsData.currency
+                                ]
+                                ? pricesResult.prices[projectRow.item_name]?.[
+                                    settingsData?.source?.title
+                                  ] *
+                                    settingsData.currencyPrice[
+                                      settingsData.currency
+                                    ]
+                                : 0
+                            )
+                          : new Intl.NumberFormat(settingsData.locale, {
+                              style: 'currency',
+                              currency: settingsData.currency,
+                            }).format(
+                              Math.round(
+                                projectRow.combined_QTY *
+                                  pricesResult.prices[projectRow.item_name]?.[
+                                    settingsData?.source?.title
+                                  ] *
+                                  settingsData.currencyPrice[
+                                    settingsData.currency
+                                  ]
+                              )
+                            )
+                        : ''}
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
-                  <div className="flex flex-shrink-0 -space-x-1 text-gray-500 text-xs font-normal">
-                    {pricesResult.prices[projectRow.item_name] == undefined
-                      ? ''
-                      : projectRow.combined_QTY == 1
-                      ? ''
-                      : new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(pricesResult.prices[projectRow.item_name]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency])}
+                  <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
+                    <div className="flex flex-shrink-0 -space-x-1 text-gray-500 text-xs font-normal">
+                      {pricesResult.prices[projectRow.item_name] == undefined
+                        ? ''
+                        : projectRow.combined_QTY == 1
+                        ? ''
+                        : new Intl.NumberFormat(settingsData.locale, {
+                            style: 'currency',
+                            currency: settingsData.currency,
+                          }).format(
+                            pricesResult.prices[projectRow.item_name]?.[
+                              settingsData?.source?.title
+                            ] *
+                              settingsData.currencyPrice[settingsData.currency]
+                          )}
+                    </div>
                   </div>
-                </div>
-              </td>
-              <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
-        <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
-          <div className="flex flex-shrink-0 -space-x-1">
-            {projectRow.stickers?.map((sticker, index) => (
-              <Link
-                to={{
-                  pathname: `https://steamcommunity.com/market/listings/730/${sticker.sticker_type} | ${sticker.sticker_name}`,
-                }}
-                target="_blank"
-              >
-                <img
-                  key={index}
-                  onMouseEnter={() =>
-                    setStickerHover(index + projectRow.item_id)
-                  }
-                  onMouseLeave={() => setStickerHover('')}
-                  className={classNames(
-                    stickerHover == index + projectRow.item_id
-                      ? 'transform-gpu hover:-translate-y-1 hover:scale-110'
-                      : '',
-                    'max-w-none h-8 w-8 rounded-full hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-green-600 ring-2 object-cover ring-transparent bg-gradient-to-t from-gray-100 to-gray-300 dark:from-gray-300 dark:to-gray-400'
-                  )}
-                  src={
-                    'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
-                    sticker.sticker_url +
-                    '.png'
-                  }
-                  alt={sticker.sticker_name}
-                  title={sticker.sticker_name}
-                />
-              </Link>
-            ))}
-          </div>
-        </div>
-      </td>
+                </td>
+              ) : (
+                ''
+              )}
+              {settingsData.columns.includes('Stickers/patches') ? (
+                <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
+                  <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
+                    <div className="flex flex-shrink-0 -space-x-1">
+                      {projectRow.stickers?.map((sticker, index) => (
+                        <Link
+                          to={{
+                            pathname: `https://steamcommunity.com/market/listings/730/${sticker.sticker_type} | ${sticker.sticker_name}`,
+                          }}
+                          target="_blank"
+                        >
+                          <img
+                            key={index}
+                            onMouseEnter={() =>
+                              setStickerHover(index + projectRow.item_id)
+                            }
+                            onMouseLeave={() => setStickerHover('')}
+                            className={classNames(
+                              stickerHover == index + projectRow.item_id
+                                ? 'transform-gpu hover:-translate-y-1 hover:scale-110'
+                                : '',
+                              'max-w-none h-8 w-8 rounded-full hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-green-600 ring-2 object-cover ring-transparent bg-gradient-to-t from-gray-100 to-gray-300 dark:from-gray-300 dark:to-gray-400'
+                            )}
+                            src={
+                              'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
+                              sticker.sticker_url +
+                              '.png'
+                            }
+                            alt={sticker.sticker_name}
+                            title={sticker.sticker_name}
+                          />
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </td>
+              ) : (
+                ''
+              )}
+              {settingsData.columns.includes('Float') ? (
+                <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
+                  <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
+                    <div className="flex flex-shrink-0 -space-x-1">
+                      {projectRow.item_paint_wear?.toString()?.substr(0, 9)}
+                    </div>
+                  </div>
+                </td>
+              ) : (
+                ''
+              )}
 
-              <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center">
-                {projectRow.trade_unlock !== undefined
-                  ? Math.ceil(
-                      (projectRow.trade_unlock.getTime() - now.getTime()) /
-                        (1000 * 60 * 60 * 24)
-                    ) + ' days'
-                  : ''}
-              </td>
+              {settingsData.columns.includes('Tradehold') ? (
+                <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center">
+                  {projectRow.trade_unlock !== undefined
+                    ? Math.ceil(
+                        (projectRow.trade_unlock.getTime() - now.getTime()) /
+                          (1000 * 60 * 60 * 24)
+                      ) + ' days'
+                    : ''}
+                </td>
+              ) : (
+                ''
+              )}
               <td className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
-        <div className="flex items-center space-x-2 justify-center rounded-full  drop-shadow-lg">
-          <div className="flex flex-shrink-0 -space-x-1 font-normal">
-            {projectRow.combined_QTY}
-          </div>
-        </div>
-      </td>
+                <div className="flex items-center space-x-2 justify-center rounded-full  drop-shadow-lg">
+                  <div className="flex flex-shrink-0 -space-x-1 font-normal">
+                    {projectRow.combined_QTY}
+                  </div>
+                </div>
+              </td>
               <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-right">
                 <div className="flex justify-center rounded-full drop-shadow-lg">
                   {projectRow.item_moveable == true ? (
@@ -433,9 +560,9 @@ function content() {
                     target="_blank"
                   >
                     <ExternalLinkIcon
-                        className="h-5 w-5 text-gray-500 dark:text-gray-400 group-hover:text-gray-100"
-                        aria-hidden="true"
-                      />
+                      className="h-5 w-5 text-gray-500 dark:text-gray-400 group-hover:text-gray-100"
+                      aria-hidden="true"
+                    />
                   </Link>
                 </div>
               </td>

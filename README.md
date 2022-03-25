@@ -4,14 +4,14 @@
 
 ----
 
-## Download Latest Version (Casemove 1.4.5)
+## Download Latest Version (Casemove 1.5.0)
 
 This is the latest stable version and can be downloaded from the [releases](https://github.com/nombersDev/casemove/releases) page, or directly from:
 
-- [Windows - (Casemove-1.4.5)](https://github.com/nombersDev/casemove/releases/download/1.4.5/Casemove.Setup.1.4.5.exe)
-- [Mac - (Casemove-1.4.5)](https://github.com/nombersDev/casemove/releases/download/1.4.5/Casemove-1.4.5.dmg)
-- [Mac ARM 64 (M1) - (Casemove-1.4.5)](https://github.com/nombersDev/casemove/releases/download/1.4.5/Casemove-1.4.5-arm64.dmg)
-- [Linux AppImage - (Casemove-1.4.5)](https://github.com/nombersDev/casemove/releases/download/1.4.5/casemove-1.4.5.zip)
+- [Windows - (Casemove-1.5.0)](https://github.com/nombersDev/casemove/releases/download/1.5.0/Casemove.Setup.1.5.0.exe)
+- [Mac - (Casemove-1.5.0)](https://github.com/nombersDev/casemove/releases/download/1.5.0/Casemove-1.5.0.dmg)
+- [Mac ARM 64 (M1) - (Casemove-1.5.0)](https://github.com/nombersDev/casemove/releases/download/1.5.0/Casemove-1.5.0-arm64.dmg)
+- [Linux AppImage - (Casemove-1.5.0)](https://github.com/nombersDev/casemove/releases/download/1.5.0/casemove-1.5.0.zip)
 
 Install the Linux version by unzipping the contents of the zip-file into a folder and click on the AppImage file. 
 
@@ -34,6 +34,13 @@ Features include:
   * Use your shared secret key instead of an auth code to log in 
   * See your storage unit's and inventory value from Buff, Skinport SCM & Bitskins in almost all currencies
   * Dark mode
+
+Trade up features:
+  * Complete trade up contracts from within the app! 
+  * See the possible outcomes from your trade up contract
+  * See an estimated EV of your trade up contract recipe
+
+
  
  
 ----

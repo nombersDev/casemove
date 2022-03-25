@@ -8,6 +8,8 @@ import moveFromReducer from './moveFromReducers'
 import moveToReducer from './moveToReducers'
 import settingsReducer from "./settings";
 import pricingReducer from "./pricing";
+import tradeUpReducer from "./tradeupReducer";
+import modalTradeReducer from './modalTrade'
 
 const rootReducers = combineReducers({
     authReducer,
@@ -18,7 +20,9 @@ const rootReducers = combineReducers({
     moveFromReducer,
     moveToReducer,
     settingsReducer,
-    pricingReducer
+    pricingReducer,
+    tradeUpReducer,
+    modalTradeReducer
 })
 
 export default rootReducers;

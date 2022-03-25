@@ -24,6 +24,7 @@ import {
   DocumentDownloadIcon,
   XIcon,
   MenuAlt1Icon,
+  BeakerIcon,
 } from '@heroicons/react/outline';
 import itemCategories from './components/content/shared/categories';
 import { toMoveContext } from './context/toMoveContext';
@@ -35,9 +36,10 @@ import { handleUserEvent } from './store/handleMessage';
 import Logo from './components/content/shared/iconsLogo/logo 2';
 import ToContent from './components/content/storageUnits/to/toHolder';
 import { classNames } from './components/content/shared/inventoryFunctions';
-import { filterInventorySetSort, inventoryAddCategoryFilter } from './store/actions/filtersInventoryActions';
+import { filterInventorySetSort, inventoryAddCategoryFilter, inventoryAddRarityFilter } from './store/actions/filtersInventoryActions';
 import settingsPage from './views/settings/settings';
 import {
+  setColumns,
   setDarkMode,
   setFastMove,
   setLocale,
@@ -46,6 +48,10 @@ import {
 } from './store/actions/settings';
 import { pricing_addPrice } from './store/actions/pricingActions';
 import TitleBarWindows from './components/content/shared/titleBarWindows';
+import TradeupPage from './views/tradeUp/tradeUp';
+import itemRarities from './components/content/shared/rarities';
+import { setTradeFoundMatch } from './store/actions/modalTrade';
+import TradeResultModal from './components/content/shared/modals & notifcations/modalTradeResult';
 DocumentDownloadIcon;
 
 //{ name: 'Reports', href: '/reports', icon: DocumentDownloadIcon, current: false }
@@ -63,7 +69,10 @@ const navigation = [
     current: false,
   },
   { name: 'Inventory', href: '/inventory', icon: ArchiveIcon, current: false },
+  { name: 'Trade up', href: '/tradeup', icon: BeakerIcon, current: false }
 ];
+// { name: 'Trade up', href: '/tradeup', icon: BeakerIcon, current: false }
+// { name: 'Trade-Up', href: '/inventory', icon: BeakerIcon, current: false },
 
 function AppContent() {
   SearchIcon;
@@ -87,6 +96,9 @@ function AppContent() {
   const modalData = useSelector((state: any) => state.modalMoveReducer);
   const settingsData = useSelector((state: any) => state.settingsReducer);
   const pricesResult = useSelector((state: any) => state.pricingReducer);
+  const inventoryData = useSelector((state: any) => state.inventoryReducer);
+  const tradeUpData = useSelector((state: any) => state.modalTradeReducer);
+  const inventory = useSelector((state: any) => state.inventoryReducer);
   const filterDetails = useSelector(
     (state: any) => state.inventoryFiltersReducer
   );
@@ -106,6 +118,8 @@ function AppContent() {
     setSideMenuOption(location.pathname);
   }
 
+  console.log(currentSideMenuOption)
+
   // Log out of session
   const dispatch = useDispatch();
 
@@ -121,6 +135,7 @@ function AppContent() {
       );
       dispatch(
         await filterInventorySetSort(
+          inventoryData.inventory,
           combinedInventory,
           filterDetails,
           filterDetails.sortValue,
@@ -138,9 +153,19 @@ function AppContent() {
         console.log('OS', returnValue);
         dispatch(setOS(returnValue));
       });
+      // wear value
+      await window.electron.store.get('columns').then((returnValue) => {
+        console.log('columns', returnValue);
+        if (returnValue != undefined) {
+          dispatch(setColumns(returnValue));
+        }
+      });
       // Darkmode
       await window.electron.store.get('darkmode.value').then((returnValue) => {
         console.log('darkmode.value', returnValue);
+        if (returnValue == undefined) {
+          returnValue = false;
+        }
         dispatch(setDarkMode(returnValue));
       });
       // Fastmove
@@ -228,6 +253,20 @@ function AppContent() {
       dispatch(pricing_addPrice(message[0]));
     });
   }
+
+  // Trade up
+  async function handleTradeUp() {
+    inventory.inventory.forEach(element => {
+      if (!tradeUpData.inventoryFirst.includes(element.item_id)) {
+        dispatch(setTradeFoundMatch(element))
+      } 
+    }) 
+  }
+  if (tradeUpData.inventoryFirst.length != 0) {
+    handleTradeUp()
+  }
+
+
   return (
     <>
       {/*
@@ -238,6 +277,8 @@ function AppContent() {
         <body class="h-full">
         ```
       */}
+      
+      <TradeResultModal />
         {settingsData.os != 'win32' ? '' : <TitleBarWindows />}
       <div className={classNames(settingsData.os == 'win32' ? 'pt-7' : '', "min-h-full dark:bg-dark-level-one h-screen")}>
         <Transition.Root show={sidebarOpen} as={Fragment}>
@@ -557,6 +598,7 @@ function AppContent() {
                   </Link>
                 ))}
               </div>
+                {!currentSideMenuOption.includes("/tradeup") ?
               <div className="mt-8">
                 {/* Secondary navigation */}
                 <h3
@@ -594,7 +636,44 @@ function AppContent() {
                     </div>
                   ))}
                 </div>
-              </div>
+              </div>: <div className="mt-8">
+                {/* Secondary navigation */}
+                <h3
+                  className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                  id="desktop-teams-headline"
+                >
+                  RARITY
+                </h3>
+                <div
+                  className="mt-1 space-y-1"
+                  role="group"
+                  aria-labelledby="desktop-teams-headline"
+                >
+                  {itemRarities.map((rarity) => (
+                    <div className={classNames(
+                      filterDetails.rarityFilter?.includes(rarity.bgColorClass) ? 'bg-gray-200 dark:bg-dark-level-three' : '',"w-full")}>
+
+                    <button
+                      key={rarity.value}
+                      onClick={() => dispatch(inventoryAddRarityFilter(rarity.bgColorClass))}
+                      className={classNames(userDetails.isLoggedIn == false ? 'pointer-events-none' : '',
+                        "group flex items-center px-3 py-2 dark:text-dark-white text-sm font-medium text-gray-700 rounded-md"
+                      )}
+
+                    >
+                      <span
+                        className={classNames(
+                          rarity.bgColorClass,
+                          'w-2.5 h-2.5 mr-4 rounded-full'
+                        )}
+                        aria-hidden="true"
+                      />
+                      <span className="truncate">{rarity.value}</span>
+                    </button>
+                    </div>
+                  ))}
+                </div>
+              </div> }
             </nav>
           </div>
 
@@ -742,6 +821,7 @@ function AppContent() {
                   <Route exact path="/transferto" component={ToContent} />
                   <Route path="/signin" component={LoginPage} />
                   <Route exact path="/inventory" component={inventoryContent} />
+                  <Route exact path="/tradeup" component={TradeupPage} />
                   <Route exact path="/settings" component={settingsPage} />
                 </toMoveContext.Provider>
               </Switch>

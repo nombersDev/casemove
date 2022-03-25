@@ -67,6 +67,22 @@ async function storeUserAccount(
   })
 }
 
+async function setAccountPosition(username, newPosition) {
+  let accountDetails = store.get('account')
+  if (accountDetails == undefined) {
+    accountDetails = {}
+  }
+
+  // Add to account details
+  accountDetails[username]['position'] = newPosition
+
+  // Set store
+  store.set({
+    account: accountDetails
+  })
+}
+
+
 // Delete user data
 async function deleteUserData(username) {
   let statusCode = 0
@@ -108,7 +124,8 @@ module.exports = {
   getLoginDetails,
   getAllAccountDetails,
   deleteUserData,
+  setAccountPosition,
   setValue,
   getValue
 };
-export { storeUserAccount, getLoginDetails, getAllAccountDetails, deleteUserData, setValue, getValue };
+export { storeUserAccount, getLoginDetails, getAllAccountDetails, deleteUserData, setAccountPosition, setValue, getValue };
