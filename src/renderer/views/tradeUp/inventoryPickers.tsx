@@ -166,22 +166,22 @@ function content() {
                 projectRow.item_name
                   ?.toLowerCase()
                   .includes(
-                    inventoryFilters.searchInput?.toLowerCase().trim()
+                    tradeUpData.searchInput?.toLowerCase().trim()
                   ) ||
                   projectRow.item_customname
                     ?.toLowerCase()
                     .includes(
-                      inventoryFilters.searchInput?.toLowerCase().trim()
+                      tradeUpData.searchInput?.toLowerCase().trim()
                     ) ||
                   projectRow.item_wear_name
                     ?.toLowerCase()
                     .includes(
-                      inventoryFilters.searchInput?.toLowerCase().trim()
+                      tradeUpData.searchInput?.toLowerCase().trim()
                     ) ||
-                  inventoryFilters.searchInput == undefined
+                    tradeUpData.searchInput == undefined
                   ? ''
                   : 'hidden',
-                inventoryFilters.rarityFilter.length != 0
+                  inventoryFilters.rarityFilter.length != 0
                   ? inventoryFilters.rarityFilter?.includes(
                       projectRow.rarityColor
                     )

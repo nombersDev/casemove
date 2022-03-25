@@ -25,7 +25,6 @@ function settingsContent() {
   let totalPrice = 0;
   tradeUpData.tradeUpProducts.forEach((element) => {
     totalFloat += element.item_paint_wear;
-    console.log(element);
     totalPrice +=
       pricesResult.prices[element.item_name]?.['steam_listing'] *
       settingsData.currencyPrice[settingsData.currency];

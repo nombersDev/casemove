@@ -40,20 +40,23 @@ export default function PossibleOutcomes() {
     return 0;
   });
 
+  // Get outcomes
   if (
     tradeUpData.tradeUpProducts.length == 10 &&
     tradeUpData.possibleOutcomes.length == 0
-  ) { if (outcomesRequested == false) {
-    window.electron.ipcRenderer
-      .getPossibleOutcomes(tradeUpData.tradeUpProducts)
-      .then((messageValue) => {
-        console.log(messageValue);
-        dispatch(tradeUpSetPossible(messageValue));
-      });
-    setOutcomesRequested(true);
-  } else {
-    setOutcomesRequested(false)
+  ) {
+    if (outcomesRequested == false) {
+      setOutcomesRequested(true);
+      window.electron.ipcRenderer
+        .getPossibleOutcomes(tradeUpData.tradeUpProducts)
+        .then((messageValue) => {
+          dispatch(tradeUpSetPossible(messageValue));
+        });
+    }
   }
+
+  if (outcomesRequested && tradeUpData.tradeUpProducts.length != 10) {
+    setOutcomesRequested(false)
   }
 
   return (

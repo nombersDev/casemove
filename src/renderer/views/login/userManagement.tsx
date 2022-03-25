@@ -8,8 +8,7 @@ export default function UserGrid({ clickOnProfile }) {
   const [getUsers, setUsers] = useState([] as any);
   async function updateFunction() {
     let doUpdate = await window.electron.ipcRenderer.getAccountDetails();
-    console.log(doUpdate)
-    let valueToUse = []
+    let valueToUse = [] as any;
     await window.electron.store.get('accountKeyList').then((returnValue) => {
       console.log('accountKeyList', returnValue);
       valueToUse = returnValue
@@ -18,7 +17,6 @@ export default function UserGrid({ clickOnProfile }) {
     if (doUpdate == undefined) {
       doUpdate = {};
     }
-    console.log(valueToUse)
     let seenValues = [] as any
     if (valueToUse != undefined) {
       valueToUse.forEach(element => {

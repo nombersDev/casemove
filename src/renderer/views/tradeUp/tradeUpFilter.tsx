@@ -1,6 +1,6 @@
 import { SearchIcon } from '@heroicons/react/solid';
 import { useDispatch, useSelector } from 'react-redux';
-import { tradeUpSetMax, tradeUpSetMin, tradeUpSetSearch } from 'renderer/store/actions/tradeUpActions';
+import { tradeUpResetPossible, tradeUpSetMax, tradeUpSetMin, tradeUpSetSearch } from 'renderer/store/actions/tradeUpActions';
 
 export default function TradeUpFilters() {
   const tradeUpData = useSelector((state: any) => state.tradeUpReducer);
@@ -19,7 +19,6 @@ export default function TradeUpFilters() {
       break;
     }
   }
-  console.log(productsToUse);
   async function updateMin(valueToSet) {
     if (valueToSet < tradeUpData.MaxFloat) {
       dispatch(tradeUpSetMin(valueToSet))
@@ -42,7 +41,7 @@ export default function TradeUpFilters() {
               <button
                 type="button"
                 className="text-gray-500 dark:text-gray-400"
-                onClick={() => console.log()}
+                onClick={() => dispatch(tradeUpResetPossible())}
               >
                 Clear all
               </button>
