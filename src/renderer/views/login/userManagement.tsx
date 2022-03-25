@@ -6,18 +6,25 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 export default function UserGrid({ clickOnProfile }) {
   const [hasRun, setHasRun] = useState(false);
   const [getUsers, setUsers] = useState([] as any);
+
+  // The brain
   async function updateFunction() {
-    let doUpdate = await window.electron.ipcRenderer.getAccountDetails();
-    let valueToUse = [] as any;
-    await window.electron.store.get('accountKeyList').then((returnValue) => {
-      console.log('accountKeyList', returnValue);
-      valueToUse = returnValue
-    });
     let finalList = [] as any;
+    let seenValues = [] as any
+    
+    // Get the account details
+    let doUpdate = await window.electron.ipcRenderer.getAccountDetails();
     if (doUpdate == undefined) {
       doUpdate = {};
     }
-    let seenValues = [] as any
+
+    // Get the order of the account details
+    let valueToUse = [] as any;
+    await window.electron.store.get('accountKeyList').then((returnValue) => {
+      valueToUse = returnValue
+    });
+
+    // Conditional logic
     if (valueToUse != undefined) {
       valueToUse.forEach(element => {
         if (seenValues.includes(element) == false) {
@@ -27,7 +34,6 @@ export default function UserGrid({ clickOnProfile }) {
       for (const [key, value] of Object.entries(doUpdate)) {
         let userObject = value as any;
         userObject['username'] = key;
-        console.log(key)
         if (!seenValues.includes(userObject['username'])) {
           finalList.push(userObject);
         }
@@ -41,32 +47,40 @@ export default function UserGrid({ clickOnProfile }) {
         }
 
       });
+    } else {
+      for (const [key, value] of Object.entries(doUpdate)) {
+        let userObject = value as any;
+        userObject['username'] = key;
+        finalList.push(userObject);
+      }
     }
-    console.log(finalList)
+    // Apply the account details
     setUsers(finalList)
 
   }
-
+  // Run brain only once
   if (hasRun == false) {
     updateFunction();
     setHasRun(true);
   }
 
+  // Remove account
   async function removeUsername(username) {
     window.electron.ipcRenderer.deleteAccountDetails(username);
     updateFunction();
   }
-
+  
+  // Drag n drop features
   async function handleOnDragEnd(result) {
-    console.log(result);
+    // Check if actually moved
     if (!result.destination) return;
     const items = Array.from(getUsers);
+
+    // Store change locally and in the settings
     window.electron.ipcRenderer.setAccountPosition(result.draggableId, result.destination.index)
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
-
     setUsers(items);
-
 
     // Store for next session
     const orderToStore = [] as any;
@@ -77,12 +91,7 @@ export default function UserGrid({ clickOnProfile }) {
     });
     await window.electron.store.set('accountKeyList', orderToStore)
   }
-
-  async function logUsers() {
-    let doUpdate = await window.electron.ipcRenderer.getAccountDetails();
-    console.log(doUpdate)
-  }
-  logUsers
+  
   return (
     <div className="overflow-x-auto h-screen-fixed bg-gray-50 dark:bg-dark-level-two">
       <div className="grid grid-cols-1 py-10 px-4 gap-4 overflow-y-auto">
@@ -93,7 +102,7 @@ export default function UserGrid({ clickOnProfile }) {
                 {getUsers.length == 0 ? (
                   <li
                     className={classNames(
-                      'relative rounded-lg border border-gray-300 border-dashed bg-white px-6 py-5 flex items-center space-x-3 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"'
+                      'relative rounded-lg border border-gray-300 border-dashed dark:bg-dark-level-four bg-white px-6 py-5 flex items-center space-x-3 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"'
                     )}
                   >
                     <div className="flex-shrink-0">
@@ -106,10 +115,10 @@ export default function UserGrid({ clickOnProfile }) {
                       </svg>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-gray-900 dark:text-dark-white">
                         Nothing here
                       </p>
-                      <p className="text-sm text-gray-500 truncate">
+                      <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                         Login to add user
                       </p>
                     </div>

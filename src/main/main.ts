@@ -626,8 +626,9 @@ async function startEvents(csgo, user) {
 // Set dark mode
 async function darkModeSetup() {
   getValue('darkmode.hasSet').then((returnValue) => {
-    if (returnValue == false) {
-      setValue('darkmode.value', false);
+    console.log('darkmodeunset',returnValue)
+    if (returnValue == false  || returnValue == undefined) {
+      setValue('darkmode.value', true);
     }
   });
 }
