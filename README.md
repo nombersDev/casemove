@@ -35,7 +35,7 @@ Features include:
   * See your storage unit's and inventory value from Buff, Skinport SCM & Bitskins in almost all currencies
   * Dark mode
 
-Features include:
+Trade up features:
   * Complete trade up contracts from within the app! 
   * See the possible outcomes from your trade up contract
   * See an estimated EV of your trade up contract recipe
