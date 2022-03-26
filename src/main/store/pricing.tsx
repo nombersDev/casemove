@@ -24,8 +24,8 @@ async function getPrices(cas) {
         cas.setPricing(response.data);
       }
     })
-    .catch(function () {
-      console.log('heress');
+    .catch(function (error) {
+      console.log('Error prices', error);
       getPricesBackup(cas)
     });
 }

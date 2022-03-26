@@ -131,11 +131,8 @@ const createWindow = async () => {
   // Open urls in the user's browser
   mainWindow.webContents.on('new-window', (event, url) => {
     event.preventDefault();
-    console.log(url);
     shell.openExternal(
       url
-        .replaceAll('http://localhost:1212/#/', '')
-        .replaceAll('http://localhost:1212/index.html#/', '')
     );
   });
 
