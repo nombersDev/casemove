@@ -129,6 +129,7 @@ function StorageUnits() {
     }
     return false;
   });
+  console.log(storageFiltered)
   return (
     <>
       {/* Storage units */}
