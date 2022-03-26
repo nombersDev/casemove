@@ -175,6 +175,7 @@ app.on('window-all-closed', () => {
 
 let myWindow = null as any;
 const gotTheLock = app.requestSingleInstanceLock();
+const reactNombers = false;
 
 if (!gotTheLock) {
   app.quit();
@@ -192,7 +193,7 @@ if (!gotTheLock) {
       currentLocale = app.getLocale();
       console.log('Currentlocal', currentLocale);
 
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV === 'development' && reactNombers) {
         let reactDevToolsPath = '';
         // on windows
         console.log(process.platform);
