@@ -17,11 +17,11 @@ async function getPrices(cas) {
   axios
     .get(url)
     .then(function (response) {
-      console.log(response.statusCode);
-      if (response.statusCode !== 200) {
-        getPricesBackup(cas)
+      console.log('prices, response', typeof response === 'object', response !== null)
+      if (typeof response === 'object' && response !== null) {
+        cas.setPricing(response.data, 'normal')
       } else {
-        cas.setPricing(response.data);
+        getPricesBackup(cas);
       }
     })
     .catch(function (error) {
@@ -102,8 +102,8 @@ class runItems {
       }
     });
   }
-  async setPricing(pricingData) {
-    console.log('pricingSet')
+  async setPricing(pricingData, commandFrom) {
+    console.log('pricingSet', commandFrom)
     this.prices = pricingData;
   }
   async makeSinglerequest(itemRow) {

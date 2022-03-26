@@ -198,6 +198,17 @@ function StorageUnits() {
                     </span>
                   </button>
                 </th> : '' }
+                {settingsData.columns.includes('Rarity') ?
+              <th className="hidden xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
+                  <button
+                    onClick={() => onSortChange('Rarity')}
+                    className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
+                  >
+                    <span className="flex justify-between">
+                    Rarity <SelectorIcon className="h-2" />
+                    </span>
+                  </button>
+                </th> : '' }
 
                 {settingsData.columns.includes('Tradehold') ?
                 <th className="hidden md:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two  ">

@@ -12,7 +12,8 @@ const columns = [
   { id: 2, name: 'Float' },
   { id: 3, name: 'Stickers/patches' },
   { id: 4, name: 'Storage' },
-  { id: 4, name: 'Tradehold' },
+  { id: 5, name: 'Tradehold' },
+  { id: 6, name: 'Rarity'}
 ]
 
 
