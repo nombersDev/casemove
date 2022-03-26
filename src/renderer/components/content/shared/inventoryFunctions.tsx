@@ -18,6 +18,10 @@ export default function combineInventory(thisInventory) {
       valued['item_has_stickers'] +
       valued['stickers'];
 
+    if (valued['item_paint_wear'] != undefined) {
+      valueConditions = valueConditions + valued['item_paint_wear'];
+    }
+
     // Filter the inventory
     if (seenProducts.includes(valueConditions) == false) {
       length = thisInventory.filter(function (item) {
@@ -29,6 +33,9 @@ export default function combineInventory(thisInventory) {
           item['item_moveable'] +
           item['item_has_stickers'] +
           item['stickers'];
+        if (item['item_paint_wear'] != undefined) {
+          itemConditions = itemConditions + item['item_paint_wear'];
+        }
 
         return itemConditions == valueConditions;
       });
@@ -114,8 +121,12 @@ export async function getStorageUnitDataReload(storageID, storageName) {
   return newStorageData;
 }
 
-export async function getStorageUnitData(storageID, storageName, prices, pricesRequested) {
-
+export async function getStorageUnitData(
+  storageID,
+  storageName,
+  prices,
+  pricesRequested
+) {
   let newStorageData = [] as any;
   let productsToGet = [] as any;
   let storageResult = await window.electron.ipcRenderer.getStorageUnitData(
@@ -135,14 +146,16 @@ export async function getStorageUnitData(storageID, storageName, prices, pricesR
     }
     item['storage_id'] = storageID;
     item['storage_name'] = storageName;
-    if (prices[item.item_name] == undefined && pricesRequested.includes(item.item_name) == false) {
-      productsToGet.push(item)
+    if (
+      prices[item.item_name] == undefined &&
+      pricesRequested.includes(item.item_name) == false
+    ) {
+      productsToGet.push(item);
     }
     newStorageData.push(item);
-
   });
   if (productsToGet.length > 0) {
-    window.electron.ipcRenderer.getPrice(productsToGet)
+    window.electron.ipcRenderer.getPrice(productsToGet);
   }
   return [newStorageData, productsToGet];
 }
@@ -157,7 +170,7 @@ export async function filterInventory(
   const thisInventory = [] as any;
   // First Categories
   let totalTwo = 0;
-  console.log(filtersData)
+  console.log(filtersData);
   for (const [, value] of Object.entries(filtersData)) {
     let valued = value as String;
     let command = valued.substring(0, 1);
@@ -220,7 +233,12 @@ export async function filterInventory(
       });
     }
   }
-  combinedInventory = await sortDataFunction(sortData, combinedInventory, prices, pricingSource);
+  combinedInventory = await sortDataFunction(
+    sortData,
+    combinedInventory,
+    prices,
+    pricingSource
+  );
 
   return combinedInventory;
 }
@@ -228,12 +246,13 @@ export function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-
-
-
-export async function sortDataFunction(sortValue, inventory, prices, pricingSource) {
+export async function sortDataFunction(
+  sortValue,
+  inventory,
+  prices,
+  pricingSource
+) {
   function sortRun(valueOne, ValueTwo, useNaN = false) {
-
     if (valueOne < ValueTwo) {
       return -1;
     }
@@ -242,134 +261,141 @@ export async function sortDataFunction(sortValue, inventory, prices, pricingSour
     }
 
     if (useNaN && isNaN(valueOne)) {
-      return -1
+      return -1;
     }
     return 0;
-
   }
 
   // Check
   if (sortValue == 'Storages') {
     inventory.sort(function (a, b) {
-      return sortRun(a.item_customname, b.item_customname)
+      return sortRun(a.item_customname, b.item_customname);
     });
     return inventory;
   }
   // First sort by Name
   inventory.sort(function (a, b) {
-    return sortRun(a.item_name.replaceAll('★', '').replaceAll(' ', ''), b.item_name.replaceAll('★', '').replaceAll(' ', ''))
+    return sortRun(
+      a.item_name.replaceAll('★', '').replaceAll(' ', ''),
+      b.item_name.replaceAll('★', '').replaceAll(' ', '')
+    );
   });
-  switch(sortValue) {
-
+  switch (sortValue) {
     case 'Default':
       inventory.sort(function (a, b) {
-        return sortRun(a.position, b.position)
+        return sortRun(a.position, b.position);
       });
       return inventory;
 
     case 'Category':
       inventory.sort(function (a, b) {
-        return sortRun(a.category, b.category)
+        return sortRun(a.category, b.category);
       });
       return inventory;
 
     case 'QTY':
       inventory.sort(function (a, b) {
-        return -sortRun(a.combined_QTY, b.combined_QTY)
+        return -sortRun(a.combined_QTY, b.combined_QTY);
       });
       return inventory;
 
     case 'Price':
       inventory.sort(function (a, b) {
-        return -sortRun(prices[a.item_name]?.[pricingSource] * a.combined_QTY, prices[b.item_name]?.[pricingSource] * b.combined_QTY)
+        return -sortRun(
+          prices[a.item_name]?.[pricingSource] * a.combined_QTY,
+          prices[b.item_name]?.[pricingSource] * b.combined_QTY
+        );
       });
       return inventory;
 
     case 'Stickers':
       inventory.sort(function (a, b) {
-        return -sortRun(a?.stickers?.length, b?.stickers?.length)
+        return -sortRun(a?.stickers?.length, b?.stickers?.length);
       });
       return inventory;
 
     case 'wearValue':
       inventory.sort(function (a, b) {
-        return -sortRun(a.item_paint_wear, b.item_paint_wear)
+        return -sortRun(a.item_paint_wear, b.item_paint_wear);
       });
       return inventory;
 
     case 'Rarity':
       inventory.sort(function (a, b) {
-        var valueAToTest = a.rarity
-        var valueBToTest = b.rarity
+        var valueAToTest = a.rarity;
+        var valueBToTest = b.rarity;
         if (valueAToTest == undefined) {
-          valueAToTest = 99
-        }
-        
-        if (valueBToTest == undefined) {
-          valueBToTest = 99
+          valueAToTest = 99;
         }
 
-        return sortRun(valueAToTest, valueBToTest)
+        if (valueBToTest == undefined) {
+          valueBToTest = 99;
+        }
+
+        return sortRun(valueAToTest, valueBToTest);
       });
       return inventory;
 
-
     case 'StorageName':
       inventory.sort(function (a, b) {
-        return sortRun(a?.storage_name, b?.storage_name)
+        return sortRun(a?.storage_name, b?.storage_name);
       });
       return inventory;
 
     case 'tradehold':
       const now = new Date();
       inventory.sort(function (a, b) {
-        return sortRun(a?.trade_unlock?.getTime() - now.getTime(), b?.trade_unlock?.getTime() - now.getTime(), true)
+        return sortRun(
+          a?.trade_unlock?.getTime() - now.getTime(),
+          b?.trade_unlock?.getTime() - now.getTime(),
+          true
+        );
       });
       return inventory;
 
     default:
-      return inventory
+      return inventory;
   }
 }
 
 export async function downloadReport(storageData) {
-  let csvContent = "Item Name,Item Custom Name, Price, Price Combined, Item Moveable, Storage Name, Tradehold, Category, Combined QTY, Item Wear Name, Item Paint Wear,Item Has Stickers/Patches,Stickers\n";
-  var csv = storageData.map(function(d){
-    let storageName = d.storage_name
-    if (storageName == undefined) {
-      storageName = '#Inventory'
-    }
+  let csvContent =
+    'Item Name,Item Custom Name, Price, Price Combined, Item Moveable, Storage Name, Tradehold, Category, Combined QTY, Item Wear Name, Item Paint Wear,Item Has Stickers/Patches,Stickers\n';
+  var csv = storageData
+    .map(function (d) {
+      let storageName = d.storage_name;
+      if (storageName == undefined) {
+        storageName = '#Inventory';
+      }
 
-    let stickersData = d.stickers;
-    if (stickersData != []) {
-      let newStickers = [] as any;
-      stickersData.forEach(element => {
-        newStickers.push(element.sticker_name)
-      });
-      stickersData = newStickers.join(';');
-    }
-    const returnDict = {
-      item_name: d.item_name,
-      item_customname: d.item_customname,
-      price: d.item_price,
-      price_combined: d.item_price_combined,
-      item_moveable: d.item_moveable,
-      storage_name: storageName,
-      trade_unlock: d.trade_unlock,
-      category: d.category,
-      combined_QTY: d.combined_QTY,
-      item_wear_name: d.item_wear_name,
-      item_paint_wear: d.item_paint_wear,
-      item_has_stickers: d.item_has_stickers,
-      item_stickers: stickersData
-    }
-    return JSON.stringify(Object.values(returnDict));
-})
-.join('\n')
-.replaceAll('null', '')
-.replace(/(^\[)|(\]$)/mg, '');
-csv = csvContent + csv
-window.electron.ipcRenderer.downloadFile(csv)
+      let stickersData = d.stickers;
+      if (stickersData != []) {
+        let newStickers = [] as any;
+        stickersData.forEach((element) => {
+          newStickers.push(element.sticker_name);
+        });
+        stickersData = newStickers.join(';');
+      }
+      const returnDict = {
+        item_name: d.item_name,
+        item_customname: d.item_customname,
+        price: d.item_price,
+        price_combined: d.item_price_combined,
+        item_moveable: d.item_moveable,
+        storage_name: storageName,
+        trade_unlock: d.trade_unlock,
+        category: d.category,
+        combined_QTY: d.combined_QTY,
+        item_wear_name: d.item_wear_name,
+        item_paint_wear: d.item_paint_wear,
+        item_has_stickers: d.item_has_stickers,
+        item_stickers: stickersData,
+      };
+      return JSON.stringify(Object.values(returnDict));
+    })
+    .join('\n')
+    .replaceAll('null', '')
+    .replace(/(^\[)|(\]$)/gm, '');
+  csv = csvContent + csv;
+  window.electron.ipcRenderer.downloadFile(csv);
 }
-
-

@@ -75,7 +75,6 @@ function content({ projectRow, index }) {
       (row) => row[0] == projectRow.item_id
     )[0][2].length;
   }
-  console.log(projectRow)
 
   return (
     <>
