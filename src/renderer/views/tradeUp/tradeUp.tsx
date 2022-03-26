@@ -6,7 +6,7 @@ import {
   VariableIcon,
 } from '@heroicons/react/solid';
 import { useDispatch, useSelector } from 'react-redux';
-import { HashRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import PricingAmount from 'renderer/components/content/shared/filters/pricingAmount';
 import { classNames } from 'renderer/components/content/shared/inventoryFunctions';
 import TradeModal from 'renderer/components/content/shared/modals & notifcations/modalTrade';

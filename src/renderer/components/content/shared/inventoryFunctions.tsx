@@ -297,6 +297,22 @@ export async function sortDataFunction(sortValue, inventory, prices, pricingSour
       });
       return inventory;
 
+    case 'Rarity':
+      inventory.sort(function (a, b) {
+        var valueAToTest = a.rarity
+        var valueBToTest = b.rarity
+        if (valueAToTest == undefined) {
+          valueAToTest = 99
+        }
+        
+        if (valueBToTest == undefined) {
+          valueBToTest = 99
+        }
+
+        return sortRun(valueAToTest, valueBToTest)
+      });
+      return inventory;
+
 
     case 'StorageName':
       inventory.sort(function (a, b) {
