@@ -629,6 +629,11 @@ async function darkModeSetup() {
       setValue('darkmode.value', true);
     }
   });
+  getValue('fastmove').then((returnValue) => {
+    console.log('fastmove',returnValue)
+    setValue('fastmove', false);
+    
+  });
 }
 darkModeSetup();
 
