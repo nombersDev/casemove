@@ -360,7 +360,7 @@ export async function sortDataFunction(
 
 export async function downloadReport(storageData) {
   let csvContent =
-    'Item Name,Item Custom Name, Price, Price Combined, Item Moveable, Storage Name, Tradehold, Category, Combined QTY, Item Wear Name, Item Paint Wear,Item Has Stickers/Patches,Stickers\n';
+    'Item Name,Item Custom Name,Price,Price Combined,Item Moveable,Storage Name,Tradehold,Category,Combined QTY,Item Wear Name,Item Paint Wear,Item Has Stickers/Patches,Stickers\n';
   var csv = storageData
     .map(function (d) {
       let storageName = d.storage_name;
