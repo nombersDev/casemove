@@ -36,6 +36,26 @@ function content() {
     window.electron.ipcRenderer.refreshInventory();
   }
 
+  // Sort run
+  function sortRun(valueOne, ValueTwo, useNaN = false) {
+    if (valueOne < ValueTwo) {
+      return -1;
+    }
+    if (valueOne > ValueTwo) {
+      return 1;
+    }
+
+    if (useNaN && isNaN(valueOne)) {
+      return -1;
+    }
+    return 0;
+  }
+
+  let inventoryToUse = inventory.inventory;
+  inventoryToUse = inventoryToUse.sort(function (a, b) {
+    return sortRun(a.item_customname, b.item_customname);
+  });
+
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 dark:bg-dark-level-one">
@@ -114,7 +134,7 @@ function content() {
           </Switch>
         </div>
       </div>
-      {inventory.inventory.filter(function (row) {
+      {inventoryToUse.filter(function (row) {
         if (!row.item_url?.includes('casket')) {
           return false; // skip
         }
@@ -127,7 +147,7 @@ function content() {
           role="list"
           className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 xl:grid-cols-4 mt-3"
         >
-          {inventory.inventory
+          {inventoryToUse
             .filter(function (row) {
               if (!row.item_url.includes('casket')) {
                 return false; // skip

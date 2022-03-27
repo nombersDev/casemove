@@ -230,9 +230,12 @@ class items {
       }
       returnDict['stattrak'] = false;
       if (this.isStatTrak(value)) {
-
         returnDict['stattrak'] = true;
-        returnDict['item_name'] = 'StatTrak™ ' + returnDict['item_name']
+        returnDict['item_name'] = 'StatTrak™ ' + returnDict['item_name'];
+      }
+      // Star
+      if (value['quality'] == 3) {
+        returnDict['item_name'] = '★ ' + returnDict['item_name'];
       }
       // console.log(value, returnDict)
       returnList.push(returnDict);
@@ -268,15 +271,12 @@ class items {
   isStatTrak(storageRow) {
     if (storageRow['attribute'] !== undefined) {
       for (const [, value] of Object.entries(storageRow['attribute'])) {
-
-        if (
-          value['def_index'] == 80
-        ) {
-          return true
+        if (value['def_index'] == 80) {
+          return true;
         }
       }
     }
-    return false
+    return false;
   }
 
   itemProcessorName(storageRow, imageURL) {
@@ -293,7 +293,6 @@ class items {
       const musicKitResult = this.getMusicKits(musicKitIndex);
       let nameToUse =
         'Music Kit | ' + this.getTranslation(musicKitResult['loc_name']);
-
 
       return nameToUse;
     }
@@ -364,11 +363,6 @@ class items {
         this.getGraffitiKitName(graffitiKitIndex).replaceAll('_', ' ')
       );
       var finalName = finalName + ' (' + graffitiKitResult + ')';
-    }
-
-    // Star
-    if (storageRow['quality'] == 3) {
-      var finalName = '★ ' + finalName;
     }
 
     return finalName;
