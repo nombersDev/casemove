@@ -116,12 +116,32 @@ function content() {
     if (totalDict[projectRow.storage_id] == undefined) {
       totalDict[projectRow.storage_id] = 0
     }
-    
+
     let pricingAmount = totalDict[projectRow.storage_id]
     pricingAmount += projectRow.combined_QTY * pricesResult.prices[projectRow.item_name]?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency]
     totalDict[projectRow.storage_id] = pricingAmount
   });
   console.log(totalDict)
+
+  // Sort run
+  function sortRun(valueOne, ValueTwo, useNaN = false) {
+    if (valueOne < ValueTwo) {
+      return -1;
+    }
+    if (valueOne > ValueTwo) {
+      return 1;
+    }
+
+    if (useNaN && isNaN(valueOne)) {
+      return -1;
+    }
+    return 0;
+  }
+
+  let inventoryToUse = inventory.inventory;
+  inventoryToUse = inventoryToUse.sort(function (a, b) {
+    return sortRun(a.item_customname, b.item_customname);
+  });
 
 
 
@@ -236,7 +256,7 @@ function content() {
           </Switch>
         </div>
       </div>
-      {inventory.inventory.filter(function (row) {
+      {inventoryToUse.filter(function (row) {
         if (!row.item_url.includes('casket')) {
           return false; // skip
         }
@@ -249,7 +269,7 @@ function content() {
           role="list"
           className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-3"
         >
-          {inventory.inventory
+          {inventoryToUse
             .filter(function (row) {
               if (!row.item_url.includes('casket')) {
                 return false; // skip
