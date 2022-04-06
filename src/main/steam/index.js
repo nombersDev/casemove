@@ -197,6 +197,12 @@ class items {
         this.itemProcessorHasStickersApplied,
         [returnDict, value]
       );
+      let equipped  = this.handleError(
+        this.itemProcessorisEquipped,
+        [value]
+      );
+      returnDict['equipped_ct'] = equipped[0]
+      returnDict['equipped_t'] = equipped[1]
       returnDict['def_index'] = value['def_index'];
 
       if (returnDict['item_has_stickers']) {
@@ -237,7 +243,7 @@ class items {
       if (value['quality'] == 3) {
         returnDict['item_name'] = '★ ' + returnDict['item_name'];
       }
-      // console.log(value, returnDict)
+
       returnList.push(returnDict);
     }
     return returnList;
@@ -266,6 +272,23 @@ class items {
       }
     }
     return false;
+  }
+
+  itemProcessorisEquipped(storageRow) {
+    // 2 = CT
+    // 3 = T
+    let CT = false
+    let T = false
+    
+    for (const [key, value] of Object.entries(storageRow?.equipped_state)) {
+      if (value?.new_class == 2) {
+        T = true;
+      } 
+      if (value?.new_class == 3) {
+          CT = true
+      }
+    } 
+    return [CT, T]
   }
 
   isStatTrak(storageRow) {

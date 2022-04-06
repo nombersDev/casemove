@@ -1,6 +1,8 @@
 import { SearchIcon } from '@heroicons/react/solid';
 import { useDispatch, useSelector } from 'react-redux';
 import { tradeUpResetPossible, tradeUpSetMax, tradeUpSetMin, tradeUpSetSearch } from 'renderer/store/actions/tradeUpActions';
+import CollectionsDropDown from './collectionsDropdown';
+import TradeUpOptionsDropDown from './optionsDropdown';
 
 export default function TradeUpFilters() {
   const tradeUpData = useSelector((state: any) => state.tradeUpReducer);
@@ -46,7 +48,12 @@ export default function TradeUpFilters() {
                 Clear all
               </button>
             </div>
-
+            <div className='pl-4 pr-2'>
+    <TradeUpOptionsDropDown />
+    </div>
+    <div className='pl-4 pr-2'>
+    <CollectionsDropDown />
+    </div>
             <label htmlFor="search" className="sr-only">
               Search items
             </label>
@@ -75,6 +82,8 @@ export default function TradeUpFilters() {
             </div>
           </div>
           <div className="flex ">
+            
+    <div className='ml-2 pl-2  border-gray-200 dark:border-gray-400'></div>
           <div className="hidden xl:block max-w-7xl flex h-8 items-center space-x-6 divide-x divide-gray-200 text-sm px-4 sm:px-6 lg:px-8">
             <div className="">
             <div className="flex items-center justify-end">

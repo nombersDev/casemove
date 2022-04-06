@@ -13,7 +13,8 @@ const columns = [
   { id: 3, name: 'Stickers/patches' },
   { id: 4, name: 'Storage' },
   { id: 5, name: 'Tradehold' },
-  { id: 6, name: 'Rarity'}
+  { id: 6, name: 'Rarity'},
+  { id: 7, name: 'Collections'}
 ]
 
 
@@ -59,9 +60,9 @@ export default function ColumnsDropDown() {
 
           <div key={personIdx} className={classNames(
             active
-            ? 'bg-gray-100 text-gray-900 dark:bg-dark-level-three dark:text-dark-white'
-            : 'text-gray-700 dark:text-dark-white',
-            'relative flex items-start dark:hover:bg-level-one px-4 py-2 text-sm'
+            ? 'bg-gray-100 text-gray-900 dark:bg-dark-level-two dark:text-dark-white'
+            : 'text-gray-700 dark:text-dark-white dark:bg-dark-level-three',
+            'relative flex items-start dark:hover:bg-level-one px-4 py-2 text-sm '
           )} >
             <div className="min-w-0 flex-1 text-sm">
               <label htmlFor={`person-${column.id}`} className="font-medium dark:text-dark-white text-gray-700 select-none">

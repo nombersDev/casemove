@@ -253,6 +253,12 @@ export async function sortDataFunction(
   pricingSource
 ) {
   function sortRun(valueOne, ValueTwo, useNaN = false) {
+    if (valueOne == undefined) {
+      valueOne = -90000000000
+    }
+    if (ValueTwo == undefined) {
+      ValueTwo = -90000000000
+    }
     if (valueOne < ValueTwo) {
       return -1;
     }
@@ -316,7 +322,18 @@ export async function sortDataFunction(
 
     case 'wearValue':
       inventory.sort(function (a, b) {
-        return -sortRun(a.item_paint_wear, b.item_paint_wear);
+        return -sortRun(a.item_paint_wear, b.item_paint_wear, true);
+      });
+      return inventory;
+    
+    case 'Collection':
+      inventory.sort(function (a, b) {
+        if (b == undefined) {
+          return -1
+        }
+
+        
+        return sortRun(a.collection, b.collection, true);
       });
       return inventory;
 
@@ -332,7 +349,7 @@ export async function sortDataFunction(
           valueBToTest = 99;
         }
 
-        return sortRun(valueAToTest, valueBToTest);
+        return sortRun(valueAToTest, valueBToTest, true);
       });
       return inventory;
 

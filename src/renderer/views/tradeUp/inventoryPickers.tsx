@@ -50,6 +50,14 @@ function content() {
     if (tradeUpData.tradeUpProductsIDS.includes(item.item_id)) {
       return false;
     }
+    if (tradeUpData.collections.length > 0 && !tradeUpData.collections.includes(item?.collection)) {
+      return false;
+    }
+    if (tradeUpData.options.includes('Hide equipped')) {
+      if (item.equipped_t || item.equipped_ct) {
+        return false;
+      }
+    }
     if (tradeUpData.tradeUpProducts.length != 0) {
       let restrictRarity = tradeUpData.tradeUpProducts[0].rarityName
       let restrictStattrak = tradeUpData.tradeUpProducts[0].stattrak
@@ -74,6 +82,7 @@ function content() {
   inventoryToUse.forEach(element => {
     element['rarityColor'] =itemR[element.rarityName]
   });
+  
 
 
   // Prices
@@ -115,6 +124,16 @@ function content() {
               >
                 <span className="flex justify-between">
                   Product <SelectorIcon className="h-2" />
+                </span>
+              </button>
+            </th>
+            <th className="hidden xl:table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
+              <button
+                onClick={() => onSortChange('Collection')}
+                className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
+              >
+                <span className="flex justify-between">
+                  Collection <SelectorIcon className="h-2" />
                 </span>
               </button>
             </th>
@@ -287,6 +306,16 @@ function content() {
                       ) : (
                         ''
                       )}
+                      {projectRow.equipped_t ? (
+                        <span className='ml-1 h-3 leading-3 pl-1 pr-1 text-white  dark:text-dark-white text-center font-medium	 bg-dark-level-four rounded-full   text-xs'> T </span>
+                      ) : (
+                        ''
+                      )}
+                      {projectRow.equipped_ct ? (
+                        <span className='ml-1 h-3 leading-3 pl-1 pr-1 text-center  text-white dark:text-dark-white font-medium	 bg-dark-level-four rounded-full   text-xs'> CT </span>
+                      ) : (
+                        ''
+                      )}
 
                       {projectRow.item_url.includes('casket') ? (
                         <Link
@@ -338,6 +367,19 @@ function content() {
                   </span>
                 </div>
               </td>
+              <td className="hidden xl:table-cell px-6 py-3 max-w-0 w-full whitespace-nowrap overflow-hidden text-sm font-normal text-gray-900">
+                <div className="flex items-center">
+                  
+                  <span>
+                    <span className="flex dark:text-dark-white">
+                      {projectRow.collection.replace('The ', '').replace(' Collection', '')}
+                      
+                    </span>
+                    
+                  </span>
+                </div>
+              </td>
+             
               {settingsData.columns.includes('Price') ? (
                 <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 font-medium">
                   <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
