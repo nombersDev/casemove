@@ -150,7 +150,7 @@ export default function LoginForm({ isLock, replaceLock }) {
       }
 
       dispatch(signIn(returnPackage));
-      const combined = await combineInventory(responseStatus[1][3]);
+      const combined = await combineInventory(responseStatus[1][3], settingsData);
       dispatch(
         setInventoryAction({
           inventory: responseStatus[1][3],

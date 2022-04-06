@@ -1,7 +1,8 @@
 import itemCategories from './categories';
 
 // This will combine the inventory when specific conditions match
-export default function combineInventory(thisInventory) {
+export default function combineInventory(thisInventory, settings) {
+
   const seenProducts = [] as any;
   const newInventory = [] as any;
 
@@ -18,7 +19,7 @@ export default function combineInventory(thisInventory) {
       valued['item_has_stickers'] +
       valued['stickers'];
 
-    if (valued['item_paint_wear'] != undefined) {
+    if (valued['item_paint_wear'] != undefined && settings.columns.includes('Float')) {
       valueConditions = valueConditions + valued['item_paint_wear'];
     }
 
@@ -33,7 +34,7 @@ export default function combineInventory(thisInventory) {
           item['item_moveable'] +
           item['item_has_stickers'] +
           item['stickers'];
-        if (item['item_paint_wear'] != undefined) {
+        if (item['item_paint_wear'] != undefined && settings.columns.includes('Float')) {
           itemConditions = itemConditions + item['item_paint_wear'];
         }
 
@@ -72,9 +73,9 @@ export default function combineInventory(thisInventory) {
   return newInventory;
 }
 
-export async function getInventory(getInventoryData, prices, pricingSource) {
+export async function getInventory(getInventoryData, prices, pricingSource, settings) {
   var unfilteredInventory = await window.electron.ipcRenderer.runCommandTest(3);
-  var combinedInventory = await combineInventory(unfilteredInventory);
+  var combinedInventory = await combineInventory(unfilteredInventory, settings);
   combinedInventory = await filterInventory(
     combinedInventory,
     getInventoryData['filters'],
@@ -96,13 +97,13 @@ export async function getInventory(getInventoryData, prices, pricingSource) {
   return combinedInventory;
 }
 
-export async function getStorageUnitDataReload(storageID, storageName) {
+export async function getStorageUnitDataReload(storageID, storageName, settings) {
   let storageResult = await window.electron.ipcRenderer.runCommandTest(
     2,
     [],
     storageID
   );
-  storageResult = await combineInventory(storageResult);
+  storageResult = await combineInventory(storageResult, settings);
   const newStorageData = [] as any;
   await storageResult.forEach(function (item) {
     item['bgColorClass'] = 'bg-current';
@@ -125,16 +126,17 @@ export async function getStorageUnitData(
   storageID,
   storageName,
   prices,
-  pricesRequested
+  pricesRequested,
+  settings
 ) {
   let newStorageData = [] as any;
   let productsToGet = [] as any;
   let storageResult = await window.electron.ipcRenderer.getStorageUnitData(
-    storageID
+    storageID, settings
   );
   storageResult = storageResult[1];
 
-  storageResult = await combineInventory(storageResult);
+  storageResult = await combineInventory(storageResult, settings);
   await storageResult.forEach(function (item) {
     item['bgColorClass'] = 'bg-current';
     item['category'] = 'None';
@@ -325,14 +327,14 @@ export async function sortDataFunction(
         return -sortRun(a.item_paint_wear, b.item_paint_wear, true);
       });
       return inventory;
-    
+
     case 'Collection':
       inventory.sort(function (a, b) {
         if (b == undefined) {
           return -1
         }
 
-        
+
         return sortRun(a.collection, b.collection, true);
       });
       return inventory;

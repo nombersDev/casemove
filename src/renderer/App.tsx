@@ -199,18 +199,18 @@ function AppContent() {
   if (isListening == false) {
     setFirstTimeSettings();
     window.electron.ipcRenderer.userEvents().then((messageValue) => {
-      handleSubMessage(messageValue);
+      handleSubMessage(messageValue, settingsData);
     });
     setIsListening(true);
   }
 
-  async function handleSubMessage(messageValue) {
+  async function handleSubMessage(messageValue, settingsData) {
     if (settingsData.fastMove && modalData.query.length > 0) {
       console.log('Command blocked', modalData.moveOpen, settingsData.fastMove);
       setIsListening(false);
       return;
     }
-    const actionToTake = (await handleUserEvent(messageValue)) as any;
+    const actionToTake = (await handleUserEvent(messageValue, settingsData)) as any;
     dispatch(actionToTake);
     if (messageValue[0] == 1) {
       await handleFilterData(actionToTake.payload.combinedInventory);
@@ -259,8 +259,8 @@ function AppContent() {
     inventory.inventory.forEach(element => {
       if (!tradeUpData.inventoryFirst.includes(element.item_id)) {
         dispatch(setTradeFoundMatch(element))
-      } 
-    }) 
+      }
+    })
   }
   if (tradeUpData.inventoryFirst.length != 0) {
     handleTradeUp()
@@ -277,7 +277,7 @@ function AppContent() {
         <body class="h-full">
         ```
       */}
-      
+
       <TradeResultModal />
         {settingsData.os != 'win32' ? '' : <TitleBarWindows />}
       <div className={classNames(settingsData.os == 'win32' ? 'pt-7' : '', "min-h-full dark:bg-dark-level-one h-screen")}>

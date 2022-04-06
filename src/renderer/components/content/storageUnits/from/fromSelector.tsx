@@ -50,7 +50,7 @@ function content() {
       dispatch(moveFromRemoveCasket(storageID));
     } else {
       dispatch(moveFromAddCasketToStorages(storageID));
-      let storageResult = await getStorageUnitData(storageID, storageName, pricesResult.prices, pricesResult.productsRequested);
+      let storageResult = await getStorageUnitData(storageID, storageName, pricesResult.prices, pricesResult.productsRequested, settingsData);
       let pricesRequested = storageResult[1]
       if (pricesRequested.length > 0) {
         dispatch(pricing_add_to_requested(pricesRequested))
