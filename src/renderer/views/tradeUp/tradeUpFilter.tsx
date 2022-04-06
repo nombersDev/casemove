@@ -82,17 +82,17 @@ export default function TradeUpFilters() {
             </div>
           </div>
           <div className="flex ">
-            
+
     <div className='ml-2 pl-2  border-gray-200 dark:border-gray-400'></div>
           <div className="hidden xl:block max-w-7xl flex h-8 items-center space-x-6 divide-x divide-gray-200 text-sm px-4 sm:px-6 lg:px-8">
             <div className="">
             <div className="flex items-center justify-end">
-            <p className="text-gray-500 dark:text-gray-400 pr-3">{tradeUpData.MinFloat} min </p>
+            <p className="text-gray-500 dark:text-gray-400 pr-3 truncate">{tradeUpData.MinFloat} min </p>
 
             <input type="range" min="0" max="1" value={tradeUpData.MinFloat} step="0.01" onChange={(e) => updateMin(e.target.value)} className=" dark:bg-dark-level-three h-2 dark:appearance-none" />
             </div>
             <div className="flex items-center justify-end">
-            <p className="text-gray-500 dark:text-gray-400 pr-3">{tradeUpData.MaxFloat} max </p>
+            <p className="text-gray-500 dark:text-gray-400 pr-3 truncate">{tradeUpData.MaxFloat} max </p>
             <input type="range" min="0" max="1" value={tradeUpData.MaxFloat} step="0.01" onChange={(e) => updateMax(e.target.value)} className=" dark:bg-dark-level-three h-2 dark:appearance-none" />
             </div>
             </div>

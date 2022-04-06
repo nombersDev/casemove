@@ -82,7 +82,7 @@ function content() {
   inventoryToUse.forEach(element => {
     element['rarityColor'] =itemR[element.rarityName]
   });
-  
+
 
 
   // Prices
@@ -149,7 +149,7 @@ function content() {
               </button>
             </th>
 
-            <th className="hidden xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
+            <th className="hidden 2xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
               <button
                 onClick={() => onSortChange('Stickers')}
                 className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
@@ -369,17 +369,17 @@ function content() {
               </td>
               <td className="hidden xl:table-cell px-6 py-3 max-w-0 w-full whitespace-nowrap overflow-hidden text-sm font-normal text-gray-900">
                 <div className="flex items-center">
-                  
+
                   <span>
                     <span className="flex dark:text-dark-white">
                       {projectRow.collection.replace('The ', '').replace(' Collection', '')}
-                      
+
                     </span>
-                    
+
                   </span>
                 </div>
               </td>
-             
+
               {settingsData.columns.includes('Price') ? (
                 <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 font-medium">
                   <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
@@ -402,7 +402,7 @@ function content() {
               ) : (
                 ''
               )}
-              <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
+              <td className="hidden 2xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
                 <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
                   <div className="flex flex-shrink-0 -space-x-1">
                     {projectRow.stickers?.map((sticker, index) => (
