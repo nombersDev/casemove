@@ -382,8 +382,7 @@ async function startEvents(csgo, user) {
     pricing.handleItem(info);
   });
 
-  // Get tradeup
-  // Get storage unit contents
+  // Trade up handlers
   ipcMain.on('getTradeUpPossible', async (event, itemsToGet) => {
     tradeUpClass.getPotentitalOutcome(itemsToGet).then((returnValue) => {
       pricing.handleTradeUp(returnValue);
@@ -630,9 +629,10 @@ async function darkModeSetup() {
     }
   });
   getValue('fastmove').then((returnValue) => {
-    console.log('fastmove',returnValue)
-    setValue('fastmove', false);
-    
+    if (returnValue == undefined) {
+      console.log('fastmove',returnValue)
+      setValue('fastmove', false);
+    }
   });
 }
 darkModeSetup();

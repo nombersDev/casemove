@@ -136,7 +136,17 @@ function content() {
                 </span>
               </button>
             </th>
-
+            {settingsData.columns.includes('Collections') ?
+                <th className="hidden xl:table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
+                  <button
+                    onClick={() => onSortChange('Collection')}
+                    className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
+                  >
+                    <span className="flex justify-between">
+                      Collection <SelectorIcon className="h-2" />
+                    </span>
+                  </button>
+                </th> : '' }
             {settingsData.columns.includes('Price') ? (
               <th className="table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
                 <button
@@ -367,6 +377,16 @@ function content() {
                       ) : (
                         ''
                       )}
+                      {projectRow.equipped_t ? (
+                        <span className='ml-1 h-3 leading-3 pl-1 pr-1 text-white  dark:text-dark-white text-center font-medium	 bg-dark-level-four rounded-full   text-xs'> T </span>
+                      ) : (
+                        ''
+                      )}
+                      {projectRow.equipped_ct ? (
+                        <span className='ml-1 h-3 leading-3 pl-1 pr-1 text-center  text-white dark:text-dark-white font-medium	 bg-dark-level-four rounded-full   text-xs'> CT </span>
+                      ) : (
+                        ''
+                      )}
 
                       {projectRow.item_url.includes('casket') ? (
                         <Link
@@ -418,6 +438,19 @@ function content() {
                   </span>
                 </div>
               </td>
+              {settingsData.columns.includes('Collections') ?
+      <td className="hidden xl:table-cell px-6 py-3 max-w-0 w-full whitespace-nowrap overflow-hidden text-sm font-normal text-gray-900">
+      <div className="flex items-center">
+        
+        <span>
+          <span className="flex dark:text-dark-white">
+            {projectRow?.collection?.replace('The ', '')?.replace(' Collection', '')}
+            
+          </span>
+          
+        </span>
+      </div>
+    </td> : '' }
               {settingsData.columns.includes('Price') ? (
                 <td className="table-cell px-6 py-3 text-sm text-gray-500 font-medium">
                   <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">

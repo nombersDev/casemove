@@ -159,7 +159,17 @@ function StorageUnits() {
                     </span>
                   </button>
                 </th>
-
+                {settingsData.columns.includes('Collections') ?
+                <th className="hidden xl:table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
+                  <button
+                    onClick={() => onSortChange('Collection')}
+                    className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
+                  >
+                    <span className="flex justify-between">
+                      Collection <SelectorIcon className="h-2" />
+                    </span>
+                  </button>
+                </th> : '' }
               {settingsData.columns.includes('Price') ?
                 <th className="table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
                   <button

@@ -154,6 +154,16 @@ function content({ projectRow, index }) {
               ) : (
                 ''
               )}
+              {projectRow.equipped_t ? (
+                <span className='ml-1 h-3 leading-3 pl-1 pr-1 text-white  dark:text-dark-white text-center font-medium	 bg-dark-level-four rounded-full   text-xs'> T </span>
+                ) : (
+                  ''
+                )}
+              {projectRow.equipped_ct ? (
+                <span className='ml-1 h-3 leading-3 pl-1 pr-1 text-center  text-white dark:text-dark-white font-medium	 bg-dark-level-four rounded-full   text-xs'> CT </span>
+                ) : (
+                ''
+              )}
             </span>
             <span className="text-gray-500" title={projectRow.item_paint_wear}>
               {projectRow.item_customname !== null ? projectRow.item_name : ''}
@@ -168,6 +178,19 @@ function content({ projectRow, index }) {
           </span>
         </div>
       </td>
+      {settingsData.columns.includes('Collections') ?
+      <td className="hidden xl:table-cell px-6 py-3 max-w-0 w-full whitespace-nowrap overflow-hidden text-sm font-normal text-gray-900">
+      <div className="flex items-center">
+        
+        <span>
+          <span className="flex dark:text-dark-white">
+            {projectRow?.collection?.replace('The ', '')?.replace(' Collection', '')}
+            
+          </span>
+          
+        </span>
+      </div>
+    </td> : '' }
       {settingsData.columns.includes('Price') ?
       <td className="table-cell px-6 py-3 text-sm text-gray-500 font-medium">
         <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">

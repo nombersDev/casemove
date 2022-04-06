@@ -40,3 +40,16 @@ export const tradeUpSetMax = (max) => {
       payload: max
   }
 }
+export const tradeUpCollectionsAddRemove = (collection) => {
+    return {
+        type: 'TRADEUP_ADDREMOVE_COLLECTION',
+        payload: collection
+    }
+  }
+
+export const tradeUpOptionsAddRemove = (option) => {
+    return {
+        type: 'TRADEUP_ADDREMOVE_OPTION',
+        payload: option
+    }
+  }

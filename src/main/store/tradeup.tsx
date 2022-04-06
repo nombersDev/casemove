@@ -36,14 +36,15 @@ class tradeUps {
 
   // Get rarity
   getRarity(min_wear, max_wear, averageFloat) {
+    let c = (max_wear - min_wear) * averageFloat
     for (const [key, value] of Object.entries(this.rarityLevels)) {
       // @ts-ignore
       let chance = (value - min_wear) / (max_wear - min_wear);
       if (chance > averageFloat) {
-        return key;
+        return [key, c + parseFloat(min_wear)];
       }
     }
-    return 'Battle-Scarred';
+    return ['Battle-Scarred', c + parseFloat(min_wear)];
   }
 
   // Get possible outcomes
@@ -77,6 +78,7 @@ class tradeUps {
           let possible =
             this.collections?.[collection][itemName]?.trade_up;
           element['tradeUpConfirmed'] = possible;
+          element['collection'] = collection
         }
       });
 
@@ -127,6 +129,9 @@ class tradeUps {
           relevantObject['max-wear'],
           average
         );
+        let floatChance = skinRarity[1]
+        // @ts-ignore
+        skinRarity = skinRarity[0]
         // @ts-ignore
         let percentageChance =
           100 /
@@ -144,6 +149,7 @@ class tradeUps {
           item_wear_name: skinRarity,
           percentage: percentageChance.toFixed(2),
           image: relevantObject['imageURL'],
+          float_chance: floatChance
         };
         // @ts-ignore
         finalResult.push(objectToWrite);

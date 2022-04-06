@@ -4,8 +4,9 @@ const initialState = {
     possibleOutcomes: [] as any,
     searchInput: '',
     MinFloat: '0',
-    MaxFloat: '1'
-
+    MaxFloat: '1',
+    collections: [] as any,
+    options: ["Hide equipped"] as any,
   };
 
   const tradeUpReducer = (state = initialState, action) => {
@@ -34,6 +35,26 @@ const initialState = {
               tradeUpProducts: toMoveAlreadyExists,
               tradeUpProductsIDS: newTradeUpIDS,
            }
+          }
+      
+      case 'TRADEUP_ADDREMOVE_COLLECTION':
+          let collectionAlreadyExists = state.collections.filter(row => row != action.payload)
+          if (collectionAlreadyExists.length == state.collections.length) {
+            collectionAlreadyExists.push(action.payload)
+          }
+          return {
+            ...state,
+            collections: collectionAlreadyExists
+          }
+      
+      case 'TRADEUP_ADDREMOVE_OPTION':
+          let optionAlready = state.options.filter(row => row != action.payload)
+          if (optionAlready.length == state.options.length) {
+            optionAlready.push(action.payload)
+          }
+          return {
+            ...state,
+            options: optionAlready
           }
       case 'TRADEUP_SET_SEARCH':
           return {

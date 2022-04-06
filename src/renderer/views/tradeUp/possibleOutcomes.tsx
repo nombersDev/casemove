@@ -22,7 +22,6 @@ export default function PossibleOutcomes() {
 
   let totalPrice = 0;
   tradeUpData.tradeUpProducts.forEach((element) => {
-    console.log(element);
     totalPrice += pricesResult.prices[element.item_name]?.['steam_listing'];
   });
   totalPrice;
@@ -101,11 +100,13 @@ export default function PossibleOutcomes() {
                       )}
                       aria-hidden="true"
                     />
+                    
                   </div>
                   <div className="flex justify-between">
                     <p className="text-gray-500">
                       {project.percentage} % |{' '}
-                      {rarityShort[project.item_wear_name]}
+                      {rarityShort[project.item_wear_name]} |{' '}
+                      {project.float_chance.toString()?.substr(1, 8)}
                     </p>
                     <div className="flex items-center">
                       <p className="text-gray-500">
