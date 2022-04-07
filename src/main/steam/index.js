@@ -279,15 +279,15 @@ class items {
     // 3 = T
     let CT = false
     let T = false
-    
+
     for (const [key, value] of Object.entries(storageRow?.equipped_state)) {
       if (value?.new_class == 2) {
         T = true;
-      } 
+      }
       if (value?.new_class == 3) {
           CT = true
       }
-    } 
+    }
     return [CT, T]
   }
 
@@ -386,6 +386,7 @@ class items {
         this.getGraffitiKitName(graffitiKitIndex).replaceAll('_', ' ')
       );
       var finalName = finalName + ' (' + graffitiKitResult + ')';
+      var finalName = finalName.replace('Swat', "SWAT")
     }
 
     return finalName;
