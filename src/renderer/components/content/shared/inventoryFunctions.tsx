@@ -261,6 +261,7 @@ export async function sortDataFunction(
     if (ValueTwo == undefined) {
       ValueTwo = -90000000000
     }
+    console.log(valueOne, ValueTwo)
     if (valueOne < ValueTwo) {
       return -1;
     }
@@ -271,6 +272,23 @@ export async function sortDataFunction(
     if (useNaN && isNaN(valueOne)) {
       return -1;
     }
+    return 0;
+  }
+  function sortRunAlt(valueOne, ValueTwo) {
+    if (isNaN(valueOne)) {
+      valueOne = -90000000000
+    }
+    if (isNaN(ValueTwo)) {
+      ValueTwo = -90000000000
+    }
+    console.log(valueOne, ValueTwo)
+    if (valueOne < ValueTwo) {
+      return -1;
+    }
+    if (valueOne > ValueTwo) {
+      return 1;
+    }
+
     return 0;
   }
 
@@ -309,7 +327,7 @@ export async function sortDataFunction(
 
     case 'Price':
       inventory.sort(function (a, b) {
-        return -sortRun(
+        return sortRunAlt(
           prices[a.item_name]?.[pricingSource] * a.combined_QTY,
           prices[b.item_name]?.[pricingSource] * b.combined_QTY
         );

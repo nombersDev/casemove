@@ -4,10 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { tradeUpCollectionsAddRemove } from 'renderer/store/actions/tradeUpActions';
 
 export default function CollectionsDropDown() {
-  
+
   const tradeUpData = useSelector((state: any) => state.tradeUpReducer);
   const inventory = useSelector((state: any) => state.inventoryReducer);
-  
+
   const inventoryFilters = useSelector(
     (state: any) => state.inventoryFiltersReducer
   );
@@ -50,14 +50,12 @@ export default function CollectionsDropDown() {
   });
 
 
-  let itemR = {}
   inventoryToUse.forEach(element => {
-    
+
     if (inventoryFilters.rarityFilter.length != 0) {
       if (inventoryFilters.rarityFilter?.includes(
         element.rarityColor
         )) {
-          element['rarityColor'] =itemR[element.rarityName]
           if (element['collection'] != undefined && collections.includes(element['collection']) == false) {
             collections.push(element['collection'])
           }
@@ -66,24 +64,24 @@ export default function CollectionsDropDown() {
       if (element['collection'] != undefined && collections.includes(element['collection']) == false) {
         collections.push(element['collection'])
       }
-    } 
+    }
   });
-  
+
   collections.sort()
-  
+
   return (
     <Popover.Group className="-mx-4 flex items-center divide-x divide-gray-200">
-                  
+
                     <Popover  className="pl-4 relative inline-block text-left">
                       <Popover.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900 dark:hover:text-gray-400 dark:text-gray-500">
                       Collections
                       <span className="mr-1.5 ml-1.5 rounded py-0.5 px-1.5 bg-gray-200 dark:bg-dark-level-four dark:text-gray-400 text-xs font-semibold text-gray-700 tabular-nums">
                             {tradeUpData.collections.length}
                           </span>
-                        
-                        
-                        
-                        
+
+
+
+
                       </Popover.Button>
 
                       <Transition
@@ -107,6 +105,7 @@ export default function CollectionsDropDown() {
                                   checked={tradeUpData.collections.includes(option)}
                                   className="h-4 w-4 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500"
                                   onClick={() => dispatch(tradeUpCollectionsAddRemove(option))}
+                                  onChange={() => ('')}
                                 />
                                 <label
                                   htmlFor={`filter-${option}-${optionIdx}`}
