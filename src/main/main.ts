@@ -31,6 +31,8 @@ import { currency } from './store/currency';
 import { tradeUps } from './store/tradeup';
 
 var ByteBuffer = require("bytebuffer");
+const Protos = require('globaloffensive/protobufs/generated/_load.js');
+const Language = require('globaloffensive/language.js');
 const currencyClass = new currency();
 
 let tradeUpClass = new tradeUps();
@@ -412,9 +414,14 @@ async function startEvents(csgo, user) {
     for( let id of idsToUse){
       tradeupPayLoad.writeUint64(id);
     }
-    console.log(await csgo._send(1002, null, tradeupPayLoad))
+    console.log(await csgo._send(Language.Craft, null, tradeupPayLoad))
+    
 
   });
+
+  // Equipped = 1059 
+  // 
+
   ipcMain.on('getCurrency', async (event) => {
     getValue('pricing.currency').then((returnValue) => {
       currencyClass.getRate(returnValue).then((response) => {
@@ -531,6 +538,17 @@ async function startEvents(csgo, user) {
         event.reply('renameStorageUnit-reply', [1, itemIds[0]]);
       }
     });
+  });
+
+  // Rename Storage units
+  ipcMain.on('setItemsPositions', async (_event, dictOfItems) => {
+    console.log(dictOfItems)
+    dictOfItems
+    console.log(Language.SetItemPositions, Protos.CMsgSetItemPositions, dictOfItems)
+    
+    console.log(await csgo._send(Language.SetItemPositions, Protos.CMsgSetItemPositions, dictOfItems))
+    
+    
   });
 
   // Remove items from storage unit

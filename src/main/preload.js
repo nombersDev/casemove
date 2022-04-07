@@ -48,9 +48,13 @@ contextBridge.exposeInMainWorld('electron', {
       });
     },
 
-    // User account
+    // Trade up
     tradeOrder(idsToProcess, idToUse) {
       ipcRenderer.send('processTradeOrder', idsToProcess, idToUse);
+    },
+    // 
+    tradeOrder(dictToUse) {
+      ipcRenderer.send('setItemsPositions', dictToUse);
     },
 
 
@@ -236,7 +240,8 @@ contextBridge.exposeInMainWorld('electron', {
         'getPrice',
         'windowsActions',
         'getTradeUpPossible',
-        'processTradeOrder'
+        'processTradeOrder',
+        'setItemsPositions'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
@@ -263,7 +268,8 @@ contextBridge.exposeInMainWorld('electron', {
         'getPrice',
         'windowsActions',
         'getTradeUpPossible',
-        'processTradeOrder'
+        'processTradeOrder',
+        'setItemsPositions'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`

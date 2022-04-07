@@ -1,4 +1,5 @@
 import {
+  ArrowUpIcon,
   CheckCircleIcon,
   ExternalLinkIcon,
   PencilIcon,
@@ -78,6 +79,17 @@ function content() {
       setInventory(inventoryToUse);
     }
   }
+
+  async function setItemsPosition(item_id, position) {
+    position
+    window.electron.ipcRenderer.tradeOrder({item_positions: [{
+      position: 1,
+      item_id: parseInt(item_id)
+    }]})
+
+  }
+  // inventoryToUse = inventory.inventory
+  console.log(inventory.inventory)
 
   return (
     <>
@@ -245,7 +257,7 @@ function content() {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-100 dark:bg-dark-level-one dark:divide-gray-500">
-          {getInventory.map((projectRow) => (
+          {getInventory.map((projectRow, idx) => (
             <tr
               key={projectRow.item_id}
               className={classNames(
@@ -619,6 +631,23 @@ function content() {
                   </Link>
                 </div>
               </td>
+              <td className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
+        <div className="flex justify-center">
+          <button
+            onClick={() => setItemsPosition(projectRow.item_id, idx)}
+            
+            id={`removeX-`}
+          >
+            <ArrowUpIcon
+              className={classNames(
+                'h-4 w-4',
+                'text-gray-400 dark:text-gray-500 hover:text-green-400 dark:hover:text-green-400  '
+              )}
+              aria-hidden="true"
+            />
+          </button>
+        </div>
+      </td>
 
               <td className="hidden md:px-6 py-3 whitespace-nowrap text-right text-sm font-medium"></td>
             </tr>

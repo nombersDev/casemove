@@ -261,7 +261,6 @@ export async function sortDataFunction(
     if (ValueTwo == undefined) {
       ValueTwo = -90000000000
     }
-    console.log(valueOne, ValueTwo)
     if (valueOne < ValueTwo) {
       return -1;
     }
