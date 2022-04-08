@@ -1,5 +1,4 @@
 import {
-  ArrowUpIcon,
   CheckCircleIcon,
   ExternalLinkIcon,
   PencilIcon,
@@ -88,8 +87,9 @@ function content() {
     }]})
 
   }
+  setItemsPosition
   // inventoryToUse = inventory.inventory
-  console.log(inventory.inventory)
+  console.log(inventoryToUse)
 
   return (
     <>
@@ -214,7 +214,7 @@ function content() {
                     </span>
                   </button>
                 </th> : '' }
-            
+
 
             {settingsData.columns.includes('Tradehold') ? (
               <th className="hidden md:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two  ">
@@ -257,7 +257,7 @@ function content() {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-100 dark:bg-dark-level-one dark:divide-gray-500">
-          {getInventory.map((projectRow, idx) => (
+          {getInventory.map((projectRow) => (
             <tr
               key={projectRow.item_id}
               className={classNames(
@@ -453,13 +453,13 @@ function content() {
               {settingsData.columns.includes('Collections') ?
       <td className="hidden xl:table-cell px-6 py-3 max-w-0 w-full whitespace-nowrap overflow-hidden text-sm font-normal text-gray-900">
       <div className="flex items-center">
-        
+
         <span>
           <span className="flex dark:text-dark-white">
             {projectRow?.collection?.replace('The ', '')?.replace(' Collection', '')}
-            
+
           </span>
-          
+
         </span>
       </div>
     </td> : '' }
@@ -631,23 +631,7 @@ function content() {
                   </Link>
                 </div>
               </td>
-              <td className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
-        <div className="flex justify-center">
-          <button
-            onClick={() => setItemsPosition(projectRow.item_id, idx)}
-            
-            id={`removeX-`}
-          >
-            <ArrowUpIcon
-              className={classNames(
-                'h-4 w-4',
-                'text-gray-400 dark:text-gray-500 hover:text-green-400 dark:hover:text-green-400  '
-              )}
-              aria-hidden="true"
-            />
-          </button>
-        </div>
-      </td>
+
 
               <td className="hidden md:px-6 py-3 whitespace-nowrap text-right text-sm font-medium"></td>
             </tr>

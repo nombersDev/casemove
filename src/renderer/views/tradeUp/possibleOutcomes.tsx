@@ -17,7 +17,7 @@ export default function PossibleOutcomes() {
   const pricesResult = useSelector((state: any) => state.pricingReducer);
   const tradeUpData = useSelector((state: any) => state.tradeUpReducer);
   const settingsData = useSelector((state: any) => state.settingsReducer);
-  const [outcomesRequested, setOutcomesRequested] = useState(false);
+  const [outcomesRequested, setOutcomesRequested] = useState(0);
   const dispatch = useDispatch();
 
   let totalPrice = 0;
@@ -40,12 +40,13 @@ export default function PossibleOutcomes() {
   });
 
   // Get outcomes
+  console.log(tradeUpData.tradeUpProducts.length, tradeUpData.possibleOutcomes.length)
   if (
-    tradeUpData.tradeUpProducts.length == 10 &&
+    tradeUpData.tradeUpProducts.length > 0 &&
     tradeUpData.possibleOutcomes.length == 0
   ) {
-    if (outcomesRequested == false) {
-      setOutcomesRequested(true);
+    if (outcomesRequested != tradeUpData.tradeUpProducts.length) {
+      setOutcomesRequested(tradeUpData.tradeUpProducts.length);
       window.electron.ipcRenderer
         .getPossibleOutcomes(tradeUpData.tradeUpProducts)
         .then((messageValue) => {
@@ -54,8 +55,8 @@ export default function PossibleOutcomes() {
     }
   }
 
-  if (outcomesRequested && tradeUpData.tradeUpProducts.length != 10) {
-    setOutcomesRequested(false)
+  if (outcomesRequested != tradeUpData.tradeUpProducts.length) {
+    setOutcomesRequested(tradeUpData.tradeUpProducts.length)
   }
 
   return (
@@ -100,7 +101,7 @@ export default function PossibleOutcomes() {
                       )}
                       aria-hidden="true"
                     />
-                    
+
                   </div>
                   <div className="flex justify-between">
                     <p className="text-gray-500">
@@ -136,7 +137,7 @@ export default function PossibleOutcomes() {
               <div className="flex-1 px-4 py-2 text-sm truncate">
                 <div className="flex justify-between">
                   <span className="text-gray-900 font-medium hover:text-gray-600 dark:text-dark-white">
-                    Add 10 to see the results
+                    Add 1 to see the results
                   </span>
                 </div>
                 <div className="flex justify-start">

@@ -136,7 +136,7 @@ class items {
       ) {
         continue;
       }
-      console.log(value['item_id'])
+      // console.log(value['item_id'])
 
       const returnDict = {};
       // URL
@@ -244,7 +244,7 @@ class items {
       if (value['quality'] == 3) {
         returnDict['item_name'] = '★ ' + returnDict['item_name'];
       }
-      console.log(value, returnDict)
+      // console.log(value, returnDict)
 
       returnList.push(returnDict);
     }

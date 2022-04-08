@@ -415,12 +415,12 @@ async function startEvents(csgo, user) {
       tradeupPayLoad.writeUint64(id);
     }
     console.log(await csgo._send(Language.Craft, null, tradeupPayLoad))
-    
+
 
   });
 
-  // Equipped = 1059 
-  // 
+  // Equipped = 1059
+  //
 
   ipcMain.on('getCurrency', async (event) => {
     getValue('pricing.currency').then((returnValue) => {
@@ -540,15 +540,22 @@ async function startEvents(csgo, user) {
     });
   });
 
-  // Rename Storage units
+  // Set item positions
   ipcMain.on('setItemsPositions', async (_event, dictOfItems) => {
-    console.log(dictOfItems)
-    dictOfItems
-    console.log(Language.SetItemPositions, Protos.CMsgSetItemPositions, dictOfItems)
-    
-    console.log(await csgo._send(Language.SetItemPositions, Protos.CMsgSetItemPositions, dictOfItems))
-    
-    
+    await csgo._send(Language.SetItemPositions, Protos.CMsgSetItemPositions, dictOfItems)
+  });
+
+  // Set item positions
+  ipcMain.on('setItemEquipped', async (_event, item_id, item_name, itemClass) => {
+    item_name
+
+
+    await csgo._send(Language.k_EMsgGCAdjustItemEquippedState, Protos.CMsgAdjustItemEquippedState, {
+      item_id: item_id,
+      new_class: itemClass,
+      new_slot: 0,
+      swap: 0
+    })
   });
 
   // Remove items from storage unit

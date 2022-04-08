@@ -280,7 +280,6 @@ export async function sortDataFunction(
     if (isNaN(ValueTwo)) {
       ValueTwo = -90000000000
     }
-    console.log(valueOne, ValueTwo)
     if (valueOne < ValueTwo) {
       return -1;
     }
@@ -305,6 +304,7 @@ export async function sortDataFunction(
       b.item_name.replaceAll('★', '').replaceAll(' ', '')
     );
   });
+  console.log(inventory)
   switch (sortValue) {
     case 'Default':
       inventory.sort(function (a, b) {
