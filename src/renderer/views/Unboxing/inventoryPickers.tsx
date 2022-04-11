@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { classNames } from 'renderer/components/content/shared/inventoryFunctions';
 import itemRarities from 'renderer/components/content/shared/rarities';
-//import { sortDataFunction } from 'renderer/context/inventoryFiltersContext';
 import { filterInventorySetSort } from 'renderer/store/actions/filtersInventoryActions';
 import { setRenameModal } from 'renderer/store/actions/modalMove actions';
 import { pricing_add_to_requested } from 'renderer/store/actions/pricingActions';
@@ -101,57 +100,11 @@ function content() {
     dispatch(pricing_add_to_requested(pricesToGet));
   }
 
-  // SORT Fix for prices
-    function sortRunAlt(valueOne, ValueTwo) {
-      if (isNaN(valueOne)) {
-        valueOne = -90000000000
-      }
-      if (isNaN(ValueTwo)) {
-        ValueTwo = -90000000000
-      }
-      if (valueOne < ValueTwo) {
-        return -1;
-      }
-      if (valueOne > ValueTwo) {
-        return 1;
-      }
-  
-      return 0;
-    }
-  
-    if (inventoryFilters.sortValue == 'Price'){
-        inventoryToUse.sort(function (a, b) {
-          return sortRunAlt(
-            pricesResult.prices[a.item_name]?.[settingsData?.source?.title],
-            pricesResult.prices[b.item_name]?.[settingsData?.source?.title]
-          );
-        });
-    }
-    
-    // Convert to dict for easier match
-    let finalList = {};
-    inventoryToUse.forEach(element => {
-      if (finalList[element.item_name] == undefined) {
-        finalList[element.item_name] = [element]
-      } 
-      else {
-        let listToUse = finalList[element.item_name];
-        listToUse.push(element)
-        finalList[element.item_name] = listToUse
-      }
-    });
-
-    // Inventory to use
-    let finalInventoryToUse = [] as any;
-    inventoryFilters.inventoryFiltered.forEach((projectRow) => {
-      if (finalList[projectRow.item_name] != undefined) {
-        finalInventoryToUse = [...finalInventoryToUse, ...finalList[projectRow.item_name]]
-      }
-    })
-    const isFull = tradeUpData.tradeUpProducts.length == 10
-    if (inventoryFilters.sortBack) {
-      finalInventoryToUse.reverse()
-    }
+  // Is it full ?
+  const isFull = tradeUpData.tradeUpProducts.length == 10
+  if (inventoryFilters.sortBack) {
+    inventoryToUse.reverse()
+  }
 
 
   return (
@@ -225,7 +178,7 @@ function content() {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-100 dark:bg-dark-level-one dark:divide-gray-500">
-          {finalInventoryToUse.map((projectRow) => (
+          {inventoryToUse.map((projectRow) => (
             <tr
               key={projectRow.item_id}
               className={classNames(

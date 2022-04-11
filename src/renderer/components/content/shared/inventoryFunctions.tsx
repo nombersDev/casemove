@@ -273,6 +273,22 @@ export async function sortDataFunction(
     }
     return 0;
   }
+  function sortRunAlt(valueOne, ValueTwo) {
+    if (isNaN(valueOne)) {
+      valueOne = -90000000000
+    }
+    if (isNaN(ValueTwo)) {
+      ValueTwo = -90000000000
+    }
+    if (valueOne < ValueTwo) {
+      return -1;
+    }
+    if (valueOne > ValueTwo) {
+      return 1;
+    }
+
+    return 0;
+  }
 
   // Check
   if (sortValue == 'Storages') {
@@ -309,7 +325,7 @@ export async function sortDataFunction(
 
     case 'Price':
       inventory.sort(function (a, b) {
-        return -sortRun(
+        return sortRunAlt(
           prices[a.item_name]?.[pricingSource] * a.combined_QTY,
           prices[b.item_name]?.[pricingSource] * b.combined_QTY
         );
@@ -333,9 +349,7 @@ export async function sortDataFunction(
         if (b == undefined) {
           return -1
         }
-
-
-        return sortRun(a.collection, b.collection, true);
+        return sortRun(a.collection?.toLowerCase(), b.collection?.toLowerCase(), true);
       });
       return inventory;
 

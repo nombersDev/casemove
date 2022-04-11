@@ -89,9 +89,9 @@ class tradeUps {
   // Generate outcome
   getPotentitalOutcome(arrayOfItems) {
     return new Promise((resolve) => {
-      if (arrayOfItems.length != 10) {
-        resolve(false);
-      }
+      // if (arrayOfItems.length != 10) {
+      //   resolve(false);
+      // }
       let finalResult = [];
       let average = 0;
       let possibleSkins = [];
@@ -120,7 +120,7 @@ class tradeUps {
         average += element.item_paint_wear;
       });
 
-      average = average / 10;
+      average = average / arrayOfItems.length;
 
       seenSkins.forEach((element) => {
         let relevantObject = this.collections[this.directory[element]][element];

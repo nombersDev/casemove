@@ -136,6 +136,7 @@ class items {
       ) {
         continue;
       }
+      // console.log(value['item_id'])
 
       const returnDict = {};
       // URL
@@ -243,6 +244,7 @@ class items {
       if (value['quality'] == 3) {
         returnDict['item_name'] = '★ ' + returnDict['item_name'];
       }
+      // console.log(value, returnDict)
 
       returnList.push(returnDict);
     }
@@ -279,15 +281,15 @@ class items {
     // 3 = T
     let CT = false
     let T = false
-    
+
     for (const [key, value] of Object.entries(storageRow?.equipped_state)) {
       if (value?.new_class == 2) {
         T = true;
-      } 
+      }
       if (value?.new_class == 3) {
           CT = true
       }
-    } 
+    }
     return [CT, T]
   }
 
@@ -386,6 +388,7 @@ class items {
         this.getGraffitiKitName(graffitiKitIndex).replaceAll('_', ' ')
       );
       var finalName = finalName + ' (' + graffitiKitResult + ')';
+      var finalName = finalName.replace('Swat', "SWAT")
     }
 
     return finalName;

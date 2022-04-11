@@ -209,13 +209,11 @@ function content({ projectRow, index }) {
                   style: 'currency',
                   currency: settingsData.currency,
                 }).format(
-                  Math.round(
                     projectRow.combined_QTY *
                       pricesResult.prices[projectRow.item_name]?.[
                         settingsData?.source?.title
                       ] *
                       settingsData.currencyPrice[settingsData.currency]
-                  )
                 )}
           </div>
         </div>

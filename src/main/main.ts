@@ -31,6 +31,8 @@ import { currency } from './store/currency';
 import { tradeUps } from './store/tradeup';
 
 var ByteBuffer = require("bytebuffer");
+const Protos = require('globaloffensive/protobufs/generated/_load.js');
+const Language = require('globaloffensive/language.js');
 const currencyClass = new currency();
 
 let tradeUpClass = new tradeUps();
@@ -407,14 +409,28 @@ async function startEvents(csgo, user) {
       idsToUse.push(parseInt(element))
     });
     let tradeupPayLoad = new ByteBuffer(1+2+idsToUse.length*8, ByteBuffer.LITTLE_ENDIAN);
-    console.log(rarObject[rarityToUse])
     tradeupPayLoad.append(rarObject[rarityToUse],'hex');
     for( let id of idsToUse){
       tradeupPayLoad.writeUint64(id);
     }
-    console.log(await csgo._send(1002, null, tradeupPayLoad))
+    await csgo._send(Language.Craft, null, tradeupPayLoad)
+
 
   });
+
+  // Open container
+  ipcMain.on('openContainer', async (_event, itemsToOpen) => {
+    let containerPayload = new ByteBuffer(16, ByteBuffer.LITTLE_ENDIAN);
+    containerPayload.append('0000000000000000','hex');
+    for( let id of itemsToOpen){
+      containerPayload.writeUint64(parseInt(id));
+    }
+    await csgo._send(Language.UnlockCrate, null, containerPayload)
+  });
+
+  // Equipped = 1059
+  //
+
   ipcMain.on('getCurrency', async (event) => {
     getValue('pricing.currency').then((returnValue) => {
       currencyClass.getRate(returnValue).then((response) => {
@@ -423,6 +439,10 @@ async function startEvents(csgo, user) {
       });
     });
   });
+
+  // csgo.on('debug', (item) => {
+  //   console.log(item)
+  // });
 
   // CSGO listeners
   // Inventory events
@@ -531,6 +551,24 @@ async function startEvents(csgo, user) {
         event.reply('renameStorageUnit-reply', [1, itemIds[0]]);
       }
     });
+  });
+
+  // Set item positions
+  ipcMain.on('setItemsPositions', async (_event, dictOfItems) => {
+    await csgo._send(Language.SetItemPositions, Protos.CMsgSetItemPositions, dictOfItems)
+  });
+
+  // Set item positions
+  ipcMain.on('setItemEquipped', async (_event, item_id, item_name, itemClass) => {
+    item_name
+
+
+    await csgo._send(Language.k_EMsgGCAdjustItemEquippedState, Protos.CMsgAdjustItemEquippedState, {
+      item_id: item_id,
+      new_class: itemClass,
+      new_slot: 0,
+      swap: 0
+    })
   });
 
   // Remove items from storage unit
