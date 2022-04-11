@@ -119,14 +119,7 @@ function content() {
       return 0;
     }
   
-    if (inventoryFilters.sortValue == 'Price'){
-        inventoryToUse.sort(function (a, b) {
-          return sortRunAlt(
-            pricesResult.prices[a.item_name]?.[settingsData?.source?.title],
-            pricesResult.prices[b.item_name]?.[settingsData?.source?.title]
-          );
-        });
-    }
+    
     
     // Convert to dict for easier match
     let finalList = {};
@@ -148,10 +141,20 @@ function content() {
         finalInventoryToUse = [...finalInventoryToUse, ...finalList[projectRow.item_name]]
       }
     })
+    if (inventoryFilters.sortValue == 'Price'){
+      finalInventoryToUse.sort(function (a, b) {
+        return sortRunAlt(
+          pricesResult.prices[a.item_name]?.[settingsData?.source?.title],
+          pricesResult.prices[b.item_name]?.[settingsData?.source?.title]
+        );
+      });
+  }
     const isFull = tradeUpData.tradeUpProducts.length == 10
     if (inventoryFilters.sortBack) {
       finalInventoryToUse.reverse()
     }
+    
+
 
 
   return (
