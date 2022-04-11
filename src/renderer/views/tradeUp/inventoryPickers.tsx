@@ -38,10 +38,32 @@ function content() {
     );
   }
 
-  let inventoryToUse = [...inventory.inventory];
+  // Convert to dict for easier match
+    let finalList = {};
+    inventory.inventory.forEach(element => {
+      if (finalList[element.item_name] == undefined) {
+        finalList[element.item_name] = [element]
+      } 
+      else {
+        let listToUse = finalList[element.item_name];
+        listToUse.push(element)
+        finalList[element.item_name] = listToUse
+        
+      }
+    });
+
+    // Inventory to use
+    let finalInventoryToUse = [] as any;
+    let seenNames = [] as any;
+    inventoryFilters.inventoryFiltered.forEach((projectRow) => {
+      if (finalList[projectRow.item_name] != undefined && seenNames.includes(projectRow.item_name) == false) {
+        finalInventoryToUse = [...finalInventoryToUse, ...finalList[projectRow.item_name]]
+        seenNames.push(projectRow.item_name)
+      }
+    })
 
 
-  inventoryToUse = inventoryToUse.filter(function (item) {
+    finalInventoryToUse = finalInventoryToUse.filter(function (item) {
     if (!item.tradeUpConfirmed) {
       return false;
     }
@@ -80,7 +102,7 @@ function content() {
   itemRarities.forEach(element => {
     itemR[element.value] = element.bgColorClass
   });
-  inventoryToUse.forEach(element => {
+  finalInventoryToUse.forEach(element => {
     element['rarityColor'] =itemR[element.rarityName]
   });
 
@@ -88,7 +110,7 @@ function content() {
 
   // Prices
   let pricesToGet = [] as any;
-  inventoryToUse.forEach((projectRow) => {
+  finalInventoryToUse.forEach((projectRow) => {
     if (
       pricesResult.prices[projectRow.item_name] == undefined &&
       pricesResult.productsRequested.includes(projectRow.item_name) == false
@@ -121,26 +143,7 @@ function content() {
   
     
     
-    // Convert to dict for easier match
-    let finalList = {};
-    inventoryToUse.forEach(element => {
-      if (finalList[element.item_name] == undefined) {
-        finalList[element.item_name] = [element]
-      } 
-      else {
-        let listToUse = finalList[element.item_name];
-        listToUse.push(element)
-        finalList[element.item_name] = listToUse
-      }
-    });
-
-    // Inventory to use
-    let finalInventoryToUse = [] as any;
-    inventoryFilters.inventoryFiltered.forEach((projectRow) => {
-      if (finalList[projectRow.item_name] != undefined) {
-        finalInventoryToUse = [...finalInventoryToUse, ...finalList[projectRow.item_name]]
-      }
-    })
+    
     if (inventoryFilters.sortValue == 'Price'){
       finalInventoryToUse.sort(function (a, b) {
         return sortRunAlt(
