@@ -27,7 +27,7 @@ export default function LoginForm({ isLock, replaceLock }) {
   const [wasSuccess, setWasSuccess] = useState(false);
   const [titleToDisplay, setTitleToDisplay] = useState('test');
   const [textToDisplay, setTextToDisplay] = useState('test');
-  const [storePassword, setStorePassword] = useState(true);
+  const [storePassword, setStorePassword] = useState(false);
   const [getLoadingButton, setLoadingButton] = useState(false);
   const [secretEnabled, setSecretEnabled] = useState(false);
   const filterDetails = useSelector(

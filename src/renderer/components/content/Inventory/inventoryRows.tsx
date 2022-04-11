@@ -79,17 +79,11 @@ function content() {
     }
   }
 
-  async function setItemsPosition(item_id, position) {
-    position
-    window.electron.ipcRenderer.tradeOrder({item_positions: [{
-      position: 1,
-      item_id: parseInt(item_id)
-    }]})
+  // async function setItemsPosition(item_id) {
+  //   window.electron.ipcRenderer.OpenContainer([item_id])
 
-  }
-  setItemsPosition
-  // inventoryToUse = inventory.inventory
-  console.log(inventoryToUse)
+ //  }
+  // setItemsPosition
 
   return (
     <>
@@ -464,7 +458,7 @@ function content() {
       </div>
     </td> : '' }
               {settingsData.columns.includes('Price') ? (
-                <td className="table-cell px-6 py-3 text-sm text-gray-500 font-medium">
+                <td key={ Math.random().toString(36).substr(2, 9) } className="table-cell px-6 py-3 text-sm text-gray-500 font-medium">
                   <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
                     <div className="flex flex-shrink-0 -space-x-1 text-gray-500 dark:text-gray-400 font-normal">
                       {projectRow.item_moveable
@@ -488,11 +482,10 @@ function content() {
                                     ]
                                 : 0
                             )
-                          : new Intl.NumberFormat(settingsData.locale, {
+                          :  new Intl.NumberFormat(settingsData.locale, {
                               style: 'currency',
                               currency: settingsData.currency,
                             }).format(
-                              Math.round(
                                 projectRow.combined_QTY *
                                   pricesResult.prices[projectRow.item_name]?.[
                                     settingsData?.source?.title
@@ -500,8 +493,7 @@ function content() {
                                   settingsData.currencyPrice[
                                     settingsData.currency
                                   ]
-                              )
-                            )
+                            ) 
                         : ''}
                     </div>
                   </div>
@@ -527,7 +519,7 @@ function content() {
                 ''
               )}
               {settingsData.columns.includes('Stickers/patches') ? (
-                <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
+                <td key={ Math.random().toString(36).substr(2, 9) } className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
                   <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
                     <div className="flex flex-shrink-0 -space-x-1">
                       {projectRow.stickers?.map((sticker, index) => (
@@ -566,7 +558,7 @@ function content() {
                 ''
               )}
               {settingsData.columns.includes('Float') ? (
-                <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
+                <td key={ Math.random().toString(36).substr(2, 9) } className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
                   <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
                     <div className="flex flex-shrink-0 -space-x-1">
                       {projectRow.item_paint_wear?.toString()?.substr(0, 9)}
@@ -577,7 +569,7 @@ function content() {
                 ''
               )}
               {settingsData.columns.includes('Rarity') ?
-        <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
+        <td key={ Math.random().toString(36).substr(2, 9) } className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
           <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
             <div className="flex flex-shrink-0 -space-x-1">
               {projectRow.rarityName}
@@ -586,7 +578,7 @@ function content() {
         </td> : '' }
 
               {settingsData.columns.includes('Tradehold') ? (
-                <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center">
+                <td key={ Math.random().toString(36).substr(2, 9) } className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center">
                   {projectRow.trade_unlock !== undefined
                     ? Math.ceil(
                         (projectRow.trade_unlock.getTime() - now.getTime()) /
@@ -597,14 +589,14 @@ function content() {
               ) : (
                 ''
               )}
-              <td className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
+              <td key={ Math.random().toString(36).substr(2, 9) } className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
                 <div className="flex items-center space-x-2 justify-center rounded-full  drop-shadow-lg">
                   <div className="flex flex-shrink-0 -space-x-1 font-normal">
                     {projectRow.combined_QTY}
                   </div>
                 </div>
               </td>
-              <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-right">
+              <td key={ Math.random().toString(36).substr(2, 9) } className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-right">
                 <div className="flex justify-center rounded-full drop-shadow-lg">
                   {projectRow.item_moveable == true ? (
                     <CheckCircleIcon
@@ -616,7 +608,7 @@ function content() {
                   )}
                 </div>
               </td>
-              <td className="table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 hover:text-gray-200 text-right">
+              <td key={ Math.random().toString(36).substr(2, 9) } className="table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 hover:text-gray-200 text-right">
                 <div className="flex justify-center rounded-full drop-shadow-lg">
                   <Link
                     to={{
@@ -633,7 +625,8 @@ function content() {
               </td>
 
 
-              <td className="hidden md:px-6 py-3 whitespace-nowrap text-right text-sm font-medium"></td>
+              <td key={ Math.random().toString(36).substr(2, 9) } className="hidden md:px-6 py-3 whitespace-nowrap text-right text-sm font-medium"></td>
+              
             </tr>
           ))}
         </tbody>

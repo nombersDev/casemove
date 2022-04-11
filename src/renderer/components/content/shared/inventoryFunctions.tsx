@@ -304,7 +304,6 @@ export async function sortDataFunction(
       b.item_name.replaceAll('★', '').replaceAll(' ', '')
     );
   });
-  console.log(inventory)
   switch (sortValue) {
     case 'Default':
       inventory.sort(function (a, b) {
@@ -350,9 +349,7 @@ export async function sortDataFunction(
         if (b == undefined) {
           return -1
         }
-
-
-        return sortRun(a.collection, b.collection, true);
+        return sortRun(a.collection?.toLowerCase(), b.collection?.toLowerCase(), true);
       });
       return inventory;
 

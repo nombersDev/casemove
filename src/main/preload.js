@@ -56,6 +56,10 @@ contextBridge.exposeInMainWorld('electron', {
     tradeOrder(dictToUse) {
       ipcRenderer.send('setItemsPositions', dictToUse);
     },
+    // 
+    OpenContainer(listToUse) {
+      ipcRenderer.send('openContainer', listToUse);
+    },
 
 
     // User account
@@ -241,7 +245,8 @@ contextBridge.exposeInMainWorld('electron', {
         'windowsActions',
         'getTradeUpPossible',
         'processTradeOrder',
-        'setItemsPositions'
+        'setItemsPositions',
+        'openContainer'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
@@ -269,7 +274,8 @@ contextBridge.exposeInMainWorld('electron', {
         'windowsActions',
         'getTradeUpPossible',
         'processTradeOrder',
-        'setItemsPositions'
+        'setItemsPositions',
+        'openContainer'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`

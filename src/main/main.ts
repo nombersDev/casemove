@@ -409,14 +409,23 @@ async function startEvents(csgo, user) {
       idsToUse.push(parseInt(element))
     });
     let tradeupPayLoad = new ByteBuffer(1+2+idsToUse.length*8, ByteBuffer.LITTLE_ENDIAN);
-    console.log(rarObject[rarityToUse])
     tradeupPayLoad.append(rarObject[rarityToUse],'hex');
     for( let id of idsToUse){
       tradeupPayLoad.writeUint64(id);
     }
-    console.log(await csgo._send(Language.Craft, null, tradeupPayLoad))
+    await csgo._send(Language.Craft, null, tradeupPayLoad)
 
 
+  });
+
+  // Open container
+  ipcMain.on('openContainer', async (_event, itemsToOpen) => {
+    let containerPayload = new ByteBuffer(16, ByteBuffer.LITTLE_ENDIAN);
+    containerPayload.append('0000000000000000','hex');
+    for( let id of itemsToOpen){
+      containerPayload.writeUint64(parseInt(id));
+    }
+    await csgo._send(Language.UnlockCrate, null, containerPayload)
   });
 
   // Equipped = 1059
@@ -430,6 +439,10 @@ async function startEvents(csgo, user) {
       });
     });
   });
+
+  // csgo.on('debug', (item) => {
+  //   console.log(item)
+  // });
 
   // CSGO listeners
   // Inventory events

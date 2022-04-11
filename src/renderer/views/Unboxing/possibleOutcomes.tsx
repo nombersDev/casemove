@@ -40,6 +40,7 @@ export default function PossibleOutcomes() {
   });
 
   // Get outcomes
+  console.log(tradeUpData.tradeUpProducts.length, tradeUpData.possibleOutcomes.length)
   if (
     tradeUpData.tradeUpProducts.length > 0 &&
     tradeUpData.possibleOutcomes.length == 0
