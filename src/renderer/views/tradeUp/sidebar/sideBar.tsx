@@ -14,8 +14,10 @@ export default function TradeUpSideBar() {
     totalFloat += element.item_paint_wear;
   });
   totalFloat = totalFloat / tradeUpData.tradeUpProducts.length;
+  
 
   let productsToUse = [...tradeUpData.tradeUpProducts];
+  
   while (true) {
     if (productsToUse.length != 10) {
       productsToUse.push({ item_name: 'EMPTY' });

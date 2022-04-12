@@ -4248,7 +4248,7 @@
         "MAC-10 | Pipe Down": {
             "quality": "Restricted",
             "min-wear": "0.00",
-            "max-wear": "0.15",
+            "max-wear": "0.90",
             "category": "Normal",
             "best_quality": "6",
             "trade_up": true,

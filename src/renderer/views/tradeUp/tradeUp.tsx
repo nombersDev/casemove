@@ -12,8 +12,8 @@ import { classNames } from 'renderer/components/content/shared/inventoryFunction
 import TradeModal from 'renderer/components/content/shared/modals & notifcations/modalTrade';
 import { setTradeMove } from 'renderer/store/actions/modalTrade';
 import TradeUpPicker from './inventoryPickers';
-import TradeUpSideBar from './sideBar';
-import TradeUpFilters from './tradeUpFilter';
+import TradeUpSideBar from './sidebar/sideBar';
+import TradeUpFilters from './filter/tradeUpFilter';
 
 function settingsContent() {
   const tradeUpData = useSelector((state: any) => state.tradeUpReducer);

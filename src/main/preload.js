@@ -53,7 +53,7 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.send('processTradeOrder', idsToProcess, idToUse);
     },
     // 
-    tradeOrder(dictToUse) {
+    setItemsPosition(dictToUse) {
       ipcRenderer.send('setItemsPositions', dictToUse);
     },
     // 
