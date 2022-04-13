@@ -14,7 +14,7 @@ export default function CollectionsDropDown() {
   const dispatch = useDispatch();
   dispatch
   let inventoryToUse = [...inventory.inventory];
-  let collections = [] as any;
+  let collections = [...tradeUpData.collections] as any;
 
 
   inventoryToUse = inventoryToUse.filter(function (item) {
