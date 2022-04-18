@@ -307,7 +307,7 @@ export async function sortDataFunction(
   switch (sortValue) {
     case 'Default':
       inventory.sort(function (a, b) {
-        return sortRun(a.position, b.position);
+        return sortRun(a.item_id, b.item_id);
       });
       return inventory;
 

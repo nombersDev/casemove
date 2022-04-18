@@ -1,10 +1,12 @@
 const initialState = {
     doHide: false,
+    hideFull: true,
     activeStorages: [] as any,
     activeStoragesAmount: 0,
     totalToMove: [] as any,
     totalItemsToMove: 0,
     searchInput: '',
+    searchInputStorage: '',
     sortValue: 'Default',
     doCancel: false,
     sortBack: false,
@@ -16,6 +18,12 @@ const initialState = {
           return {
               ...state,
               doHide: !state.doHide
+           } 
+      
+      case 'MOVE_TO_SET_FULL':
+          return {
+              ...state,
+              hideFull: !state.hideFull
            } 
       case 'MOVE_TO_ADD_TO':
         // Add to or remove from active storages
@@ -62,6 +70,12 @@ const initialState = {
           return {
               ...state,
               searchInput: action.payload.searchField
+           } 
+        
+        case 'MOVE_TO_SET_SEARCH_STORAGE':
+          return {
+              ...state,
+              searchInputStorage: action.payload.searchField
            } 
         case 'MOVE_TO_SET_SORT':
           if (state.sortValue == action.payload.sortValue) {

@@ -122,6 +122,27 @@ function content() {
     window.electron.ipcRenderer.getPrice(pricesToGet);
     dispatch(pricing_add_to_requested(pricesToGet));
   }
+  
+
+  function sortRun(valueOne, ValueTwo, useNaN = false) {
+    if (valueOne == undefined) {
+      valueOne = -90000000000
+    }
+    if (ValueTwo == undefined) {
+      ValueTwo = -90000000000
+    }
+    if (valueOne < ValueTwo) {
+      return -1;
+    }
+    if (valueOne > ValueTwo) {
+      return 1;
+    }
+
+    if (useNaN && isNaN(valueOne)) {
+      return -1;
+    }
+    return 0;
+  }
 
   // SORT Fix for prices
     function sortRunAlt(valueOne, ValueTwo) {
@@ -152,10 +173,21 @@ function content() {
         );
       });
   }
-    const isFull = tradeUpData.tradeUpProducts.length == 10
+  if (inventoryFilters.sortValue == 'wearValue'){
+    finalInventoryToUse.sort(function (a, b) {
+      return -sortRun(a.item_paint_wear, b.item_paint_wear, true);
+    });
+}
+if (inventoryFilters.sortValue == 'Stickers'){
+  finalInventoryToUse.sort(function (a, b) {
+    return -sortRun(a?.stickers?.length, b?.stickers?.length);
+  });
+}
+const isFull = tradeUpData.tradeUpProducts.length == 10
     if (inventoryFilters.sortBack) {
       finalInventoryToUse.reverse()
     }
+  
     
 
 

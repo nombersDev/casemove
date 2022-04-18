@@ -1,5 +1,5 @@
 import { Menu, Transition, Switch } from '@headlessui/react';
-import { DotsVerticalIcon, RefreshIcon } from '@heroicons/react/solid';
+import { DotsVerticalIcon, RefreshIcon, SearchIcon } from '@heroicons/react/solid';
 import { Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -7,7 +7,9 @@ import { setRenameModal } from 'renderer/store/actions/modalMove actions';
 import {
   moveToAddCasketToStorages,
   moveToClearAll,
+  moveToSetFull,
   moveToSetHide,
+  moveTosetSearchFieldStorage,
 } from 'renderer/store/actions/moveToActions';
 import EmptyComponent from '../../shared/emptyState';
 import RenameModal from '../../shared/modals & notifcations/modalRename';
@@ -21,7 +23,6 @@ function content() {
   const inventory = useSelector((state: any) => state.inventoryReducer);
   const toSelector = useSelector((state: any) => state.moveToReducer);
   const settingsData = useSelector((state: any) => state.settingsReducer);
-  const localHide = toSelector.doHide;
 
   // Clear all filters
 
@@ -52,18 +53,45 @@ function content() {
   }
 
   let inventoryToUse = inventory.inventory;
-  inventoryToUse = inventoryToUse.sort(function (a, b) {
-    return sortRun(a.item_customname, b.item_customname);
-  });
+
 
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 dark:bg-dark-level-one">
       <RenameModal />
       <div className="border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between ">
-        <h2 className="text-gray-500 text-xs font-medium uppercase tracking-wide">
+        
+      <div className='flex items-center' >
+        <h2 className="text-gray-500 text-xs font-medium uppercase mr-3 tracking-wide">
           Storage units
         </h2>
+        <label htmlFor="search" className="sr-only">
+              Search storages
+            </label>
+            <div className="relative rounded-md dark:border-opacity-50 border-gray-200 border-l-2 focus:outline-none focus:outline-none">
+              <div
+                className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                aria-hidden="true"
+              >
+                <SearchIcon
+                  className="mr-3 h-4 w-4 text-gray-400"
+                  aria-hidden="true"
+                />
+              </div>
+              <input
+                type="text"
+                name="search"
+                id="search"
+                value={toSelector.searchInputStorage}
+                className="block w-full pb-0.5  focus:outline-none dark:text-dark-white pl-9 sm:text-sm border-gray-300 h-7 dark:bg-dark-level-one dark:rounded-none dark:bg-dark-level-one dark:rounded-none"
+                placeholder="Search storages"
+                spellCheck="false"
+                onChange={(e) =>
+                  dispatch(moveTosetSearchFieldStorage(e.target.value))
+                }
+              />
+            </div>
+        </div>
         <div className="mt-4 flex items-center sm:mt-0 sm:ml-4">
           <Link
             to=""
@@ -77,22 +105,22 @@ function content() {
             Hide empty
           </span>
           <Switch
-            checked={localHide}
+            checked={toSelector.doHide}
             onChange={() => dispatch(moveToSetHide())}
             className={classNames(
-              localHide ? 'bg-indigo-600 dark:bg-indigo-700' : 'bg-gray-200',
+              toSelector.doHide ? 'bg-indigo-600 dark:bg-indigo-700' : 'bg-gray-200',
               'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none'
             )}
           >
             <span
               className={classNames(
-                localHide ? 'translate-x-5' : 'translate-x-0',
+                toSelector.doHide ? 'translate-x-5' : 'translate-x-0',
                 'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
               )}
             >
               <span
                 className={classNames(
-                  localHide
+                  toSelector.doHide
                     ? 'opacity-0 ease-out duration-100'
                     : 'opacity-100 ease-in duration-200',
                   'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity'
@@ -115,7 +143,7 @@ function content() {
               </span>
               <span
                 className={classNames(
-                  localHide
+                  toSelector.doHide
                     ? 'opacity-100 ease-in duration-200'
                     : 'opacity-0 ease-out duration-100',
                   'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity'
@@ -132,13 +160,81 @@ function content() {
               </span>
             </span>
           </Switch>
-        </div>
+          <span className="mr-3  ml-3 text-gray-500 text-xs dark:text-dark-white font-medium uppercase tracking-wide">
+            Hide full
+          </span>
+          <Switch
+            checked={toSelector.hideFull}
+            onChange={() => dispatch(moveToSetFull())}
+            className={classNames(
+              toSelector.hideFull ? 'bg-indigo-600 dark:bg-indigo-700' : 'bg-gray-200',
+              'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none'
+            )}
+          >
+            <span
+              className={classNames(
+                toSelector.hideFull ? 'translate-x-5' : 'translate-x-0',
+                'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
+              )}
+            >
+              <span
+                className={classNames(
+                  toSelector.hideFull
+                    ? 'opacity-0 ease-out duration-100'
+                    : 'opacity-100 ease-in duration-200',
+                  'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity'
+                )}
+                aria-hidden="true"
+              >
+                <svg
+                  className="h-3 w-3 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 12 12"
+                >
+                  <path
+                    d="M4 8l2-2m0 0l2-2M6 6L4 4m2 2l2 2"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
+              <span
+                className={classNames(
+                  toSelector.hideFull
+                    ? 'opacity-100 ease-in duration-200'
+                    : 'opacity-0 ease-out duration-100',
+                  'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity'
+                )}
+                aria-hidden="true"
+              >
+                <svg
+                  className="h-3 w-3 text-indigo-600"
+                  fill="currentColor"
+                  viewBox="0 0 12 12"
+                >
+                  <path d="M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z" />
+                </svg>
+              </span>
+            </span>
+          </Switch>
+          
+          
+        
+            </div>
       </div>
       {inventoryToUse.filter(function (row) {
         if (!row.item_url?.includes('casket')) {
           return false; // skip
         }
-        if (row.item_storage_total == 0 && localHide) {
+        if (row.item_storage_total == 0 && toSelector.doHide) {
+          return false; // skip
+        }
+        if (toSelector.searchInputStorage != '' && !row?.item_customname?.toLowerCase()?.includes(toSelector.searchInputStorage)) {
+          return false; // skip
+        }
+        if (row.item_storage_total == 1000 && toSelector.hideFull) {
           return false; // skip
         }
         return true;
@@ -152,10 +248,26 @@ function content() {
               if (!row.item_url.includes('casket')) {
                 return false; // skip
               }
-              if (row.item_storage_total == 0 && localHide) {
+              if (toSelector.searchInputStorage != '' && !row?.item_customname?.toLowerCase()?.includes(toSelector.searchInputStorage)) {
+                return false; // skip
+              }
+              if (row.item_storage_total == 0 && toSelector.doHide) {
+                return false; // skip
+              }
+              if (row.item_storage_total == 1000 && toSelector.hideFull) {
                 return false; // skip
               }
               return true;
+            }).sort(function (a, b) {
+              let a_customName = a.item_customname
+              let b_customName = b.item_customname
+              if (a_customName == undefined) {
+                a_customName = '0000'
+              }
+              if (b_customName == undefined) {
+                b_customName = '0000'
+              }
+              return sortRun(a_customName, b_customName);
             })
             .map((project) => (
               <li

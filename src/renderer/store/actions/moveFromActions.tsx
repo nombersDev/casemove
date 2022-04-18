@@ -1,6 +1,6 @@
-export const moveFromSetHide = () => {
+export const moveFromSetFull = () => {
     return {
-        type: 'MOVE_FROM_SET_HIDE'
+        type: 'MOVE_FROM_SET_FULL'
     }
 }
 
@@ -27,7 +27,14 @@ export const moveFromsetSearchField = (searchField) => {
         }
     }
 }
-
+export const moveFromsetSearchFieldStorage = (searchField) => {
+    return {
+        type: 'MOVE_FROM_SET_SEARCH_STORAGE',
+        payload: {
+            searchField: searchField
+        }
+    }
+}
 export const moveFromSetSortOption = (sortValue) => {
     return {
         type: 'MOVE_FROM_SET_SORT',
