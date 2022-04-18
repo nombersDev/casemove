@@ -1,9 +1,10 @@
 const initialState = {
-    doHide: true,
+    hideFull: false,
     activeStorages: [] as any,
     totalToMove: [] as any,
     totalItemsToMove: 0,
     searchInput: '',
+    searchInputStorage: '',
     sortValue: 'Default',
     doCancel: false,
     sortBack: false,
@@ -11,11 +12,11 @@ const initialState = {
 
   const moveFromReducer = (state = initialState, action) => {
     switch (action.type) {
-      case 'MOVE_FROM_SET_HIDE':
-          return {
-              ...state,
-              doHide: !state.doHide
-           }
+      case 'MOVE_FROM_SET_FULL':
+        return {
+            ...state,
+            hideFull: !state.hideFull
+         } 
       case 'MOVE_FROM_SET_SORT_BACK':
           return {
               ...state,
@@ -72,10 +73,10 @@ const initialState = {
               ...state,
               searchInput: action.payload.searchField
            }
-           case 'MOVE_FROM_SET_SEARCH':
+           case 'MOVE_FROM_SET_SEARCH_STORAGE':
           return {
               ...state,
-              searchInput: action.payload.searchField
+              searchInputStorage: action.payload.searchField
            } 
         case 'MOVE_FROM_SET_SORT':
           if (state.sortValue == action.payload.sortValue) {

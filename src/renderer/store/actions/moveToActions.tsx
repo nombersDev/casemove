@@ -3,6 +3,11 @@ export const moveToSetHide = () => {
         type: 'MOVE_TO_SET_HIDE'
     }
 }
+export const moveToSetFull = () => {
+    return {
+        type: 'MOVE_TO_SET_FULL'
+    }
+}
 export const moveToClearAll = () => {
     return {
         type: 'MOVE_TO_CLEAR_ALL'
@@ -24,7 +29,14 @@ export const moveTosetSearchField = (searchField) => {
         }
     }
 }
-
+export const moveTosetSearchFieldStorage = (searchField) => {
+    return {
+        type: 'MOVE_TO_SET_SEARCH_STORAGE',
+        payload: {
+            searchField: searchField
+        }
+    }
+}
 export const moveToSetSortOption = (sortValue) => {
     return {
         type: 'MOVE_TO_SET_SORT',

@@ -78,7 +78,8 @@ const initialState = {
            }
         case 'TRADEUP_RESET':
             return {
-              ...initialState
+              ...initialState,
+              collections: state.collections
             }
 
       

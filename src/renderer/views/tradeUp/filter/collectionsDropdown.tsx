@@ -2,6 +2,7 @@ import { Fragment } from 'react'
 import {  Popover, Transition } from '@headlessui/react'
 import { useDispatch, useSelector } from 'react-redux';
 import { tradeUpCollectionsAddRemove } from 'renderer/store/actions/tradeUpActions';
+import { classNames } from 'renderer/components/content/shared/inventoryFunctions';
 
 export default function CollectionsDropDown() {
 
@@ -73,9 +74,9 @@ export default function CollectionsDropDown() {
     <Popover.Group className="-mx-4 flex items-center divide-x divide-gray-200">
 
                     <Popover  className="pl-4 relative inline-block text-left">
-                      <Popover.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900 dark:hover:text-gray-400 dark:text-gray-500">
+                      <Popover.Button className={classNames(collections.length == 0 ? 'pointer-events-none' : '',"group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900 dark:hover:text-gray-400 dark:text-gray-500")}>
                       Collections
-                      <span className="mr-1.5 ml-1.5 rounded py-0.5 px-1.5 bg-gray-200 dark:bg-dark-level-four dark:text-gray-400 text-xs font-semibold text-gray-700 tabular-nums">
+                      <span className="mr-1.5 ml-1.5 rounded py-0.5 px-1.5 bg-gray-200 dark:bg-dark-level-four dark:text-gray-400 text-xs font-semibold text-gray-700 tabular-nums" >
                             {tradeUpData.collections.length}
                           </span>
 

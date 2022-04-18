@@ -28,7 +28,6 @@ export default function TradeModal() {
   console.log(modalData.moveOpen)
 
   async function confirmContract() {
-    console.log(tradeUpData.tradeUpProducts[0]?.rarity)
     let rarityToUse = tradeUpData.tradeUpProducts[0]?.rarity - 1
     if (tradeUpData.tradeUpProducts[0]?.stattrak) {
       rarityToUse += 10
