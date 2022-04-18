@@ -33,7 +33,7 @@ function settingsContent() {
   let totalEV = 0;
   tradeUpData.possibleOutcomes.forEach((element) => {
     let individualPrice =
-      pricesResult?.prices[element.item_name]?.['steam_listing'];
+      pricesResult?.prices[element.item_name]?.['steam_listing'] * settingsData.currencyPrice[settingsData.currency];
     totalEV += individualPrice * (element.percentage / 100);
     console.log(
       element,
