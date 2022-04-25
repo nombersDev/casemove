@@ -1,13 +1,7 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import {
-  app,
-  BrowserWindow,
-  shell,
-  ipcMain,
-  session,
-} from 'electron';
+import { app, BrowserWindow, shell, ipcMain, session } from 'electron';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import { fetchItems } from './steam/getCommands';
@@ -30,11 +24,10 @@ import { pricingEmitter, runItems } from './store/pricing';
 import { currency } from './store/currency';
 import { tradeUps } from './store/tradeup';
 
-var ByteBuffer = require("bytebuffer");
+var ByteBuffer = require('bytebuffer');
 const Protos = require('globaloffensive/protobufs/generated/_load.js');
 const Language = require('globaloffensive/language.js');
 const currencyClass = new currency();
-
 let tradeUpClass = new tradeUps();
 
 let mainWindow: BrowserWindow | null = null;
@@ -133,9 +126,7 @@ const createWindow = async () => {
   // Open urls in the user's browser
   mainWindow.webContents.on('new-window', (event, url) => {
     event.preventDefault();
-    shell.openExternal(
-      url
-    );
+    shell.openExternal(url);
   });
 
   if (process.platform == 'linux') {
@@ -327,37 +318,74 @@ ipcMain.on(
           if (returnValue) {
             event.reply('login-reply', [5]);
           } else {
-            user.gamesPlayed([]);
-            user.gamesPlayed([730]);
-            csgo.once('connectedToGC', () => {
-              console.log('Connected to GC!');
-              if (csgo.haveGCSession) {
-                console.log('Have Session!');
-                fetchItemClass
-                  .convertInventory(csgo.inventory)
-                  .then((returnValue) => {
-                    tradeUpClass.getTradeUp(returnValue).then((newReturnValue:any) => {
-                      const returnPackage = [
-                        user.logOnResult.client_supplied_steamid,
-                        displayName,
-                        csgo.haveGCSession,
-                        newReturnValue,
-                      ];
-                      startEvents(csgo, user);
-                      if (shouldRemember) {
-                        storeUserAccount(
-                          username,
-                          displayName,
-                          password,
-                          user.logOnResult.client_supplied_steamid,
-                          secretKey
-                        );
-                      }
+            async function gameCoordinate(resolve: any = null) {
+              csgo.once('connectedToGC', () => {
+                if (resolve) {
+                  resolve('GC');
+                }
+                console.log('Connected to GC!');
+                if (csgo.haveGCSession) {
+                  console.log('Have Session!');
+                  fetchItemClass
+                    .convertInventory(csgo.inventory)
+                    .then((returnValue) => {
+                      tradeUpClass
+                        .getTradeUp(returnValue)
+                        .then((newReturnValue: any) => {
+                          const returnPackage = [
+                            user.logOnResult.client_supplied_steamid,
+                            displayName,
+                            csgo.haveGCSession,
+                            newReturnValue,
+                          ];
+                          startEvents(csgo, user);
+                          if (shouldRemember) {
+                            storeUserAccount(
+                              username,
+                              displayName,
+                              password,
+                              user.logOnResult.client_supplied_steamid,
+                              secretKey
+                            );
+                          }
 
-                      event.reply('login-reply', [1, returnPackage]);
+                          event.reply('login-reply', [1, returnPackage]);
+                        });
                     });
+                }
+              });
+            }
 
-                  });
+            // // Create a timeout race to catch an infinite loading error in case the Steam account hasnt added the CSGO license
+            // Run the normal version
+            startGameCoordinator()
+            let GCResponse = new Promise((resolve) => {
+              gameCoordinate(resolve);
+            });
+            // Run the timeout
+            let timeout = new Promise((resolve, _reject) => {
+              setTimeout(resolve, 10000, 'time');
+            });
+
+            // Race the two
+            Promise.race([timeout, GCResponse]).then((value) => {
+              if (value == 'time') {
+                console.log(
+                  'GC didnt start in time, adding CSGO to the library and retrying.'
+                );
+                user.requestFreeLicense(
+                  [730],
+                  function (err, packageIds, appIds) {
+                    if (err) {
+                      console.log(err);
+                      event.reply('login-reply', [5]);
+                    }
+                    console.log('Granted package: ', packageIds);
+                    console.log('Granted App: ', appIds);
+                    startGameCoordinator();
+                    gameCoordinate();
+                  }
+                );
               }
             });
           }
@@ -369,6 +397,12 @@ ipcMain.on(
     });
 
     user.logOn(logInOptions);
+
+    // Start the game coordinator for CSGO
+    async function startGameCoordinator() {
+      user.gamesPlayed([]);
+      user.gamesPlayed([730]);
+    }
   }
 );
 
@@ -393,39 +427,40 @@ async function startEvents(csgo, user) {
   });
   ipcMain.on('processTradeOrder', async (_event, idsToProcess, rarityToUse) => {
     const rarObject = {
-      0: "00000A00",
-      1: "01000A00",
-      2: "02000A00",
-      3: "03000A00",
-      4: "04000A00",
+      0: '00000A00',
+      1: '01000A00',
+      2: '02000A00',
+      3: '03000A00',
+      4: '04000A00',
       10: '0a000a00',
       11: '0b000a00',
       12: '0c000a00',
       13: '0d000a00',
       14: '0e000a00',
     };
-    let idsToUse = [] as any
-    idsToProcess.forEach(element => {
-      idsToUse.push(parseInt(element))
+    let idsToUse = [] as any;
+    idsToProcess.forEach((element) => {
+      idsToUse.push(parseInt(element));
     });
-    let tradeupPayLoad = new ByteBuffer(1+2+idsToUse.length*8, ByteBuffer.LITTLE_ENDIAN);
-    tradeupPayLoad.append(rarObject[rarityToUse],'hex');
-    for( let id of idsToUse){
+    let tradeupPayLoad = new ByteBuffer(
+      1 + 2 + idsToUse.length * 8,
+      ByteBuffer.LITTLE_ENDIAN
+    );
+    tradeupPayLoad.append(rarObject[rarityToUse], 'hex');
+    for (let id of idsToUse) {
       tradeupPayLoad.writeUint64(id);
     }
-    await csgo._send(Language.Craft, null, tradeupPayLoad)
-
-
+    await csgo._send(Language.Craft, null, tradeupPayLoad);
   });
 
   // Open container
   ipcMain.on('openContainer', async (_event, itemsToOpen) => {
     let containerPayload = new ByteBuffer(16, ByteBuffer.LITTLE_ENDIAN);
-    containerPayload.append('0000000000000000','hex');
-    for( let id of itemsToOpen){
+    containerPayload.append('0000000000000000', 'hex');
+    for (let id of itemsToOpen) {
       containerPayload.writeUint64(parseInt(id));
     }
-    await csgo._send(Language.UnlockCrate, null, containerPayload)
+    await csgo._send(Language.UnlockCrate, null, containerPayload);
   });
 
   // Equipped = 1059
@@ -450,14 +485,13 @@ async function startEvents(csgo, user) {
     if (!Object.keys(item).includes('casket_id')) {
       console.log('Item' + item.itemid + ' was removed');
       fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
-        tradeUpClass.getTradeUp(returnValue).then((newReturnValue:any) => {
+        tradeUpClass.getTradeUp(returnValue).then((newReturnValue: any) => {
           mainWindow?.webContents.send('userEvents', [
             1,
             'itemRemoved',
             [item, newReturnValue],
           ]);
-
-        })
+        });
       });
     }
   });
@@ -465,7 +499,7 @@ async function startEvents(csgo, user) {
   csgo.on('itemChanged', (item) => {
     console.log('Item' + item.itemid + ' was changed');
     fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
-      tradeUpClass.getTradeUp(returnValue).then((newReturnValue:any) => {
+      tradeUpClass.getTradeUp(returnValue).then((newReturnValue: any) => {
         mainWindow?.webContents.send('userEvents', [
           1,
           'itemChanged',
@@ -479,7 +513,7 @@ async function startEvents(csgo, user) {
     if (!Object.keys(item).includes('casket_id')) {
       console.log('Item' + item.itemid + ' was acquired');
       fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
-        tradeUpClass.getTradeUp(returnValue).then((newReturnValue:any) => {
+        tradeUpClass.getTradeUp(returnValue).then((newReturnValue: any) => {
           mainWindow?.webContents.send('userEvents', [
             1,
             'itemAcquired',
@@ -530,8 +564,7 @@ async function startEvents(csgo, user) {
           'itemAcquired',
           [{}, newReturnValue],
         ]);
-
-      })
+      });
     });
   });
   // Retry connection
@@ -555,21 +588,31 @@ async function startEvents(csgo, user) {
 
   // Set item positions
   ipcMain.on('setItemsPositions', async (_event, dictOfItems) => {
-    await csgo._send(Language.SetItemPositions, Protos.CMsgSetItemPositions, dictOfItems)
+    await csgo._send(
+      Language.SetItemPositions,
+      Protos.CMsgSetItemPositions,
+      dictOfItems
+    );
   });
 
   // Set item positions
-  ipcMain.on('setItemEquipped', async (_event, item_id, item_name, itemClass) => {
-    item_name
+  ipcMain.on(
+    'setItemEquipped',
+    async (_event, item_id, item_name, itemClass) => {
+      item_name;
 
-
-    await csgo._send(Language.k_EMsgGCAdjustItemEquippedState, Protos.CMsgAdjustItemEquippedState, {
-      item_id: item_id,
-      new_class: itemClass,
-      new_slot: 0,
-      swap: 0
-    })
-  });
+      await csgo._send(
+        Language.k_EMsgGCAdjustItemEquippedState,
+        Protos.CMsgAdjustItemEquippedState,
+        {
+          item_id: item_id,
+          new_class: itemClass,
+          new_slot: 0,
+          swap: 0,
+        }
+      );
+    }
+  );
 
   // Remove items from storage unit
   ipcMain.on(
@@ -616,7 +659,7 @@ async function startEvents(csgo, user) {
   ipcMain.on('getCasketContents', async (event, casketID) => {
     await csgo.getCasketContents(casketID, async function (err, items) {
       fetchItemClass.convertStorageData(items).then((returnValue) => {
-        tradeUpClass.getTradeUp(returnValue).then((newReturnValue:any) => {
+        tradeUpClass.getTradeUp(returnValue).then((newReturnValue: any) => {
           event.reply('getCasketContent-reply', [1, newReturnValue]);
           console.log('Casket contains: ', newReturnValue.length);
         });
@@ -661,14 +704,14 @@ async function startEvents(csgo, user) {
 // Set dark mode
 async function darkModeSetup() {
   getValue('darkmode.hasSet').then((returnValue) => {
-    console.log('darkmodeunset',returnValue)
-    if (returnValue == false  || returnValue == undefined) {
+    console.log('darkmodeunset', returnValue);
+    if (returnValue == false || returnValue == undefined) {
       setValue('darkmode.value', true);
     }
   });
   getValue('fastmove').then((returnValue) => {
     if (returnValue == undefined) {
-      console.log('fastmove',returnValue)
+      console.log('fastmove', returnValue);
       setValue('fastmove', false);
     }
   });

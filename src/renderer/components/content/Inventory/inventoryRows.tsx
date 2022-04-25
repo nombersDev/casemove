@@ -314,7 +314,7 @@ function content() {
                         to={{
                           pathname: `https://steamcommunity.com/market/listings/730/${
                             projectRow.item_paint_wear == undefined
-                              ? projectRow.item_name
+                              ? projectRow.item_name.replaceAll('Holo/Foil', 'Holo-Foil')
                               : projectRow.item_name +
                                 ' (' +
                                 projectRow.item_wear_name +
@@ -493,7 +493,7 @@ function content() {
                                   settingsData.currencyPrice[
                                     settingsData.currency
                                   ]
-                            ) 
+                            )
                         : ''}
                     </div>
                   </div>
@@ -626,7 +626,7 @@ function content() {
 
 
               <td key={ Math.random().toString(36).substr(2, 9) } className="hidden md:px-6 py-3 whitespace-nowrap text-right text-sm font-medium"></td>
-              
+
             </tr>
           ))}
         </tbody>
