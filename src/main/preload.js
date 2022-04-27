@@ -52,11 +52,11 @@ contextBridge.exposeInMainWorld('electron', {
     tradeOrder(idsToProcess, idToUse) {
       ipcRenderer.send('processTradeOrder', idsToProcess, idToUse);
     },
-    // 
+    //
     setItemsPosition(dictToUse) {
       ipcRenderer.send('setItemsPositions', dictToUse);
     },
-    // 
+    //
     OpenContainer(listToUse) {
       ipcRenderer.send('openContainer', listToUse);
     },
@@ -153,9 +153,9 @@ contextBridge.exposeInMainWorld('electron', {
     },
 
     // Commands
-    getStorageUnitData(itemID) {
+    getStorageUnitData(itemID, storageName) {
       return new Promise((resolve) => {
-        ipcRenderer.send('getCasketContents', itemID);
+        ipcRenderer.send('getCasketContents', itemID, storageName);
 
         ipcRenderer.once('getCasketContent-reply', (event, arg) => {
           resolve(arg);

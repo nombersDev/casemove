@@ -9,11 +9,15 @@ import NotificationElement from 'renderer/components/content/shared/modals & not
 import SteamLogo from 'renderer/components/content/shared/steamLogo';
 import { filterInventorySetSort } from 'renderer/store/actions/filtersInventoryActions';
 import { setInventoryAction } from 'renderer/store/actions/inventoryActions';
-import { setCurrencyRate, setLocale, setSourceValue } from 'renderer/store/actions/settings';
+import {
+  setCurrencyRate,
+  setLocale,
+  setSourceValue,
+} from 'renderer/store/actions/settings';
 import { signIn } from 'renderer/store/actions/userStatsActions';
 import { getURL } from 'renderer/store/helpers/userStatusHelper';
 
-export default function LoginForm({ isLock, replaceLock }) {
+export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
   // Usestate
   const pricesResult = useSelector((state: any) => state.pricingReducer);
   const settingsData = useSelector((state: any) => state.settingsReducer);
@@ -47,20 +51,29 @@ export default function LoginForm({ isLock, replaceLock }) {
     setTextToDisplay(text);
     setDoShow(true);
   }
+
+  let hasChosenAccountLoginKey = false;
+  if (isLock.length == 2 && isLock[1] != undefined) {
+    hasChosenAccountLoginKey = true;
+  }
+  hasChosenAccountLoginKey;
+  isLock = isLock[0];
   async function onSubmit() {
     setLoadingButton(true);
     let responseCode = 1;
     responseCode = 1;
-    let usernameToSend = username;
-    let passwordToSend = password;
+    let usernameToSend = username as any;
+    let passwordToSend = password as any;
+    let storePasswordToSend = storePassword as any;
     if (isLock != '') {
       usernameToSend = isLock;
-      passwordToSend = '~{nA?HJjb]7hB7-';
+      passwordToSend = null;
+      storePasswordToSend = true;
     }
     const responseStatus = await window.electron.ipcRenderer.loginUser(
       usernameToSend,
       passwordToSend,
-      storePassword,
+      storePasswordToSend,
       authCode,
       sharedSecret
     );
@@ -108,6 +121,16 @@ export default function LoginForm({ isLock, replaceLock }) {
           'You were logged in but the account is currently playing elsewhere. Close the session and try again.'
         );
         break;
+      case 6:
+        openNotification(
+          false,
+          'Wrong login token',
+          'Got the wrong login token.'
+        );
+        replaceLock()
+        runDeleteUser(usernameToSend)
+
+        break;
     }
     // If success login
 
@@ -139,6 +162,7 @@ export default function LoginForm({ isLock, replaceLock }) {
         steamID: responseStatus[1][0],
         displayName: responseStatus[1][1],
         CSGOConnection: responseStatus[1][2],
+        wallet: responseStatus[1][4],
       };
       await new Promise((r) => setTimeout(r, 2500));
       try {
@@ -150,7 +174,10 @@ export default function LoginForm({ isLock, replaceLock }) {
       }
 
       dispatch(signIn(returnPackage));
-      const combined = await combineInventory(responseStatus[1][3], settingsData);
+      const combined = await combineInventory(
+        responseStatus[1][3],
+        settingsData
+      );
       dispatch(
         setInventoryAction({
           inventory: responseStatus[1][3],
@@ -212,7 +239,8 @@ export default function LoginForm({ isLock, replaceLock }) {
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
               The application needs to have an active Steam connection to manage
-              your CSGO items. You should not have any games open on the Steam account.
+              your CSGO items. You should not have any games open on the Steam
+              account.
             </p>
           </div>
           <form className="mt-8 space-y-6" action="#" method="POST">
@@ -233,100 +261,143 @@ export default function LoginForm({ isLock, replaceLock }) {
                   placeholder="Username"
                 />
               </div>
-              <div>
-                <label htmlFor="password" className="sr-only">
-                  Password
-                </label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  onChange={(e) => updatePassword(e.target.value)}
-                  autoComplete="current-password"
-                  required
-                  value={isLock == '' ? password : '~{nA?HJjb]7hB7-'}
-                  className="appearance-none dark:text-dark-white rounded-none dark:bg-dark-level-one  dark:border-opacity-50 relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900  focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                  placeholder="Password"
-                />
-              </div>
-              <div>
-                <label htmlFor="authcode" className="sr-only">
-                  Authcode
-                </label>
-                <input
-                  id="authcode"
-                  name="authcode"
-                  value={authCode}
-                  onChange={(e) => setAuthCode(e.target.value)}
-                  spellCheck={false}
-                  required
-                  className="appearance-none rounded-none dark:bg-dark-level-one dark:text-dark-white dark:border-opacity-50 relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                  placeholder="Authcode (optional)"
-                />
-              </div>
-              <div className={classNames(secretEnabled ? '' : 'hidden')}>
-                <label htmlFor="authcode" className="sr-only">
-                  SharedSecret
-                </label>
-                <input
-                  id="secret"
-                  name="secret"
-                  value={sharedSecret}
-                  onChange={(e) => setSharedSecret(e.target.value)}
-                  spellCheck={false}
-                  required
-                  className="appearance-none rounded-none dark:bg-dark-level-one dark:text-dark-white dark:border-opacity-50 relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                  placeholder="Shared Secret (If you don't know what this is, leave it empty.)"
-                />
-              </div>
-            </div>
+              {!hasChosenAccountLoginKey ? (
+                <div>
+                  <label htmlFor="password" className="sr-only">
+                    Password
+                  </label>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    onChange={(e) => updatePassword(e.target.value)}
+                    autoComplete="current-password"
+                    required
+                    value={isLock == '' ? password : '~{nA?HJjb]7hB7-'}
+                    className="appearance-none dark:text-dark-white rounded-none dark:bg-dark-level-one  dark:border-opacity-50 relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900  focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                    placeholder="Password"
+                  />
+                </div>
+              ) : (
+                ''
+              )}
+              {!hasChosenAccountLoginKey ? (
+                <div>
+                  <label htmlFor="authcode" className="sr-only">
+                    Steam Guard
+                  </label>
+                  <input
+                    id="authcode"
+                    name="authcode"
+                    value={authCode}
+                    onChange={(e) => setAuthCode(e.target.value)}
+                    spellCheck={false}
+                    required
+                    className="appearance-none rounded-none dark:bg-dark-level-one dark:text-dark-white dark:border-opacity-50 relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                    placeholder="Authcode (optional)"
+                  />
+                </div>
+              ) : (
+                <div className="pt-1 flex items-center">
+                  <LockClosedIcon className="h-4 mr-1 w-4 dark:text-gray-500" />
+                  <span className="dark:text-gray-500 sm:text-sm mt-0.5 ">
+                    Password and Steam Guard code not required
+                  </span>
+                </div>
+              )}
 
+              {!hasChosenAccountLoginKey ? (
+                <div className={classNames(secretEnabled ? '' : 'hidden')}>
+                  <label htmlFor="secret" className="sr-only">
+                    SharedSecret
+                  </label>
+                  <input
+                    id="secret"
+                    name="secret"
+                    value={sharedSecret}
+                    onChange={(e) => setSharedSecret(e.target.value)}
+                    spellCheck={false}
+                    required
+                    className="appearance-none rounded-none dark:bg-dark-level-one dark:text-dark-white dark:border-opacity-50 relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                    placeholder="Shared Secret (If you don't know what this is, leave it empty.)"
+                  />
+                </div>
+              ) : (
+                ''
+              )}
+            </div>
+            {!hasChosenAccountLoginKey ?
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                {/*
+                {isLock == '' ? (
+                  <input
+                    id="remember-me"
+                    name="remember-me"
+                    type="checkbox"
+                    defaultChecked={storePassword}
+                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                    onChange={() => setStorePassword(!storePassword)}
+                  />
+                ) : !hasChosenAccountLoginKey ? (
+                  <input
+                    id="remember-me"
+                    name="remember-me"
+                    type="checkbox"
+                    checked={true}
+                    className=" pointer-events-none h-4 w-4 text-indigo-600 focus:ring-indigo-500 dark:text-opacity-50 border-gray-300 rounded"
+                    onChange={() => setStorePassword(!storePassword)}
+                  />
+                ) : (
+                  ''
+                )}
 
-        ```
-        <html class="h-full bg-white">
-        <body class="h-full">
-        ``` */}
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  defaultChecked={storePassword}
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                  onChange={() => setStorePassword(!storePassword)}
-                />
-
-                <label
-                  htmlFor="remember-me"
-                  className="ml-2 block text-sm text-gray-900 dark:text-dark-white"
-                >
-                  Remember for later
-                </label>
+                {isLock == '' ? (
+                  <label
+                    htmlFor="remember-me"
+                    className="ml-2 block text-sm text-gray-900 dark:text-dark-white"
+                  >
+                    Remember for later
+                  </label>
+                ) : !hasChosenAccountLoginKey ? (
+                  <label
+                    htmlFor="remember-me"
+                    className="ml-2 pointer-events-none block text-sm text-gray-900 dark:text-opacity-50 dark:text-dark-white"
+                  >
+                    Remember for later
+                  </label>
+                ) : (
+                  ''
+                )}
               </div>
-
-              <div className="flex items-center">
-                <label
-                  htmlFor="sharedSecret"
-                  className="mr-2 block text-sm text-gray-900 dark:text-dark-white"
-                >
-                  Show secret field
-                </label>
-                <input
-                  id="sharedSecret"
-                  name="sharedSecret"
-                  type="checkbox"
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                  onChange={() => setSecretEnabled(!secretEnabled)}
-                />
-              </div>
-            </div>
+              {!hasChosenAccountLoginKey ? (
+                <div className="flex items-center">
+                  <label
+                    htmlFor="sharedSecret"
+                    className="mr-2 block text-sm text-gray-900 dark:text-dark-white"
+                  >
+                    Show secret field
+                  </label>
+                  <input
+                    id="sharedSecret"
+                    name="sharedSecret"
+                    type="checkbox"
+                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                    onChange={() => setSecretEnabled(!secretEnabled)}
+                  />
+                </div>
+              ) : (
+                ''
+              )}
+            </div> : '' }
 
             <div>
               <button
-                className={classNames(settingsData.darkmode ? 'focus:bg-indigo-700' : 'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500', 'group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 ')}
-
+                className={classNames(
+                  settingsData.darkmode
+                    ? 'focus:bg-indigo-700'
+                    : 'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500',
+                  'group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 '
+                )}
                 onClick={() => onSubmit()}
                 type="button"
               >

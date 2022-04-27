@@ -324,7 +324,6 @@ class items {
 
     // Main checks
     // Get first string
-
     if (defIndexresult['item_name'] !== undefined) {
       var baseOne = this.getTranslation(defIndexresult['item_name']);
     } else if (defIndexresult['prefab'] !== undefined) {

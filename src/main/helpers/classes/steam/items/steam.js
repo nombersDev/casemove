@@ -1,4 +1,4 @@
-const { getUsername, setUsername } = require('../store/settings');
+const { getUsername, setUsername } = require('../settings');
 
 async function isLoggedInElsewhere(userSession) {
   return new Promise((resolve) => {

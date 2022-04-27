@@ -132,8 +132,9 @@ export async function getStorageUnitData(
   let newStorageData = [] as any;
   let productsToGet = [] as any;
   let storageResult = await window.electron.ipcRenderer.getStorageUnitData(
-    storageID, settings
+    storageID, storageName
   );
+  console.log(storageResult[1])
   storageResult = storageResult[1];
 
   storageResult = await combineInventory(storageResult, settings);

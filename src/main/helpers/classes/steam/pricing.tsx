@@ -163,5 +163,6 @@ class runItems {
 module.exports = {
   runItems,
   pricingEmitter,
+  currencyCodes
 };
-export { runItems, pricingEmitter };
+export { runItems, pricingEmitter, currencyCodes };

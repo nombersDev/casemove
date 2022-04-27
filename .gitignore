@@ -30,3 +30,10 @@ npm-debug.log.*
 *.scss.d.ts
 .DS_Store
 .DS_Store
+src/main/helpers/classes/dev/*
+src/renderer/views/purchase/*
+src/renderer/store/reducer/modalPurchase.tsx
+src/renderer/store/reducer/purchase.tsx
+src/renderer/components/content/shared/modals & notifcations/modalPurchase.tsx
+src/renderer/store/actions/modalPurchase Actions.tsx
+src/renderer/store/actions/purchaseActions.tsx
