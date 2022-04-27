@@ -36,10 +36,15 @@ import { handleUserEvent } from './store/handleMessage';
 import Logo from './components/content/shared/iconsLogo/logo 2';
 import ToContent from './components/content/storageUnits/to/toHolder';
 import { classNames } from './components/content/shared/inventoryFunctions';
-import { filterInventorySetSort, inventoryAddCategoryFilter, inventoryAddRarityFilter } from './store/actions/filtersInventoryActions';
+import {
+  filterInventorySetSort,
+  inventoryAddCategoryFilter,
+  inventoryAddRarityFilter,
+} from './store/actions/filtersInventoryActions';
 import settingsPage from './views/settings/settings';
 import {
   setColumns,
+  setCurrencyRate,
   setDarkMode,
   setFastMove,
   setLocale,
@@ -69,10 +74,8 @@ const navigation = [
     current: false,
   },
   { name: 'Inventory', href: '/inventory', icon: ArchiveIcon, current: false },
-  { name: 'Trade up', href: '/tradeup', icon: BeakerIcon, current: false }
+  { name: 'Trade up', href: '/tradeup', icon: BeakerIcon, current: false },
 ];
-// { name: 'Trade up', href: '/tradeup', icon: BeakerIcon, current: false }
-// { name: 'Trade-Up', href: '/inventory', icon: BeakerIcon, current: false },
 
 function AppContent() {
   SearchIcon;
@@ -104,9 +107,9 @@ function AppContent() {
   );
 
   if (settingsData.darkmode) {
-    document.documentElement.classList.add('dark')
+    document.documentElement.classList.add('dark');
   } else {
-    document.documentElement.classList.remove('dark')
+    document.documentElement.classList.remove('dark');
   }
 
   function updateAutomation(itemHref) {
@@ -118,7 +121,7 @@ function AppContent() {
     setSideMenuOption(location.pathname);
   }
 
-  console.log(currentSideMenuOption)
+  console.log(currentSideMenuOption);
 
   // Log out of session
   const dispatch = useDispatch();
@@ -145,6 +148,7 @@ function AppContent() {
       );
     }
   }
+
   // First time setup
   async function setFirstTimeSettings() {
     if (settingsData.currencyPrice == {} || settingsData.source == undefined) {
@@ -153,6 +157,7 @@ function AppContent() {
         console.log('OS', returnValue);
         dispatch(setOS(returnValue));
       });
+
       // wear value
       await window.electron.store.get('columns').then((returnValue) => {
         console.log('columns', returnValue);
@@ -160,6 +165,7 @@ function AppContent() {
           dispatch(setColumns(returnValue));
         }
       });
+
       // Darkmode
       await window.electron.store.get('darkmode.value').then((returnValue) => {
         console.log('darkmode.value', returnValue);
@@ -168,6 +174,13 @@ function AppContent() {
         }
         dispatch(setDarkMode(returnValue));
       });
+      // Currency rate
+      await window.electron.ipcRenderer
+        .getCurrencyRate()
+        .then((returnValue) => {
+          console.log('currencyrate', returnValue);
+          dispatch(setCurrencyRate(returnValue[0], returnValue[1]));
+        });
       // Fastmove
       console.log('Getting settings');
       let storedFastMove = await window.electron.store.get('fastmove');
@@ -197,10 +210,12 @@ function AppContent() {
 
   // Forward user event to Store
   if (isListening == false) {
+
     setFirstTimeSettings();
     window.electron.ipcRenderer.userEvents().then((messageValue) => {
       handleSubMessage(messageValue, settingsData);
     });
+
     setIsListening(true);
   }
 
@@ -210,7 +225,10 @@ function AppContent() {
       setIsListening(false);
       return;
     }
-    const actionToTake = (await handleUserEvent(messageValue, settingsData)) as any;
+    const actionToTake = (await handleUserEvent(
+      messageValue,
+      settingsData
+    )) as any;
     dispatch(actionToTake);
     if (messageValue[0] == 1) {
       await handleFilterData(actionToTake.payload.combinedInventory);
@@ -249,23 +267,22 @@ function AppContent() {
   if (firstRun == false) {
     setFirstRun(true);
     window.electron.ipcRenderer.on('pricing', (message) => {
-      console.log(message)
+      console.log(message);
       dispatch(pricing_addPrice(message[0]));
     });
   }
 
   // Trade up
   async function handleTradeUp() {
-    inventory.inventory.forEach(element => {
+    inventory.inventory.forEach((element) => {
       if (!tradeUpData.inventoryFirst.includes(element.item_id)) {
-        dispatch(setTradeFoundMatch(element))
+        dispatch(setTradeFoundMatch(element));
       }
-    })
+    });
   }
   if (tradeUpData.inventoryFirst.length != 0) {
-    handleTradeUp()
+    handleTradeUp();
   }
-
 
   return (
     <>
@@ -279,8 +296,13 @@ function AppContent() {
       */}
 
       <TradeResultModal />
-        {settingsData.os != 'win32' ? '' : <TitleBarWindows />}
-      <div className={classNames(settingsData.os == 'win32' ? 'pt-7' : '', "min-h-full dark:bg-dark-level-one h-screen")}>
+      {settingsData.os != 'win32' ? '' : <TitleBarWindows />}
+      <div
+        className={classNames(
+          settingsData.os == 'win32' ? 'pt-7' : '',
+          'min-h-full dark:bg-dark-level-one h-screen'
+        )}
+      >
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
             as="div"
@@ -331,7 +353,12 @@ function AppContent() {
                     </button>
                   </div>
                 </Transition.Child>
-                <div className={classNames(settingsData.os == 'win32' ? 'pt-7' : '', "flex-shrink-0 flex items-center px-4")}>
+                <div
+                  className={classNames(
+                    settingsData.os == 'win32' ? 'pt-7' : '',
+                    'flex-shrink-0 flex items-center px-4'
+                  )}
+                >
                   <Logo />
                   <span className="">{shouldUpdate}</span>
                 </div>
@@ -381,7 +408,6 @@ function AppContent() {
                           <a
                             key={team.name}
                             href={team.href}
-
                             className="group flex items-center px-3 py-2 text-base leading-5 font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-50"
                           >
                             <span
@@ -408,8 +434,12 @@ function AppContent() {
 
         {/* Static sidebar for desktop */}
         <div className="hidden lg:flex lg:flex-col dark:bg-dark-level-two dark:border-opacity-50 lg:w-64 lg:fixed lg:inset-y-0 lg:border-r lg:border-gray-200 lg:pt-5 lg:pb-4 lg:bg-gray-100">
-
-          <div className={classNames(settingsData.os == 'win32' ? 'pt-7' : '', "flex items-center flex-shrink-0 px-6")}>
+          <div
+            className={classNames(
+              settingsData.os == 'win32' ? 'pt-7' : '',
+              'flex items-center flex-shrink-0 px-6'
+            )}
+          >
             <Logo />
           </div>
           {/* Sidebar component, swap this element with another sidebar if you like */}
@@ -447,7 +477,7 @@ function AppContent() {
                           {userDetails.displayName}
                         </span>
                         <span className="text-xs font-medium text-gray-500 group-hover:text-gray-500">
-                          CSGO Connection:{' '}
+
                           <span
                             className={classNames(
                               userDetails.CSGOConnection
@@ -455,8 +485,19 @@ function AppContent() {
                                 : 'text-red-400',
                               'text-xs font-medium'
                             )}
-                          >
-                            {userDetails.CSGOConnection ? 'Online' : 'Offline'}
+                          ><div className='flex justify-between'>
+                            <div>
+                            {userDetails.CSGOConnection ? 'CSGO Online' : 'CSGO Offline'}
+                            </div>
+
+                            </div>
+                            <div className='text-gray-500'>
+                            {new Intl.NumberFormat(settingsData.locale, {
+                  style: 'currency',
+                  currency: userDetails.walletBalance.currency || settingsData.currency,
+                }).format(
+                  userDetails.walletBalance.balance || 0)}
+                            </div>
                           </span>
                         </span>
                       </span>
@@ -503,8 +544,8 @@ function AppContent() {
                           onClick={() => logOut()}
                           className={classNames(
                             active
-                            ? 'bg-gray-100 text-gray-900 dark:bg-dark-level-three dark:text-dark-white'
-                            : 'text-gray-700 dark:text-dark-white',
+                              ? 'bg-gray-100 text-gray-900 dark:bg-dark-level-three dark:text-dark-white'
+                              : 'text-gray-700 dark:text-dark-white',
                             'block px-4 py-2 text-sm'
                           )}
                         >
@@ -598,82 +639,111 @@ function AppContent() {
                   </Link>
                 ))}
               </div>
-                {!currentSideMenuOption.includes("/tradeup") ?
-              <div className="mt-8">
-                {/* Secondary navigation */}
-                <h3
-                  className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider"
-                  id="desktop-teams-headline"
-                >
-                  Storage categories
-                </h3>
-                <div
-                  className="mt-1 space-y-1"
-                  role="group"
-                  aria-labelledby="desktop-teams-headline"
-                >
-                  {itemCategories.map((team) => (
-                    <div className={classNames(
-                      filterDetails.categoryFilter?.includes(team.bgColorClass) ? 'bg-gray-200 dark:bg-dark-level-three' : '',"w-full")}>
-
-                    <button
-                      key={team.name}
-                      onClick={() => dispatch(inventoryAddCategoryFilter(team.bgColorClass))}
-                      className={classNames(userDetails.isLoggedIn == false ? 'pointer-events-none' : '',
-                        "group flex items-center px-3 py-2 dark:text-dark-white text-sm font-medium text-gray-700 rounded-md"
-                      )}
-
-                    >
-                      <span
+              {!currentSideMenuOption.includes('/tradeup') ? (
+                <div className="mt-8">
+                  {/* Secondary navigation */}
+                  <h3
+                    className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                    id="desktop-teams-headline"
+                  >
+                    Storage categories
+                  </h3>
+                  <div
+                    className="mt-1 space-y-1"
+                    role="group"
+                    aria-labelledby="desktop-teams-headline"
+                  >
+                    {itemCategories.map((team) => (
+                      <div
                         className={classNames(
-                          team.bgColorClass,
-                          'w-2.5 h-2.5 mr-4 rounded-full'
+                          filterDetails.categoryFilter?.includes(
+                            team.bgColorClass
+                          )
+                            ? 'bg-gray-200 dark:bg-dark-level-three'
+                            : '',
+                          'w-full'
                         )}
-                        aria-hidden="true"
-                      />
-                      <span className="truncate">{team.name}</span>
-                    </button>
-                    </div>
-                  ))}
+                      >
+                        <button
+                          key={team.name}
+                          onClick={() =>
+                            dispatch(
+                              inventoryAddCategoryFilter(team.bgColorClass)
+                            )
+                          }
+                          className={classNames(
+                            userDetails.isLoggedIn == false
+                              ? 'pointer-events-none'
+                              : '',
+                            'group flex items-center px-3 py-2 dark:text-dark-white text-sm font-medium text-gray-700 rounded-md'
+                          )}
+                        >
+                          <span
+                            className={classNames(
+                              team.bgColorClass,
+                              'w-2.5 h-2.5 mr-4 rounded-full'
+                            )}
+                            aria-hidden="true"
+                          />
+                          <span className="truncate">{team.name}</span>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>: <div className="mt-8">
-                {/* Secondary navigation */}
-                <h3
-                  className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider"
-                  id="desktop-teams-headline"
-                >
-                  RARITY
-                </h3>
-                <div
-                  className="mt-1 space-y-1"
-                  role="group"
-                  aria-labelledby="desktop-teams-headline"
-                >
-                  {itemRarities.map((rarity) => (
-                    <div className={classNames(
-                      filterDetails.rarityFilter?.includes(rarity.bgColorClass) ? 'bg-gray-200 dark:bg-dark-level-three' : '',"w-full")}>
-
-                    <button
-                      key={rarity.value}
-                      onClick={() => dispatch(inventoryAddRarityFilter(rarity.bgColorClass))}
-                      className={classNames(userDetails.isLoggedIn == false ? 'pointer-events-none' : '',
-                        "group flex items-center px-3 py-2 dark:text-dark-white text-sm font-medium text-gray-700 rounded-md"
-                      )}
-
-                    >
-                      <span
+              ) : (
+                <div className="mt-8">
+                  {/* Secondary navigation */}
+                  <h3
+                    className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                    id="desktop-teams-headline"
+                  >
+                    RARITY
+                  </h3>
+                  <div
+                    className="mt-1 space-y-1"
+                    role="group"
+                    aria-labelledby="desktop-teams-headline"
+                  >
+                    {itemRarities.map((rarity) => (
+                      <div
                         className={classNames(
-                          rarity.bgColorClass,
-                          'w-2.5 h-2.5 mr-4 rounded-full'
+                          filterDetails.rarityFilter?.includes(
+                            rarity.bgColorClass
+                          )
+                            ? 'bg-gray-200 dark:bg-dark-level-three'
+                            : '',
+                          'w-full'
                         )}
-                        aria-hidden="true"
-                      />
-                      <span className="truncate">{rarity.value}</span>
-                    </button>
-                    </div>
-                  ))}
+                      >
+                        <button
+                          key={rarity.value}
+                          onClick={() =>
+                            dispatch(
+                              inventoryAddRarityFilter(rarity.bgColorClass)
+                            )
+                          }
+                          className={classNames(
+                            userDetails.isLoggedIn == false
+                              ? 'pointer-events-none'
+                              : '',
+                            'group flex items-center px-3 py-2 dark:text-dark-white text-sm font-medium text-gray-700 rounded-md'
+                          )}
+                        >
+                          <span
+                            className={classNames(
+                              rarity.bgColorClass,
+                              'w-2.5 h-2.5 mr-4 rounded-full'
+                            )}
+                            aria-hidden="true"
+                          />
+                          <span className="truncate">{rarity.value}</span>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div> }
+              )}
             </nav>
           </div>
 

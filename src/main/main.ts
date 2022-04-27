@@ -1,42 +1,36 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import {
-  app,
-  BrowserWindow,
-  shell,
-  ipcMain,
-  session,
-} from 'electron';
+import { app, BrowserWindow, shell, ipcMain, session } from 'electron';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import { fetchItems } from './steam/getCommands';
+import { fetchItems } from './helpers/classes/steam/items/getCommands';
 import os from 'os';
 import SteamUser from 'steam-user';
 import GlobalOffensive from 'globaloffensive';
-import { isLoggedInElsewhere } from './steam/steam';
+import { isLoggedInElsewhere } from './helpers/classes/steam/items/steam';
 import { getGithubVersion } from './scripts/versionHelper';
 import * as fs from 'fs';
-import SteamTotp from 'steam-totp';
+import { login } from './helpers/classes/steam/steam';
 import {
   storeUserAccount,
-  getLoginDetails,
   deleteUserData,
   getValue,
+  storeLoginKey,
   setValue,
   setAccountPosition,
-} from './store/settings';
-import { pricingEmitter, runItems } from './store/pricing';
-import { currency } from './store/currency';
-import { tradeUps } from './store/tradeup';
-
-var ByteBuffer = require("bytebuffer");
+} from './helpers/classes/steam/settings';
+import { pricingEmitter, runItems, currencyCodes } from './helpers/classes/steam/pricing';
+import { currency } from './helpers/classes/steam/currency';
+import { tradeUps } from './helpers/classes/steam/tradeup';
+// Define helpers
+var ByteBuffer = require('bytebuffer');
 const Protos = require('globaloffensive/protobufs/generated/_load.js');
 const Language = require('globaloffensive/language.js');
 const currencyClass = new currency();
-
 let tradeUpClass = new tradeUps();
 
+// Electron stuff
 let mainWindow: BrowserWindow | null = null;
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
@@ -133,9 +127,7 @@ const createWindow = async () => {
   // Open urls in the user's browser
   mainWindow.webContents.on('new-window', (event, url) => {
     event.preventDefault();
-    shell.openExternal(
-      url
-    );
+    shell.openExternal(url);
   });
 
   if (process.platform == 'linux') {
@@ -263,48 +255,115 @@ ipcMain.on('needUpdate', async (event) => {
 // Return 2 = Steam Guard
 // Return 3 = Steam Guard wrong
 // Return 4 = Wrong password
-// Return 5 = Playing elsewhere
+// Return 5 = Unknown
+// Return 6 = Error with loginkey
 ipcMain.on(
   'login',
   async (
     event,
     username,
-    password,
+    password = null,
     shouldRemember,
-    authcode = null,
+    steamGuard = null,
     secretKey = null
   ) => {
-    // Conditional check with random string
-    if (password == '~{nA?HJjb]7hB7-') {
-      let safeDetails = await getLoginDetails(username);
-      password = safeDetails.password;
-      if (safeDetails.secretKey != undefined) {
-        secretKey = safeDetails.secretKey;
-      }
-    }
-
     let user = new SteamUser();
     let csgo = new GlobalOffensive(user);
 
-    let logInOptions = {
-      accountName: username,
-      password: password,
-      twoFactorCode: undefined,
-    };
-    if (secretKey != null) {
-      logInOptions = {
-        accountName: username,
-        password: password,
-        twoFactorCode: SteamTotp.generateAuthCode(secretKey),
-      };
-    }
 
-    if (authcode != null) {
-      logInOptions = {
-        accountName: username,
-        password: password,
-        twoFactorCode: authcode,
-      };
+    // Success
+    user.once('loggedOn', () => {
+      user.once('accountInfo', (displayName) => {
+        console.log('Logged into Steam as ' + displayName);
+        isLoggedInElsewhere(user).then((returnValue) => {
+          if (returnValue) {
+            cancelLogin(user)
+            event.reply('login-reply', [5]);
+          } else {
+            async function gameCoordinate(resolve: any = null) {
+              csgo.once('connectedToGC', () => {
+                if (resolve) {
+                  resolve('GC');
+                }
+                console.log('Connected to GC!');
+                if (csgo.haveGCSession) {
+                  console.log('Have Session!');
+                  fetchItemClass
+                    .convertInventory(csgo.inventory)
+                    .then((returnValue) => {
+                      tradeUpClass
+                        .getTradeUp(returnValue)
+                        .then((newReturnValue: any) => {
+                          let walletToSend = user.wallet
+                          walletToSend.currency = currencyCodes?.[walletToSend.currency]
+                          const returnPackage = [
+                            user.logOnResult.client_supplied_steamid,
+                            displayName,
+                            csgo.haveGCSession,
+                            newReturnValue,
+                            walletToSend,
+                          ];
+                          startEvents(csgo, user);
+                          if (shouldRemember) {
+                            storeUserAccount(
+                              username,
+                              displayName,
+                              password,
+                              user.logOnResult.client_supplied_steamid,
+                              secretKey
+                            );
+                          }
+
+                          event.reply('login-reply', [1, returnPackage]);
+                        });
+                    });
+                }
+              });
+            }
+
+            // // Create a timeout race to catch an infinite loading error in case the Steam account hasnt added the CSGO license
+            // Run the normal version
+            startGameCoordinator();
+            let GCResponse = new Promise((resolve) => {
+              gameCoordinate(resolve);
+            });
+            // Run the timeout
+            let timeout = new Promise((resolve, _reject) => {
+              setTimeout(resolve, 10000, 'time');
+            });
+
+            // Race the two
+            Promise.race([timeout, GCResponse]).then((value) => {
+              if (value == 'time') {
+                console.log(
+                  'GC didnt start in time, adding CSGO to the library and retrying.'
+                );
+                user.requestFreeLicense(
+                  [730],
+                  function (err, packageIds, appIds) {
+                    if (err) {
+                      console.log(err);
+                      event.reply('login-reply', [5]);
+                    }
+                    console.log('Granted package: ', packageIds);
+                    console.log('Granted App: ', appIds);
+                    startGameCoordinator();
+                    // gameCoordinate();
+                  }
+                );
+              }
+            });
+          }
+        });
+      });
+    });
+
+    // Should remember
+    if (shouldRemember) {
+      user.once('loginKey', function(key) {
+        storeLoginKey(username, key)
+
+      })
     }
 
     // Steam guard
@@ -313,64 +372,40 @@ ipcMain.on(
       callback;
       if (lastCodeWrong) {
         console.log('Last code wrong, try again!');
+        cancelLogin(user)
         event.reply('login-reply', [3]);
       } else {
+        cancelLogin(user)
         event.reply('login-reply', [2]);
       }
     });
 
-    // Success
-    user.once('loggedOn', () => {
-      user.on('accountInfo', (displayName) => {
-        console.log('Logged into Steam as ' + displayName);
-        isLoggedInElsewhere(user).then((returnValue) => {
-          if (returnValue) {
-            event.reply('login-reply', [5]);
-          } else {
-            user.gamesPlayed([]);
-            user.gamesPlayed([730]);
-            csgo.once('connectedToGC', () => {
-              console.log('Connected to GC!');
-              if (csgo.haveGCSession) {
-                console.log('Have Session!');
-                fetchItemClass
-                  .convertInventory(csgo.inventory)
-                  .then((returnValue) => {
-                    tradeUpClass.getTradeUp(returnValue).then((newReturnValue:any) => {
-                      const returnPackage = [
-                        user.logOnResult.client_supplied_steamid,
-                        displayName,
-                        csgo.haveGCSession,
-                        newReturnValue,
-                      ];
-                      startEvents(csgo, user);
-                      if (shouldRemember) {
-                        storeUserAccount(
-                          username,
-                          displayName,
-                          password,
-                          user.logOnResult.client_supplied_steamid,
-                          secretKey
-                        );
-                      }
-
-                      event.reply('login-reply', [1, returnPackage]);
-                    });
-
-                  });
-              }
-            });
-          }
-        });
-      });
-    });
-    user.once('error', (error) => {
-      event.reply('login-reply', [4, error]);
+    // Default error
+    user.once('error', (_error) => {
+      cancelLogin(user)
     });
 
-    user.logOn(logInOptions);
+
+    // Login
+    let loginClass = new login()
+    loginClass.mainLogin(user, username, shouldRemember, password, steamGuard, secretKey).then((returnValue) => {
+      event.reply('login-reply', returnValue);
+    })
+    // Start the game coordinator for CSGO
+    async function startGameCoordinator() {
+      user.gamesPlayed([]);
+      user.gamesPlayed([730]);
+    }
   }
 );
+
+async function cancelLogin(user) {
+  user.removeAllListeners('loggedOn');
+  user.removeAllListeners('loginKey');
+  user.removeAllListeners('steamGuard');
+  user.removeAllListeners('error');
+}
+
 
 // Adds events listeners the user
 // Forward Steam notifications to renderer
@@ -393,56 +428,43 @@ async function startEvents(csgo, user) {
   });
   ipcMain.on('processTradeOrder', async (_event, idsToProcess, rarityToUse) => {
     const rarObject = {
-      0: "00000A00",
-      1: "01000A00",
-      2: "02000A00",
-      3: "03000A00",
-      4: "04000A00",
+      0: '00000A00',
+      1: '01000A00',
+      2: '02000A00',
+      3: '03000A00',
+      4: '04000A00',
       10: '0a000a00',
       11: '0b000a00',
       12: '0c000a00',
       13: '0d000a00',
       14: '0e000a00',
     };
-    let idsToUse = [] as any
-    idsToProcess.forEach(element => {
-      idsToUse.push(parseInt(element))
+    let idsToUse = [] as any;
+    idsToProcess.forEach((element) => {
+      idsToUse.push(parseInt(element));
     });
-    let tradeupPayLoad = new ByteBuffer(1+2+idsToUse.length*8, ByteBuffer.LITTLE_ENDIAN);
-    tradeupPayLoad.append(rarObject[rarityToUse],'hex');
-    for( let id of idsToUse){
+    let tradeupPayLoad = new ByteBuffer(
+      1 + 2 + idsToUse.length * 8,
+      ByteBuffer.LITTLE_ENDIAN
+    );
+    tradeupPayLoad.append(rarObject[rarityToUse], 'hex');
+    for (let id of idsToUse) {
       tradeupPayLoad.writeUint64(id);
     }
-    await csgo._send(Language.Craft, null, tradeupPayLoad)
-
-
+    await csgo._send(Language.Craft, null, tradeupPayLoad);
   });
 
   // Open container
   ipcMain.on('openContainer', async (_event, itemsToOpen) => {
     let containerPayload = new ByteBuffer(16, ByteBuffer.LITTLE_ENDIAN);
-    containerPayload.append('0000000000000000','hex');
-    for( let id of itemsToOpen){
+    containerPayload.append('0000000000000000', 'hex');
+    for (let id of itemsToOpen) {
       containerPayload.writeUint64(parseInt(id));
     }
-    await csgo._send(Language.UnlockCrate, null, containerPayload)
+    await csgo._send(Language.UnlockCrate, null, containerPayload);
   });
 
-  // Equipped = 1059
-  //
 
-  ipcMain.on('getCurrency', async (event) => {
-    getValue('pricing.currency').then((returnValue) => {
-      currencyClass.getRate(returnValue).then((response) => {
-        console.log(returnValue, response);
-        event.reply('getCurrency-reply', [returnValue, response]);
-      });
-    });
-  });
-
-  // csgo.on('debug', (item) => {
-  //   console.log(item)
-  // });
 
   // CSGO listeners
   // Inventory events
@@ -450,14 +472,13 @@ async function startEvents(csgo, user) {
     if (!Object.keys(item).includes('casket_id')) {
       console.log('Item' + item.itemid + ' was removed');
       fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
-        tradeUpClass.getTradeUp(returnValue).then((newReturnValue:any) => {
+        tradeUpClass.getTradeUp(returnValue).then((newReturnValue: any) => {
           mainWindow?.webContents.send('userEvents', [
             1,
             'itemRemoved',
             [item, newReturnValue],
           ]);
-
-        })
+        });
       });
     }
   });
@@ -465,7 +486,7 @@ async function startEvents(csgo, user) {
   csgo.on('itemChanged', (item) => {
     console.log('Item' + item.itemid + ' was changed');
     fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
-      tradeUpClass.getTradeUp(returnValue).then((newReturnValue:any) => {
+      tradeUpClass.getTradeUp(returnValue).then((newReturnValue: any) => {
         mainWindow?.webContents.send('userEvents', [
           1,
           'itemChanged',
@@ -479,7 +500,7 @@ async function startEvents(csgo, user) {
     if (!Object.keys(item).includes('casket_id')) {
       console.log('Item' + item.itemid + ' was acquired');
       fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
-        tradeUpClass.getTradeUp(returnValue).then((newReturnValue:any) => {
+        tradeUpClass.getTradeUp(returnValue).then((newReturnValue: any) => {
           mainWindow?.webContents.send('userEvents', [
             1,
             'itemAcquired',
@@ -520,6 +541,11 @@ async function startEvents(csgo, user) {
   user.on('loggedOn', () => {
     mainWindow?.webContents.send('userEvents', [2, 'reconnected']);
   });
+  user.on('wallet', () => {
+    let walletToSend = user.wallet
+    walletToSend.currency = currencyCodes?.[walletToSend.currency]
+    mainWindow?.webContents.send('userEvents', [4, walletToSend]);
+  });
 
   // Get commands from Renderer
   ipcMain.on('refreshInventory', async () => {
@@ -530,8 +556,7 @@ async function startEvents(csgo, user) {
           'itemAcquired',
           [{}, newReturnValue],
         ]);
-
-      })
+      });
     });
   });
   // Retry connection
@@ -555,21 +580,31 @@ async function startEvents(csgo, user) {
 
   // Set item positions
   ipcMain.on('setItemsPositions', async (_event, dictOfItems) => {
-    await csgo._send(Language.SetItemPositions, Protos.CMsgSetItemPositions, dictOfItems)
+    await csgo._send(
+      Language.SetItemPositions,
+      Protos.CMsgSetItemPositions,
+      dictOfItems
+    );
   });
 
   // Set item positions
-  ipcMain.on('setItemEquipped', async (_event, item_id, item_name, itemClass) => {
-    item_name
+  ipcMain.on(
+    'setItemEquipped',
+    async (_event, item_id, item_name, itemClass) => {
+      item_name;
 
-
-    await csgo._send(Language.k_EMsgGCAdjustItemEquippedState, Protos.CMsgAdjustItemEquippedState, {
-      item_id: item_id,
-      new_class: itemClass,
-      new_slot: 0,
-      swap: 0
-    })
-  });
+      await csgo._send(
+        Language.k_EMsgGCAdjustItemEquippedState,
+        Protos.CMsgAdjustItemEquippedState,
+        {
+          item_id: item_id,
+          new_class: itemClass,
+          new_slot: 0,
+          swap: 0,
+        }
+      );
+    }
+  );
 
   // Remove items from storage unit
   ipcMain.on(
@@ -593,6 +628,8 @@ async function startEvents(csgo, user) {
     }
   );
 
+
+
   // Move to Storage Unit
   ipcMain.on('moveToStorageUnit', async (event, casketID, itemID, fastMode) => {
     csgo.addToCasket(casketID, itemID);
@@ -613,10 +650,10 @@ async function startEvents(csgo, user) {
   });
 
   // Get storage unit contents
-  ipcMain.on('getCasketContents', async (event, casketID) => {
+  ipcMain.on('getCasketContents', async (event, casketID, _casketName) => {
     await csgo.getCasketContents(casketID, async function (err, items) {
       fetchItemClass.convertStorageData(items).then((returnValue) => {
-        tradeUpClass.getTradeUp(returnValue).then((newReturnValue:any) => {
+        tradeUpClass.getTradeUp(returnValue).then((newReturnValue: any) => {
           event.reply('getCasketContent-reply', [1, newReturnValue]);
           console.log('Casket contains: ', newReturnValue.length);
         });
@@ -633,9 +670,7 @@ async function startEvents(csgo, user) {
   });
 
   async function clearForNewSession() {
-    // Remove for pricing
-    pricingEmitter.removeAllListeners('result');
-
+    console.log('Signout');
     // Remove for CSGO
     csgo.removeAllListeners('itemRemoved');
     csgo.removeAllListeners('itemChanged');
@@ -643,6 +678,8 @@ async function startEvents(csgo, user) {
     csgo.removeAllListeners('connectedToGC');
     csgo.removeAllListeners('disconnectedFromGC');
 
+    user.logOff();
+    pricingEmitter.removeAllListeners('result');
     // Remove for user
     user.removeAllListeners('error');
     user.removeAllListeners('disconnected');
@@ -656,19 +693,27 @@ async function startEvents(csgo, user) {
     ipcMain.removeAllListeners('signOut');
   }
 }
-
+// Get currency
+ipcMain.on('getCurrency', async (event) => {
+  getValue('pricing.currency').then((returnValue) => {
+    currencyClass.getRate(returnValue).then((response) => {
+      console.log(returnValue, response);
+      event.reply('getCurrency-reply', [returnValue, response]);
+    });
+  });
+});
 // setValue('darkmode.hasSet', false)
 // Set dark mode
 async function darkModeSetup() {
   getValue('darkmode.hasSet').then((returnValue) => {
-    console.log('darkmodeunset',returnValue)
-    if (returnValue == false  || returnValue == undefined) {
+    console.log('darkmodeunset', returnValue);
+    if (returnValue == false || returnValue == undefined) {
       setValue('darkmode.value', true);
     }
   });
   getValue('fastmove').then((returnValue) => {
     if (returnValue == undefined) {
-      console.log('fastmove',returnValue)
+      console.log('fastmove', returnValue);
       setValue('fastmove', false);
     }
   });

@@ -5,7 +5,7 @@
 
 import combineInventory from "renderer/components/content/shared/inventoryFunctions"
 import { setInventoryAction } from "./actions/inventoryActions"
-import { setConnection, setGC, signOut } from "./actions/userStatsActions"
+import { setConnection, setGC, signOut, setWalletBalance } from "./actions/userStatsActions"
 
 export async function handleLogonSuccess(message) {
     console.log(message)
@@ -37,6 +37,8 @@ export async function handleUserEvent(message, settings) {
             } else {
                 return setGC(true)
             }
+        case 4:
+            return setWalletBalance(description)
         default:
             return
 

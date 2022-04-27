@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { classNames } from 'renderer/components/content/shared/inventoryFunctions';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
-export default function UserGrid({ clickOnProfile }) {
+export default function UserGrid({ clickOnProfile, deleteUser,  runDeleteUser }) {
   const [hasRun, setHasRun] = useState(false);
   const [getUsers, setUsers] = useState([] as any);
 
@@ -11,7 +11,7 @@ export default function UserGrid({ clickOnProfile }) {
   async function updateFunction() {
     let finalList = [] as any;
     let seenValues = [] as any
-    
+
     // Get the account details
     let doUpdate = await window.electron.ipcRenderer.getAccountDetails();
     if (doUpdate == undefined) {
@@ -69,7 +69,11 @@ export default function UserGrid({ clickOnProfile }) {
     window.electron.ipcRenderer.deleteAccountDetails(username);
     updateFunction();
   }
-  
+  if (deleteUser) {
+    updateFunction()
+    runDeleteUser()
+  }
+
   // Drag n drop features
   async function handleOnDragEnd(result) {
     // Check if actually moved
@@ -90,8 +94,9 @@ export default function UserGrid({ clickOnProfile }) {
 
     });
     await window.electron.store.set('accountKeyList', orderToStore)
+
   }
-  
+
   return (
     <div className="overflow-x-auto h-screen-fixed bg-gray-50 dark:bg-dark-level-two">
       <div className="grid grid-cols-1 py-10 px-4 gap-4 overflow-y-auto">
@@ -157,7 +162,7 @@ export default function UserGrid({ clickOnProfile }) {
                         </div>
                         <button
                           type="button"
-                          onClick={() => clickOnProfile(person.username)}
+                          onClick={() => clickOnProfile([person.username, person.safeLoginKey])}
                           className="inline-flex items-center dark:text-dark-white p-1 border border-transparent rounded-full hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-green-600 transform hover:-translate-y-1 hover:scale-110"
                         >
                           <CheckIcon className="h-5 w-5" aria-hidden="true" />

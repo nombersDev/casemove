@@ -4,9 +4,10 @@ const initialState = {
     userProfilePicture: null,
     steamID: null,
     isLoggedIn: false,
-    hasConnection: false
+    hasConnection: false,
+    walletBalance: {}
   };
-  
+
   const authReducer = (state = initialState, action) => {
     switch (action.type) {
       case 'SIGN_IN':
@@ -17,33 +18,39 @@ const initialState = {
               userProfilePicture: action.payload.userProfilePicture,
               steamID: action.payload.steamID,
               isLoggedIn: true,
-              hasConnection: true
+              hasConnection: true,
+              walletBalance: action.payload.wallet
           }
-      case 'SIGN_OUT': 
+      case 'SIGN_OUT':
           return {
             ...initialState
           }
-      
+
       case 'SET_CONNECTION':
         return {
           ...state,
           hasConnection: action.payload.hasConnection
         }
+      case 'SET_WALLET_BALANCE':
+        return {
+          ...state,
+          walletBalance: action.payload
+        }
+
 
       case 'SET_GC':
         return {
           ...state,
           CSGOConnection: action.payload.CSGOConnection
         }
-      case 'LOGOUT': 
+      case 'LOGOUT':
         return {
           ...initialState
         }
       default:
         return state
-      
+
     }
   };
 
   export default authReducer;
-  

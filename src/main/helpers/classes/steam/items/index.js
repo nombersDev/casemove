@@ -324,7 +324,6 @@ class items {
 
     // Main checks
     // Get first string
-
     if (defIndexresult['item_name'] !== undefined) {
       var baseOne = this.getTranslation(defIndexresult['item_name']);
     } else if (defIndexresult['prefab'] !== undefined) {
@@ -542,7 +541,7 @@ class items {
 }
 
 function getSkinWearName(paintWear) {
-  const skinWearValues = [0.07, 0.15, 0.37, 0.44, 1];
+  const skinWearValues = [0.07, 0.15, 0.38, 0.45, 1];
   const skinWearNames = [
     'Factory New',
     'Minimal Wear',

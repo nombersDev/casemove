@@ -6,7 +6,8 @@ export const signIn = (forwardPackage: any) => {
             CSGOConnection: forwardPackage.CSGOConnection,
             userProfilePicture: forwardPackage.userProfilePicture,
             steamID: forwardPackage.steamID,
-            hasConnection: forwardPackage.hasConnection
+            hasConnection: forwardPackage.hasConnection,
+            wallet: forwardPackage.wallet
         }
     }
 }
@@ -25,7 +26,12 @@ export const setConnection = (connectionStatus: boolean) => {
         }
     }
 }
-
+export const setWalletBalance = (walletBalance) => {
+    return {
+        type: 'SET_WALLET_BALANCE',
+        payload: walletBalance
+    }
+}
 export const setGC = (connectionStatus: boolean) => {
     return {
         type: 'SET_GC',
