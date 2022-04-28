@@ -38,9 +38,9 @@ class login {
 
       // Get all account details
       getValue('account').then((returnValue) => {
-        if (returnValue[username]) {
-          this.rememberedDetails = returnValue[username];
-          if (returnValue[username].safeData) {
+        if (returnValue?.[username]) {
+          this.rememberedDetails = returnValue?.[username];
+          if (returnValue?.[username].safeData) {
             // Get remembered details
             getLoginDetails(username).then((returnValue) => {
               if (returnValue) {

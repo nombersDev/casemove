@@ -275,6 +275,12 @@ ipcMain.on(
     user.once('loggedOn', () => {
       user.once('accountInfo', (displayName) => {
         console.log('Logged into Steam as ' + displayName);
+        getValue('pricing.currency').then((returnValue) => {
+          if (returnValue == undefined) {
+            
+            setValue('pricing.currency', currencyCodes?.[user.wallet.currency] || 'USD')
+          }
+        });
         isLoggedInElsewhere(user).then((returnValue) => {
           if (returnValue) {
             cancelLogin(user)
@@ -696,6 +702,7 @@ async function startEvents(csgo, user) {
 // Get currency
 ipcMain.on('getCurrency', async (event) => {
   getValue('pricing.currency').then((returnValue) => {
+    
     currencyClass.getRate(returnValue).then((response) => {
       console.log(returnValue, response);
       event.reply('getCurrency-reply', [returnValue, response]);

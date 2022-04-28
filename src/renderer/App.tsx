@@ -175,12 +175,14 @@ function AppContent() {
         dispatch(setDarkMode(returnValue));
       });
       // Currency rate
-      await window.electron.ipcRenderer
+      if (userDetails.isLoggedIn) {
+        await window.electron.ipcRenderer
         .getCurrencyRate()
         .then((returnValue) => {
           console.log('currencyrate', returnValue);
           dispatch(setCurrencyRate(returnValue[0], returnValue[1]));
         });
+      }
       // Fastmove
       console.log('Getting settings');
       let storedFastMove = await window.electron.store.get('fastmove');
