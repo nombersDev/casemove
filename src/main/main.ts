@@ -277,8 +277,8 @@ ipcMain.on(
         console.log('Logged into Steam as ' + displayName);
         getValue('pricing.currency').then((returnValue) => {
           if (returnValue == undefined) {
-            
-            setValue('pricing.currency', currencyCodes?.[user.wallet.currency] || 'USD')
+
+            setValue('pricing.currency', currencyCodes?.[user?.wallet?.currency] || 'USD')
           }
         });
         isLoggedInElsewhere(user).then((returnValue) => {
@@ -301,7 +301,7 @@ ipcMain.on(
                         .getTradeUp(returnValue)
                         .then((newReturnValue: any) => {
                           let walletToSend = user.wallet
-                          walletToSend.currency = currencyCodes?.[walletToSend.currency]
+                          walletToSend.currency = currencyCodes?.[walletToSend?.currency]
                           const returnPackage = [
                             user.logOnResult.client_supplied_steamid,
                             displayName,
@@ -547,11 +547,11 @@ async function startEvents(csgo, user) {
   user.on('loggedOn', () => {
     mainWindow?.webContents.send('userEvents', [2, 'reconnected']);
   });
-  user.on('wallet', () => {
-    let walletToSend = user.wallet
-    walletToSend.currency = currencyCodes?.[walletToSend.currency]
-    mainWindow?.webContents.send('userEvents', [4, walletToSend]);
+  user.on('wallet', (_hasWallet, _currency, balance) => {
+    console.log('Wallet update: ', balance);
+    mainWindow?.webContents.send('userEvents', [4, balance]);
   });
+
 
   // Get commands from Renderer
   ipcMain.on('refreshInventory', async () => {
@@ -702,7 +702,7 @@ async function startEvents(csgo, user) {
 // Get currency
 ipcMain.on('getCurrency', async (event) => {
   getValue('pricing.currency').then((returnValue) => {
-    
+
     currencyClass.getRate(returnValue).then((response) => {
       console.log(returnValue, response);
       event.reply('getCurrency-reply', [returnValue, response]);
