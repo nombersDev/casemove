@@ -547,9 +547,11 @@ async function startEvents(csgo, user) {
   user.on('loggedOn', () => {
     mainWindow?.webContents.send('userEvents', [2, 'reconnected']);
   });
-  user.on('wallet', (_hasWallet, _currency, balance) => {
+  user.on('wallet', (hasWallet, currency, balance) => {
+    let walletToSend = {hasWallet, currency, balance}
+    walletToSend.currency = currencyCodes?.[walletToSend?.currency]
     console.log('Wallet update: ', balance);
-    mainWindow?.webContents.send('userEvents', [4, balance]);
+    mainWindow?.webContents.send('userEvents', [4, walletToSend]);
   });
 
 
