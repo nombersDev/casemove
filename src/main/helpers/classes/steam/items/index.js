@@ -243,6 +243,11 @@ class items {
       // Star
       if (value['quality'] == 3) {
         returnDict['item_name'] = '★ ' + returnDict['item_name'];
+        returnDict['item_moveable'] = true;
+      }
+
+      if (returnDict['item_name']?.includes('Genuine') && returnDict['item_name']?.includes('Pin')) {
+        returnDict['item_moveable'] = false;
       }
       // console.log(value, returnDict)
 
@@ -436,7 +441,7 @@ class items {
   }
   itemProcessorCanBeMoved(returnDict, storageRow) {
     const defIndexresult = this.get_def_index(storageRow['def_index']);
-
+    
     if (defIndexresult['prefab'] !== undefined) {
       if (defIndexresult['prefab'] == 'collectible_untradable') {
         return false;

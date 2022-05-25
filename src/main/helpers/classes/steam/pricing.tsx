@@ -110,6 +110,9 @@ class runItems {
     let itemNamePricing = itemRow.item_name.replaceAll('(Holo/Foil)', '(Holo-Foil)');
     if (itemRow.item_wear_name !== undefined) {
       itemNamePricing = itemRow.item_name + ' (' + itemRow.item_wear_name + ')';
+      if (!this.prices[itemNamePricing] && this.prices[itemRow.item_name]) {
+        itemNamePricing = itemRow.item_name
+      }
     }
 
     if (this.prices[itemNamePricing] !== undefined) {

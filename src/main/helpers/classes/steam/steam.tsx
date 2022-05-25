@@ -61,13 +61,14 @@ class login {
   }
 
   _loginCoordinator() {
+    
+    if (!this.password && this.rememberedSensitive?.password) {
+      this.password = this.rememberedSensitive?.password;
+    }
     // 1
     if (this.rememberedDetails['safeLoginKey']) {
       this._login_loginKey();
       return;
-    }
-    if (!this.password && this.rememberedSensitive?.password) {
-      this.password = this.rememberedSensitive?.password;
     }
     if (!this.password && !this.rememberedSensitive?.password) {
       this._returnToSender(4);
