@@ -71,6 +71,7 @@ function content() {
   }
 
   // Get all storage unit data
+  
   async function getAllStorages() {
     const casketResults = await inventory.inventory.filter(function (row) {
       if (!row.item_url.includes('casket')) {
@@ -81,7 +82,17 @@ function content() {
       }
       return true;
     });
-    for (const [_key, project] of Object.entries(casketResults)) {
+    for (const [_key, project] of Object.entries(casketResults.sort(function (a, b) {
+      let a_customName = a.item_customname
+      let b_customName = b.item_customname
+      if (a_customName == undefined) {
+        a_customName = '0000'
+      }
+      if (b_customName == undefined) {
+        b_customName = '0000'
+      }
+      return sortRun(a_customName, b_customName);
+    }))) {
       let projectRow = project as any;
       if (!fromReducer.activeStorages.includes(projectRow.item_id)) {
         await getStorageData(projectRow.item_id, projectRow.item_customname);

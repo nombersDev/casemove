@@ -246,9 +246,10 @@ class items {
         returnDict['item_moveable'] = true;
       }
 
-      if (returnDict['item_name']?.includes('Genuine') && returnDict['item_name']?.includes('Pin')) {
+      if (returnDict['item_name']?.includes('Pin') && value['origin'] == 5) {
         returnDict['item_moveable'] = false;
       }
+      returnDict['coordinator_data'] = value;
       // console.log(value, returnDict)
 
       returnList.push(returnDict);
