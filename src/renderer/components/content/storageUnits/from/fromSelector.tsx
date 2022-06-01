@@ -193,7 +193,7 @@ function content() {
             to=""
             type="button"
             onClick={() => getAllStorages()}
-            className={classNames(settingsData.darkmode ? 'focus:outline-none focus:bg-dark-level-four' : 'focus:outline-none focus:bg-gray-100', 'order-1 ml-3  order-1 inline-flex items-center px-4 py-2 hover:border hover:shadow-sm dark:hover:bg-dark-level-four  text-sm font-medium rounded-md text-gray-700  hover:bg-gray-50 sm:order-0 sm:ml-0')}
+            className="focus:outline-none focus:bg-dark-level-four order-1 ml-3  order-1 inline-flex items-center px-4 py-2 hover:border hover:shadow-sm dark:hover:bg-dark-level-four  text-sm font-medium rounded-md text-gray-700  hover:bg-gray-50 sm:order-0 sm:ml-0"
 
           >
 
@@ -206,7 +206,7 @@ function content() {
             to=""
             type="button"
             onClick={() => unMarkAllStorages()}
-            className={classNames(settingsData.darkmode ? 'focus:outline-none focus:bg-dark-level-four' : 'focus:outline-none focus:bg-gray-100', 'order-1 ml-3  order-1 inline-flex items-center px-4 py-2 hover:border hover:shadow-sm dark:hover:bg-dark-level-four  text-sm font-medium rounded-md text-gray-700  hover:bg-gray-50 sm:order-0 sm:ml-0')}
+            className="focus:outline-none focus:bg-dark-level-four order-1 ml-3  order-1 inline-flex items-center px-4 py-2 hover:border hover:shadow-sm dark:hover:bg-dark-level-four  text-sm font-medium rounded-md text-gray-700  hover:bg-gray-50 sm:order-0 sm:ml-0"
 
           >
 
@@ -360,7 +360,10 @@ function content() {
                 >
                   <div
                     className={classNames(
-                      'flex-shrink-0 h-full  flex items-center justify-center w-16 dark:border-opacity-50 text-white border-t border-l border-b border-gray-200 rounded-l-md dark:bg-dark-level-two'
+                      fromSelector.activeStorages.includes(project.item_id)
+                          ? 'border-green-300 '
+                          : 'border-gray-200 ',
+                      'flex-shrink-0 h-full  flex items-center justify-center w-16 dark:border-opacity-50 text-white border-t border-l border-b rounded-l-md dark:bg-dark-level-two'
                     )}
                   >
                     <img
@@ -378,7 +381,12 @@ function content() {
                     />
                   </div>
                 </Link>
-                <div className="flex-1 dark:bg-dark-level-two dark:border-opacity-50 flex items-center justify-between border-t border-r border-b border-gray-200 bg-white rounded-r-md truncate">
+                <div className={classNames(
+                        fromSelector.activeStorages.includes(project.item_id)
+                          ? 'border-green-300'
+                          : 'border-gray-200',
+                        'flex-1 dark:bg-dark-level-two dark:border-opacity-50 flex items-center justify-between border-t border-r border-b bg-white rounded-r-md truncate'
+                      )}>
                   <Link
                     to=""
                     onClick={() =>

@@ -10,7 +10,6 @@ export default function RenameModal() {
   }
 
   const dispatch = useDispatch();
-  const settingsData = useSelector((state: any) => state.settingsReducer);
   const modalData = useSelector((state: any) => state.modalRenameReducer);
 
   async function renameStorageUnit(newName) {
@@ -100,7 +99,7 @@ export default function RenameModal() {
                   className={classNames(
                     inputState.length == 0
                       ? 'pointer-events-none	bg-indigo-300 dark:bg-dark-level-three'
-                      : 'bg-indigo-600', settingsData.darkmode ? '' : 'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500',
+                      : 'bg-indigo-600',
                     'w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white  sm:col-start-2 sm:text-sm'
                   )}
                   onClick={() => renameStorageUnit(inputState)}
@@ -109,7 +108,7 @@ export default function RenameModal() {
                 </button>
                 <button
                   type="button"
-                  className={classNames(settingsData.darkmode ? '' : 'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500', "mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 dark:bg-dark-level-two dark:text-dark-white sm:mt-0 sm:col-start-1 sm:text-sm")}
+                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 dark:bg-dark-level-two dark:text-dark-white sm:mt-0 sm:col-start-1 sm:text-sm"
                   onClick={() => dispatch(closeRenameModal())}
                 >
                   Cancel

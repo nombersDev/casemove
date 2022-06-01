@@ -43,9 +43,9 @@ export const setOS = (os) => {
       payload: os
   }
 }
-export const setDarkMode = (darkmode) => {
+export const setDevmode = (devmode) => {
   return {
-      type: 'SETTINGS_SET_DARKMODE',
-      payload: darkmode
+      type: 'SETTINGS_SET_DEVMODE',
+      payload: devmode
   }
 }

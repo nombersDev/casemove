@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   setCurrencyRate,
   setCurrencyValue,
-  setDarkMode,
+  setDevmode,
   setFastMove,
   setSourceValue,
 } from 'renderer/store/actions/settings';
@@ -198,14 +198,13 @@ export default function settingsPage() {
   const [fastMoveStatus, setFastMoveStatus] = useState(settingsData.fastMove);
 
   // Dark mode
-  async function updateDarkMode() {
-    const correctValue = !(await window.electron.store.get('darkmode.value'));
-    setDarkModeStatus(correctValue);
-    await window.electron.store.set('darkmode.value', correctValue);
-    await window.electron.store.set('darkmode.hasSet', true);
-    dispatch(setDarkMode(correctValue));
+  async function updateDevMode() {
+    const correctValue = !(await window.electron.store.get('devmode.value'));
+    setDevModeStatus(correctValue);
+    await window.electron.store.set('devmode.value', correctValue);
+    dispatch(setDevmode(correctValue));
   }
-  const [darkModeStatus, setDarkModeStatus] = useState(settingsData.darkmode);
+  const [devModeStatus, setDevModeStatus] = useState(settingsData.devmode);
 
 
   // Pricing - currency
@@ -347,20 +346,20 @@ export default function settingsPage() {
                             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
 
                               <dt className="text-sm font-medium text-gray-900 dark:text-dark-white">
-                                Dark mode <br />
+                                Dev mode <br />
                                 <span className="text-gray-400">
                                   {' '}
-                                  Sets Meista's favorite mode
+                                  Gives addtional features that are useful when bugtesting
                                 </span>
                               </dt>
                               <dd className="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                 <span className="flex-grow"></span>
                                 <span className="flex items-center ml-4 flex-shrink-0">
                                   <Switch
-                                    checked={darkModeStatus}
-                                    onChange={() => updateDarkMode()}
+                                    checked={devModeStatus}
+                                    onChange={() => updateDevMode()}
                                     className={classNames(
-                                      darkModeStatus
+                                      devModeStatus
                                         ? 'bg-indigo-600 dark:bg-indigo-700'
                                         : 'bg-gray-200',
                                       'relative inline-flex mr-3 flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none'
@@ -368,7 +367,7 @@ export default function settingsPage() {
                                   >
                                     <span
                                       className={classNames(
-                                        darkModeStatus
+                                        devModeStatus
                                           ? 'translate-x-5'
                                           : 'translate-x-0',
                                         'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
@@ -376,7 +375,7 @@ export default function settingsPage() {
                                     >
                                       <span
                                         className={classNames(
-                                          darkModeStatus
+                                          devModeStatus
                                             ? 'opacity-0 ease-out duration-100'
                                             : 'opacity-100 ease-in duration-200',
                                           'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity'
@@ -399,7 +398,7 @@ export default function settingsPage() {
                                       </span>
                                       <span
                                         className={classNames(
-                                          darkModeStatus
+                                          devModeStatus
                                             ? 'opacity-100 ease-in duration-200'
                                             : 'opacity-0 ease-out duration-100',
                                           'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity'

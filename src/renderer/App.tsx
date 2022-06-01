@@ -45,7 +45,7 @@ import settingsPage from './views/settings/settings';
 import {
   setColumns,
   setCurrencyRate,
-  setDarkMode,
+  setDevmode,
   setFastMove,
   setLocale,
   setOS,
@@ -106,11 +106,7 @@ function AppContent() {
     (state: any) => state.inventoryFiltersReducer
   );
 
-  if (settingsData.darkmode) {
-    document.documentElement.classList.add('dark');
-  } else {
-    document.documentElement.classList.remove('dark');
-  }
+  document.documentElement.classList.add('dark');
 
   function updateAutomation(itemHref) {
     setSideMenuOption(itemHref);
@@ -120,8 +116,6 @@ function AppContent() {
   if (currentSideMenuOption != location.pathname) {
     setSideMenuOption(location.pathname);
   }
-
-  console.log(currentSideMenuOption);
 
   // Log out of session
   const dispatch = useDispatch();
@@ -166,14 +160,15 @@ function AppContent() {
         }
       });
 
-      // Darkmode
-      await window.electron.store.get('darkmode.value').then((returnValue) => {
-        console.log('darkmode.value', returnValue);
+      // Dev mode
+      await window.electron.store.get('devmode.value').then((returnValue) => {
+        console.log('devmode.value', returnValue);
         if (returnValue == undefined) {
           returnValue = false;
         }
-        dispatch(setDarkMode(returnValue));
+        dispatch(setDevmode(returnValue));
       });
+
       // Currency rate
       if (userDetails.isLoggedIn) {
         await window.electron.ipcRenderer

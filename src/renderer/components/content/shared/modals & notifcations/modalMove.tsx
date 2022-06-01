@@ -15,7 +15,6 @@ import {
   moveFromClearAll,
   moveFromReset,
 } from 'renderer/store/actions/moveFromActions';
-import { classNames } from '../inventoryFunctions';
 
 export default function MoveModal() {
   // const [hasRun, setRun] = useState(false);
@@ -25,6 +24,8 @@ export default function MoveModal() {
   const modalData = useSelector((state: any) => state.modalMoveReducer);
   const settingsData = useSelector((state: any) => state.settingsReducer);
   async function cancelMe() {
+    console.log('Called cancel')
+    window.electron.ipcRenderer.refreshInventory();
     dispatch(closeMoveModal());
     dispatch(cancelModal(modalData.modalPayload['key']));
 
@@ -44,9 +45,11 @@ export default function MoveModal() {
   async function runModal() {
     if (modalData.moveOpen) {
       if (modalData.doCancel.includes(modalData.modalPayload['key']) == false) {
+        console.log(modalData.modalPayload)
         if (modalData.modalPayload['type'] == 'to') {
 
           if (fastMode) {
+            console.log(modalData.modalPayload)
             window.electron.ipcRenderer.moveToStorageUnit(
               modalData.modalPayload['storageID'],
               modalData.modalPayload['itemID'],
@@ -72,6 +75,7 @@ export default function MoveModal() {
         }
         if (modalData.modalPayload['type'] == 'from') {
           if (fastMode) {
+            
             window.electron.ipcRenderer.moveFromStorageUnit(
               modalData.modalPayload['storageID'],
               modalData.modalPayload['itemID'],
@@ -94,6 +98,9 @@ export default function MoveModal() {
           }
 
           dispatch(moveModalUpdate());
+        }
+        if (modalData.modalPayload['isLast']) {
+          window.electron.ipcRenderer.refreshInventory();
         }
 
       }
@@ -195,7 +202,7 @@ export default function MoveModal() {
               <div className="mt-5 sm:mt-6">
                 <button
                   type="button"
-                  className={classNames(settingsData.darkmode ? '' : 'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500', "dark:bg-dark-level-two dark:text-dark-white mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:col-start-1 sm:text-sm")}
+                  className="dark:bg-dark-level-two dark:text-dark-white mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:col-start-1 sm:text-sm"
                   onClick={() => cancelMe()}
                 >
                   Cancel

@@ -366,7 +366,7 @@ ipcMain.on(
 
     // Should remember
     if (shouldRemember) {
-      user.once('loginKey', function(key) {
+      user.once('loginKey', function (key) {
         storeLoginKey(username, key)
 
       })
@@ -474,48 +474,55 @@ async function startEvents(csgo, user) {
 
   // CSGO listeners
   // Inventory events
-  csgo.on('itemRemoved', (item) => {
-    if (!Object.keys(item).includes('casket_id')) {
-      console.log('Item' + item.itemid + ' was removed');
-      fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
-        tradeUpClass.getTradeUp(returnValue).then((newReturnValue: any) => {
-          mainWindow?.webContents.send('userEvents', [
-            1,
-            'itemRemoved',
-            [item, newReturnValue],
-          ]);
+  async function startChangeEvents() {
+    csgo.on('itemRemoved', (item) => {
+      if (!Object.keys(item).includes('casket_id')  && !Object.keys(item).includes('casket_contained_item_count')) {
+        console.log('Item ' + item.id + ' was removed');
+        fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
+          tradeUpClass.getTradeUp(returnValue).then((newReturnValue: any) => {
+            mainWindow?.webContents.send('userEvents', [
+              1,
+              'itemRemoved',
+              [item, newReturnValue],
+            ]);
+          });
         });
-      });
-    }
-  });
-
-  csgo.on('itemChanged', (item) => {
-    console.log('Item' + item.itemid + ' was changed');
-    fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
-      tradeUpClass.getTradeUp(returnValue).then((newReturnValue: any) => {
-        mainWindow?.webContents.send('userEvents', [
-          1,
-          'itemChanged',
-          [item, newReturnValue],
-        ]);
-      });
+      }
     });
-  });
-
-  csgo.on('itemAcquired', (item) => {
-    if (!Object.keys(item).includes('casket_id')) {
-      console.log('Item' + item.itemid + ' was acquired');
+  
+    csgo.on('itemChanged', (item) => {
       fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
         tradeUpClass.getTradeUp(returnValue).then((newReturnValue: any) => {
           mainWindow?.webContents.send('userEvents', [
             1,
-            'itemAcquired',
+            'itemChanged',
             [item, newReturnValue],
           ]);
         });
       });
-    }
-  });
+  
+    });
+  
+    csgo.on('itemAcquired', (item) => {
+  
+      if (!Object.keys(item).includes('casket_id') && !Object.keys(item).includes('casket_contained_item_count')) {
+        console.log(item)
+  
+        console.log('Item ' + item.id + ' was acquired');
+        fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
+          tradeUpClass.getTradeUp(returnValue).then((newReturnValue: any) => {
+            mainWindow?.webContents.send('userEvents', [
+              1,
+              'itemAcquired',
+              [item, newReturnValue],
+            ]);
+          });
+        });
+      }
+  
+    });
+  }
+  startChangeEvents()
 
   csgo.on('disconnectedFromGC', (reason) => {
     console.log('Disconnected from GC - reason: ', reason);
@@ -548,7 +555,7 @@ async function startEvents(csgo, user) {
     mainWindow?.webContents.send('userEvents', [2, 'reconnected']);
   });
   user.on('wallet', (hasWallet, currency, balance) => {
-    let walletToSend = {hasWallet, currency, balance}
+    let walletToSend = { hasWallet, currency, balance }
     walletToSend.currency = currencyCodes?.[walletToSend?.currency]
     console.log('Wallet update: ', balance);
     mainWindow?.webContents.send('userEvents', [4, walletToSend]);
@@ -557,6 +564,11 @@ async function startEvents(csgo, user) {
 
   // Get commands from Renderer
   ipcMain.on('refreshInventory', async () => {
+    csgo.removeAllListeners('itemRemoved');
+    csgo.removeAllListeners('itemChanged');
+    csgo.removeAllListeners('itemAcquired');
+    startChangeEvents()
+
     fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
       tradeUpClass.getTradeUp(returnValue).then((newReturnValue) => {
         mainWindow?.webContents.send('userEvents', [
@@ -584,6 +596,8 @@ async function startEvents(csgo, user) {
         event.reply('renameStorageUnit-reply', [1, itemIds[0]]);
       }
     });
+
+
   });
 
   // Set item positions
@@ -619,6 +633,14 @@ async function startEvents(csgo, user) {
     'removeFromStorageUnit',
     async (event, casketID, itemID, fastMode) => {
       csgo.removeFromCasket(casketID, itemID);
+      if (fastMode) {
+
+        csgo.removeAllListeners('itemRemoved');
+        csgo.removeAllListeners('itemChanged');
+        csgo.removeAllListeners('itemAcquired');
+
+      }
+
       if (fastMode == false) {
         csgo.once(
           'itemCustomizationNotification',
@@ -641,6 +663,14 @@ async function startEvents(csgo, user) {
   // Move to Storage Unit
   ipcMain.on('moveToStorageUnit', async (event, casketID, itemID, fastMode) => {
     csgo.addToCasket(casketID, itemID);
+    if (fastMode) {
+
+      csgo.removeAllListeners('itemRemoved');
+      csgo.removeAllListeners('itemChanged');
+      csgo.removeAllListeners('itemAcquired');
+
+    }
+
     if (fastMode == false) {
       csgo.once(
         'itemCustomizationNotification',
@@ -701,6 +731,7 @@ async function startEvents(csgo, user) {
     ipcMain.removeAllListeners('signOut');
   }
 }
+
 // Get currency
 ipcMain.on('getCurrency', async (event) => {
   getValue('pricing.currency').then((returnValue) => {
@@ -711,13 +742,13 @@ ipcMain.on('getCurrency', async (event) => {
     });
   });
 });
-// setValue('darkmode.hasSet', false)
-// Set dark mode
-async function darkModeSetup() {
-  getValue('darkmode.hasSet').then((returnValue) => {
-    console.log('darkmodeunset', returnValue);
-    if (returnValue == false || returnValue == undefined) {
-      setValue('darkmode.value', true);
+
+
+// Set initial settings
+async function settingsSetup() {
+  getValue('devmode').then((returnValue) => {
+    if (returnValue == undefined) {
+      setValue('devmode', false);
     }
   });
   getValue('fastmove').then((returnValue) => {
@@ -727,7 +758,7 @@ async function darkModeSetup() {
     }
   });
 }
-darkModeSetup();
+settingsSetup();
 
 // Set platform
 setValue('os', process.platform);
