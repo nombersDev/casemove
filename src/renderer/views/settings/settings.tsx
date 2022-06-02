@@ -222,9 +222,11 @@ export default function settingsPage() {
 
   // Pricing - source
   async function updateSource(valueToSet) {
+    
     setSource(valueToSet);
     dispatch(setSourceValue(valueToSet));
     window.electron.store.set('pricing.source', valueToSet);
+    window.electron.ipcRenderer.refreshInventory();
   }
   const [source, setSource] = useState(settingsData.source);
 

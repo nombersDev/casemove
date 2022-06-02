@@ -6,6 +6,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { setColumns } from 'renderer/store/actions/settings';
 import { classNames } from './inventoryFunctions';
+import { moveFromReset } from 'renderer/store/actions/moveFromActions';
 
 const columns = [
   { id: 1, name: 'Price' },
@@ -33,6 +34,11 @@ export default function ColumnsDropDown() {
     setActiveColums(chosenActiveCopy)
     dispatch(setColumns(chosenActiveCopy))
     window.electron.store.set('columns', chosenActiveCopy);
+    
+    window.electron.ipcRenderer.refreshInventory();
+    dispatch(moveFromReset())
+    
+    console.log('Here')
   }
   return (
     <Menu as="div" className="relative inline-block text-left">
