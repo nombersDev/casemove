@@ -24,7 +24,6 @@ export default function MoveModal() {
   const modalData = useSelector((state: any) => state.modalMoveReducer);
   const settingsData = useSelector((state: any) => state.settingsReducer);
   async function cancelMe() {
-    console.log('Called cancel')
     window.electron.ipcRenderer.refreshInventory();
     dispatch(closeMoveModal());
     dispatch(cancelModal(modalData.modalPayload['key']));
@@ -45,11 +44,9 @@ export default function MoveModal() {
   async function runModal() {
     if (modalData.moveOpen) {
       if (modalData.doCancel.includes(modalData.modalPayload['key']) == false) {
-        console.log(modalData.modalPayload)
         if (modalData.modalPayload['type'] == 'to') {
 
           if (fastMode) {
-            console.log(modalData.modalPayload)
             window.electron.ipcRenderer.moveToStorageUnit(
               modalData.modalPayload['storageID'],
               modalData.modalPayload['itemID'],

@@ -26,14 +26,14 @@ function settingsContent() {
   tradeUpData.tradeUpProducts.forEach((element) => {
     totalFloat += element.item_paint_wear;
     totalPrice +=
-      pricesResult.prices[element.item_name]?.['steam_listing'] *
+      pricesResult.prices[element.item_name + element.item_wear_name || '']?.['steam_listing'] *
       settingsData.currencyPrice[settingsData.currency];
   });
   totalFloat = totalFloat / tradeUpData.tradeUpProducts.length;
   let totalEV = 0;
   tradeUpData.possibleOutcomes.forEach((element) => {
     let individualPrice =
-      pricesResult?.prices[element.item_name]?.['steam_listing'] * settingsData.currencyPrice[settingsData.currency];
+      pricesResult?.prices[element.item_name + element.item_wear_name || '']?.['steam_listing'] * settingsData.currencyPrice[settingsData.currency];
     totalEV += individualPrice * (element.percentage / 100);
     console.log(
       element,

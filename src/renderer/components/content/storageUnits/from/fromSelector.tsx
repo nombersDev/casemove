@@ -129,10 +129,9 @@ function content() {
     }
 
     let pricingAmount = totalDict[projectRow.storage_id]
-    pricingAmount += projectRow.combined_QTY * pricesResult.prices[projectRow.item_name]?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency]
+    pricingAmount += projectRow.combined_QTY * pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency]
     totalDict[projectRow.storage_id] = pricingAmount
   });
-  console.log(totalDict)
 
   // Sort run
   function sortRun(valueOne, ValueTwo, useNaN = false) {

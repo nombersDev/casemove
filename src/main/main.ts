@@ -506,8 +506,6 @@ async function startEvents(csgo, user) {
     csgo.on('itemAcquired', (item) => {
   
       if (!Object.keys(item).includes('casket_id') && !Object.keys(item).includes('casket_contained_item_count')) {
-        console.log(item)
-  
         console.log('Item ' + item.id + ' was acquired');
         fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
           tradeUpClass.getTradeUp(returnValue).then((newReturnValue: any) => {

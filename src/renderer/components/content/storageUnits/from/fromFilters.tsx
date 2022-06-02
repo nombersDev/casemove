@@ -110,10 +110,10 @@ function content() {
   inventoryFilter.forEach((projectRow) => {
     let filtered = fromReducer.totalToMove.filter(row => row[0] == projectRow.item_id)
     if (filtered.length > 0) {
-      totalHighlighted += pricesResult.prices[projectRow.item_name]?.[settingsData.source.title]  * settingsData.currencyPrice[settingsData.currency] * filtered[0][2].length
+      totalHighlighted += pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[settingsData.source.title]  * settingsData.currencyPrice[settingsData.currency] * filtered[0][2].length
     }
     let individualPrice = projectRow.combined_QTY *
-    pricesResult.prices[projectRow.item_name]?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency]
+    pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency]
     totalAmount += individualPrice = individualPrice ? individualPrice : 0
   });
   totalHighlighted = totalHighlighted.toFixed(0)

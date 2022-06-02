@@ -272,7 +272,7 @@ export default function settingsPage() {
                                 Fastmove <br />
                                 <span className="text-gray-400">
                                   {' '}
-                                  Decreases reliability and increases speed.
+                                  Increases the speed, moving might fail more often.
                                 </span>
                               </dt>
                               <dd className="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
@@ -349,7 +349,7 @@ export default function settingsPage() {
                                 Dev mode <br />
                                 <span className="text-gray-400">
                                   {' '}
-                                  Gives addtional features that are useful when bugtesting
+                                  Gives addtional dev features
                                 </span>
                               </dt>
                               <dd className="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">

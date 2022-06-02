@@ -111,9 +111,9 @@ function content() {
     return false;
   });
   inventoryFilter.forEach((projectRow) => {
-    if (pricesResult.prices[projectRow.item_name]?.[settingsData?.source?.title]) {
+    if (pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[settingsData?.source?.title]) {
       let individualPrice = projectRow.combined_QTY *
-    pricesResult.prices[projectRow.item_name]?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency]
+    pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency]
     totalAmount += individualPrice = individualPrice ? individualPrice : 0
     }
   });
