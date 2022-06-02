@@ -3,7 +3,7 @@ const initialState = {
   currency: 'USD',
   locale: 'EN-GB',
   os: '',
-  darkmode: false,
+  devmode: false,
   columns: ["Price", "Stickers/patches", "Storage", "Tradehold"],
   currencyPrice: {}
 };
@@ -45,10 +45,10 @@ const settingsReducer = (state = initialState, action) => {
         ...state,
         os: action.payload,
       };
-      case 'SETTINGS_SET_DARKMODE':
+      case 'SETTINGS_SET_DEVMODE':
       return {
         ...state,
-        darkmode: action.payload,
+        devmode: action.payload,
       };
       case 'SETTINGS_ADD_CURRENCYPRICE':
         let currencyDict = state.currencyPrice

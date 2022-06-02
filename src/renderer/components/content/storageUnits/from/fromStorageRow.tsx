@@ -179,13 +179,13 @@ function content({ projectRow, index }) {
       <td className="table-cell px-6 py-3 text-sm text-gray-500 font-medium">
         <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
           <div className="flex flex-shrink-0 -space-x-1 text-gray-500 dark:text-gray-400 font-normal">
-            {pricesResult.prices[projectRow.item_name] == undefined ||
+            {pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || ''] == undefined ||
             projectRow.combined_QTY == 1
               ? new Intl.NumberFormat(settingsData.locale, {
                   style: 'currency',
                   currency: settingsData.currency,
                 }).format(
-                  pricesResult.prices[projectRow.item_name]?.[
+                  pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[
                     settingsData?.source?.title
                   ] * settingsData.currencyPrice[settingsData.currency]
                 )
@@ -194,7 +194,7 @@ function content({ projectRow, index }) {
                   currency: settingsData.currency,
                 }).format(
                     projectRow.combined_QTY *
-                      pricesResult.prices[projectRow.item_name]?.[
+                      pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[
                         settingsData?.source?.title
                       ] *
                       settingsData.currencyPrice[settingsData.currency]
@@ -203,7 +203,7 @@ function content({ projectRow, index }) {
         </div>
         <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
           <div className="flex flex-shrink-0 -space-x-1 text-gray-500  text-xs font-normal">
-            {pricesResult.prices[projectRow.item_name] == undefined
+            {pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || ''] == undefined
               ? ''
               : projectRow.combined_QTY == 1
               ? ''
@@ -211,7 +211,7 @@ function content({ projectRow, index }) {
                   style: 'currency',
                   currency: settingsData.currency,
                 }).format(
-                  pricesResult.prices[projectRow.item_name]?.[
+                  pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[
                     settingsData?.source?.title
                   ] * settingsData.currencyPrice[settingsData.currency]
                 )}

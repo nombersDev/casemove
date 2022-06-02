@@ -113,18 +113,17 @@ function content() {
   inventoryFilter.forEach((projectRow) => {
     let filtered = toReducer.totalToMove.filter(row => row[0] == projectRow.item_id)
     if (filtered.length > 0) {
-      totalHighlighted += pricesResult.prices[projectRow.item_name]?.[settingsData.source.title]  * settingsData.currencyPrice[settingsData.currency] * filtered[0][2].length
+      totalHighlighted += pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[settingsData.source.title]  * settingsData.currencyPrice[settingsData.currency] * filtered[0][2].length
 
     }
-    if (pricesResult.prices[projectRow.item_name]?.[settingsData?.source?.title]) {
+    if (pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[settingsData?.source?.title]) {
       let individualPrice = projectRow.combined_QTY *
-    pricesResult.prices[projectRow.item_name]?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency]
+    pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency]
     totalAmount += individualPrice = individualPrice ? individualPrice : 0
     }
   });
   totalHighlighted = totalHighlighted.toFixed(0)
   totalAmount = totalAmount.toFixed(0);
-  console.log(totalAmount)
 
   return (
     <div className="bg-white mt-8 dark:bg-dark-level-one">

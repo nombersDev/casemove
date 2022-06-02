@@ -58,8 +58,8 @@ function content() {
   let pricesToGet = [] as any;
   inventoryToUse.forEach((projectRow) => {
     if (
-      pricesResult.prices[projectRow.item_name] == undefined &&
-      pricesResult.productsRequested.includes(projectRow.item_name) == false
+      pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || ''] == undefined &&
+      pricesResult.productsRequested.includes(projectRow.item_name + projectRow.item_wear_name || '') == false
     ) {
       pricesToGet.push(projectRow);
     }
@@ -347,6 +347,19 @@ function content() {
                   </div>
                   <span>
                     <span className="flex dark:text-dark-white">
+                      {
+                        settingsData.devmode ? <button
+                        className="px-2.5 py-1.5 border border-gray-300 mr-3 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        onClick={() =>
+                          navigator.clipboard.writeText(
+                            JSON.stringify(projectRow)
+                          )
+                        }
+                      >
+                        {' '}
+                        COPY REF
+                      </button> : ''
+                      }
                       {projectRow.item_name !== '' ? (
                         projectRow.item_customname !== null ? (
                           projectRow.item_customname
@@ -462,19 +475,19 @@ function content() {
                   <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
                     <div className="flex flex-shrink-0 -space-x-1 text-gray-500 dark:text-gray-400 font-normal">
                       {projectRow.item_moveable
-                        ? pricesResult.prices[projectRow.item_name] ==
+                        ? pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || ''] ==
                             undefined || projectRow.combined_QTY == 1
                           ? new Intl.NumberFormat(settingsData.locale, {
                               style: 'currency',
                               currency: settingsData.currency,
                             }).format(
-                              pricesResult.prices[projectRow.item_name]?.[
+                              pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[
                                 settingsData?.source?.title
                               ] *
                                 settingsData.currencyPrice[
                                   settingsData.currency
                                 ]
-                                ? pricesResult.prices[projectRow.item_name]?.[
+                                ? pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[
                                     settingsData?.source?.title
                                   ] *
                                     settingsData.currencyPrice[
@@ -487,7 +500,7 @@ function content() {
                               currency: settingsData.currency,
                             }).format(
                                 projectRow.combined_QTY *
-                                  pricesResult.prices[projectRow.item_name]?.[
+                                  pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[
                                     settingsData?.source?.title
                                   ] *
                                   settingsData.currencyPrice[
@@ -499,7 +512,7 @@ function content() {
                   </div>
                   <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
                     <div className="flex flex-shrink-0 -space-x-1 text-gray-500 text-xs font-normal">
-                      {pricesResult.prices[projectRow.item_name] == undefined
+                      {pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || ''] == undefined
                         ? ''
                         : projectRow.combined_QTY == 1
                         ? ''
@@ -507,7 +520,7 @@ function content() {
                             style: 'currency',
                             currency: settingsData.currency,
                           }).format(
-                            pricesResult.prices[projectRow.item_name]?.[
+                            pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[
                               settingsData?.source?.title
                             ] *
                               settingsData.currencyPrice[settingsData.currency]

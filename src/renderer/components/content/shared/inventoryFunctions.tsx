@@ -10,6 +10,7 @@ export default function combineInventory(thisInventory, settings) {
     let valued = value as String;
 
     // Create a string that matches the conditions
+    let wearName = valued['item_wear_name']  || 0
     let valueConditions =
       valued['item_name'] +
       valued['item_customname'] +
@@ -17,6 +18,7 @@ export default function combineInventory(thisInventory, settings) {
       valued['trade_unlock'] +
       valued['item_moveable'] +
       valued['item_has_stickers'] +
+      wearName +
       valued['stickers'];
 
     if (valued['item_paint_wear'] != undefined && settings.columns.includes('Float')) {
@@ -26,6 +28,7 @@ export default function combineInventory(thisInventory, settings) {
     // Filter the inventory
     if (seenProducts.includes(valueConditions) == false) {
       length = thisInventory.filter(function (item) {
+        let wearName = item['item_wear_name']  || 0
         let itemConditions =
           item['item_name'] +
           item['item_customname'] +
@@ -33,6 +36,7 @@ export default function combineInventory(thisInventory, settings) {
           item['trade_unlock'] +
           item['item_moveable'] +
           item['item_has_stickers'] +
+          wearName +
           item['stickers'];
         if (item['item_paint_wear'] != undefined && settings.columns.includes('Float')) {
           itemConditions = itemConditions + item['item_paint_wear'];

@@ -6,6 +6,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { setColumns } from 'renderer/store/actions/settings';
 import { classNames } from './inventoryFunctions';
+import { moveFromReset } from 'renderer/store/actions/moveFromActions';
 
 const columns = [
   { id: 1, name: 'Price' },
@@ -33,11 +34,16 @@ export default function ColumnsDropDown() {
     setActiveColums(chosenActiveCopy)
     dispatch(setColumns(chosenActiveCopy))
     window.electron.store.set('columns', chosenActiveCopy);
+    
+    window.electron.ipcRenderer.refreshInventory();
+    dispatch(moveFromReset())
+    
+    console.log('Here')
   }
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className={classNames(settingsData.darkmode ? "focus:border-indigo-500" : "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500", "inline-flex justify-center w-full rounded-md border border-gray-300 dark:bg-dark-level-one dark:text-dark-white  shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50")}>
+        <Menu.Button className="focus:border-indigo-500 inline-flex justify-center w-full rounded-md border border-gray-300 dark:bg-dark-level-one dark:text-dark-white  shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
           {settingsData.columns.length} Selected
           <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
         </Menu.Button>
