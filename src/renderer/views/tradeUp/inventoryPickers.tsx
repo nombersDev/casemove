@@ -168,8 +168,8 @@ function content() {
     if (inventoryFilters.sortValue == 'Price'){
       finalInventoryToUse.sort(function (a, b) {
         return sortRunAlt(
-          pricesResult.prices[a.item_name]?.[settingsData?.source?.title],
-          pricesResult.prices[b.item_name]?.[settingsData?.source?.title]
+          pricesResult.prices[a.item_name  + a.item_wear_name || '']?.[settingsData?.source?.title],
+          pricesResult.prices[b.item_name  + b.item_wear_name || '']?.[settingsData?.source?.title]
         );
       });
   }
