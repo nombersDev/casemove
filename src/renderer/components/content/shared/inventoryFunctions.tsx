@@ -331,8 +331,8 @@ export async function sortDataFunction(
     case 'Price':
       inventory.sort(function (a, b) {
         return sortRunAlt(
-          prices[a.item_name]?.[pricingSource] * a.combined_QTY,
-          prices[b.item_name]?.[pricingSource] * b.combined_QTY
+          prices[a.item_name  + a.item_wear_name || '']?.[pricingSource] * a.combined_QTY,
+          prices[b.item_name  + b.item_wear_name || '']?.[pricingSource] * b.combined_QTY
         );
       });
       return inventory;
