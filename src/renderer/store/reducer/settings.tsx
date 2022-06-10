@@ -4,7 +4,7 @@ const initialState = {
   locale: 'EN-GB',
   os: '',
   devmode: false,
-  columns: ["Price", "Stickers/patches", "Storage", "Tradehold"],
+  columns: ["Price", "Stickers/patches", "Storage", "Tradehold", 'Moveable', 'Inventory link'],
   currencyPrice: {}
 };
 

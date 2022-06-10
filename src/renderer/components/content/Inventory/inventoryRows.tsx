@@ -58,8 +58,12 @@ function content() {
   let pricesToGet = [] as any;
   inventoryToUse.forEach((projectRow) => {
     if (
-      pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || ''] == undefined &&
-      pricesResult.productsRequested.includes(projectRow.item_name + projectRow.item_wear_name || '') == false
+      pricesResult.prices[
+        projectRow.item_name + projectRow.item_wear_name || ''
+      ] == undefined &&
+      pricesResult.productsRequested.includes(
+        projectRow.item_name + projectRow.item_wear_name || ''
+      ) == false
     ) {
       pricesToGet.push(projectRow);
     }
@@ -82,7 +86,7 @@ function content() {
   // async function setItemsPosition(item_id) {
   //   window.electron.ipcRenderer.OpenContainer([item_id])
 
- //  }
+  //  }
   // setItemsPosition
 
   return (
@@ -142,17 +146,20 @@ function content() {
                 </span>
               </button>
             </th>
-            {settingsData.columns.includes('Collections') ?
-                <th className="hidden xl:table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
-                  <button
-                    onClick={() => onSortChange('Collection')}
-                    className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    <span className="flex justify-between">
-                      Collection <SelectorIcon className="h-2" />
-                    </span>
-                  </button>
-                </th> : '' }
+            {settingsData.columns.includes('Collections') ? (
+              <th className="hidden xl:table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
+                <button
+                  onClick={() => onSortChange('Collection')}
+                  className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
+                >
+                  <span className="flex justify-between">
+                    Collection <SelectorIcon className="h-2" />
+                  </span>
+                </button>
+              </th>
+            ) : (
+              ''
+            )}
             {settingsData.columns.includes('Price') ? (
               <th className="table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
                 <button
@@ -197,18 +204,20 @@ function content() {
             ) : (
               ''
             )}
-            {settingsData.columns.includes('Rarity') ?
+            {settingsData.columns.includes('Rarity') ? (
               <th className="hidden xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
-                  <button
-                    onClick={() => onSortChange('Rarity')}
-                    className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    <span className="flex justify-between">
+                <button
+                  onClick={() => onSortChange('Rarity')}
+                  className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
+                >
+                  <span className="flex justify-between">
                     Rarity <SelectorIcon className="h-2" />
-                    </span>
-                  </button>
-                </th> : '' }
-
+                  </span>
+                </button>
+              </th>
+            ) : (
+              ''
+            )}
 
             {settingsData.columns.includes('Tradehold') ? (
               <th className="hidden md:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two  ">
@@ -235,16 +244,25 @@ function content() {
                 </span>
               </button>
             </th>
-            <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <button className="text-gray-500 dark:text-gray-400 pointer-events-none tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400">
-                Moveable
-              </button>
-            </th>
-            <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <button className="text-gray-500 dark:text-gray-400 pointer-events-none tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400">
-                Link
-              </button>
-            </th>
+            {settingsData.columns.includes('Moveable') ? (
+              <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <button className="text-gray-500 dark:text-gray-400 pointer-events-none tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Moveable
+                </button>
+              </th>
+            ) : (
+              ''
+            )}
+
+            {settingsData.columns.includes('Inventory link') ? (
+              <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <button className="text-gray-500 dark:text-gray-400 pointer-events-none tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Link
+                </button>
+              </th>
+            ) : (
+              ''
+            )}
             <th className="table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 dark:border-opacity-50 dark:bg-dark-level-two text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               <span className="md:hidden">Link</span>
             </th>
@@ -314,7 +332,10 @@ function content() {
                         to={{
                           pathname: `https://steamcommunity.com/market/listings/730/${
                             projectRow.item_paint_wear == undefined
-                              ? projectRow.item_name.replaceAll('Holo/Foil', 'Holo-Foil')
+                              ? projectRow.item_name.replaceAll(
+                                  'Holo/Foil',
+                                  'Holo-Foil'
+                                )
                               : projectRow.item_name +
                                 ' (' +
                                 projectRow.item_wear_name +
@@ -347,19 +368,21 @@ function content() {
                   </div>
                   <span>
                     <span className="flex dark:text-dark-white">
-                      {
-                        settingsData.devmode ? <button
-                        className="px-2.5 py-1.5 border border-gray-300 mr-3 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        onClick={() =>
-                          navigator.clipboard.writeText(
-                            JSON.stringify(projectRow)
-                          )
-                        }
-                      >
-                        {' '}
-                        COPY REF
-                      </button> : ''
-                      }
+                      {settingsData.devmode ? (
+                        <button
+                          className="px-2.5 py-1.5 border border-gray-300 mr-3 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                          onClick={() =>
+                            navigator.clipboard.writeText(
+                              JSON.stringify(projectRow)
+                            )
+                          }
+                        >
+                          {' '}
+                          COPY REF
+                        </button>
+                      ) : (
+                        ''
+                      )}
                       {projectRow.item_name !== '' ? (
                         projectRow.item_customname !== null ? (
                           projectRow.item_customname
@@ -397,12 +420,18 @@ function content() {
                         ''
                       )}
                       {projectRow.equipped_t ? (
-                        <span className='ml-1 h-3 leading-3 pl-1 pr-1 text-white  dark:text-dark-white text-center font-medium	 bg-dark-level-four rounded-full   text-xs'> T </span>
+                        <span className="ml-1 h-3 leading-3 pl-1 pr-1 text-white  dark:text-dark-white text-center font-medium	 bg-dark-level-four rounded-full   text-xs">
+                          {' '}
+                          T{' '}
+                        </span>
                       ) : (
                         ''
                       )}
                       {projectRow.equipped_ct ? (
-                        <span className='ml-1 h-3 leading-3 pl-1 pr-1 text-center  text-white dark:text-dark-white font-medium	 bg-dark-level-four rounded-full   text-xs'> CT </span>
+                        <span className="ml-1 h-3 leading-3 pl-1 pr-1 text-center  text-white dark:text-dark-white font-medium	 bg-dark-level-four rounded-full   text-xs">
+                          {' '}
+                          CT{' '}
+                        </span>
                       ) : (
                         ''
                       )}
@@ -457,62 +486,74 @@ function content() {
                   </span>
                 </div>
               </td>
-              {settingsData.columns.includes('Collections') ?
-      <td className="hidden xl:table-cell px-6 py-3 max-w-0 w-full whitespace-nowrap overflow-hidden text-sm font-normal text-gray-900">
-      <div className="flex items-center">
-
-        <span>
-          <span className="flex dark:text-dark-white">
-            {projectRow?.collection?.replace('The ', '')?.replace(' Collection', '')}
-
-          </span>
-
-        </span>
-      </div>
-    </td> : '' }
+              {settingsData.columns.includes('Collections') ? (
+                <td className="hidden xl:table-cell px-6 py-3 max-w-0 w-full whitespace-nowrap overflow-hidden text-sm font-normal text-gray-900">
+                  <div className="flex items-center">
+                    <span>
+                      <span className="flex dark:text-dark-white">
+                        {projectRow?.collection
+                          ?.replace('The ', '')
+                          ?.replace(' Collection', '')}
+                      </span>
+                    </span>
+                  </div>
+                </td>
+              ) : (
+                ''
+              )}
               {settingsData.columns.includes('Price') ? (
-                <td key={ Math.random().toString(36).substr(2, 9) } className="table-cell px-6 py-3 text-sm text-gray-500 font-medium">
+                <td
+                  key={Math.random().toString(36).substr(2, 9)}
+                  className="table-cell px-6 py-3 text-sm text-gray-500 font-medium"
+                >
                   <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
                     <div className="flex flex-shrink-0 -space-x-1 text-gray-500 dark:text-gray-400 font-normal">
                       {projectRow.item_moveable
-                        ? pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || ''] ==
-                            undefined || projectRow.combined_QTY == 1
+                        ? pricesResult.prices[
+                            projectRow.item_name + projectRow.item_wear_name ||
+                              ''
+                          ] == undefined || projectRow.combined_QTY == 1
                           ? new Intl.NumberFormat(settingsData.locale, {
                               style: 'currency',
                               currency: settingsData.currency,
                             }).format(
-                              pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[
-                                settingsData?.source?.title
-                              ] *
+                              pricesResult.prices[
+                                projectRow.item_name +
+                                  projectRow.item_wear_name || ''
+                              ]?.[settingsData?.source?.title] *
                                 settingsData.currencyPrice[
                                   settingsData.currency
                                 ]
-                                ? pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[
-                                    settingsData?.source?.title
-                                  ] *
+                                ? pricesResult.prices[
+                                    projectRow.item_name +
+                                      projectRow.item_wear_name || ''
+                                  ]?.[settingsData?.source?.title] *
                                     settingsData.currencyPrice[
                                       settingsData.currency
                                     ]
                                 : 0
                             )
-                          :  new Intl.NumberFormat(settingsData.locale, {
+                          : new Intl.NumberFormat(settingsData.locale, {
                               style: 'currency',
                               currency: settingsData.currency,
                             }).format(
-                                projectRow.combined_QTY *
-                                  pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[
-                                    settingsData?.source?.title
-                                  ] *
-                                  settingsData.currencyPrice[
-                                    settingsData.currency
-                                  ]
+                              projectRow.combined_QTY *
+                                pricesResult.prices[
+                                  projectRow.item_name +
+                                    projectRow.item_wear_name || ''
+                                ]?.[settingsData?.source?.title] *
+                                settingsData.currencyPrice[
+                                  settingsData.currency
+                                ]
                             )
                         : ''}
                     </div>
                   </div>
                   <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
                     <div className="flex flex-shrink-0 -space-x-1 text-gray-500 text-xs font-normal">
-                      {pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || ''] == undefined
+                      {pricesResult.prices[
+                        projectRow.item_name + projectRow.item_wear_name || ''
+                      ] == undefined
                         ? ''
                         : projectRow.combined_QTY == 1
                         ? ''
@@ -520,9 +561,10 @@ function content() {
                             style: 'currency',
                             currency: settingsData.currency,
                           }).format(
-                            pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[
-                              settingsData?.source?.title
-                            ] *
+                            pricesResult.prices[
+                              projectRow.item_name +
+                                projectRow.item_wear_name || ''
+                            ]?.[settingsData?.source?.title] *
                               settingsData.currencyPrice[settingsData.currency]
                           )}
                     </div>
@@ -532,7 +574,10 @@ function content() {
                 ''
               )}
               {settingsData.columns.includes('Stickers/patches') ? (
-                <td key={ Math.random().toString(36).substr(2, 9) } className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
+                <td
+                  key={Math.random().toString(36).substr(2, 9)}
+                  className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium"
+                >
                   <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
                     <div className="flex flex-shrink-0 -space-x-1">
                       {projectRow.stickers?.map((sticker, index) => (
@@ -571,7 +616,10 @@ function content() {
                 ''
               )}
               {settingsData.columns.includes('Float') ? (
-                <td key={ Math.random().toString(36).substr(2, 9) } className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
+                <td
+                  key={Math.random().toString(36).substr(2, 9)}
+                  className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium"
+                >
                   <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
                     <div className="flex flex-shrink-0 -space-x-1">
                       {projectRow.item_paint_wear?.toString()?.substr(0, 9)}
@@ -581,17 +629,26 @@ function content() {
               ) : (
                 ''
               )}
-              {settingsData.columns.includes('Rarity') ?
-        <td key={ Math.random().toString(36).substr(2, 9) } className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
-          <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
-            <div className="flex flex-shrink-0 -space-x-1">
-              {projectRow.rarityName}
-            </div>
-          </div>
-        </td> : '' }
+              {settingsData.columns.includes('Rarity') ? (
+                <td
+                  key={Math.random().toString(36).substr(2, 9)}
+                  className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium"
+                >
+                  <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
+                    <div className="flex flex-shrink-0 -space-x-1">
+                      {projectRow.rarityName}
+                    </div>
+                  </div>
+                </td>
+              ) : (
+                ''
+              )}
 
               {settingsData.columns.includes('Tradehold') ? (
-                <td key={ Math.random().toString(36).substr(2, 9) } className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center">
+                <td
+                  key={Math.random().toString(36).substr(2, 9)}
+                  className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center"
+                >
                   {projectRow.trade_unlock !== undefined
                     ? Math.ceil(
                         (projectRow.trade_unlock.getTime() - now.getTime()) /
@@ -602,44 +659,62 @@ function content() {
               ) : (
                 ''
               )}
-              <td key={ Math.random().toString(36).substr(2, 9) } className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
+              <td
+                key={Math.random().toString(36).substr(2, 9)}
+                className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium"
+              >
                 <div className="flex items-center space-x-2 justify-center rounded-full  drop-shadow-lg">
                   <div className="flex flex-shrink-0 -space-x-1 font-normal">
                     {projectRow.combined_QTY}
                   </div>
                 </div>
               </td>
-              <td key={ Math.random().toString(36).substr(2, 9) } className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-right">
-                <div className="flex justify-center rounded-full drop-shadow-lg">
-                  {projectRow.item_moveable == true ? (
-                    <CheckCircleIcon
-                      className="h-5 w-5 text-green-500"
-                      aria-hidden="true"
-                    />
-                  ) : (
-                    ''
-                  )}
-                </div>
-              </td>
-              <td key={ Math.random().toString(36).substr(2, 9) } className="table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 hover:text-gray-200 text-right">
-                <div className="flex justify-center rounded-full drop-shadow-lg">
-                  <Link
-                    to={{
-                      pathname: `https://steamcommunity.com/profiles/${userDetails.steamID}/inventory/#730_2_${projectRow.combined_ids[0]}`,
-                    }}
-                    target="_blank"
-                  >
-                    <ExternalLinkIcon
-                      className="h-5 w-5 text-gray-500 dark:text-gray-400 group-hover:text-gray-100"
-                      aria-hidden="true"
-                    />
-                  </Link>
-                </div>
-              </td>
+              {settingsData.columns.includes('Moveable') ? (
+                <td
+                  key={Math.random().toString(36).substr(2, 9)}
+                  className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-right"
+                >
+                  <div className="flex justify-center rounded-full drop-shadow-lg">
+                    {projectRow.item_moveable == true ? (
+                      <CheckCircleIcon
+                        className="h-5 w-5 text-green-500"
+                        aria-hidden="true"
+                      />
+                    ) : (
+                      ''
+                    )}
+                  </div>
+                </td>
+              ) : (
+                ''
+              )}
+              {settingsData.columns.includes('Inventory link') ? (
+                <td
+                  key={Math.random().toString(36).substr(2, 9)}
+                  className="table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 hover:text-gray-200 text-right"
+                >
+                  <div className="flex justify-center rounded-full drop-shadow-lg">
+                    <Link
+                      to={{
+                        pathname: `https://steamcommunity.com/profiles/${userDetails.steamID}/inventory/#730_2_${projectRow.combined_ids[0]}`,
+                      }}
+                      target="_blank"
+                    >
+                      <ExternalLinkIcon
+                        className="h-5 w-5 text-gray-500 dark:text-gray-400 group-hover:text-gray-100"
+                        aria-hidden="true"
+                      />
+                    </Link>
+                  </div>
+                </td>
+              ) : (
+                ''
+              )}
 
-
-              <td key={ Math.random().toString(36).substr(2, 9) } className="hidden md:px-6 py-3 whitespace-nowrap text-right text-sm font-medium"></td>
-
+              <td
+                key={Math.random().toString(36).substr(2, 9)}
+                className="hidden md:px-6 py-3 whitespace-nowrap text-right text-sm font-medium"
+              ></td>
             </tr>
           ))}
         </tbody>

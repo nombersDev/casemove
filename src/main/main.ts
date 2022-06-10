@@ -273,6 +273,7 @@ ipcMain.on(
 
     // Success
     user.once('loggedOn', () => {
+      console.log('logged on main')
       user.once('accountInfo', (displayName) => {
         console.log('Logged into Steam as ' + displayName);
         getValue('pricing.currency').then((returnValue) => {
@@ -387,9 +388,10 @@ ipcMain.on(
     });
 
     // Default error
-    user.once('error', (_error) => {
-      cancelLogin(user)
-    });
+    //user.once('error', (_error) => {
+
+    //cancelLogin(user)
+    //});
 
 
     // Login
@@ -489,7 +491,7 @@ async function startEvents(csgo, user) {
         });
       }
     });
-  
+
     csgo.on('itemChanged', (item) => {
       fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
         tradeUpClass.getTradeUp(returnValue).then((newReturnValue: any) => {
@@ -500,11 +502,11 @@ async function startEvents(csgo, user) {
           ]);
         });
       });
-  
+
     });
-  
+
     csgo.on('itemAcquired', (item) => {
-  
+
       if (!Object.keys(item).includes('casket_id') && !Object.keys(item).includes('casket_contained_item_count')) {
         console.log('Item ' + item.id + ' was acquired');
         fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
@@ -517,7 +519,7 @@ async function startEvents(csgo, user) {
           });
         });
       }
-  
+
     });
   }
   startChangeEvents()

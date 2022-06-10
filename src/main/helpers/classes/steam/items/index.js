@@ -246,9 +246,17 @@ class items {
         returnDict['item_moveable'] = true;
       }
 
+      // Promotional pin fix
       if (returnDict['item_name']?.includes('Pin') && value['origin'] == 5) {
         returnDict['item_moveable'] = false;
       }
+
+      // Promotional music kit fix
+      if (value['music_index'] != undefined && value['origin'] == 0) {
+        returnDict['item_moveable'] = false;
+      }
+
+
       returnDict['coordinator_data'] = value;
       // console.log(value, returnDict)
 
@@ -442,7 +450,7 @@ class items {
   }
   itemProcessorCanBeMoved(returnDict, storageRow) {
     const defIndexresult = this.get_def_index(storageRow['def_index']);
-    
+
     if (defIndexresult['prefab'] !== undefined) {
       if (defIndexresult['prefab'] == 'collectible_untradable') {
         return false;
