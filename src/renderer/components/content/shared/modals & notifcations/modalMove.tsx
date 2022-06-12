@@ -179,6 +179,7 @@ export default function MoveModal() {
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
                       Please wait while the app moves your items.
+                      {fastMode == false ? ' \nWant to speed this up? Enable fastmove in the settings.': ''}
                     </p>
 
                     {modalData.totalFailed == 0 ? (
@@ -191,9 +192,6 @@ export default function MoveModal() {
                   </div>
                 </div>
               </div>
-              <span className="mr-3 text-gray-500 dark:text-dark-white text-xs font-medium uppercase tracking-wide">
-
-          </span>
 
 
               <div className="mt-5 sm:mt-6">

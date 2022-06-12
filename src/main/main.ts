@@ -273,6 +273,7 @@ ipcMain.on(
 
     // Success
     user.once('loggedOn', () => {
+      console.log('logged on main')
       user.once('accountInfo', (displayName) => {
         console.log('Logged into Steam as ' + displayName);
         getValue('pricing.currency').then((returnValue) => {
@@ -387,9 +388,10 @@ ipcMain.on(
     });
 
     // Default error
-    user.once('error', (_error) => {
-      cancelLogin(user)
-    });
+    //user.once('error', (_error) => {
+
+    //cancelLogin(user)
+    //});
 
 
     // Login
@@ -489,7 +491,7 @@ async function startEvents(csgo, user) {
         });
       }
     });
-  
+
     csgo.on('itemChanged', (item) => {
       fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
         tradeUpClass.getTradeUp(returnValue).then((newReturnValue: any) => {
@@ -500,11 +502,11 @@ async function startEvents(csgo, user) {
           ]);
         });
       });
-  
+
     });
-  
+
     csgo.on('itemAcquired', (item) => {
-  
+
       if (!Object.keys(item).includes('casket_id') && !Object.keys(item).includes('casket_contained_item_count')) {
         console.log('Item ' + item.id + ' was acquired');
         fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
@@ -517,7 +519,7 @@ async function startEvents(csgo, user) {
           });
         });
       }
-  
+
     });
   }
   startChangeEvents()
@@ -631,13 +633,16 @@ async function startEvents(csgo, user) {
     'removeFromStorageUnit',
     async (event, casketID, itemID, fastMode) => {
       csgo.removeFromCasket(casketID, itemID);
-      if (fastMode) {
+      // if (fastMode) {
 
         csgo.removeAllListeners('itemRemoved');
         csgo.removeAllListeners('itemChanged');
         csgo.removeAllListeners('itemAcquired');
 
-      }
+      // }
+      // csgo.removeAllListeners('itemRemoved');
+      // csgo.removeAllListeners('itemChanged');
+      // csgo.removeAllListeners('itemAcquired');
 
       if (fastMode == false) {
         csgo.once(
@@ -647,7 +652,7 @@ async function startEvents(csgo, user) {
               notificationType ==
               GlobalOffensive.ItemCustomizationNotification.CasketRemoved
             ) {
-              console.log(itemIds + ' removed from storage unit');
+              console.log(itemIds + ' got an item removed from it');
               event.reply('removeFromStorageUnit-reply', [1, itemIds[0]]);
             }
           }
@@ -661,13 +666,13 @@ async function startEvents(csgo, user) {
   // Move to Storage Unit
   ipcMain.on('moveToStorageUnit', async (event, casketID, itemID, fastMode) => {
     csgo.addToCasket(casketID, itemID);
-    if (fastMode) {
+    //if (fastMode) {
 
       csgo.removeAllListeners('itemRemoved');
       csgo.removeAllListeners('itemChanged');
       csgo.removeAllListeners('itemAcquired');
 
-    }
+    // }
 
     if (fastMode == false) {
       csgo.once(
@@ -677,7 +682,7 @@ async function startEvents(csgo, user) {
             notificationType ==
             GlobalOffensive.ItemCustomizationNotification.CasketAdded
           ) {
-            console.log(itemIds[0] + ' added to storage unit');
+            console.log(itemIds[0] + ' got an item added to it');
             event.reply('moveToStorageUnit-reply', [1, itemIds[0]]);
           }
         }

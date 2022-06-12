@@ -61,7 +61,7 @@ class login {
   }
 
   _loginCoordinator() {
-    
+
     if (!this.password && this.rememberedSensitive?.password) {
       this.password = this.rememberedSensitive?.password;
     }
@@ -113,8 +113,10 @@ class login {
       console.log('Error login 1: ', error);
       storeLoginKey(this.username);
       if (this.rememberedSensitive?.secretKey) {
+        console.log('Secret key')
         this._login_secretKey();
       } else {
+
         this._returnToSender(6);
       }
     });
@@ -140,6 +142,9 @@ class login {
       ),
       rememberPassword: true,
     };
+    this.steamUser.once('loggedOn', () => {
+      console.log('logged on')
+    })
     this._loginStart();
   }
 
