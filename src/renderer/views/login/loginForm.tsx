@@ -1,6 +1,7 @@
-import { LockClosedIcon } from '@heroicons/react/solid';
+import { ClipboardCheckIcon, ClipboardCopyIcon, ExternalLinkIcon, KeyIcon, LockClosedIcon, WifiIcon } from '@heroicons/react/solid';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { LoadingButton } from 'renderer/components/content/shared/animations';
 import combineInventory, {
   classNames,
@@ -27,6 +28,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
   const [password, setPassword] = useState('');
   const [authCode, setAuthCode] = useState('');
   const [sharedSecret, setSharedSecret] = useState('');
+  const [clientjstoken, setClientjstoken] = useState('');
   const [doShow, setDoShow] = useState(false);
   const [wasSuccess, setWasSuccess] = useState(false);
   const [titleToDisplay, setTitleToDisplay] = useState('test');
@@ -60,6 +62,41 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
   isLock = isLock[0];
   async function onSubmit() {
     setLoadingButton(true);
+    
+    let clientjstokenToSend = clientjstoken as any;
+    // Validate web token
+    if (webToken) {
+      // Is json string?
+      try {
+        clientjstokenToSend = JSON.parse(clientjstoken)
+      }
+      catch {
+        openNotification(
+          false,
+          'Not a JSON string',
+          'Did you copy the entire string? Try again.'
+        );
+        setLoadingButton(false)
+        setClientjstoken('')
+        return
+      }
+
+      // Is logged in?
+      if (!clientjstokenToSend.logged_in) {
+        openNotification(
+          false,
+          'Not logged in',
+          'Please log in to the browser and try again.'
+        );
+        setLoadingButton(false)
+        setClientjstoken('')
+        return
+      }
+    } else {
+      clientjstokenToSend = ''
+    }
+
+
     let responseCode = 1;
     responseCode = 1;
     let usernameToSend = username as any;
@@ -70,12 +107,14 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
       passwordToSend = null;
       storePasswordToSend = true;
     }
+    console.log(clientjstokenToSend)
     const responseStatus = await window.electron.ipcRenderer.loginUser(
       usernameToSend,
       passwordToSend,
-      storePasswordToSend,
+      clientjstokenToSend != '' ? false : storePasswordToSend,
       authCode,
-      sharedSecret
+      sharedSecret,
+      clientjstokenToSend
     );
     responseCode = responseStatus[0];
 
@@ -213,6 +252,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
   }
 
   const [seenOnce, setOnce] = useState(false);
+  const [webToken, setWebToken] = useState(false);
   const [sendSubmit, shouldSubmit] = useState(false);
   if (seenOnce == false) {
     document.addEventListener('keyup', ({ key }) => {
@@ -231,21 +271,28 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
   return (
     <>
       <div className="min-h-full flex items-center  pt-32 justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
+        <div className="max-w-md w-full">
           <div>
             <SteamLogo />
             <h2 className="mt-6 text-center dark:text-dark-white text-3xl font-extrabold text-gray-900">
-              Connect to Steam
+              {
+                !webToken ? 'Connect to Steam' : 'Connect from browser'
+              }
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
-              The application needs to have an active Steam connection to manage
-              your CSGO items. You should not have any games open on the Steam
-              account.
+              {
+                !webToken ? 'The application needs to have an active Steam connection to manage your CSGO items. You should not have any games open on the Steam account.'
+                : 'Open the URL by clicking on the button, or by copying it to the clipboard. You should be logged into the account you wish to connect Casemove with. Paste the entire string below.'
+              }
+
             </p>
           </div>
-          <form className="mt-8 space-y-6" action="#" method="POST">
+
+          <form className="mt-8 mb-6" action="#" method="POST">
             <input type="hidden" name="remember" defaultValue="true" />
-            <div className="rounded-md -space-y-px">
+            {
+              !webToken ? 
+            <div className="rounded-md mb-6">
               <div>
                 <label htmlFor="email-address" className="sr-only">
                   Username
@@ -325,9 +372,44 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
               ) : (
                 ''
               )}
-            </div>
+            </div> : <div className="rounded-md mb-6">
+              
+      <div className="mt-1 flex rounded-md shadow-sm">
+        <div className="relative flex items-stretch flex-grow focus-within:z-10">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <ClipboardCheckIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+          </div>
+          <input
+            type="email"
+            name="clientjs"
+            id="clientjs"
+            value={clientjstoken}
+            onChange={(e) => setClientjstoken(e.target.value)}
+            className="bg-dark-level-one focus:border-green-500 block w-full rounded-none rounded-l-md pl-10 sm:text-sm border border-gray-300 border-opacity-50 focus:outline-none text-dark-white "
+            placeholder="Paste data"
+          />
+        </div>
+        <button
+          onClick={() => navigator.clipboard.writeText(`https://steamcommunity.com/chat/clientjstoken`)}
+          type="button"
+          className="-ml-px relative inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 border-opacity-50 text-sm font-medium text-gray-700 bg-dark-level-two hover:bg-dark-level-three focus:outline-none focus:border-green-500  "
+        >
+          <ClipboardCopyIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+        </button>
+        <Link
+         to={{
+          pathname: `https://steamcommunity.com/chat/clientjstoken`,
+        }}
+        target="_blank"
+          className="-ml-px relative inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 border-opacity-50 text-sm font-medium rounded-r-md text-gray-700 bg-dark-level-two hover:bg-dark-level-three focus:outline-none focus:border-green-500  "
+        >
+          <ExternalLinkIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+        </Link>
+    </div>
+              
+            </div> }
             {!hasChosenAccountLoginKey ?
-            <div className="flex items-center justify-between">
+            <div className={classNames(!webToken ? '' : 'hidden', "flex items-center justify-between")}>
               <div className="flex items-center">
                 {isLock == '' ? (
                   <input
@@ -389,10 +471,33 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
                 ''
               )}
             </div> : '' }
-
-            <div>
+    
+            <div className='flex justify-between mt-6'>
+            <button
+                className=" group text-dark-white relative w-1/2 flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-dark-level-two hover:bg-dark-level-three "
+                onClick={() => setWebToken(!webToken)}
+                type="button"
+              >
+                <span className="absolute left-0 inset-y-0 flex items-center pl-3">
+                  {webToken ? (
+                    <KeyIcon
+                    className="h-5 w-5 text-dark-white"
+                    aria-hidden="true"
+                  />
+                  ) : (
+                    <WifiIcon
+                      className="h-5 w-5 text-dark-white"
+                      aria-hidden="true"
+                    />
+                  )}
+                </span>
+                <span className='pl-3'>
+                  {!webToken ? 'Browser' : 'Credentials'}
+                </span>
+              </button>
+              
               <button
-                className="focus:bg-indigo-700 group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 "
+                className="focus:bg-indigo-700 group relative w-full flex justify-center py-2 px-4 ml-3 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 "
                 onClick={() => onSubmit()}
                 type="button"
               >
