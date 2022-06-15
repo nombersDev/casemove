@@ -257,7 +257,7 @@ class items {
       }
 
 
-      returnDict['coordinator_data'] = value;
+      // returnDict['coordinator_data'] = JSON.stringify(value);
       // console.log(value, returnDict)
 
       returnList.push(returnDict);
