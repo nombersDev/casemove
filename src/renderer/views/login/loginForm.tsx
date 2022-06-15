@@ -380,7 +380,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
             <ClipboardCheckIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
           </div>
           <input
-            type="email"
+            type="text"
             name="clientjs"
             id="clientjs"
             value={clientjstoken}
