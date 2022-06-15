@@ -25,6 +25,7 @@ https://user-images.githubusercontent.com/98760010/160420993-c62435b7-8962-4c32-
 
 Features include:
 
+  * Log in without entering your password / Steam Guard
   * View your inventory
   * View your storage units contents
   * View the Value of your inventory and storage units
@@ -36,7 +37,6 @@ Features include:
   * Switch between multiple accounts easily
   * Use your shared secret key instead of an auth code to log in 
   * See your storage unit's and inventory value from Buff, Skinport SCM & Bitskins in almost all currencies
-  * Dark mode
 
 Trade up features:
   * Complete trade up contracts from within the app! 
@@ -74,7 +74,11 @@ No, Casemove doesn’t store any information on your computer, except for when y
 
 #### Why can't I just log in using the Steam Web authentication?
 
-In order to move items in and out of Storage Units, the app needs to have an active connection with the CSGO game coordinator. This is not possible when using the web authentication method. 
+In order to move items in and out of Storage Units, the app needs to have an active connection with the CSGO game coordinator. This is not possible when using the web authentication method. However, take a look at the question below. 
+
+#### How does the browser login work?
+
+The browser login feature works by you logging in to the regular steam website which makes Steam generate a one time string that you, amongst other things, can use to log in to casemove. This is the safest log in method, as the generated string is single use, which means that even if someone got a hold of it, it would be useless to them. To get the string, open this [URL](https://steamcommunity.com/chat/clientjstoken).
 
 #### Where can I read more about the safety?
 
