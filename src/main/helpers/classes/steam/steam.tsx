@@ -15,6 +15,7 @@ class login {
   username;
   steamGuard;
   secretKey;
+  clientjstoken;
   shouldRemember = false;
   logInOptions = {} as any;
   resolve;
@@ -25,7 +26,8 @@ class login {
     shouldRemember,
     password = null,
     steamGuard = null,
-    secretKey = null
+    secretKey = null,
+    clientjstoken = null
   ) {
     return new Promise((resolve) => {
       this.resolve = resolve;
@@ -35,6 +37,7 @@ class login {
       this.steamGuard = steamGuard;
       this.secretKey = secretKey;
       this.steamUser = steamuser;
+      this.clientjstoken = clientjstoken
 
       // Get all account details
       getValue('account').then((returnValue) => {
@@ -61,6 +64,12 @@ class login {
   }
 
   _loginCoordinator() {
+
+    // 0
+    if (this.clientjstoken) {
+      this._login_clientjstoken();
+      return;
+    }
 
     if (!this.password && this.rememberedSensitive?.password) {
       this.password = this.rememberedSensitive?.password;
@@ -106,7 +115,17 @@ class login {
       this._returnToSender(4, error);
     });
   }
-
+  // 0 - Client
+  _login_clientjstoken() {
+    this._defaultError();
+    this.logInOptions = {
+      accountName: this.clientjstoken?.account_name,
+      webLogonToken: this.clientjstoken?.token,
+      steamID: this.clientjstoken?.steamid
+    }
+    this._loginStart();
+  }
+  
   // 1 - Login key
   _login_loginKey() {
     this.steamUser.once('error', (error) => {

@@ -108,15 +108,20 @@ contextBridge.exposeInMainWorld('electron', {
       password,
       shouldRemember,
       authcode,
-      sharedSecret
+      sharedSecret,
+      clientjstoken
     )
     {
+      console.log(clientjstoken)
 
       if (authcode == '') {
         authcode = null;
       }
       if (sharedSecret == '') {
         sharedSecret = null;
+      }
+      if (clientjstoken == '') {
+        clientjstoken = null
       }
       return new Promise((resolve) => {
         ipcRenderer.send(
@@ -125,7 +130,8 @@ contextBridge.exposeInMainWorld('electron', {
           password,
           shouldRemember,
           authcode,
-          sharedSecret
+          sharedSecret,
+          clientjstoken
         );
         ipcRenderer.once('login-reply', (event, arg) => {
           resolve(arg);

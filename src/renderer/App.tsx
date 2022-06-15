@@ -489,11 +489,11 @@ function AppContent() {
 
                             </div>
                             <div className='text-gray-500'>
-                            {new Intl.NumberFormat(settingsData.locale, {
+                              {userDetails.walletBalance?.balance == 0 || userDetails.walletBalance == null ? '' : new Intl.NumberFormat(settingsData.locale, {
                   style: 'currency',
-                  currency: userDetails.walletBalance.currency || settingsData.currency,
+                  currency: userDetails.walletBalance?.currency || settingsData.currency,
                 }).format(
-                  userDetails.walletBalance.balance || 0)}
+                  userDetails.walletBalance?.balance || 0)}
                             </div>
                           </span>
                         </span>

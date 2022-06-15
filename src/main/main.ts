@@ -265,7 +265,8 @@ ipcMain.on(
     password = null,
     shouldRemember,
     steamGuard = null,
-    secretKey = null
+    secretKey = null,
+    clientjstoken = null
   ) => {
     let user = new SteamUser();
     let csgo = new GlobalOffensive(user);
@@ -302,7 +303,9 @@ ipcMain.on(
                         .getTradeUp(returnValue)
                         .then((newReturnValue: any) => {
                           let walletToSend = user.wallet
-                          walletToSend.currency = currencyCodes?.[walletToSend?.currency]
+                          if (walletToSend) {
+                            walletToSend.currency = currencyCodes?.[walletToSend?.currency]
+                          }
                           const returnPackage = [
                             user.logOnResult.client_supplied_steamid,
                             displayName,
@@ -396,7 +399,7 @@ ipcMain.on(
 
     // Login
     let loginClass = new login()
-    loginClass.mainLogin(user, username, shouldRemember, password, steamGuard, secretKey).then((returnValue) => {
+    loginClass.mainLogin(user, username, shouldRemember, password, steamGuard, secretKey, clientjstoken).then((returnValue) => {
       event.reply('login-reply', returnValue);
     })
     // Start the game coordinator for CSGO
