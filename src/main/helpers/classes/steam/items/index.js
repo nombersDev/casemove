@@ -117,6 +117,11 @@ class items {
 
   inventoryConverter(inventoryResult, isCasket = false) {
     var returnList = [];
+    if (typeof inventoryResult === 'object' && inventoryResult !== null) {
+      returnList
+    } else {
+      return returnList
+    }
 
     for (const [key, value] of Object.entries(inventoryResult)) {
       if (value['def_index'] == undefined) {
