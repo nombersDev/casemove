@@ -267,6 +267,11 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
     onSubmit();
     shouldSubmit(false);
   }
+  console.log(sendSubmit)
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+  }
 
   return (
     <>
@@ -288,7 +293,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
             </p>
           </div>
 
-          <form className="mt-8 mb-6" action="#" method="POST">
+          <form className="mt-8 mb-6" onSubmit={(e) => handleSubmit(e)}>
             <input type="hidden" name="remember" defaultValue="true" />
             {
               !webToken ? 
