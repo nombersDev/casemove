@@ -12,7 +12,7 @@ import { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BeakerIcon, XIcon } from '@heroicons/react/solid';
-import { classNames } from '../inventoryFunctions';
+import { classNames } from '../filters/inventoryFunctions';
 import { setTradeConfirm, setTradeMove } from 'renderer/store/actions/modalTrade';
 import { tradeUpAddRemove } from 'renderer/store/actions/tradeUpActions';
 
@@ -134,7 +134,7 @@ export default function TradeModal() {
                             style: 'currency',
                             currency: settingsData.currency,
                           }).format(
-                            pricesResult.prices[project.item_name]?.[
+                            pricesResult.prices[project.item_name  + project.item_wear_name || '']?.[
                               settingsData?.source?.title
                             ] *
                               settingsData.currencyPrice[settingsData.currency]

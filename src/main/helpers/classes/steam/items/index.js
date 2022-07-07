@@ -261,7 +261,6 @@ class items {
         returnDict['item_moveable'] = false;
       }
 
-
       // returnDict['coordinator_data'] = JSON.stringify(value);
       // console.log(value, returnDict)
 
@@ -550,6 +549,7 @@ class items {
   getStickerDetails(stickerID) {
     return this.csgoItems['sticker_kits'][stickerID];
   }
+
 
   checkIfAttributeIsThere(item, attribDefIndex) {
     let attrib = (item.attribute || []).find(

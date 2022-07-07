@@ -4,7 +4,7 @@ import { Transition } from '@headlessui/react';
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/outline';
 import { XIcon } from '@heroicons/react/solid';
 import { useSelector } from 'react-redux';
-import { classNames } from '../inventoryFunctions';
+import { classNames } from '../filters/inventoryFunctions';
 
 export default function NotificationElement({
   success,

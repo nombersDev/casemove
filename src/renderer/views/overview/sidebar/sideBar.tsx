@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { classNames } from 'renderer/components/content/shared/inventoryFunctions';
+import { classNames } from 'renderer/components/content/shared/filters/inventoryFunctions';
 import { tradeUpAddRemove } from 'renderer/store/actions/tradeUpActions';
 import PossibleOutcomes from './possibleOutcomes';
 
@@ -15,7 +15,9 @@ export default function TradeUpSideBar() {
   });
   totalFloat = totalFloat / tradeUpData.tradeUpProducts.length;
 
+
   let productsToUse = [...tradeUpData.tradeUpProducts];
+
   while (true) {
     if (productsToUse.length != 10) {
       productsToUse.push({ item_name: 'EMPTY' });

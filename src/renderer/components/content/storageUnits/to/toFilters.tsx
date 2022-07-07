@@ -8,7 +8,7 @@ import {
 } from '@heroicons/react/solid';
 // import MoveModal from '../../shared/modals & notifcations/modalMove';
 import { useDispatch, useSelector } from 'react-redux';
-import { classNames } from '../../shared/inventoryFunctions';
+import { classNames } from '../../shared/filters/inventoryFunctions';
 import MoveModal from '../../shared/modals & notifcations/modalMove';
 import { moveModalQuerySet } from 'renderer/store/actions/modalMove actions';
 import {

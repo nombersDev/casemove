@@ -9,7 +9,7 @@ import {
   setSourceValue,
 } from 'renderer/store/actions/settings';
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid';
-import { classNames } from 'renderer/components/content/shared/inventoryFunctions';
+import { classNames } from 'renderer/components/content/shared/filters/inventoryFunctions';
 import ColumnsDropDown from 'renderer/components/content/shared/dropdownRows';
 
 const sources = [

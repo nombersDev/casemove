@@ -2,8 +2,9 @@ import { BeakerIcon, PencilIcon, SelectorIcon, TagIcon } from '@heroicons/react/
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { classNames } from 'renderer/components/content/shared/inventoryFunctions';
+import { classNames } from 'renderer/components/content/shared/filters/inventoryFunctions';
 import itemRarities from 'renderer/components/content/shared/rarities';
+//import { sortDataFunction } from 'renderer/context/inventoryFiltersContext';
 import { filterInventorySetSort } from 'renderer/store/actions/filtersInventoryActions';
 import { setRenameModal } from 'renderer/store/actions/modalMove actions';
 import { pricing_add_to_requested } from 'renderer/store/actions/pricingActions';
@@ -37,10 +38,32 @@ function content() {
     );
   }
 
-  let inventoryToUse = [...inventory.inventory];
+  // Convert to dict for easier match
+    let finalList = {};
+    inventory.inventory.forEach(element => {
+      if (finalList[element.item_name] == undefined) {
+        finalList[element.item_name] = [element]
+      }
+      else {
+        let listToUse = finalList[element.item_name];
+        listToUse.push(element)
+        finalList[element.item_name] = listToUse
+
+      }
+    });
+
+    // Inventory to use
+    let finalInventoryToUse = [] as any;
+    let seenNames = [] as any;
+    inventoryFilters.inventoryFiltered.forEach((projectRow) => {
+      if (finalList[projectRow.item_name] != undefined && seenNames.includes(projectRow.item_name) == false) {
+        finalInventoryToUse = [...finalInventoryToUse, ...finalList[projectRow.item_name]]
+        seenNames.push(projectRow.item_name)
+      }
+    })
 
 
-  inventoryToUse = inventoryToUse.filter(function (item) {
+    finalInventoryToUse = finalInventoryToUse.filter(function (item) {
     if (!item.tradeUpConfirmed) {
       return false;
     }
@@ -79,7 +102,7 @@ function content() {
   itemRarities.forEach(element => {
     itemR[element.value] = element.bgColorClass
   });
-  inventoryToUse.forEach(element => {
+  finalInventoryToUse.forEach(element => {
     element['rarityColor'] =itemR[element.rarityName]
   });
 
@@ -87,7 +110,7 @@ function content() {
 
   // Prices
   let pricesToGet = [] as any;
-  inventoryToUse.forEach((projectRow) => {
+  finalInventoryToUse.forEach((projectRow) => {
     if (
       pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || ''] == undefined &&
       pricesResult.productsRequested.includes(projectRow.item_name + projectRow.item_wear_name || '') == false
@@ -100,11 +123,73 @@ function content() {
     dispatch(pricing_add_to_requested(pricesToGet));
   }
 
-  // Is it full ?
-  const isFull = tradeUpData.tradeUpProducts.length == 10
-  if (inventoryFilters.sortBack) {
-    inventoryToUse.reverse()
+
+  function sortRun(valueOne, ValueTwo, useNaN = false) {
+    if (valueOne == undefined) {
+      valueOne = -90000000000
+    }
+    if (ValueTwo == undefined) {
+      ValueTwo = -90000000000
+    }
+    if (valueOne < ValueTwo) {
+      return -1;
+    }
+    if (valueOne > ValueTwo) {
+      return 1;
+    }
+
+    if (useNaN && isNaN(valueOne)) {
+      return -1;
+    }
+    return 0;
   }
+
+  // SORT Fix for prices
+    function sortRunAlt(valueOne, ValueTwo) {
+      if (isNaN(valueOne)) {
+        valueOne = -90000000000
+      }
+      if (isNaN(ValueTwo)) {
+        ValueTwo = -90000000000
+      }
+      if (valueOne < ValueTwo) {
+        return -1;
+      }
+      if (valueOne > ValueTwo) {
+        return 1;
+      }
+
+      return 0;
+    }
+
+
+
+
+    if (inventoryFilters.sortValue == 'Price'){
+      finalInventoryToUse.sort(function (a, b) {
+        return sortRunAlt(
+          pricesResult.prices[a.item_name  + a.item_wear_name || '']?.[settingsData?.source?.title],
+          pricesResult.prices[b.item_name  + b.item_wear_name || '']?.[settingsData?.source?.title]
+        );
+      });
+  }
+  if (inventoryFilters.sortValue == 'wearValue'){
+    finalInventoryToUse.sort(function (a, b) {
+      return -sortRun(a.item_paint_wear, b.item_paint_wear, true);
+    });
+}
+if (inventoryFilters.sortValue == 'Stickers'){
+  finalInventoryToUse.sort(function (a, b) {
+    return -sortRun(a?.stickers?.length, b?.stickers?.length);
+  });
+}
+const isFull = tradeUpData.tradeUpProducts.length == 10
+    if (inventoryFilters.sortBack) {
+      finalInventoryToUse.reverse()
+    }
+
+
+
 
 
   return (
@@ -178,7 +263,7 @@ function content() {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-100 dark:bg-dark-level-one dark:divide-gray-500">
-          {inventoryToUse.map((projectRow) => (
+          {finalInventoryToUse.map((projectRow) => (
             <tr
               key={projectRow.item_id}
               className={classNames(

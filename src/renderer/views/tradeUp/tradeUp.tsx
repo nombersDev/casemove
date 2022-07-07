@@ -8,7 +8,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import PricingAmount from 'renderer/components/content/shared/filters/pricingAmount';
-import { classNames } from 'renderer/components/content/shared/inventoryFunctions';
+import { classNames } from 'renderer/components/content/shared/filters/inventoryFunctions';
 import TradeModal from 'renderer/components/content/shared/modals & notifcations/modalTrade';
 import { setTradeMove } from 'renderer/store/actions/modalTrade';
 import TradeUpPicker from './inventoryPickers';

@@ -11,6 +11,7 @@ import {
 } from 'react-router-dom';
 import inventoryContent from './components/content/Inventory/inventory';
 import {
+  ChartBarIcon,
   DownloadIcon,
   GiftIcon,
   InboxInIcon,
@@ -26,7 +27,7 @@ import {
   MenuAlt1Icon,
   BeakerIcon,
 } from '@heroicons/react/outline';
-import itemCategories from './components/content/shared/categories';
+import {itemCategories} from './components/content/shared/categories';
 import { toMoveContext } from './context/toMoveContext';
 import StorageUnitsComponent from './components/content/storageUnits/from/Content';
 import LoginPage from './views/login/login';
@@ -35,7 +36,7 @@ import { signOut } from './store/actions/userStatsActions';
 import { handleUserEvent } from './store/handleMessage';
 import Logo from './components/content/shared/iconsLogo/logo 2';
 import ToContent from './components/content/storageUnits/to/toHolder';
-import { classNames } from './components/content/shared/inventoryFunctions';
+import { classNames } from './components/content/shared/filters/inventoryFunctions';
 import {
   filterInventorySetSort,
   inventoryAddCategoryFilter,
@@ -57,10 +58,13 @@ import TradeupPage from './views/tradeUp/tradeUp';
 import itemRarities from './components/content/shared/rarities';
 import { setTradeFoundMatch } from './store/actions/modalTrade';
 import TradeResultModal from './components/content/shared/modals & notifcations/modalTradeResult';
+import OverviewPage from './views/overview/overview';
 DocumentDownloadIcon;
 
 //{ name: 'Reports', href: '/reports', icon: DocumentDownloadIcon, current: false }
 const navigation = [
+
+  { name: 'Overview', href: '/stats', icon:ChartBarIcon, current:false},
   {
     name: 'Transfer | From',
     href: '/transferfrom',
@@ -74,7 +78,7 @@ const navigation = [
     current: false,
   },
   { name: 'Inventory', href: '/inventory', icon: ArchiveIcon, current: false },
-  { name: 'Trade up', href: '/tradeup', icon: BeakerIcon, current: false },
+  { name: 'Trade up', href: '/tradeup', icon: BeakerIcon, current: false }
 ];
 
 function AppContent() {
@@ -228,6 +232,7 @@ function AppContent() {
     )) as any;
     dispatch(actionToTake);
     if (messageValue[0] == 1) {
+      console.log(messageValue)
       await handleFilterData(actionToTake.payload.combinedInventory);
     }
     setIsListening(false);
@@ -243,18 +248,20 @@ function AppContent() {
   }
 
   // Should update status
-  const [shouldUpdate, setShouldUpdate] = useState(0);
+  const [shouldUpdate, setShouldUpdate] = useState(false);
+  const [shouldCheckUpdate, setShouldCheckUpdate] = useState(true);
+
   const [getVersion, setVersion] = useState('');
+  const [getDownloadLink, setDownloadLink] = useState('');
   async function getUpdate() {
     const doUpdate = await window.electron.ipcRenderer.needUpdate();
-    console.log(doUpdate);
-    setVersion('v' + doUpdate[1]);
-    if (doUpdate[0] == true) {
-      setShouldUpdate(1);
-    }
+    console.log(doUpdate)
+    setVersion('v' + doUpdate.currentVersion);
+    setShouldUpdate(doUpdate.requireUpdate);
+    setDownloadLink(doUpdate.githubResponse.downloadLink)
   }
-  if (shouldUpdate == 0) {
-    setShouldUpdate(2);
+  if (shouldCheckUpdate == true) {
+    setShouldCheckUpdate(false);
     getUpdate();
   }
 
@@ -280,6 +287,7 @@ function AppContent() {
   if (tradeUpData.inventoryFirst.length != 0) {
     handleTradeUp();
   }
+  console.log(shouldUpdate)
 
   return (
     <>
@@ -442,7 +450,7 @@ function AppContent() {
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="mt-6 h-0 flex-1 flex flex-col overflow-y-auto">
             {/* User account dropdown */}
-            <Menu
+            {!window.location.href.includes('/stats') ? <Menu
               as="div"
               className={classNames(
                 userDetails.isLoggedIn ? '' : 'pointer-events-none',
@@ -553,7 +561,8 @@ function AppContent() {
                   </div>
                 </Menu.Items>
               </Transition>
-            </Menu>
+            </Menu> : ''}
+
 
             <div className="px-3 mt-5">
               {userDetails.CSGOConnection == false &&
@@ -570,9 +579,9 @@ function AppContent() {
                   />
                   <span className="mr-3 text-green-900">Retry connection</span>
                 </button>
-              ) : shouldUpdate == 1 ? (
+              ) : shouldUpdate == true ? (
                 <a
-                  href="https://github.com/nombersDev/casemove/releases"
+                  href={getDownloadLink}
                   target="_blank"
                 >
                   <button
@@ -777,7 +786,7 @@ function AppContent() {
                         Retry connection
                       </span>
                     </button>
-                  ) : shouldUpdate == 1 ? (
+                  ) : shouldUpdate == false ? (
                     <a
                       href="https://steamcommunity.com/tradeoffer/new/?partner=1033744096&token=29ggoJY7"
                       target="_blank"
@@ -890,6 +899,7 @@ function AppContent() {
                   <Route exact path="/inventory" component={inventoryContent} />
                   <Route exact path="/tradeup" component={TradeupPage} />
                   <Route exact path="/settings" component={settingsPage} />
+                  <Route exact path="/stats" component={OverviewPage} />
                 </toMoveContext.Provider>
               </Switch>
             </Router>

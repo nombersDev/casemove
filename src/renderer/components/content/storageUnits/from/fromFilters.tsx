@@ -14,7 +14,7 @@ import {
 } from 'renderer/store/actions/moveFromActions';
 import {
   downloadReport,
-} from '../../shared/inventoryFunctions';
+} from '../../shared/filters/inventoryFunctions';
 import MoveModal from '../../shared/modals & notifcations/modalMove';
 import { moveModalQuerySet } from 'renderer/store/actions/modalMove actions';
 import PricingAmount from '../../shared/filters/pricingAmount';

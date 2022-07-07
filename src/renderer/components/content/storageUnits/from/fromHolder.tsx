@@ -3,7 +3,7 @@ import StorageRow from './fromStorageRow';
 import StorageSelectorContent from './fromSelector';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { sortDataFunction } from '../../shared/inventoryFunctions';
+import { sortDataFunction } from '../../shared/filters/inventoryFunctions';
 import { useState } from 'react';
 import { moveFromSetSortOption } from 'renderer/store/actions/moveFromActions';
 import { inventorySetStoragesData } from 'renderer/store/actions/inventoryActions';

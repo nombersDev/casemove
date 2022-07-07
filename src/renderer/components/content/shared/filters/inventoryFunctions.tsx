@@ -1,13 +1,81 @@
-import itemCategories from './categories';
+import {itemCategories, itemSubCategories} from '../categories';
+
+interface ItemRow {
+  item_name: string
+  item_customname: string | null
+  item_url: string
+  item_id: string
+  position: number
+  item_wear_name?: string
+  item_paint_wear?: number
+  item_origin: number
+  item_moveable: boolean
+  item_has_stickers: boolean
+  equipped_ct: boolean
+  equipped_t: boolean
+  def_index: number
+  stickers: Array<string>
+  rarity?: number
+  rarityName: string
+  tradeUp: boolean
+  stattrak: boolean
+  tradeUpConfirmed: boolean
+  collection?: string
+  combined_ids?: Array<string>
+  combined_QTY?: number
+  bgColorClass?: string
+  category?: string
+  major?: string
+}
+
+// Will get the categories
+async function getCategory(toLoopThrough: Array<ItemRow>, additionalObjectToAdd: any = {}) {
+  let returnArray: Array<itemRow> = [];
+  let itemIdsFiltered: Array<string> = [];
+
+  for (const [_, value] of Object.entries(itemCategories)) {
+    let result = toLoopThrough.filter(itemRow => itemRow.item_url.includes(value.value));
+    result = result.map(function(el) {
+      itemIdsFiltered.push(el.item_id)
+      let o = Object.assign({}, el);
+      o.category = value.name
+      o.bgColorClass = value.bgColorClass
+
+      // Major
+      const majorRegex = new RegExp('(?:' + Object.keys(itemSubCategories.majors).join('|') + ')', 'g')
+      const majorMatch = el.item_name.match(majorRegex);
+      if (majorMatch) {
+        o.major = majorMatch[0]
+      }
+
+      // Additional keys to add
+      for (const [keyToAdd, valueToAdd] of Object.entries(additionalObjectToAdd)) {
+        o[keyToAdd] = valueToAdd
+      }
+      return o;
+    })
+
+
+    returnArray.push(...result)
+  }
+
+  // If any items are left behind - ie doesn't fit in a category, we add it back to the array.
+  if (toLoopThrough.length != returnArray.length) {
+
+    returnArray.push(...toLoopThrough.filter(itemRow => !itemIdsFiltered.includes(itemRow.item_id)));
+  }
+  return returnArray
+
+}
 
 // This will combine the inventory when specific conditions match
-export default function combineInventory(thisInventory, settings) {
+export default function combineInventory(thisInventory: Array<ItemRow>, settings: any, additionalObjectToAdd: any = {}) {
 
   const seenProducts = [] as any;
   const newInventory = [] as any;
 
   for (const [, value] of Object.entries(thisInventory)) {
-    let valued = value as String;
+    let valued = value;
 
     // Create a string that matches the conditions
     let wearName = valued['item_wear_name']  || 0
@@ -27,7 +95,7 @@ export default function combineInventory(thisInventory, settings) {
 
     // Filter the inventory
     if (seenProducts.includes(valueConditions) == false) {
-      length = thisInventory.filter(function (item) {
+      let length = thisInventory.filter(function (item) {
         let wearName = item['item_wear_name']  || 0
         let itemConditions =
           item['item_name'] +
@@ -48,7 +116,7 @@ export default function combineInventory(thisInventory, settings) {
       // Get all ids
       let valuedList = [] as any;
       for (const [, filteredValue] of Object.entries(length)) {
-        let filteredValued = filteredValue as String;
+        let filteredValued = filteredValue
 
         valuedList.push(filteredValued['item_id']);
       }
@@ -62,43 +130,21 @@ export default function combineInventory(thisInventory, settings) {
       seenProducts.push(valueConditions);
     }
   }
-  newInventory.forEach(function (item) {
-    item['bgColorClass'] = 'bg-current';
-    item['category'] = 'None';
-    for (const [key, value] of Object.entries(itemCategories)) {
-      key;
-      if (item['item_url'].includes(value['value'])) {
-        item['bgColorClass'] = value['bgColorClass'];
-        item['category'] = value['name'];
-      }
-    }
-  });
-
-  return newInventory;
+  return getCategory(newInventory, additionalObjectToAdd).then((returnValue) => {
+    return returnValue
+  })
 }
 
 export async function getInventory(getInventoryData, prices, pricingSource, settings) {
   var unfilteredInventory = await window.electron.ipcRenderer.runCommandTest(3);
   var combinedInventory = await combineInventory(unfilteredInventory, settings);
-  combinedInventory = await filterInventory(
+  return await filterInventory(
     combinedInventory,
     getInventoryData['filters'],
     getInventoryData['sort'],
     prices,
     pricingSource
-  );
-  combinedInventory.forEach(function (item) {
-    item['bgColorClass'] = 'bg-current';
-    item['category'] = 'None';
-    for (const [key, value] of Object.entries(itemCategories)) {
-      key;
-      if (item['item_url'].includes(value['value'])) {
-        item['bgColorClass'] = value['bgColorClass'];
-        item['category'] = value['name'];
-      }
-    }
-  });
-  return combinedInventory;
+  )
 }
 
 export async function getStorageUnitDataReload(storageID, storageName, settings) {
@@ -107,23 +153,10 @@ export async function getStorageUnitDataReload(storageID, storageName, settings)
     [],
     storageID
   );
-  storageResult = await combineInventory(storageResult, settings);
-  const newStorageData = [] as any;
-  await storageResult.forEach(function (item) {
-    item['bgColorClass'] = 'bg-current';
-    item['category'] = 'None';
-    for (const [, value] of Object.entries(itemCategories)) {
-      if (item['item_url'].includes(value['value'])) {
-        item['bgColorClass'] = value['bgColorClass'];
-        item['category'] = value['name'];
-      }
-    }
-    item['storage_id'] = storageID;
-    item['storage_name'] = storageName;
-    newStorageData.push(item);
+  return await combineInventory(storageResult, settings, {
+    storage_id: storageID,
+    storage_name: storageName
   });
-
-  return newStorageData;
 }
 
 export async function getStorageUnitData(
@@ -141,21 +174,14 @@ export async function getStorageUnitData(
   console.log(storageResult[1])
   storageResult = storageResult[1];
 
-  storageResult = await combineInventory(storageResult, settings);
+  storageResult = await combineInventory(storageResult, settings, {
+    storage_id: storageID,
+    storage_name: storageName
+  });
   await storageResult.forEach(function (item) {
-    item['bgColorClass'] = 'bg-current';
-    item['category'] = 'None';
-    for (const [, value] of Object.entries(itemCategories)) {
-      if (item['item_url'].includes(value['value'])) {
-        item['bgColorClass'] = value['bgColorClass'];
-        item['category'] = value['name'];
-      }
-    }
-    item['storage_id'] = storageID;
-    item['storage_name'] = storageName;
     if (
-      prices[item.item_name] == undefined &&
-      pricesRequested.includes(item.item_name) == false
+      prices[item.item_name + item.item_wear_name || ''] == undefined &&
+      pricesRequested.includes(item.item_name + item.item_wear_name || '') == false
     ) {
       productsToGet.push(item);
     }

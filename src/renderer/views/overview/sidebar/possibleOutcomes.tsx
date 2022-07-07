@@ -2,7 +2,7 @@ import { CashIcon } from '@heroicons/react/solid';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { classNames } from 'renderer/components/content/shared/inventoryFunctions';
+import { classNames } from 'renderer/components/content/shared/filters/inventoryFunctions';
 import { tradeUpSetPossible } from 'renderer/store/actions/tradeUpActions';
 
 const rarityShort = {
@@ -19,17 +19,18 @@ export default function PossibleOutcomes() {
   const settingsData = useSelector((state: any) => state.settingsReducer);
   const [outcomesRequested, setOutcomesRequested] = useState(0);
   const dispatch = useDispatch();
+  console.log(tradeUpData.possibleOutcomes.length, tradeUpData.tradeUpProducts.length)
 
   let totalPrice = 0;
   tradeUpData.tradeUpProducts.forEach((element) => {
-    totalPrice += pricesResult.prices[element.item_name]?.['steam_listing'];
+    totalPrice += pricesResult.prices[element.item_name + element.item_wear_name || '']?.['steam_listing'];
   });
   totalPrice;
 
   tradeUpData.possibleOutcomes.forEach((element) => {
     element['profit_cal'] =
       (100 / (totalPrice * 100)) *
-      (pricesResult?.prices[element.item_name]?.['steam_listing'] * 100);
+      (pricesResult?.prices[element.item_name + element.item_wear_name || '']?.['steam_listing'] * 100);
   });
   tradeUpData.possibleOutcomes.sort(function (a, b) {
     var keyA = a.profit_cal,
@@ -40,10 +41,8 @@ export default function PossibleOutcomes() {
   });
 
   // Get outcomes
-  console.log(tradeUpData.tradeUpProducts.length, tradeUpData.possibleOutcomes.length)
   if (
-    tradeUpData.tradeUpProducts.length > 0 &&
-    tradeUpData.possibleOutcomes.length == 0
+    tradeUpData.tradeUpProducts.length > 0
   ) {
     if (outcomesRequested != tradeUpData.tradeUpProducts.length) {
       setOutcomesRequested(tradeUpData.tradeUpProducts.length);

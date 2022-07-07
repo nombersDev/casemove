@@ -1,4 +1,4 @@
-import { filterInventory } from "renderer/components/content/shared/inventoryFunctions"
+import { filterInventory } from "renderer/components/content/shared/filters/inventoryFunctions"
 
 
 const allButClear = (filterString: any, sortValue, inventoryFiltered, tradeUpInventory) => {

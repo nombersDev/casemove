@@ -20,7 +20,7 @@ import EmptyComponent from '../../shared/emptyState';
 import {
   classNames,
   getStorageUnitData,
-} from '../../shared/inventoryFunctions';
+} from '../../shared/filters/inventoryFunctions';
 import RenameModal from '../../shared/modals & notifcations/modalRename';
 
 function content() {
@@ -71,13 +71,19 @@ function content() {
   }
 
   // Get all storage unit data
-  
+
   async function getAllStorages() {
     const casketResults = await inventory.inventory.filter(function (row) {
       if (!row.item_url.includes('casket')) {
         return false; // skip
       }
       if (row.item_storage_total == 0) {
+        return false; // skip
+      }
+      if (fromSelector.searchInputStorage != '' && !row?.item_customname?.toLowerCase()?.includes(fromSelector.searchInputStorage)) {
+        return false; // skip
+      }
+      if (row.item_storage_total == 1000 && fromReducer.hideFull) {
         return false; // skip
       }
       return true;
@@ -289,7 +295,7 @@ function content() {
               </span>
             </span>
           </Switch>
-         
+
         </div>
       </div>
       {inventoryToUse.filter(function (row) {

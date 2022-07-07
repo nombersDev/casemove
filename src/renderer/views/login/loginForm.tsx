@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { LoadingButton } from 'renderer/components/content/shared/animations';
 import combineInventory, {
   classNames,
-} from 'renderer/components/content/shared/inventoryFunctions';
+} from 'renderer/components/content/shared/filters/inventoryFunctions';
 import NotificationElement from 'renderer/components/content/shared/modals & notifcations/notification';
 import SteamLogo from 'renderer/components/content/shared/steamLogo';
 import { filterInventorySetSort } from 'renderer/store/actions/filtersInventoryActions';
@@ -62,7 +62,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
   isLock = isLock[0];
   async function onSubmit() {
     setLoadingButton(true);
-    
+
     let clientjstokenToSend = clientjstoken as any;
     // Validate web token
     if (webToken) {
@@ -296,7 +296,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
           <form className="mt-8 mb-6" onSubmit={(e) => handleSubmit(e)}>
             <input type="hidden" name="remember" defaultValue="true" />
             {
-              !webToken ? 
+              !webToken ?
             <div className="rounded-md mb-6">
               <div>
                 <label htmlFor="email-address" className="sr-only">
@@ -378,7 +378,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
                 ''
               )}
             </div> : <div className="rounded-md mb-6">
-              
+
       <div className="mt-1 flex rounded-md shadow-sm">
         <div className="relative flex items-stretch flex-grow focus-within:z-10">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -411,7 +411,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
           <ExternalLinkIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
         </Link>
     </div>
-              
+
             </div> }
             {!hasChosenAccountLoginKey ?
             <div className={classNames(!webToken ? '' : 'hidden', "flex items-center justify-between")}>
@@ -476,7 +476,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
                 ''
               )}
             </div> : '' }
-    
+
             <div className='flex justify-between mt-6'>
             <button
                 className=" group text-dark-white relative w-1/2 flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-dark-level-two hover:bg-dark-level-three "
@@ -500,7 +500,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
                   {!webToken ? 'Browser' : 'Credentials'}
                 </span>
               </button>
-              
+
               <button
                 className="focus:bg-indigo-700 group relative w-full flex justify-center py-2 px-4 ml-3 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 "
                 onClick={() => onSubmit()}

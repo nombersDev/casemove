@@ -1,5 +1,5 @@
 import { CashIcon } from '@heroicons/react/solid';
-import { classNames } from '../inventoryFunctions';
+import { classNames } from './inventoryFunctions';
 
 export default function PricingAmount({totalAmount, pricingAmount = 0, IconToUse = CashIcon, colorOf = "text-yellow-500"}) {
   return (

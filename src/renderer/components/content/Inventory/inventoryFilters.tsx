@@ -11,7 +11,7 @@ import {
   filterInventoryClearAll,
   inventoryFilterSetSearch,
 } from 'renderer/store/actions/filtersInventoryActions';
-import { classNames, downloadReport } from '../shared/inventoryFunctions';
+import { classNames, downloadReport } from '../shared/filters/inventoryFunctions';
 import PricingAmount from '../shared/filters/pricingAmount';
 import MoveLeft from '../shared/filters/inventoryAmount';
 import AccountAmount from '../shared/filters/accountAmount';

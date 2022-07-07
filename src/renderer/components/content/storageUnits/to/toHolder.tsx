@@ -3,7 +3,7 @@ import StorageRow from './toStorageRow';
 import StorageSelectorContent from './toSelector';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { sortDataFunction } from '../../shared/inventoryFunctions';
+import { sortDataFunction } from '../../shared/filters/inventoryFunctions';
 import { useState } from 'react';
 import { inventorySetStoragesData } from 'renderer/store/actions/inventoryActions';
 import { BanIcon, FireIcon, SelectorIcon } from '@heroicons/react/solid';

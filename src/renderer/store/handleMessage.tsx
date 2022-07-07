@@ -3,7 +3,7 @@
 // 2: User log in / log out
 // 3: CSGO Connection
 
-import combineInventory from "renderer/components/content/shared/inventoryFunctions"
+import combineInventory from "renderer/components/content/shared/filters/inventoryFunctions"
 import { setInventoryAction } from "./actions/inventoryActions"
 import { setConnection, setGC, signOut, setWalletBalance } from "./actions/userStatsActions"
 

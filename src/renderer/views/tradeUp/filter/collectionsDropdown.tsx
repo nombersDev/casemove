@@ -2,7 +2,7 @@ import { Fragment } from 'react'
 import {  Popover, Transition } from '@headlessui/react'
 import { useDispatch, useSelector } from 'react-redux';
 import { tradeUpCollectionsAddRemove } from 'renderer/store/actions/tradeUpActions';
-import { classNames } from 'renderer/components/content/shared/inventoryFunctions';
+import { classNames } from 'renderer/components/content/shared/filters/inventoryFunctions';
 
 export default function CollectionsDropDown() {
 
