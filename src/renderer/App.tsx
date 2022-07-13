@@ -149,7 +149,8 @@ function AppContent() {
 
   // First time setup
   async function setFirstTimeSettings() {
-    if (settingsData.currencyPrice == {} || settingsData.source == undefined) {
+    console.log(settingsData.currencyPrice == {}, settingsData.os == '', settingsData)
+    if (settingsData.os == '') {
       // OS
       await window.electron.store.get('os').then((returnValue) => {
         console.log('OS', returnValue);

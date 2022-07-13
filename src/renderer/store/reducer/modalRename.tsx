@@ -1,6 +1,11 @@
-const initialState = {
+import { RenameModal } from "renderer/interfaces/store";
+
+const initialState: RenameModal = {
     renameOpen: false,
-    modalPayload: {}
+    modalPayload: {
+      itemID: '',
+      itemName: ''
+    },
   };
 
   const modalRenameReducer = (state = initialState, action) => {

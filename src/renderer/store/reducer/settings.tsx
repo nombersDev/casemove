@@ -1,11 +1,16 @@
-const initialState = {
+import { Settings } from "renderer/interfaces/store";
+
+const initialState: Settings = {
   fastMove: false,
-  currency: 'USD',
+  currency: 'USD', 
   locale: 'EN-GB',
   os: '',
   devmode: false,
   columns: ["Price", "Stickers/patches", "Storage", "Tradehold", 'Moveable', 'Inventory link'],
-  currencyPrice: {}
+  currencyPrice: {},
+  source: {
+    title: 'Steam Community Market'
+  }
 };
 
 const settingsReducer = (state = initialState, action) => {

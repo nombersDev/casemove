@@ -1,12 +1,14 @@
-const initialState = {
-    tradeUpProducts: [] as any,
-    tradeUpProductsIDS: [] as any,
-    possibleOutcomes: [] as any,
+import { TradeUpActions } from "renderer/interfaces/store";
+
+const initialState: TradeUpActions = {
+    tradeUpProducts: [],
+    tradeUpProductsIDS: [],
+    possibleOutcomes: [],
     searchInput: '',
     MinFloat: '0',
     MaxFloat: '1',
-    collections: [] as any,
-    options: ["Hide equipped"] as any,
+    collections: [],
+    options: ["Hide equipped"],
   };
 
   const tradeUpReducer = (state = initialState, action) => {

@@ -1,7 +1,10 @@
-const initialState = {
+
+import { ModalTrade } from "renderer/interfaces/store";
+
+const initialState: ModalTrade = {
     moveOpen: false,
     openResult: false,
-    inventoryFirst: [] as any,
+    inventoryFirst: [],
     rowToMatch: {}
   };
 

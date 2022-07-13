@@ -1,9 +1,11 @@
-const initialState = {
+import { MoveToReducer } from "renderer/interfaces/store";
+
+const initialState: MoveToReducer = {
     doHide: false,
     hideFull: true,
-    activeStorages: [] as any,
+    activeStorages: [],
     activeStoragesAmount: 0,
-    totalToMove: [] as any,
+    totalToMove: [],
     totalItemsToMove: 0,
     searchInput: '',
     searchInputStorage: '',
@@ -77,7 +79,7 @@ const initialState = {
               ...state,
               searchInputStorage: action.payload.searchField
            } 
-        case 'MOVE_TO_SET_SORT':
+        case 'SET_SORT':
           if (state.sortValue == action.payload.sortValue) {
             return {
               ...state, 

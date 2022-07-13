@@ -2,22 +2,20 @@ import StorageFilter from './toFilters';
 import StorageRow from './toStorageRow';
 import StorageSelectorContent from './toSelector';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { sortDataFunction } from '../../shared/filters/inventoryFunctions';
+import { useSelector } from 'react-redux';
+import { classNames, sortDataFunction } from '../../shared/filters/inventoryFunctions';
 import { useState } from 'react';
-import { inventorySetStoragesData } from 'renderer/store/actions/inventoryActions';
-import { BanIcon, FireIcon, SelectorIcon } from '@heroicons/react/solid';
-import { moveToSetSortOption } from 'renderer/store/actions/moveToActions';
+import { BanIcon, FireIcon } from '@heroicons/react/solid';
+import { searchFilter } from 'renderer/functionsClasses/itemsFilters';
+import { Store } from 'renderer/interfaces/store';
+import { RowHeader, RowHeaderCondition, RowHeaderPlain } from '../../Inventory/inventoryRows/headerRows';
 
 function StorageUnits() {
-  function classNames(...classes) {
-    return classes.filter(Boolean).join(' ');
-  }
-  const dispatch = useDispatch();
-  const inventory = useSelector((state: any) => state.inventoryReducer);
-  const toReducer = useSelector((state: any) => state.moveToReducer);
-  const pricesResult = useSelector((state: any) => state.pricingReducer);
-  const settingsData = useSelector((state: any) => state.settingsReducer);
+  const inventory = useSelector((state: Store) => state.inventoryReducer);
+  const inventoryFilter = useSelector((state: Store) => state.inventoryFiltersReducer);
+  const toReducer = useSelector((state: Store) => state.moveToReducer);
+  const pricesResult = useSelector((state: Store) => state.pricingReducer);
+  const settingsData = useSelector((state: Store) => state.settingsReducer);
   const [getStorage, setStorage] = useState(inventory.storageInventory);
   getStorage;
   const inventoryFilters = useSelector(
@@ -67,18 +65,6 @@ function StorageUnits() {
     }
   }
 
-  async function onSortChange(sortValue) {
-    dispatch(moveToSetSortOption(sortValue));
-    const storageResult = await sortDataFunction(
-      sortValue,
-      inventory.storageInventory,
-      pricesResult.prices,
-      settingsData?.source?.title
-    );
-    console.log(storageResult);
-    dispatch(inventorySetStoragesData(storageResult));
-  }
-
   async function storageResult() {
     const storageResult = await sortDataFunction(
       toReducer.sortValue,
@@ -93,43 +79,8 @@ function StorageUnits() {
     getStorage.reverse()
   }
 
-  let inventoryMoveable = getStorage.filter(function (row) {
-
-    if (
-      inventoryFilters.categoryFilter.length != 0 ) {
-       if (!inventoryFilters.categoryFilter?.includes(row.bgColorClass)) {
-         return false
-       }
-      }
-    if (
-      row.item_name
-        ?.toLowerCase()
-        .trim()
-        .includes(toReducer.searchInput?.toLowerCase().trim())
-    ) {
-      return true; // skip
-    }
-    if (
-      row.item_customname
-        ?.toLowerCase()
-        .trim()
-        .includes(toReducer.searchInput?.toLowerCase().trim())
-    ) {
-      return true; // skip
-    }
-    if (
-      row.item_wear_name
-        ?.toLowerCase()
-        .trim()
-        .includes(toReducer.searchInput?.toLowerCase().trim())
-    ) {
-      return true; // skip
-    }
-    if (toReducer.searchInput == undefined) {
-      return true; // skip
-    }
-    return false;
-  });
+  
+  let inventoryMoveable = searchFilter(getStorage, inventoryFilter, toReducer)
   inventoryMoveable = inventoryMoveable.filter(function (item) {
     return item[`item_moveable`] == true;
   });
@@ -158,95 +109,17 @@ function StorageUnits() {
           <table className="min-w-full">
           <thead className="dark:bg-dark-level-two bg-gray-50">
           <tr className={classNames(settingsData.os == 'win32' ? 'top-7' : 'top-0', 'border-gray-200 sticky')}>
-                <th className="table-cell px-6 py-2 border-b border-gray-200 bg-gray-50 dark:border-opacity-50 dark:bg-dark-level-two text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  <button onClick={() => onSortChange('Product name')}
-                  className='text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400'>
-                  <span className='flex justify-between'>Product  <SelectorIcon className='h-2'/></span>
-                    </button>
-                </th>
-                {settingsData.columns.includes('Collections') ?
-                <th className="hidden xl:table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
-                  <button
-                    onClick={() => onSortChange('Collection')}
-                    className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    <span className="flex justify-between">
-                      Collection <SelectorIcon className="h-2" />
-                    </span>
-                  </button>
-                </th> : '' }
-                {settingsData.columns.includes('Price') ?
-                <th className="table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
-                  <button
-                    onClick={() => onSortChange('Price')}
-                    className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    <span className="flex justify-between">
-                      Price <SelectorIcon className="h-2" />
-                    </span>
-                  </button>
-                </th> : '' }
-                {settingsData.columns.includes('Stickers/patches') ?
-                <th className="hidden xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
-                <button
-                  onClick={() => onSortChange('Stickers')}
-                  className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-                >
-                  <span className="flex justify-between">
-                    Stickers/Patches <SelectorIcon className="h-2" />
-                  </span>
-                </button>
-              </th> : ''}
-
-              {settingsData.columns.includes('Float') ?
-              <th className="hidden xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
-                  <button
-                    onClick={() => onSortChange('wearValue')}
-                    className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    <span className="flex justify-between">
-                      Float <SelectorIcon className="h-2" />
-                    </span>
-                  </button>
-                </th> : '' }
-                {settingsData.columns.includes('Rarity') ?
-              <th className="hidden xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
-                  <button
-                    onClick={() => onSortChange('Rarity')}
-                    className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    <span className="flex justify-between">
-                    Rarity <SelectorIcon className="h-2" />
-                    </span>
-                  </button>
-                </th> : '' }
-
-                {settingsData.columns.includes('Tradehold') ?
-                <th className="hidden md:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two  ">
-                  <button
-                    onClick={() => onSortChange('tradehold')}
-                    className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    <span className="flex justify-between">
-                      Tradehold <SelectorIcon className="h-2" />
-                    </span>
-                  </button>
-                </th> : '' }
-                <th
-                  className="table-cell px-6 py-2 border-b border-gray-200 bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
-                  <button onClick={() => onSortChange('QTY')}
-                  className='text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400'>
-
-                  <span className='flex justify-between'>QTY  <SelectorIcon className='h-2'/></span>
-                    </button>
-                </th>
-                <th
-                  className="hidden md:table-cell px-6 py-2 border-b border-gray-200 bg-gray-50 dark:border-opacity-50 dark:bg-dark-level-two">
-                  <button
-                  className='text-gray-500 dark:text-gray-400 pointer-events-none tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400'>
-                  Move
-                    </button>
-                </th>
+                <RowHeader headerName='Product' sortName='Product name'/>
+                <RowHeaderCondition headerName='Collection' sortName='Collection' condition='Collections'/>
+                <RowHeaderCondition headerName='Price' sortName='Price' condition='Price'/>
+                <RowHeaderCondition headerName='Stickers/Patches' sortName='Stickers' condition='Stickers/patches'/>
+                <RowHeaderCondition headerName='Float' sortName='wearValue' condition='Float'/>
+                <RowHeaderCondition headerName='Rarity' sortName='Rarity' condition='Rarity'/>
+                <RowHeaderCondition headerName='Storage' sortName='StorageName' condition='Storage'/>
+                <RowHeaderCondition headerName='Tradehold' sortName='tradehold' condition='Tradehold'/>
+                <RowHeader headerName='QTY' sortName='QTY'/>
+                <RowHeaderPlain headerName='Move' />
+                
                 <th className="table-cell px-6 py-2 border-b border-gray-200 bg-gray-50  dark:border-opacity-50 dark:bg-dark-level-two text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 <div className="flex">
                     <button

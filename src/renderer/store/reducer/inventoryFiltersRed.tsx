@@ -1,11 +1,14 @@
-const initialState = {
-  inventoryFilter: ['1item_moveable'] as any,
+import { InventoryFilters } from "../../interfaces/store";
+
+
+const initialState: InventoryFilters = {
+  inventoryFilter: ['1item_moveable'],
   sortValue: 'Default',
-  inventoryFiltered: [] as any,
+  inventoryFiltered: [],
   searchInput: '',
   sortBack: false,
-  categoryFilter: [] as any,
-  rarityFilter: [] as any
+  categoryFilter: [],
+  rarityFilter: []
 };
 
 const inventoryFiltersReducer = (state = initialState, action) => {

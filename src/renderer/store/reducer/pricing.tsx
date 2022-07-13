@@ -1,7 +1,9 @@
-const initialState = {
-  prices: {} as any,
+import { Prices } from "renderer/interfaces/store";
+
+const initialState: Prices = {
+  prices: {},
   storageAmount: 0,
-  productsRequested: [] as any,
+  productsRequested: [],
 };
 
 const pricingReducer = (state = initialState, action) => {

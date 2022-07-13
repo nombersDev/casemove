@@ -15,6 +15,8 @@ import { classNames, downloadReport } from '../shared/filters/inventoryFunctions
 import PricingAmount from '../shared/filters/pricingAmount';
 import MoveLeft from '../shared/filters/inventoryAmount';
 import AccountAmount from '../shared/filters/accountAmount';
+import { searchFilter } from 'renderer/functionsClasses/itemsFilters';
+import { ConvertPrices, ConvertPricesFormatted } from 'renderer/functionsClasses/prices';
 const filters = {
   onlyMoveable: [
     { value: '1trade_unlock', label: 'Active tradehold' },
@@ -80,62 +82,24 @@ function content() {
 
   // Calculate inventory amount prices
   let totalAmount = 0 as any;
-  let inventoryFilter = inventoryToUse.filter(function (row) {
-    if (
-      row.item_name
-        ?.toLowerCase()
-        .trim()
-        .includes(inventoryFilters.searchInput?.toLowerCase().trim())
-    ) {
-      return true; // skip
-    }
-    if (
-      row.item_customname
-        ?.toLowerCase()
-        .trim()
-        .includes(inventoryFilters.searchInput?.toLowerCase().trim())
-    ) {
-      return true; // skip
-    }
-    if (
-      row.item_wear_name
-        ?.toLowerCase()
-        .trim()
-        .includes(inventoryFilters.searchInput?.toLowerCase().trim())
-    ) {
-      return true; // skip
-    }
-    if (inventoryFilters.searchInput == undefined) {
-      return true; // skip
-    }
-    return false;
-  });
+  let inventoryFilter = searchFilter(inventoryToUse, inventoryFilters, inventoryFilters)
+  const PricesClass = new ConvertPrices(settingsData, pricesResult)
   inventoryFilter.forEach((projectRow) => {
-    if (pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[settingsData?.source?.title]) {
-      let individualPrice = projectRow.combined_QTY *
-    pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency]
-    totalAmount += individualPrice = individualPrice ? individualPrice : 0
+    let itemRowPricing = PricesClass.getPrice(projectRow)
+    if (itemRowPricing) {
+      let individualPrice = projectRow.combined_QTY as number * itemRowPricing
+      totalAmount += individualPrice = individualPrice ? individualPrice : 0
     }
   });
   totalAmount = totalAmount.toFixed(0);
 
 
   // Download function
+  const PricesClassFormatted = new ConvertPricesFormatted(settingsData, pricesResult)
   async function sendDownload() {
-    console.log(inventoryFilter);
-    console.log(inventoryFilters.searchInput);
-    inventoryFilter.forEach((element) => {
-      element['item_price'] = new Intl.NumberFormat(settingsData.locale, {
-        style: 'currency',
-        currency: settingsData.currency,
-      }).format(
-        pricesResult.prices[element.item_name + element.item_wear_name || '' ]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency]);
-      element['item_price_combined'] = new Intl.NumberFormat(settingsData.locale, {
-        style: 'currency',
-        currency: settingsData.currency,
-      }).format(
-        element.combined_QTY *
-        pricesResult.prices[element.item_name + element.item_wear_name || '' ]?.[settingsData?.source?.title] * settingsData.currencyPrice[settingsData.currency]);
+    inventoryFilter.forEach((element: any) => {
+      element.item_price = PricesClassFormatted.getFormattedPrice(element);
+      element.item_price_combined = PricesClassFormatted.getFormattedPriceCombined(element);
     });
 
     downloadReport(inventoryFilter);

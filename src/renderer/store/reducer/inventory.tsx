@@ -1,8 +1,10 @@
-const initialState = {
-    inventory: [] as any,
-    combinedInventory: [] as any,
-    storageInventory: [] as any,
-    totalAccountItems: 0 as any,
+import { Inventory } from "renderer/interfaces/store";
+
+const initialState: Inventory = {
+    inventory: [],
+    combinedInventory: [],
+    storageInventory: [],
+    totalAccountItems: 0,
   };
 
   const inventoryReducer = (state = initialState, action) => {
