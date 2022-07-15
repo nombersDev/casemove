@@ -152,7 +152,7 @@ export interface AuthReducer {
   walletBalance: WalletInterface
 };
 
-export interface Store {
+export interface State {
   authReducer: AuthReducer
   inventoryReducer: Inventory
   inventoryFiltersReducer: InventoryFilters

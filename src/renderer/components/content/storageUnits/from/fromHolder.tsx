@@ -8,11 +8,11 @@ import { useState } from 'react';
 import { BanIcon, FireIcon } from '@heroicons/react/solid';
 import { RowHeader, RowHeaderCondition, RowHeaderPlain } from '../../Inventory/inventoryRows/headerRows';
 import { searchFilter } from 'renderer/functionsClasses/itemsFilters';
-import { Store } from 'renderer/interfaces/store';
+import { State } from 'renderer/interfaces/states';
 
 function StorageUnits() {
   const inventory = useSelector((state: any) => state.inventoryReducer);
-  const inventoryFilters = useSelector((state: Store) => state.inventoryFiltersReducer);
+  const inventoryFilters = useSelector((state: State) => state.inventoryFiltersReducer);
   const fromReducer = useSelector((state: any) => state.moveFromReducer);
   const pricesResult = useSelector((state: any) => state.pricingReducer);
   const settingsData = useSelector((state: any) => state.settingsReducer);
@@ -21,7 +21,6 @@ function StorageUnits() {
     return new Promise((resolve) => setTimeout(resolve, time));
   }
 
-  
   async function ultimateFire() {
     const runIndex = [] as any
     const relevantRows = document.getElementsByClassName(`findRow`);

@@ -25,9 +25,14 @@ export interface ItemRow {
     bgColorClass?: string
     category?: string
     major?: string
+    storage_id?: string
+    item_storage_total?: number
   }
 
   export interface ItemRowStorage extends ItemRow {
     storage_id: string
+    item_storage_total: number
   }
+
+
 

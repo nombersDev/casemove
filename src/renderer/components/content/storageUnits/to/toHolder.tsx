@@ -7,15 +7,15 @@ import { classNames, sortDataFunction } from '../../shared/filters/inventoryFunc
 import { useState } from 'react';
 import { BanIcon, FireIcon } from '@heroicons/react/solid';
 import { searchFilter } from 'renderer/functionsClasses/itemsFilters';
-import { Store } from 'renderer/interfaces/store';
+import { State } from 'renderer/interfaces/states';
 import { RowHeader, RowHeaderCondition, RowHeaderPlain } from '../../Inventory/inventoryRows/headerRows';
 
 function StorageUnits() {
-  const inventory = useSelector((state: Store) => state.inventoryReducer);
-  const inventoryFilter = useSelector((state: Store) => state.inventoryFiltersReducer);
-  const toReducer = useSelector((state: Store) => state.moveToReducer);
-  const pricesResult = useSelector((state: Store) => state.pricingReducer);
-  const settingsData = useSelector((state: Store) => state.settingsReducer);
+  const inventory = useSelector((state: State) => state.inventoryReducer);
+  const inventoryFilter = useSelector((state: State) => state.inventoryFiltersReducer);
+  const toReducer = useSelector((state: State) => state.moveToReducer);
+  const pricesResult = useSelector((state: State) => state.pricingReducer);
+  const settingsData = useSelector((state: State) => state.settingsReducer);
   const [getStorage, setStorage] = useState(inventory.storageInventory);
   getStorage;
   const inventoryFilters = useSelector(
@@ -79,7 +79,7 @@ function StorageUnits() {
     getStorage.reverse()
   }
 
-  
+
   let inventoryMoveable = searchFilter(getStorage, inventoryFilter, toReducer)
   inventoryMoveable = inventoryMoveable.filter(function (item) {
     return item[`item_moveable`] == true;
@@ -119,7 +119,7 @@ function StorageUnits() {
                 <RowHeaderCondition headerName='Tradehold' sortName='tradehold' condition='Tradehold'/>
                 <RowHeader headerName='QTY' sortName='QTY'/>
                 <RowHeaderPlain headerName='Move' />
-                
+
                 <th className="table-cell px-6 py-2 border-b border-gray-200 bg-gray-50  dark:border-opacity-50 dark:bg-dark-level-two text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 <div className="flex">
                     <button

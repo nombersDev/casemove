@@ -451,7 +451,7 @@ function AppContent() {
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="mt-6 h-0 flex-1 flex flex-col overflow-y-auto">
             {/* User account dropdown */}
-            {!window.location.href.includes('/stats') ? <Menu
+            <Menu
               as="div"
               className={classNames(
                 userDetails.isLoggedIn ? '' : 'pointer-events-none',
@@ -562,7 +562,7 @@ function AppContent() {
                   </div>
                 </Menu.Items>
               </Transition>
-            </Menu> : ''}
+            </Menu>
 
 
             <div className="px-3 mt-5">
@@ -882,12 +882,12 @@ function AppContent() {
               <Switch>
                 <toMoveContext.Provider value={toMoveValue}>
                   {userDetails.isLoggedIn ? (
-                    <Redirect exact from="/" to="/transferfrom" />
+                    <Redirect exact from="/" to="/stats" />
                   ) : (
                     <Redirect from="*" to="/signin" />
                   )}
                   {userDetails.isLoggedIn ? (
-                    <Redirect exact from="/signin" to="/transferfrom" />
+                    <Redirect exact from="/signin" to="/stats" />
                   ) : (
                     ''
                   )}

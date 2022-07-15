@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { searchFilter } from 'renderer/functionsClasses/itemsFilters';
 import { RequestPrices } from 'renderer/functionsClasses/prices';
-import { Store } from 'renderer/interfaces/store';
+import { State } from 'renderer/interfaces/states';
 import { classNames } from '../shared/filters/inventoryFunctions';
 import RenameModal from '../shared/modals & notifcations/modalRename';
 import { RowCollections } from './inventoryRows/collectionsRow';
@@ -22,12 +22,12 @@ import { RowTradehold } from './inventoryRows/tradeholdRow';
 
 function content() {
   const [getInventory, setInventory] = useState([] as any);
-  const inventory = useSelector((state: Store) => state.inventoryReducer);
+  const inventory = useSelector((state: State) => state.inventoryReducer);
   const inventoryFilters = useSelector(
-    (state: Store) => state.inventoryFiltersReducer
+    (state: State) => state.inventoryFiltersReducer
   );
-  const pricesResult = useSelector((state: Store) => state.pricingReducer);
-  const settingsData = useSelector((state: Store) => state.settingsReducer);
+  const pricesResult = useSelector((state: State) => state.pricingReducer);
+  const settingsData = useSelector((state: State) => state.settingsReducer);
 
   const dispatch = useDispatch();
 
@@ -126,7 +126,7 @@ function content() {
           {finalToUse.map((projectRow) => (
             <tr
               key={projectRow.item_id}
-              
+
             >
 
               <RowProduct itemRow={projectRow} />

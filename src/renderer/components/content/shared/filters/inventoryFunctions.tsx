@@ -1,11 +1,11 @@
-import { ItemRow } from 'renderer/interfaces/items';
+import { ItemRow, ItemRowStorage } from 'renderer/interfaces/items';
 import {itemCategories, itemSubCategories} from '../categories';
 
 
 
 // Will get the categories
-async function getCategory(toLoopThrough: Array<ItemRow>, additionalObjectToAdd: any = {}) {
-  let returnArray: Array<itemRow> = [];
+async function getCategory(toLoopThrough: Array<ItemRow | ItemRowStorage>, additionalObjectToAdd: any = {}) {
+  let returnArray: Array<ItemRow | ItemRowStorage> = [];
   let itemIdsFiltered: Array<string> = [];
 
   for (const [_, value] of Object.entries(itemCategories)) {
@@ -44,7 +44,7 @@ async function getCategory(toLoopThrough: Array<ItemRow>, additionalObjectToAdd:
 }
 
 // This will combine the inventory when specific conditions match
-export default function combineInventory(thisInventory: Array<ItemRow>, settings: any, additionalObjectToAdd: any = {}) {
+export default function combineInventory(thisInventory: Array<ItemRow | ItemRowStorage>, settings: any, additionalObjectToAdd: any = {}) {
 
   const seenProducts = [] as any;
   const newInventory = [] as any;
@@ -132,40 +132,6 @@ export async function getStorageUnitDataReload(storageID, storageName, settings)
     storage_id: storageID,
     storage_name: storageName
   });
-}
-
-export async function getStorageUnitData(
-  storageID,
-  storageName,
-  prices,
-  pricesRequested,
-  settings
-) {
-  let newStorageData = [] as any;
-  let productsToGet = [] as any;
-  let storageResult = await window.electron.ipcRenderer.getStorageUnitData(
-    storageID, storageName
-  );
-  console.log(storageResult[1])
-  storageResult = storageResult[1];
-
-  storageResult = await combineInventory(storageResult, settings, {
-    storage_id: storageID,
-    storage_name: storageName
-  });
-  await storageResult.forEach(function (item) {
-    if (
-      prices[item.item_name + item.item_wear_name || ''] == undefined &&
-      pricesRequested.includes(item.item_name + item.item_wear_name || '') == false
-    ) {
-      productsToGet.push(item);
-    }
-    newStorageData.push(item);
-  });
-  if (productsToGet.length > 0) {
-    window.electron.ipcRenderer.getPrice(productsToGet);
-  }
-  return [newStorageData, productsToGet];
 }
 
 export async function filterInventory(

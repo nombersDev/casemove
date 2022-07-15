@@ -1,4 +1,4 @@
-import { MoveFromReducer } from "renderer/interfaces/store";
+import { MoveFromReducer } from "renderer/interfaces/states";
 
 const initialState: MoveFromReducer = {
     hideFull: false,
@@ -18,7 +18,7 @@ const initialState: MoveFromReducer = {
         return {
             ...state,
             hideFull: !state.hideFull
-         } 
+         }
       case 'MOVE_FROM_SET_SORT_BACK':
           return {
               ...state,
@@ -79,7 +79,7 @@ const initialState: MoveFromReducer = {
           return {
               ...state,
               searchInputStorage: action.payload.searchField
-           } 
+           }
         case 'SET_SORT':
           if (state.sortValue == action.payload.sortValue) {
             return {

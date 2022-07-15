@@ -1,4 +1,4 @@
-import { TradeUpActions } from "renderer/interfaces/store";
+import { TradeUpActions } from "renderer/interfaces/states";
 
 const initialState: TradeUpActions = {
     tradeUpProducts: [],
@@ -38,7 +38,7 @@ const initialState: TradeUpActions = {
               tradeUpProductsIDS: newTradeUpIDS,
            }
           }
-      
+
       case 'TRADEUP_ADDREMOVE_COLLECTION':
           let collectionAlreadyExists = state.collections.filter(row => row != action.payload)
           if (collectionAlreadyExists.length == state.collections.length) {
@@ -48,7 +48,7 @@ const initialState: TradeUpActions = {
             ...state,
             collections: collectionAlreadyExists
           }
-      
+
       case 'TRADEUP_ADDREMOVE_OPTION':
           let optionAlready = state.options.filter(row => row != action.payload)
           if (optionAlready.length == state.options.length) {
@@ -84,7 +84,7 @@ const initialState: TradeUpActions = {
               collections: state.collections
             }
 
-      
+
 
         case 'SIGN_OUT':
         return {

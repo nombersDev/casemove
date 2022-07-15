@@ -1,8 +1,8 @@
-import { Settings } from "renderer/interfaces/store";
+import { Settings } from "renderer/interfaces/states";
 
 const initialState: Settings = {
   fastMove: false,
-  currency: 'USD', 
+  currency: 'USD',
   locale: 'EN-GB',
   os: '',
   devmode: false,

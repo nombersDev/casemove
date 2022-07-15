@@ -1,7 +1,7 @@
 import { LightningBoltIcon, XIcon } from '@heroicons/react/solid';
 import { useDispatch, useSelector } from 'react-redux';
 import { RequestPrices } from 'renderer/functionsClasses/prices';
-import { Store } from 'renderer/interfaces/store';
+import { State } from 'renderer/interfaces/states';
 import { moveToAddRemove } from 'renderer/store/actions/moveToActions';
 import { pricing_add_to_requested } from 'renderer/store/actions/pricingActions';
 import { RowCollections } from '../../Inventory/inventoryRows/collectionsRow';
@@ -17,9 +17,9 @@ import { classNames } from '../../shared/filters/inventoryFunctions';
 
 function content({ projectRow, index }: {projectRow: any, index: number}) {
   const dispatch = useDispatch();
-  const toReducer = useSelector((state: Store) => state.moveToReducer);
-  const pricesResult = useSelector((state: Store) => state.pricingReducer);
-  const settingsData = useSelector((state: Store) => state.settingsReducer);
+  const toReducer = useSelector((state: State) => state.moveToReducer);
+  const pricesResult = useSelector((state: State) => state.pricingReducer);
+  const settingsData = useSelector((state: State) => state.settingsReducer);
 
   async function returnField(fieldValue) {
     if (toReducer.activeStorages.length == 0) {

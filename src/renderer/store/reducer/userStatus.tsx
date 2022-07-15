@@ -1,4 +1,4 @@
-import { AuthReducer } from "renderer/interfaces/store";
+import { AuthReducer } from "renderer/interfaces/states";
 
 const initialState: AuthReducer = {
     displayName: null ,

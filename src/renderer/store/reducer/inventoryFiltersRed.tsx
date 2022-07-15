@@ -1,4 +1,4 @@
-import { InventoryFilters } from "../../interfaces/store";
+import { InventoryFilters } from "../../interfaces/states";
 
 
 const initialState: InventoryFilters = {
@@ -56,16 +56,12 @@ const inventoryFiltersReducer = (state = initialState, action) => {
       }
 
     case 'INVENTORY_ADD_CATEGORY_FILTER':
-      console.log(action.payload)
-      console.log(state.categoryFilter)
-      console.log(state)
       let newFilters = state.categoryFilter
       if (newFilters.includes(action.payload)) {
         newFilters.splice(newFilters.indexOf(action.payload), 1)
       } else {
         newFilters = [...newFilters, action.payload]
       }
-      console.log(newFilters)
       return {
         ...state,
         categoryFilter: newFilters

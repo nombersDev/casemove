@@ -1,4 +1,4 @@
-import { Inventory } from "renderer/interfaces/store";
+import { Inventory } from "renderer/interfaces/states";
 
 const initialState: Inventory = {
     inventory: [],

@@ -1,6 +1,6 @@
 
 import { ItemRow } from "renderer/interfaces/items";
-import { InventoryFilters, MoveFromReducer, MoveToReducer } from "renderer/interfaces/store";
+import { InventoryFilters, MoveFromReducer, MoveToReducer } from "renderer/interfaces/states";
 
 
 export function searchFilter(itemsArray: Array<ItemRow>, inventoryFilters: InventoryFilters, chosenReducer: InventoryFilters  | MoveFromReducer  | MoveToReducer): Array<ItemRow> {
