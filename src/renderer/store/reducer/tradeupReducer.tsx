@@ -5,8 +5,8 @@ const initialState: TradeUpActions = {
     tradeUpProductsIDS: [],
     possibleOutcomes: [],
     searchInput: '',
-    MinFloat: '0',
-    MaxFloat: '1',
+    MinFloat: 0,
+    MaxFloat: 1,
     collections: [],
     options: ["Hide equipped"],
   };

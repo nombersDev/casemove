@@ -1,7 +1,5 @@
-import { useSelector } from "react-redux";
-export function RowCollections({ itemRow }) {
-  const settingsData = useSelector((state: any) => state.settingsReducer);
 
+export function RowCollections({ itemRow, settingsData }) {
   return (
     <>
       {settingsData.columns.includes('Collections') ?

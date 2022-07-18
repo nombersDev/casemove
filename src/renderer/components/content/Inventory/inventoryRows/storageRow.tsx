@@ -1,8 +1,5 @@
-import { useSelector } from "react-redux";
 
-
-export function RowStorage({itemRow}) { 
-    const settingsData = useSelector((state: any) => state.settingsReducer);
+export function RowStorage({itemRow, settingsData}) { 
     
     return (
         <>

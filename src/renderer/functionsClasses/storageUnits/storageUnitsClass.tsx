@@ -23,12 +23,14 @@ export class HandleStorageData {
     let storageResult = await this._getStorageUnitData(
       storageRow
     );
-    console.log(this.state.pricingReducer)
     const ClassRequest = new RequestPrices(this.dispatch, this.state.settingsReducer, this.state.pricingReducer)
-    ClassRequest.handleRequestArray(storageResult)
+    ClassRequest.handleRequestArray(storageResult.combinedStorages)
+
+    console.log(storageResult)
     this.dispatch(
       addStorageInventoryData(
-        storageResult,
+        storageResult.rawStorages,
+        storageResult.combinedStorages,
         storageRow.item_id,
         this.state.moveFromReducer.sortValue
       )
@@ -44,14 +46,20 @@ export class HandleStorageData {
       storageRow.item_id, storageRow.item_customname
     );
     let returnData: Array<ItemRowStorage> = storageResult[1]
-    console.log(storageRow.item_id, storageRow.item_customname)
-    console.log(returnData)
 
     let finalReturnData = await combineInventory(returnData, this.state.settingsReducer, {
       storage_id: storageRow.item_id,
       storage_name: storageRow.item_customname
     }) as Array<ItemRowStorage>;
 
-    return finalReturnData
+    returnData.forEach(element => {
+      element.storage_id = storageRow.item_id
+      element.storage_name = storageRow.item_customname as string
+    });
+
+    return {
+      combinedStorages: finalReturnData,
+      rawStorages: returnData
+    }
   }
 }

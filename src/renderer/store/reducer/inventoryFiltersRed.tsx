@@ -2,7 +2,12 @@ import { InventoryFilters } from "../../interfaces/states";
 
 
 const initialState: InventoryFilters = {
-  inventoryFilter: ['1item_moveable'],
+  inventoryFilter: [{
+    include: true,
+    label: 'Storage moveable',
+    valueToCheck: 'item_moveable',
+    commandType: 'checkBooleanVariable'
+  }],
   sortValue: 'Default',
   inventoryFiltered: [],
   searchInput: '',
@@ -13,6 +18,13 @@ const initialState: InventoryFilters = {
 
 const inventoryFiltersReducer = (state = initialState, action) => {
   switch (action.type) {
+    case 'SET_FILTERED':
+      return {
+        ...state,
+        inventoryFilter: action.payload.inventoryFilter,
+        sortValue: action.payload.sortValue,
+        inventoryFiltered: action.payload.inventoryFiltered
+      }
     case 'ALL_BUT_CLEAR':
       if (state.sortValue == action.payload.sortValue) {
         return {
@@ -27,8 +39,7 @@ const inventoryFiltersReducer = (state = initialState, action) => {
           ...state,
           inventoryFilter: action.payload.inventoryFilter,
           sortValue: action.payload.sortValue,
-          inventoryFiltered: action.payload.inventoryFiltered,
-          sortBack: initialState.sortBack
+          inventoryFiltered: action.payload.inventoryFiltered
         }
       }
 
@@ -39,7 +50,8 @@ const inventoryFiltersReducer = (state = initialState, action) => {
       }
     case 'MOVE_FROM_CLEAR':
       return {
-        ...initialState
+        ...state,
+        categoryFilter: []
       }
 
 
@@ -82,6 +94,20 @@ const inventoryFiltersReducer = (state = initialState, action) => {
       return {
         ...state,
         searchInput: action.payload.searchField
+      }
+      
+    case 'SET_SORT':
+      if (state.sortValue == action.payload.sortValue) {
+        return {
+          ...state,
+          sortBack: !state.sortBack
+        }
+      } else {
+        return {
+          ...state,
+          sortValue: action.payload.sortValue,
+          sortBack: initialState.sortBack
+        }
       }
     case 'SIGN_OUT':
       return {

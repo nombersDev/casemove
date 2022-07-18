@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RequestPrices } from 'renderer/functionsClasses/prices';
 import { State } from 'renderer/interfaces/states';
 import { moveToAddRemove } from 'renderer/store/actions/moveToActions';
-import { pricing_add_to_requested } from 'renderer/store/actions/pricingActions';
 import { RowCollections } from '../../Inventory/inventoryRows/collectionsRow';
 import { RowFloat } from '../../Inventory/inventoryRows/floatRow';
 import { RowPrice } from '../../Inventory/inventoryRows/priceRow';
@@ -73,14 +72,6 @@ function content({ projectRow, index }: {projectRow: any, index: number}) {
   const isEmpty =
     toReducer.totalToMove.filter((row) => row[0] == projectRow.item_id)
       .length == 0;
-  let pricesToGet = [] as any
-  if (pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || ''] == undefined && pricesResult.productsRequested.includes(projectRow.item_name + projectRow.item_wear_name || '') == false) {
-    pricesToGet.push(projectRow)
-  }
-  if (pricesToGet.length > 0) {
-    window.electron.ipcRenderer.getPrice(pricesToGet)
-    dispatch(pricing_add_to_requested(pricesToGet))
-  }
 
   let totalFieldValue = 0
   if (isEmpty == false) {
@@ -92,15 +83,36 @@ function content({ projectRow, index }: {projectRow: any, index: number}) {
   return (
     <>
       <RowProduct itemRow={projectRow} />
-      <RowCollections itemRow={projectRow} />
-      <RowPrice itemRow={projectRow} />
-      <RowStickersPatches itemRow={projectRow} />
-      <RowFloat itemRow={projectRow} />
-      <RowRarity itemRow={projectRow} />
-      <RowStorage itemRow={projectRow} />
-      <RowTradehold itemRow={projectRow} />
-      <RowQTY itemRow={projectRow} />
-
+      <RowCollections itemRow={projectRow} settingsData={settingsData}/>
+      <RowPrice itemRow={projectRow} settingsData={settingsData} pricesReducer={pricesResult}/>
+      <RowStickersPatches itemRow={projectRow} settingsData={settingsData}/>
+      <RowFloat itemRow={projectRow} settingsData={settingsData} />
+      <RowRarity itemRow={projectRow} settingsData={settingsData}/>
+      <RowStorage itemRow={projectRow} settingsData={settingsData} />
+      <RowTradehold itemRow={projectRow} settingsData={settingsData}/>
+      <RowQTY itemRow={projectRow}/>
+      <td className="table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 hover:text-gray-200 text-right">
+        <div className="flex justify-center rounded-full drop-shadow-lg">
+          <div>
+            <input
+              type="text"
+              name="postal-code"
+              id="postal-code"
+              autoComplete="off"
+              value={
+                isEmpty
+                  ? ''
+                  : toReducer.totalToMove.filter(
+                      (row) => row[0] == projectRow.item_id
+                    )[0][2].length
+              }
+              placeholder="0"
+              onChange={(e) => returnField(e.target.value)}
+              className=" block w-full border rounded sm:text-sm text-gray-500 text-center border-gray-400 border-gray-400 dark:bg-dark-level-two dark:text-dark-white"
+            />
+          </div>
+        </div>
+      </td>
       <td className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
         <div className='flex justify-center'>
           <button

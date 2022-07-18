@@ -1,4 +1,6 @@
 import { ItemRow, ItemRowStorage } from 'renderer/interfaces/items';
+import { State } from 'renderer/interfaces/states';
+import { filterInventorySetSort } from 'renderer/store/actions/filtersInventoryActions';
 import {itemCategories, itemSubCategories} from '../categories';
 
 
@@ -110,31 +112,7 @@ export default function combineInventory(thisInventory: Array<ItemRow | ItemRowS
   })
 }
 
-export async function getInventory(getInventoryData, prices, pricingSource, settings) {
-  var unfilteredInventory = await window.electron.ipcRenderer.runCommandTest(3);
-  var combinedInventory = await combineInventory(unfilteredInventory, settings);
-  return await filterInventory(
-    combinedInventory,
-    getInventoryData['filters'],
-    getInventoryData['sort'],
-    prices,
-    pricingSource
-  )
-}
-
-export async function getStorageUnitDataReload(storageID, storageName, settings) {
-  let storageResult = await window.electron.ipcRenderer.runCommandTest(
-    2,
-    [],
-    storageID
-  );
-  return await combineInventory(storageResult, settings, {
-    storage_id: storageID,
-    storage_name: storageName
-  });
-}
-
-export async function filterInventory(
+export async function filterInventoryd(
   combinedInventory,
   filtersData,
   sortData,
@@ -218,6 +196,16 @@ export async function filterInventory(
 }
 export function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
+}
+
+// Sort function
+export async function onSortChange(dispatch: Function, currentState: State, sortValue: string) {
+  dispatch(
+    await filterInventorySetSort(
+      currentState,
+      sortValue
+    )
+  );
 }
 
 export async function sortDataFunction(
@@ -363,44 +351,145 @@ export async function sortDataFunction(
   }
 }
 
-export async function downloadReport(storageData) {
-  let csvContent =
-    'Item Name,Item Custom Name,Price,Price Combined,Item Moveable,Storage Name,Tradehold,Category,Combined QTY,Item Wear Name,Item Paint Wear,Item Has Stickers/Patches,Stickers\n';
-  var csv = storageData
-    .map(function (d) {
-      let storageName = d.storage_name;
-      if (storageName == undefined) {
-        storageName = '#Inventory';
-      }
+export function sortDataFunctionTwo(
+  sortValue,
+  inventory,
+  prices,
+  pricingSource
+) {
+  function sortRun(valueOne, ValueTwo, useNaN = false) {
+    if (valueOne == undefined) {
+      valueOne = -90000000000
+    }
+    if (ValueTwo == undefined) {
+      ValueTwo = -90000000000
+    }
+    if (valueOne < ValueTwo) {
+      return -1;
+    }
+    if (valueOne > ValueTwo) {
+      return 1;
+    }
 
-      let stickersData = d.stickers;
-      if (stickersData != []) {
-        let newStickers = [] as any;
-        stickersData.forEach((element) => {
-          newStickers.push(element.sticker_name);
-        });
-        stickersData = newStickers.join(';');
-      }
-      const returnDict = {
-        item_name: d.item_name,
-        item_customname: d.item_customname,
-        price: d.item_price,
-        price_combined: d.item_price_combined,
-        item_moveable: d.item_moveable,
-        storage_name: storageName,
-        trade_unlock: d.trade_unlock,
-        category: d.category,
-        combined_QTY: d.combined_QTY,
-        item_wear_name: d.item_wear_name,
-        item_paint_wear: d.item_paint_wear,
-        item_has_stickers: d.item_has_stickers,
-        item_stickers: stickersData,
-      };
-      return JSON.stringify(Object.values(returnDict));
-    })
-    .join('\n')
-    .replaceAll('null', '')
-    .replace(/(^\[)|(\]$)/gm, '');
-  csv = csvContent + csv;
-  window.electron.ipcRenderer.downloadFile(csv);
+    if (useNaN && isNaN(valueOne)) {
+      return -1;
+    }
+    return 0;
+  }
+  function sortRunAlt(valueOne, ValueTwo) {
+    if (isNaN(valueOne)) {
+      valueOne = -90000000000
+    }
+    if (isNaN(ValueTwo)) {
+      ValueTwo = -90000000000
+    }
+    if (valueOne < ValueTwo) {
+      return -1;
+    }
+    if (valueOne > ValueTwo) {
+      return 1;
+    }
+
+    return 0;
+  }
+
+  // Check
+  if (sortValue == 'Storages') {
+    inventory.sort(function (a, b) {
+      return sortRun(a.item_customname, b.item_customname);
+    });
+    return inventory;
+  }
+  // First sort by Name
+  inventory.sort(function (a, b) {
+    return sortRun(
+      a.item_name.replaceAll('★', '').replaceAll(' ', ''),
+      b.item_name.replaceAll('★', '').replaceAll(' ', '')
+    );
+  });
+  switch (sortValue) {
+    case 'Default':
+      inventory.sort(function (a, b) {
+        return sortRun(a.item_id, b.item_id);
+      });
+      return inventory;
+
+    case 'Category':
+      inventory.sort(function (a, b) {
+        return sortRun(a.category, b.category);
+      });
+      return inventory;
+
+    case 'QTY':
+      inventory.sort(function (a, b) {
+        return -sortRun(a.combined_QTY, b.combined_QTY);
+      });
+      return inventory;
+
+    case 'Price':
+      inventory.sort(function (a, b) {
+        return sortRunAlt(
+          prices[a.item_name  + a.item_wear_name || '']?.[pricingSource] * a.combined_QTY || 1,
+          prices[b.item_name  + b.item_wear_name || '']?.[pricingSource] * b.combined_QTY || 1
+        );
+      });
+      return inventory;
+
+    case 'Stickers':
+      inventory.sort(function (a, b) {
+        return -sortRun(a?.stickers?.length, b?.stickers?.length);
+      });
+      return inventory;
+
+    case 'wearValue':
+      inventory.sort(function (a, b) {
+        return -sortRun(a.item_paint_wear, b.item_paint_wear, true);
+      });
+      return inventory;
+
+    case 'Collection':
+      inventory.sort(function (a, b) {
+        if (b == undefined) {
+          return -1
+        }
+        return sortRun(a.collection?.toLowerCase(), b.collection?.toLowerCase(), true);
+      });
+      return inventory;
+
+    case 'Rarity':
+      inventory.sort(function (a, b) {
+        var valueAToTest = a.rarity;
+        var valueBToTest = b.rarity;
+        if (valueAToTest == undefined) {
+          valueAToTest = 99;
+        }
+
+        if (valueBToTest == undefined) {
+          valueBToTest = 99;
+        }
+
+        return sortRun(valueAToTest, valueBToTest, true);
+      });
+      return inventory;
+
+    case 'StorageName':
+      inventory.sort(function (a, b) {
+        return sortRun(a?.storage_name, b?.storage_name);
+      });
+      return inventory;
+
+    case 'tradehold':
+      const now = new Date();
+      inventory.sort(function (a, b) {
+        return sortRun(
+          a?.trade_unlock?.getTime() - now.getTime(),
+          b?.trade_unlock?.getTime() - now.getTime(),
+          true
+        );
+      });
+      return inventory;
+
+    default:
+      return inventory;
+  }
 }

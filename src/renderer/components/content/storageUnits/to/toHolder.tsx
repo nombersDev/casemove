@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { classNames, sortDataFunction } from '../../shared/filters/inventoryFunctions';
 import { useState } from 'react';
 import { BanIcon, FireIcon } from '@heroicons/react/solid';
-import { searchFilter } from 'renderer/functionsClasses/itemsFilters';
+import { searchFilter } from 'renderer/functionsClasses/filters/search';
 import { State } from 'renderer/interfaces/states';
 import { RowHeader, RowHeaderCondition, RowHeaderPlain } from '../../Inventory/inventoryRows/headerRows';
 

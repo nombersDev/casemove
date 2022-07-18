@@ -4,7 +4,7 @@ import { InventoryFilters, MoveFromReducer, MoveToReducer } from "renderer/inter
 
 
 export function searchFilter(itemsArray: Array<ItemRow>, inventoryFilters: InventoryFilters, chosenReducer: InventoryFilters  | MoveFromReducer  | MoveToReducer): Array<ItemRow> {
-    return itemsArray.filter(function (row) {
+  return itemsArray.filter(function (row) {
 
         if (
           inventoryFilters.categoryFilter.length != 0 ) {

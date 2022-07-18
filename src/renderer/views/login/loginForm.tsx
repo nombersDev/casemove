@@ -4,11 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { LoadingButton } from 'renderer/components/content/shared/animations';
 import combineInventory, {
-  classNames,
+  classNames, sortDataFunction,
 } from 'renderer/components/content/shared/filters/inventoryFunctions';
 import NotificationElement from 'renderer/components/content/shared/modals & notifcations/notification';
 import SteamLogo from 'renderer/components/content/shared/steamLogo';
-import { filterInventorySetSort } from 'renderer/store/actions/filtersInventoryActions';
+import { filterItemRows } from 'renderer/functionsClasses/filters/custom';
+import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
+import { State } from 'renderer/interfaces/states';
+import { inventory_setFiltered } from 'renderer/store/actions/filtersInventoryActions';
 import { setInventoryAction } from 'renderer/store/actions/inventoryActions';
 import {
   setCurrencyRate,
@@ -20,7 +23,6 @@ import { getURL } from 'renderer/store/helpers/userStatusHelper';
 
 export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
   // Usestate
-  const pricesResult = useSelector((state: any) => state.pricingReducer);
   const settingsData = useSelector((state: any) => state.settingsReducer);
   isLock;
   replaceLock;
@@ -36,9 +38,9 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
   const [storePassword, setStorePassword] = useState(false);
   const [getLoadingButton, setLoadingButton] = useState(false);
   const [secretEnabled, setSecretEnabled] = useState(false);
-  const filterDetails = useSelector(
-    (state: any) => state.inventoryFiltersReducer
-  );
+  
+  const ReducerClass = new ReducerManager(useSelector)
+  const currentState: State = ReducerClass.getStorage()
   // Handle login
   const dispatch = useDispatch();
   // Return 1 = Success
@@ -223,15 +225,11 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
           combinedInventory: combined,
         })
       );
+      let filteredInv = await filterItemRows(combined, currentState.inventoryFiltersReducer.inventoryFilter)
+      filteredInv = await sortDataFunction(currentState.inventoryFiltersReducer.sortValue, filteredInv, currentState.pricingReducer.prices, currentState.settingsReducer?.source?.title)
+      console.log(filteredInv)
       dispatch(
-        await filterInventorySetSort(
-          responseStatus[1][3],
-          combined,
-          filterDetails,
-          filterDetails.sortValue,
-          pricesResult.prices,
-          settingsData?.source?.title
-        )
+        inventory_setFiltered(currentState.inventoryFiltersReducer.inventoryFilter, currentState.inventoryFiltersReducer.sortValue, filteredInv)
       );
     } else {
       setAuthCode('');

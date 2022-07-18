@@ -11,11 +11,16 @@ import { RowTradehold } from '../../Inventory/inventoryRows/tradeholdRow';
 import { RowQTY } from '../../Inventory/inventoryRows/QTYRow';
 import { RowCollections } from '../../Inventory/inventoryRows/collectionsRow';
 import { RowProduct } from '../../Inventory/inventoryRows/rowName';
+import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
+import { State } from 'renderer/interfaces/states';
 
 function content({ projectRow, index }) {
   const dispatch = useDispatch();
-  const fromReducer = useSelector((state: any) => state.moveFromReducer);
-  const inventory = useSelector((state: any) => state.inventoryReducer);
+  const ReducerClass = new ReducerManager(useSelector)
+  const currentState: State = ReducerClass.getStorage()
+  const fromReducer = currentState.moveFromReducer
+  const inventory = currentState.inventoryReducer
+
 
   async function returnField(fieldValue) {
     fieldValue = parseInt(fieldValue);
@@ -75,14 +80,14 @@ function content({ projectRow, index }) {
     <>
       
       <RowProduct itemRow={projectRow} />
-      <RowCollections itemRow={projectRow} />
-      <RowPrice itemRow={projectRow} />
-      <RowStickersPatches itemRow={projectRow} />
-      <RowFloat itemRow={projectRow} />
-      <RowRarity itemRow={projectRow} />
-      <RowStorage itemRow={projectRow} />
-      <RowTradehold itemRow={projectRow} />
-      <RowQTY itemRow={projectRow} />
+      <RowCollections itemRow={projectRow} settingsData={currentState.settingsReducer}/>
+      <RowPrice itemRow={projectRow} settingsData={currentState.settingsReducer} pricesReducer={currentState.pricingReducer} />
+      <RowStickersPatches itemRow={projectRow} settingsData={currentState.settingsReducer} />
+      <RowFloat itemRow={projectRow} settingsData={currentState.settingsReducer}/>
+      <RowRarity itemRow={projectRow} settingsData={currentState.settingsReducer} />
+      <RowStorage itemRow={projectRow} settingsData={currentState.settingsReducer} />
+      <RowTradehold itemRow={projectRow} settingsData={currentState.settingsReducer}/>
+      <RowQTY itemRow={projectRow}/>
 
       <td className="table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 hover:text-gray-200 text-right">
         <div className="flex justify-center rounded-full drop-shadow-lg">

@@ -207,6 +207,7 @@
     "@node-steam/vdf": "^2.2.0",
     "@redux-beacon/google-analytics": "^1.2.3",
     "@reduxjs/toolkit": "^1.7.1",
+    "@types/lodash": "^4.14.182",
     "axios": "^0.24.0",
     "bytebuffer": "^5.0.1",
     "chart.js": "^3.8.0",

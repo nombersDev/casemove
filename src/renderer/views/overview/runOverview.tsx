@@ -6,22 +6,24 @@ import {
   CashIcon,
   CheckCircleIcon,
   ChevronRightIcon,
-  CogIcon,
   CollectionIcon,
   CreditCardIcon,
   DatabaseIcon,
-  LogoutIcon,
+  DownloadIcon,
   TagIcon,
 } from '@heroicons/react/solid';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import BarAppMajor from './barChatMajors';
 import RadarApp from './radarChart';
 import {
   HashRouter as Router,
-  Route,
-  Link,
+  Route
 } from 'react-router-dom';
-import { signOut } from 'renderer/store/actions/userStatsActions';
+import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
+import { State } from 'renderer/interfaces/states';
+import { ConvertPrices } from 'renderer/functionsClasses/prices';
+import { downloadReport } from 'renderer/functionsClasses/downloadReport';
+import { LoadButton } from 'renderer/components/content/loadStorageUnitsButton';
 
 const transactions = [
   {
@@ -39,9 +41,11 @@ const transactions = [
 
 function Content() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const userDetails = useSelector((state: any) => state.authReducer);
-  const settingsData = useSelector((state: any) => state.settingsReducer);
-  const inventory = useSelector((state: any) => state.inventoryReducer);
+  let ReducerClass = new ReducerManager(useSelector);
+  let currentState: State = ReducerClass.getStorage();
+  const userDetails = currentState.authReducer
+  const settingsData = currentState.settingsReducer
+  const inventory = currentState.inventoryReducer
   let hr = new Date().getHours();
   let goodMessage: string = 'Good Evening';
 
@@ -54,12 +58,25 @@ function Content() {
   } else if (hr >= 0 && hr <= 3) {
     goodMessage = 'Wassup';
   }
-  const dispatch = useDispatch();
 
-  async function logOut() {
-    window.electron.ipcRenderer.logUserOut();
-    dispatch(signOut());
-  }
+
+  // Inventory prices
+  const PricingClass = new ConvertPrices(settingsData, currentState.pricingReducer)
+  let inventoryValue = 0
+  inventory.combinedInventory.forEach(element => {
+    const itemPrice = PricingClass.getPrice(element)
+    if (!isNaN(itemPrice)) {
+      inventoryValue += itemPrice * element.combined_QTY
+    }
+  });
+
+  let storageUnitsValue = 0
+  inventory.storageInventory.forEach(element => {
+    const itemPrice = PricingClass.getPrice(element)
+    if (!isNaN(itemPrice)) {
+      storageUnitsValue += itemPrice * element.combined_QTY
+    }
+  });
 
   return (
     <>
@@ -110,14 +127,14 @@ function Content() {
                     <div className="flex items-center">
                       <img
                         className="hidden h-16 w-16 rounded-full sm:block"
-                        src={userDetails.userProfilePicture}
+                        src={userDetails.userProfilePicture as string}
                         alt=""
                       />
                       <div>
                         <div className="flex items-center">
                           <img
                             className="h-16 w-16 rounded-full sm:hidden"
-                            src={userDetails.userProfilePicture}
+                            src={userDetails.userProfilePicture as string}
                             alt=""
                           />
                           <h1 className="ml-3 text-2xl font-bold leading-7  text-dark-white sm:leading-9 sm:truncate">
@@ -153,7 +170,7 @@ function Content() {
                               className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
                               aria-hidden="true"
                             />
-                            {settingsData.source?.name}
+                            {settingsData.source.name}
                           </dd>
                           <dt className="sr-only">Account status</dt>
                         </dl>
@@ -161,29 +178,19 @@ function Content() {
                     </div>
                   </div>
                   <div className="mt-6 flex space-x-3 md:mt-0 md:ml-4">
-                    <Link
-                      to="/settings"
-                      className="inline-flex items-center px-4 py-2 shadow-sm text-sm font-medium rounded-md text-dark-white bg-dark-level-three hover:bg-dark-level-four"
-                    >
-                      {' '}
-                      <CogIcon
-                        className="flex-shrink-0 mr-1.5 h-5 w-5 text-dark-white"
-                        aria-hidden="true"
-                      />
-                      Settings
-                    </Link>
                     <button
-                      type="button"
-                      onClick={() => logOut()}
+                      onClick={() => downloadReport(settingsData, currentState.pricingReducer, [...inventory.combinedInventory, ...inventory.storageInventory])}
                       className="inline-flex items-center px-4 py-2 shadow-sm text-sm font-medium rounded-md text-dark-white bg-dark-level-three hover:bg-dark-level-four"
                     >
                       {' '}
-                      <LogoutIcon
+                      <DownloadIcon
                         className="flex-shrink-0 mr-1.5 h-5 w-5 text-dark-white"
                         aria-hidden="true"
                       />
-                      Log out
+                      Download all
                     </button>
+
+                    <LoadButton />
                   </div>
                 </div>
               </div>
@@ -216,7 +223,7 @@ function Content() {
                                   style: 'currency',
                                   currency: settingsData.currency,
                                   maximumFractionDigits: 0,
-                                }).format(3232)}
+                                }).format(inventoryValue + storageUnitsValue)}
                               </div>
                               <div className="text-sm text-gray-500">
                                 /{' '}
@@ -254,13 +261,13 @@ function Content() {
                                   style: 'currency',
                                   currency: settingsData.currency,
                                   maximumFractionDigits: 0,
-                                }).format(2843)}
+                                }).format(storageUnitsValue)}
                               </div>
                               <div className="text-sm text-gray-500">
                                 /{' '}
                                 {new Intl.NumberFormat('en-US').format(
                                   inventory.totalAccountItems -
-                                    inventory.inventory.length
+                                  inventory.inventory.length
                                 )}{' '}
                                 Items
                               </div>
@@ -293,7 +300,7 @@ function Content() {
                                   style: 'currency',
                                   currency: settingsData.currency,
                                   maximumFractionDigits: 0,
-                                }).format(389)}
+                                }).format(inventoryValue)}
                               </div>
                               <div className="text-sm text-gray-500">
                                 /{' '}

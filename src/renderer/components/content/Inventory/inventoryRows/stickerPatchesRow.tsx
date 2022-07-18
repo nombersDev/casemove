@@ -1,11 +1,9 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { classNames } from "../../shared/filters/inventoryFunctions";
 
-export function RowStickersPatches({itemRow}) { 
+export function RowStickersPatches({itemRow, settingsData}) { 
     const [stickerHover, setStickerHover] = useState('');
-    const settingsData = useSelector((state: any) => state.settingsReducer);
     
     return (
         <>

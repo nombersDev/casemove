@@ -1,10 +1,11 @@
 
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { searchFilter } from 'renderer/functionsClasses/itemsFilters';
+import { searchFilter } from 'renderer/functionsClasses/filters/search';
 import { RequestPrices } from 'renderer/functionsClasses/prices';
+import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
 import { State } from 'renderer/interfaces/states';
-import { classNames } from '../shared/filters/inventoryFunctions';
+import { classNames, sortDataFunction } from '../shared/filters/inventoryFunctions';
 import RenameModal from '../shared/modals & notifcations/modalRename';
 import { RowCollections } from './inventoryRows/collectionsRow';
 import { RowFloat } from './inventoryRows/floatRow';
@@ -22,12 +23,12 @@ import { RowTradehold } from './inventoryRows/tradeholdRow';
 
 function content() {
   const [getInventory, setInventory] = useState([] as any);
-  const inventory = useSelector((state: State) => state.inventoryReducer);
-  const inventoryFilters = useSelector(
-    (state: State) => state.inventoryFiltersReducer
-  );
-  const pricesResult = useSelector((state: State) => state.pricingReducer);
-  const settingsData = useSelector((state: State) => state.settingsReducer);
+  const ReducerClass = new ReducerManager(useSelector)
+  const currentState: State = ReducerClass.getStorage()
+  const inventory = currentState.inventoryReducer
+  const inventoryFilters = currentState.inventoryFiltersReducer
+  const pricesResult = currentState.pricingReducer
+  const settingsData = currentState.settingsReducer
 
   const dispatch = useDispatch();
 
@@ -45,15 +46,20 @@ function content() {
   let PricingRequest = new RequestPrices(dispatch, settingsData, pricesResult)
   PricingRequest.handleRequestArray(inventoryToUse)
 
-  if (inventoryToUse != getInventory) {
-    if (
-      inventoryFilters.sortBack == true &&
-      inventoryToUse.reverse() != getInventory
-    ) {
-      setInventory(inventoryToUse);
-    } else {
-      setInventory(inventoryToUse);
-    }
+  async function storageResult() {
+    let storageResult = await sortDataFunction(
+      inventoryFilters.sortValue,
+      inventoryToUse,
+      pricesResult.prices,
+      settingsData?.source?.title
+    );
+
+    setInventory(storageResult);
+  }
+
+  storageResult();
+  if (inventoryFilters.sortBack == true) {
+    getInventory.reverse();
   }
 
   let finalToUse = searchFilter(getInventory, inventoryFilters, inventoryFilters)
@@ -129,17 +135,17 @@ function content() {
 
             >
 
-              <RowProduct itemRow={projectRow} />
-              <RowCollections itemRow={projectRow} />
-              <RowPrice itemRow={projectRow} />
-              <RowStickersPatches itemRow={projectRow} />
-              <RowFloat itemRow={projectRow} />
-              <RowRarity itemRow={projectRow} />
-              <RowStorage itemRow={projectRow} />
-              <RowTradehold itemRow={projectRow} />
+              <RowProduct itemRow={projectRow}  />
+              <RowCollections itemRow={projectRow} settingsData={settingsData} />
+              <RowPrice itemRow={projectRow} settingsData={settingsData} pricesReducer={pricesResult} />
+              <RowStickersPatches itemRow={projectRow} settingsData={settingsData} />
+              <RowFloat itemRow={projectRow} settingsData={settingsData} />
+              <RowRarity itemRow={projectRow} settingsData={settingsData} />
+              <RowStorage itemRow={projectRow}  settingsData={settingsData}/>
+              <RowTradehold itemRow={projectRow} settingsData={settingsData} />
               <RowQTY itemRow={projectRow} />
-              <RowMoveable itemRow={projectRow} />
-              <RowLinkInventory itemRow={projectRow} />
+              <RowMoveable itemRow={projectRow} settingsData={settingsData} />
+              <RowLinkInventory itemRow={projectRow} settingsData={settingsData} userDetails={currentState.authReducer}/>
               <td
                 key={Math.random().toString(36).substr(2, 9)}
                 className="hidden md:px-6 py-3 whitespace-nowrap text-right text-sm font-medium"

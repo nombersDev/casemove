@@ -5,7 +5,7 @@ export interface ItemRow {
     item_url: string
     item_id: string
     position: number
-    item_wear_name?: string
+    item_wear_name: string
     item_paint_wear?: number
     item_origin: number
     item_moveable: boolean
@@ -14,24 +14,26 @@ export interface ItemRow {
     equipped_t: boolean
     def_index: number
     stickers: Array<string>
-    rarity?: number
+    rarity: number
     rarityName: string
     tradeUp: boolean
     stattrak: boolean
     tradeUpConfirmed: boolean
-    collection?: string
-    combined_ids?: Array<string>
-    combined_QTY?: number
-    bgColorClass?: string
-    category?: string
-    major?: string
-    storage_id?: string
-    item_storage_total?: number
+    collection: string
+    combined_ids: Array<string>
+    combined_QTY: number
+    bgColorClass: string
+    category: string
+    major: string
+    storage_id: string
+    item_storage_total: number
+    percentage: number
   }
 
   export interface ItemRowStorage extends ItemRow {
     storage_id: string
     item_storage_total: number
+    storage_name: string
   }
 
 

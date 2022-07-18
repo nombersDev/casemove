@@ -1,8 +1,6 @@
 import { CheckCircleIcon } from "@heroicons/react/solid";
-import { useSelector } from "react-redux";
 
-export function RowMoveable({itemRow}) { 
-    const settingsData = useSelector((state: any) => state.settingsReducer);
+export function RowMoveable({itemRow, settingsData}) { 
     
     return (
         <>

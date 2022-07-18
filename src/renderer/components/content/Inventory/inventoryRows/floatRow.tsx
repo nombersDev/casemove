@@ -1,8 +1,5 @@
-import { useSelector } from "react-redux";
 
-
-export function RowFloat({itemRow}) { 
-    const settingsData = useSelector((state: any) => state.settingsReducer);
+export function RowFloat({itemRow, settingsData}) { 
     
     return (
         <>

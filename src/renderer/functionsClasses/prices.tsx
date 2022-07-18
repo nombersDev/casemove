@@ -78,8 +78,16 @@ export class RequestPrices extends ConvertPrices {
   }
 
   handleRequestArray(itemRows: Array<ItemRow>): void {
-    itemRows.forEach((element) => {
-      this.handleRequested(element);
+    let rowsToSend = [] as Array<ItemRow>
+    itemRows.forEach((itemRow) => {
+      if (isNaN(this.getPrice(itemRow)) == true && this._checkRequested(itemRow)) {
+        rowsToSend.push(itemRow)
+      }
     });
+    if (rowsToSend.length > 0) {
+      requestPrice(rowsToSend);
+      dispatchRequested(this.dispatch, rowsToSend);
+
+    }
   }
 }

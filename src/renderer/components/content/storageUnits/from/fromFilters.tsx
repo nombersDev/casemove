@@ -12,12 +12,10 @@ import {
   moveFromClearAll,
   moveFromsetSearchField
 } from 'renderer/store/actions/moveFromActions';
-import {
-  downloadReport,
-} from '../../shared/filters/inventoryFunctions';
 import MoveModal from '../../shared/modals & notifcations/modalMove';
 import { moveModalQuerySet } from 'renderer/store/actions/modalMove actions';
 import PricingAmount from '../../shared/filters/pricingAmount';
+import { downloadReport } from 'renderer/functionsClasses/downloadReport';
 
 
 function classNames(...classes) {
@@ -119,25 +117,7 @@ function content() {
   totalHighlighted = totalHighlighted.toFixed(0)
   totalAmount = totalAmount.toFixed(0);
 
-  // Send download
-  async function sendDownload() {
-    inventoryFilter.forEach((element) => {
-      element['item_price'] =
-      new Intl.NumberFormat(settingsData.locale, {
-        style: 'currency',
-        currency: settingsData.currency,
-      }).format(
-        pricesResult.prices[element.item_name + element.item_wear_name || '' ]?.[settingsData.source.title]  * settingsData.currencyPrice[settingsData.currency]);
-      element['item_price_combined'] = new Intl.NumberFormat(settingsData.locale, {
-        style: 'currency',
-        currency: settingsData.currency,
-      }).format(
-        element.combined_QTY *
-        pricesResult.prices[element.item_name + element.item_wear_name || '' ]?.[settingsData.source.title]  * settingsData.currencyPrice[settingsData.currency])
-    });
-
-    downloadReport(inventoryFilter);
-  }
+  
 
   return (
     <div className="bg-white mt-8">
@@ -196,7 +176,7 @@ function content() {
                 <Link
                   to=""
                   type="button"
-                  onClick={() => sendDownload()}
+                  onClick={() => downloadReport(settingsData, pricesResult, inventoryFilter)}
                   className={classNames(
                     inventory.storageInventory.length == 0
                       ? 'pointer-events-none border-gray-100'

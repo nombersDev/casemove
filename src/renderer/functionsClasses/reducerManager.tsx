@@ -1,15 +1,15 @@
 const names = {
-  authReducer: 'authReducer',
-  inventoryReducer: 'inventoryReducer',
-  inventoryFiltersReducer: 'InventoryFilters',
-  modalMoveReducer: 'ModalMove',
-  modalRenameReducer: 'RenameModal',
-  moveFromReducer: 'MoveFromReducer',
-  moveToReducer: 'MoveToReducer',
-  settingsReducer: 'Settings',
-  pricingReducer: 'Prices',
-  tradeUpReducer: 'TradeUpActions',
-  modalTradeReducer: 'ModalTrade'
+  userdetails: 'authReducer',
+  inventory: 'inventoryReducer',
+  inventoryFilters: 'inventoryFiltersReducer',
+  modalMove: 'modalMoveReducer',
+  modalRename: 'modalRenameReducer',
+  moveFrom: 'moveFromReducer',
+  moveTo: 'moveToReducer',
+  settings: 'settingsReducer',
+  pricing: 'pricingReducer',
+  tradeUp: 'tradeUpReducer',
+  modalTrade: 'modalTradeReducer'
 }
 
 export class ReducerManager{

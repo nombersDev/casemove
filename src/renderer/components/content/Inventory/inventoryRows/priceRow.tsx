@@ -1,11 +1,9 @@
-import { useSelector } from "react-redux";
+
 import { ConvertPricesFormatted } from "renderer/functionsClasses/prices";
 
 
-export function RowPrice({itemRow}) { 
-    const pricesResult = useSelector((state: any) => state.pricingReducer);
-    const settingsData = useSelector((state: any) => state.settingsReducer);
-    const PricesClass = new ConvertPricesFormatted(settingsData, pricesResult)
+export function RowPrice({itemRow, settingsData, pricesReducer}) { 
+    const PricesClass = new ConvertPricesFormatted(settingsData, pricesReducer)
     const price = PricesClass.getPrice(itemRow)
     const formattedPrice = PricesClass.getFormattedPrice(itemRow)
     const formattedPriceCombined = PricesClass.getFormattedPriceCombined(itemRow)

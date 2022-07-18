@@ -1,4 +1,5 @@
 import { ItemRow, ItemRowStorage } from "renderer/interfaces/items"
+import { Filter } from "./filters"
 
 // Individual
 export interface MoveModalPayload {
@@ -41,10 +42,12 @@ export interface WalletInterface {
 
 export interface source {
   title: string
+  avatar: string
+  name: string
 }
 // Store
 export interface InventoryFilters {
-  inventoryFilter: Array<string>
+  inventoryFilter: Array<Filter>
   sortValue: string
   inventoryFiltered: Array<ItemRow>
   searchInput: string
@@ -57,6 +60,15 @@ export interface Inventory {
   inventory: Array<ItemRow>,
   combinedInventory: Array<ItemRow>,
   storageInventory: Array<ItemRowStorage>,
+  storageInventoryRaw: Array<ItemRowStorage>
+  totalAccountItems: number,
+};
+
+export interface InventoryNew {
+  inventory: Array<ItemRow>,
+  combinedInventory: Array<ItemRow>,
+  storageInventory: Array<ItemRowStorage>,
+  storageInventoryRaw: Array<ItemRowStorage>
   totalAccountItems: number,
 };
 
@@ -83,7 +95,7 @@ export interface RenameModal {
 export interface ModalTrade {
   moveOpen: boolean,
   openResult: boolean,
-  inventoryFirst: Array<ItemRow>
+  inventoryFirst: Array<string>
   rowToMatch: ItemRow | {}
 }
 
@@ -132,12 +144,12 @@ export interface Settings {
 
 
 export interface TradeUpActions {
-  tradeUpProducts: Array<ItemRow>,
+  tradeUpProducts: Array<ItemRowStorage>,
   tradeUpProductsIDS: Array<string>,
   possibleOutcomes: Array<ItemRow>,
   searchInput: string,
-  MinFloat: string,
-  MaxFloat: string,
+  MinFloat: number,
+  MaxFloat: number,
   collections: Array<string>,
   options: Array<string>,
 };

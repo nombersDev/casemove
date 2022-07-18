@@ -9,7 +9,9 @@ const initialState: Settings = {
   columns: ["Price", "Stickers/patches", "Storage", "Tradehold", 'Moveable', 'Inventory link'],
   currencyPrice: {},
   source: {
-    title: 'Steam Community Market'
+    title: 'steam_listing',
+    name: 'Steam Community Market',
+    avatar: 'https://steamcommunity.com/favicon.ico'
   }
 };
 

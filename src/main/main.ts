@@ -552,6 +552,7 @@ async function startEvents(csgo, user) {
         });
       }
     });
+
   }
   startChangeEvents();
 
@@ -660,17 +661,12 @@ async function startEvents(csgo, user) {
   ipcMain.on(
     'removeFromStorageUnit',
     async (event, casketID, itemID, fastMode) => {
-      csgo.removeFromCasket(casketID, itemID);
-      // if (fastMode) {
-
       csgo.removeAllListeners('itemRemoved');
       csgo.removeAllListeners('itemChanged');
       csgo.removeAllListeners('itemAcquired');
+      csgo.removeFromCasket(casketID, itemID);
 
-      // }
-      // csgo.removeAllListeners('itemRemoved');
-      // csgo.removeAllListeners('itemChanged');
-      // csgo.removeAllListeners('itemAcquired');
+
 
       if (fastMode == false) {
         csgo.once(

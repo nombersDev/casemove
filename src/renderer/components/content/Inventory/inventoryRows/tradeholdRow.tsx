@@ -1,8 +1,5 @@
-import { useSelector } from "react-redux";
 
-
-export function RowTradehold({ itemRow }) {
-  const settingsData = useSelector((state: any) => state.settingsReducer);
+export function RowTradehold({itemRow, settingsData}) {
   const now = new Date();
 
   return (

@@ -1,10 +1,7 @@
 import { ExternalLinkIcon } from "@heroicons/react/solid";
-import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-export function RowLinkInventory({ itemRow }) {
-  const settingsData = useSelector((state: any) => state.settingsReducer);
-  const userDetails = useSelector((state: any) => state.authReducer);
+export function RowLinkInventory({ itemRow, settingsData, userDetails }) {
 
   return (
     <>

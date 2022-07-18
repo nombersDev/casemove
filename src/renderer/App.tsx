@@ -27,7 +27,7 @@ import {
   MenuAlt1Icon,
   BeakerIcon,
 } from '@heroicons/react/outline';
-import {itemCategories} from './components/content/shared/categories';
+import { itemCategories } from './components/content/shared/categories';
 import { toMoveContext } from './context/toMoveContext';
 import StorageUnitsComponent from './components/content/storageUnits/from/Content';
 import LoginPage from './views/login/login';
@@ -36,11 +36,11 @@ import { signOut } from './store/actions/userStatsActions';
 import { handleUserEvent } from './store/handleMessage';
 import Logo from './components/content/shared/iconsLogo/logo 2';
 import ToContent from './components/content/storageUnits/to/toHolder';
-import { classNames } from './components/content/shared/filters/inventoryFunctions';
+import { classNames, sortDataFunction } from './components/content/shared/filters/inventoryFunctions';
 import {
-  filterInventorySetSort,
   inventoryAddCategoryFilter,
   inventoryAddRarityFilter,
+  inventory_setFiltered,
 } from './store/actions/filtersInventoryActions';
 import settingsPage from './views/settings/settings';
 import {
@@ -59,12 +59,15 @@ import itemRarities from './components/content/shared/rarities';
 import { setTradeFoundMatch } from './store/actions/modalTrade';
 import TradeResultModal from './components/content/shared/modals & notifcations/modalTradeResult';
 import OverviewPage from './views/overview/overview';
+import { State } from './interfaces/states';
+import { ReducerManager } from './functionsClasses/reducerManager';
+import { filterItemRows } from './functionsClasses/filters/custom';
 DocumentDownloadIcon;
 
 //{ name: 'Reports', href: '/reports', icon: DocumentDownloadIcon, current: false }
 const navigation = [
 
-  { name: 'Overview', href: '/stats', icon:ChartBarIcon, current:false},
+  { name: 'Overview', href: '/stats', icon: ChartBarIcon, current: false },
   {
     name: 'Transfer | From',
     href: '/transferfrom',
@@ -99,16 +102,15 @@ function AppContent() {
   );
 
   // Redux user details
-  const userDetails = useSelector((state: any) => state.authReducer);
-  const modalData = useSelector((state: any) => state.modalMoveReducer);
-  const settingsData = useSelector((state: any) => state.settingsReducer);
-  const pricesResult = useSelector((state: any) => state.pricingReducer);
-  const inventoryData = useSelector((state: any) => state.inventoryReducer);
-  const tradeUpData = useSelector((state: any) => state.modalTradeReducer);
-  const inventory = useSelector((state: any) => state.inventoryReducer);
-  const filterDetails = useSelector(
-    (state: any) => state.inventoryFiltersReducer
-  );
+
+  const ReducerClass = new ReducerManager(useSelector)
+  const currentState: State = ReducerClass.getStorage()
+  const userDetails = currentState.authReducer
+  const modalData = currentState.modalMoveReducer
+  const settingsData = currentState.settingsReducer
+  const tradeUpData = currentState.modalTradeReducer
+  const inventory = currentState.inventoryReducer
+  const filterDetails = currentState.inventoryFiltersReducer
 
   document.documentElement.classList.add('dark');
 
@@ -129,20 +131,13 @@ function AppContent() {
       filterDetails.inventoryFilter.length > 0 ||
       filterDetails.sortValue != 'Default'
     ) {
-      console.log(
-        combinedInventory,
-        filterDetails.inventoryFilter,
-        filterDetails.sortValue
-      );
+
+      let filteredInv = await filterItemRows(combinedInventory, currentState.inventoryFiltersReducer.inventoryFilter)
+      filteredInv = await sortDataFunction(currentState.inventoryFiltersReducer.sortValue, filteredInv, currentState.pricingReducer.prices, currentState.settingsReducer?.source?.title)
+      console.log(filteredInv)
+
       dispatch(
-        await filterInventorySetSort(
-          inventoryData.inventory,
-          combinedInventory,
-          filterDetails,
-          filterDetails.sortValue,
-          pricesResult.prices,
-          settingsData?.source?.title
-        )
+        inventory_setFiltered(currentState.inventoryFiltersReducer.inventoryFilter, currentState.inventoryFiltersReducer.sortValue, filteredInv)
       );
     }
   }
@@ -177,11 +172,11 @@ function AppContent() {
       // Currency rate
       if (userDetails.isLoggedIn) {
         await window.electron.ipcRenderer
-        .getCurrencyRate()
-        .then((returnValue) => {
-          console.log('currencyrate', returnValue);
-          dispatch(setCurrencyRate(returnValue[0], returnValue[1]));
-        });
+          .getCurrencyRate()
+          .then((returnValue) => {
+            console.log('currencyrate', returnValue);
+            dispatch(setCurrencyRate(returnValue[0], returnValue[1]));
+          });
       }
       // Fastmove
       console.log('Getting settings');
@@ -222,20 +217,26 @@ function AppContent() {
   }
 
   async function handleSubMessage(messageValue, settingsData) {
+
     if (settingsData.fastMove && modalData.query.length > 0) {
       console.log('Command blocked', modalData.moveOpen, settingsData.fastMove);
       setIsListening(false);
       return;
     }
-    const actionToTake = (await handleUserEvent(
-      messageValue,
-      settingsData
-    )) as any;
-    dispatch(actionToTake);
-    if (messageValue[0] == 1) {
-      console.log(messageValue)
-      await handleFilterData(actionToTake.payload.combinedInventory);
+    if (messageValue.command == undefined) {
+      const actionToTake = (await handleUserEvent(
+        messageValue,
+        settingsData
+      )) as any;
+      dispatch(actionToTake);
+      if (messageValue[0] == 1) {
+        console.log(messageValue)
+        await handleFilterData(actionToTake.payload.combinedInventory);
+      }
     }
+
+
+
     setIsListening(false);
   }
 
@@ -492,17 +493,17 @@ function AppContent() {
                               'text-xs font-medium'
                             )}
                           ><div className='flex justify-between'>
-                            <div>
-                            {userDetails.CSGOConnection ? 'CSGO Online' : 'CSGO Offline'}
-                            </div>
+                              <div>
+                                {userDetails.CSGOConnection ? 'CSGO Online' : 'CSGO Offline'}
+                              </div>
 
                             </div>
                             <div className='text-gray-500'>
                               {userDetails.walletBalance?.balance == 0 || userDetails.walletBalance == null ? '' : new Intl.NumberFormat(settingsData.locale, {
-                  style: 'currency',
-                  currency: userDetails.walletBalance?.currency || settingsData.currency,
-                }).format(
-                  userDetails.walletBalance?.balance || 0)}
+                                style: 'currency',
+                                currency: userDetails.walletBalance?.currency || settingsData.currency,
+                              }).format(
+                                userDetails.walletBalance?.balance || 0)}
                             </div>
                           </span>
                         </span>
@@ -567,7 +568,7 @@ function AppContent() {
 
             <div className="px-3 mt-5">
               {userDetails.CSGOConnection == false &&
-              userDetails.isLoggedIn == true ? (
+                userDetails.isLoggedIn == true ? (
                 <button
                   type="button"
                   onClick={() => retryConnection()}
@@ -772,7 +773,7 @@ function AppContent() {
               <div className="flex-1 items-center justify-end flex">
                 <div className="px-3">
                   {userDetails.CSGOConnection == false &&
-                  userDetails.isLoggedIn == true ? (
+                    userDetails.isLoggedIn == true ? (
                     <button
                       type="button"
                       onClick={() => retryConnection()}

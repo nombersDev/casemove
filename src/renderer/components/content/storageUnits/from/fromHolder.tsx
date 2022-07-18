@@ -7,7 +7,7 @@ import { classNames, sortDataFunction } from '../../shared/filters/inventoryFunc
 import { useState } from 'react';
 import { BanIcon, FireIcon } from '@heroicons/react/solid';
 import { RowHeader, RowHeaderCondition, RowHeaderPlain } from '../../Inventory/inventoryRows/headerRows';
-import { searchFilter } from 'renderer/functionsClasses/itemsFilters';
+import { searchFilter } from 'renderer/functionsClasses/filters/search';
 import { State } from 'renderer/interfaces/states';
 
 function StorageUnits() {

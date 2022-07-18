@@ -1,8 +1,4 @@
-import { useSelector } from "react-redux";
-
-
-export function RowRarity({itemRow}) { 
-    const settingsData = useSelector((state: any) => state.settingsReducer);
+export function RowRarity({itemRow, settingsData}) { 
     
     return (
         <>

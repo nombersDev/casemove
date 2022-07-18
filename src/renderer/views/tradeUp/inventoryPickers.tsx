@@ -1,69 +1,62 @@
-import { BeakerIcon, PencilIcon, SelectorIcon, TagIcon } from '@heroicons/react/solid';
+import { BeakerIcon, PencilIcon, TagIcon } from '@heroicons/react/solid';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { classNames } from 'renderer/components/content/shared/filters/inventoryFunctions';
+import { RowHeader } from 'renderer/components/content/Inventory/inventoryRows/headerRows';
+import { classNames, sortDataFunctionTwo } from 'renderer/components/content/shared/filters/inventoryFunctions';
 import itemRarities from 'renderer/components/content/shared/rarities';
-//import { sortDataFunction } from 'renderer/context/inventoryFiltersContext';
-import { filterInventorySetSort } from 'renderer/store/actions/filtersInventoryActions';
+import { ConvertPricesFormatted } from 'renderer/functionsClasses/prices';
+import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
+import { State } from 'renderer/interfaces/states';
 import { setRenameModal } from 'renderer/store/actions/modalMove actions';
-import { pricing_add_to_requested } from 'renderer/store/actions/pricingActions';
 import { tradeUpAddRemove } from 'renderer/store/actions/tradeUpActions';
 
 
 function content() {
   const [stickerHover, setStickerHover] = useState('');
   const [itemHover, setItemHover] = useState('');
-  const inventory = useSelector((state: any) => state.inventoryReducer);
-  const inventoryFilters = useSelector(
-    (state: any) => state.inventoryFiltersReducer
-  );
-  const pricesResult = useSelector((state: any) => state.pricingReducer);
-  const settingsData = useSelector((state: any) => state.settingsReducer);
-  const tradeUpData = useSelector((state: any) => state.tradeUpReducer);
+  const currentState: State = new ReducerManager(useSelector).getStorage()
+
+  const inventory = currentState.inventoryReducer
+  const inventoryFilters = currentState.inventoryFiltersReducer
+  const pricesResult = currentState.pricingReducer
+  const settingsData = currentState.settingsReducer
+  const tradeUpData = currentState.tradeUpReducer
 
   const dispatch = useDispatch();
 
   // Sort function
-  async function onSortChange(sortValue) {
-    dispatch(
-      await filterInventorySetSort(
-        inventory.inventory,
-        inventory.combinedInventory,
-        inventoryFilters,
-        sortValue,
-        pricesResult.prices,
-        settingsData?.source?.title
-      )
-    );
-  }
+  
 
   // Convert to dict for easier match
-    let finalList = {};
-    inventory.inventory.forEach(element => {
-      if (finalList[element.item_name] == undefined) {
-        finalList[element.item_name] = [element]
-      }
-      else {
-        let listToUse = finalList[element.item_name];
-        listToUse.push(element)
-        finalList[element.item_name] = listToUse
+  let finalList = {};
+  let inventoryToUse = [...inventory.inventory, ...inventory.storageInventoryRaw]
+  inventoryToUse.forEach(element => {
+    if (finalList[element.item_name] == undefined) {
+      finalList[element.item_name] = [element]
+    }
+    else {
+      let listToUse = finalList[element.item_name];
+      listToUse.push(element)
+      finalList[element.item_name] = listToUse
 
-      }
-    });
+    }
+  });
 
-    // Inventory to use
-    let finalInventoryToUse = [] as any;
-    let seenNames = [] as any;
-    inventoryFilters.inventoryFiltered.forEach((projectRow) => {
-      if (finalList[projectRow.item_name] != undefined && seenNames.includes(projectRow.item_name) == false) {
-        finalInventoryToUse = [...finalInventoryToUse, ...finalList[projectRow.item_name]]
-        seenNames.push(projectRow.item_name)
-      }
-    })
+  // Inventory to use
+  let finalInventoryToUse = [] as any;
+  let seenNames = [] as any;
+  let inventoryFilter = [...inventoryFilters.inventoryFiltered, ...inventory.storageInventory]
+  inventoryFilter.forEach((projectRow) => {
+    if (finalList[projectRow.item_name] != undefined && seenNames.includes(projectRow.item_name) == false) {
+      finalInventoryToUse = [...finalInventoryToUse, ...finalList[projectRow.item_name]]
+      seenNames.push(projectRow.item_name)
+    }
+  })
 
+  finalInventoryToUse =  sortDataFunctionTwo(inventoryFilters.sortValue, finalInventoryToUse, pricesResult.prices, settingsData?.source?.title)
 
-    finalInventoryToUse = finalInventoryToUse.filter(function (item) {
+  finalInventoryToUse = finalInventoryToUse.filter(function (item) {
     if (!item.tradeUpConfirmed) {
       return false;
     }
@@ -103,90 +96,13 @@ function content() {
     itemR[element.value] = element.bgColorClass
   });
   finalInventoryToUse.forEach(element => {
-    element['rarityColor'] =itemR[element.rarityName]
+    element['rarityColor'] = itemR[element.rarityName]
   });
 
-
-
-  // Prices
-  let pricesToGet = [] as any;
-  finalInventoryToUse.forEach((projectRow) => {
-    if (
-      pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || ''] == undefined &&
-      pricesResult.productsRequested.includes(projectRow.item_name + projectRow.item_wear_name || '') == false
-    ) {
-      pricesToGet.push(projectRow);
-    }
-  });
-  if (pricesToGet.length > 0) {
-    window.electron.ipcRenderer.getPrice(pricesToGet);
-    dispatch(pricing_add_to_requested(pricesToGet));
+  const isFull = tradeUpData.tradeUpProducts.length == 10
+  if (inventoryFilters.sortBack) {
+    finalInventoryToUse.reverse()
   }
-
-
-  function sortRun(valueOne, ValueTwo, useNaN = false) {
-    if (valueOne == undefined) {
-      valueOne = -90000000000
-    }
-    if (ValueTwo == undefined) {
-      ValueTwo = -90000000000
-    }
-    if (valueOne < ValueTwo) {
-      return -1;
-    }
-    if (valueOne > ValueTwo) {
-      return 1;
-    }
-
-    if (useNaN && isNaN(valueOne)) {
-      return -1;
-    }
-    return 0;
-  }
-
-  // SORT Fix for prices
-    function sortRunAlt(valueOne, ValueTwo) {
-      if (isNaN(valueOne)) {
-        valueOne = -90000000000
-      }
-      if (isNaN(ValueTwo)) {
-        ValueTwo = -90000000000
-      }
-      if (valueOne < ValueTwo) {
-        return -1;
-      }
-      if (valueOne > ValueTwo) {
-        return 1;
-      }
-
-      return 0;
-    }
-
-
-
-
-    if (inventoryFilters.sortValue == 'Price'){
-      finalInventoryToUse.sort(function (a, b) {
-        return sortRunAlt(
-          pricesResult.prices[a.item_name  + a.item_wear_name || '']?.[settingsData?.source?.title],
-          pricesResult.prices[b.item_name  + b.item_wear_name || '']?.[settingsData?.source?.title]
-        );
-      });
-  }
-  if (inventoryFilters.sortValue == 'wearValue'){
-    finalInventoryToUse.sort(function (a, b) {
-      return -sortRun(a.item_paint_wear, b.item_paint_wear, true);
-    });
-}
-if (inventoryFilters.sortValue == 'Stickers'){
-  finalInventoryToUse.sort(function (a, b) {
-    return -sortRun(a?.stickers?.length, b?.stickers?.length);
-  });
-}
-const isFull = tradeUpData.tradeUpProducts.length == 10
-    if (inventoryFilters.sortBack) {
-      finalInventoryToUse.reverse()
-    }
 
 
 
@@ -202,63 +118,15 @@ const isFull = tradeUpData.tradeUpProducts.length == 10
               'border-gray-200 sticky'
             )}
           >
-            <th className="table-cell px-6 py-2 border-b border-gray-200 bg-gray-50 dark:border-opacity-50 dark:bg-dark-level-two text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              <button
-                onClick={() => onSortChange('Product name')}
-                className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-              >
-                <span className="flex justify-between">
-                  Product <SelectorIcon className="h-2" />
-                </span>
-              </button>
-            </th>
-            <th className="hidden xl:table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
-              <button
-                onClick={() => onSortChange('Collection')}
-                className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-              >
-                <span className="flex justify-between">
-                  Collection <SelectorIcon className="h-2" />
-                </span>
-              </button>
-            </th>
-
-            <th className="hidden xl:table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
-              <button
-                onClick={() => onSortChange('Price')}
-                className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-              >
-                <span className="flex justify-between">
-                  Price <SelectorIcon className="h-2" />
-                </span>
-              </button>
-            </th>
-
-            <th className="hidden 2xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
-              <button
-                onClick={() => onSortChange('Stickers')}
-                className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-              >
-                <span className="flex justify-between">
-                  Stickers/Patches <SelectorIcon className="h-2" />
-                </span>
-              </button>
-            </th>
-
+            <RowHeader headerName='Product' sortName='Product name' />
+            <RowHeader headerName='Collection' sortName='Collection' />
+            <RowHeader headerName='Price' sortName='Price' />
+            <RowHeader headerName='Stickers/Patches' sortName='Stickers' />
+            <RowHeader headerName='Float' sortName='wearValue' />
             <th className="hidden lg:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
-              <button
-                onClick={() => onSortChange('wearValue')}
-                className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-              >
-                <span className="flex justify-between">
-                  Float <SelectorIcon className="h-2" />
-                </span>
-              </button>
-            </th>
-            <th className="hidden lg:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
-            <span className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400">
-                  Move
-                </span>
+              <span className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400">
+                Move
+              </span>
             </th>
           </tr>
         </thead>
@@ -282,13 +150,13 @@ const isFull = tradeUpData.tradeUpProducts.length == 10
                     .includes(
                       tradeUpData.searchInput?.toLowerCase().trim()
                     ) ||
-                    tradeUpData.searchInput == undefined
+                  tradeUpData.searchInput == undefined
                   ? ''
                   : 'hidden',
-                  inventoryFilters.rarityFilter.length != 0
+                inventoryFilters.rarityFilter.length != 0
                   ? inventoryFilters.rarityFilter?.includes(
-                      projectRow.rarityColor
-                    )
+                    projectRow.rarityColor
+                  )
                     ? ''
                     : 'hidden'
                   : '',
@@ -320,15 +188,14 @@ const isFull = tradeUpData.tradeUpProducts.length == 10
                       <Link
                         to={
                           {
-                          pathname: `https://steamcommunity.com/market/listings/730/${
-                            projectRow.item_paint_wear == undefined
-                              ? projectRow.item_name
-                              : projectRow.item_name +
+                            pathname: `https://steamcommunity.com/market/listings/730/${projectRow.item_paint_wear == undefined
+                                ? projectRow.item_name
+                                : projectRow.item_name +
                                 ' (' +
                                 projectRow.item_wear_name +
                                 ')'
-                          }`,
-                        }}
+                              }`,
+                          }}
                         target="_blank"
                       >
                         <div className="flex flex-shrink-0 -space-x-1">
@@ -385,8 +252,8 @@ const isFull = tradeUpData.tradeUpProducts.length == 10
                         </span>
                       )}
                       {projectRow.item_name !== '' &&
-                      projectRow.item_customname !== null &&
-                      !projectRow.item_url.includes('casket') ? (
+                        projectRow.item_customname !== null &&
+                        !projectRow.item_url.includes('casket') ? (
                         <TagIcon className="h-3 w-3  ml-1" />
                       ) : (
                         ''
@@ -430,20 +297,22 @@ const isFull = tradeUpData.tradeUpProducts.length == 10
                       {projectRow.item_customname !== null
                         ? projectRow.item_storage_total !== undefined
                           ? projectRow.item_name +
-                            ' (' +
-                            projectRow.item_storage_total +
-                            ')'
+                          ' (' +
+                          projectRow.item_storage_total +
+                          ')'
                           : projectRow.item_name
                         : ''}
 
                       {projectRow.item_customname !== null &&
-                      projectRow.item_paint_wear !== undefined
+                        projectRow.item_paint_wear !== undefined
                         ? ' - '
                         : ''}
 
                       {projectRow.item_paint_wear !== undefined
                         ? projectRow.item_wear_name
                         : ''}
+                        
+                       {projectRow.storage_name ? ' /' + projectRow.storage_name : ''}
                       {/*
                       {isShown == project.item_id  && project.item_paint_wear !== undefined?
                         <div>{project.item_paint_wear}</div>
@@ -469,17 +338,10 @@ const isFull = tradeUpData.tradeUpProducts.length == 10
                 <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 font-medium">
                   <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
                     <div className="flex flex-shrink-0 -space-x-1 text-gray-500 dark:text-gray-400 font-normal">
-                    {pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || ''] == undefined
+                      {pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || ''] == undefined
                         ? ''
-                        : new Intl.NumberFormat(settingsData.locale, {
-                            style: 'currency',
-                            currency: settingsData.currency,
-                          }).format(
-                            pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[
-                              settingsData?.source?.title
-                            ] *
-                              settingsData.currencyPrice[settingsData.currency]
-                          )}
+                        : 
+                         new ConvertPricesFormatted(settingsData, pricesResult).getFormattedPrice(projectRow)}
                     </div>
                   </div>
 
@@ -524,23 +386,23 @@ const isFull = tradeUpData.tradeUpProducts.length == 10
               </td>
 
               <td className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-normal ">
-              {projectRow.item_paint_wear?.toString()?.substr(0, 9)}
+                {projectRow.item_paint_wear?.toString()?.substr(0, 9)}
               </td>
               <td className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
-        <div className={classNames(isFull ? 'hidden' : '', 'flex justify-center')}>
-          <button
-          onClick={() => dispatch(tradeUpAddRemove(projectRow))}
+                <div className={classNames(isFull ? 'hidden' : '', 'flex justify-center')}>
+                  <button
+                    onClick={() => dispatch(tradeUpAddRemove(projectRow))}
 
-          >
-            <BeakerIcon
-              className={classNames(
-                'text-gray-400 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-400 h-5'
-              )}
-              aria-hidden="true"
-            />
-          </button>
-        </div>
-      </td>
+                  >
+                    <BeakerIcon
+                      className={classNames(
+                        'text-gray-400 dark:text-gray-500 hover:text-yellow-400 dark:hover:text-yellow-400 h-5'
+                      )}
+                      aria-hidden="true"
+                    />
+                  </button>
+                </div>
+              </td>
 
               <td className="hidden md:px-6 py-3 whitespace-nowrap text-right text-sm font-medium"></td>
             </tr>

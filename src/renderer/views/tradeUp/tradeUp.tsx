@@ -2,6 +2,7 @@ import {
   ArrowCircleDownIcon,
   ArrowCircleUpIcon,
   CheckCircleIcon,
+  CollectionIcon,
   ScaleIcon,
   VariableIcon,
 } from '@heroicons/react/solid';
@@ -14,44 +15,48 @@ import { setTradeMove } from 'renderer/store/actions/modalTrade';
 import TradeUpPicker from './inventoryPickers';
 import TradeUpSideBar from './sidebar/sideBar';
 import TradeUpFilters from './filter/tradeUpFilter';
+import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
+import { State } from 'renderer/interfaces/states';
+import { ConvertPrices } from 'renderer/functionsClasses/prices';
+import { useState } from 'react';
+import { getAllStorages } from 'renderer/functionsClasses/storageUnits/storageUnitsFunctions';
+import { LoadingButton } from 'renderer/components/content/shared/animations';
 
 function settingsContent() {
-  const tradeUpData = useSelector((state: any) => state.tradeUpReducer);
-  const pricesResult = useSelector((state: any) => state.pricingReducer);
-  const settingsData = useSelector((state: any) => state.settingsReducer);
+  let ReducerClass = new ReducerManager(useSelector);
+  let currentState: State = ReducerClass.getStorage();
+  const tradeUpData = currentState.tradeUpReducer
+  const settingsData = currentState.settingsReducer
+
   const dispatch = useDispatch();
+  const PricingClass = new ConvertPrices(settingsData, currentState.pricingReducer)
+  const [getLoadingButton, setLoadingButton] = useState(false);
+  async function getAllStor() {
+    setLoadingButton(true)
+    getAllStorages(dispatch, currentState).then(() => {
+      setLoadingButton(false)
+    })
+  }
+
+
 
   let totalFloat = 0;
   let totalPrice = 0;
   tradeUpData.tradeUpProducts.forEach((element) => {
-    totalFloat += element.item_paint_wear;
-    totalPrice +=
-      pricesResult.prices[element.item_name + element.item_wear_name || '']?.['steam_listing'] *
-      settingsData.currencyPrice[settingsData.currency];
+    totalFloat += element.item_paint_wear as number;
+    totalPrice += PricingClass.getPrice(element)
   });
   totalFloat = totalFloat / tradeUpData.tradeUpProducts.length;
   let totalEV = 0;
   tradeUpData.possibleOutcomes.forEach((element) => {
-    let individualPrice =
-      pricesResult?.prices[element.item_name + element.item_wear_name || '']?.['steam_listing'] * settingsData.currencyPrice[settingsData.currency];
+    let individualPrice = PricingClass.getPrice(element);
     totalEV += individualPrice * (element.percentage / 100);
-    console.log(
-      element,
-      element.percentage,
-      individualPrice * (element.percentage / 100)
-    );
   });
 
   return (
     <>
-    <TradeModal />
-      {/*
-        This example requires updating your template:
-        ```
-        <html class="h-full bg-white">
-        <body class="h-full">
-        ```
-      */}
+      <TradeModal />
+
       <div>
         {/* Page title & actions */}
         <div className="border-b border-gray-200 px-4 h-14  py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8 dark:border-opacity-50">
@@ -67,6 +72,7 @@ function settingsContent() {
               </div>
 
               <div className="ml-4 mt-4 flex-shrink-0 flex">
+
 
                 <PricingAmount
                   totalAmount={totalFloat.toString()?.substr(0, 9)}
@@ -111,24 +117,48 @@ function settingsContent() {
                   IconToUse={ScaleIcon}
 
                 />
+
                 <span className="flex items-center text-gray-500 text-xs font-medium">
+                  <span className="text-blue-500 pl-2 pr-2 border-l border-gray-200 dark:border-gray-400">
+                    <button
+                      type="button"
+                      onClick={() => getAllStor()}
+                      className={classNames(currentState.moveFromReducer.activeStorages.length == 0 || getLoadingButton ? 'bg-green-700' : 'bg-dark-level-three',
+
+                        'order-1 ml-3 inline-flex items-center px-4 py-2 border dark:border-opacity-0 dark:text-dark-white text-sm font-medium hover:bg-dark-level-four rounded-md text-gray-700 focus:outline-none sm:order-0 sm:ml-0'
+                      )}
+                    >
+                      {currentState.moveFromReducer.activeStorages.length != 0 ? currentState.moveFromReducer.activeStorages.length + " Storage units loaded" : "Load storage units"}
+                      {getLoadingButton ? (
+                        <LoadingButton
+                          className="ml-3 dark:text-dark-white h-4 w-4 text-gray-700"
+                          aria-hidden="true"
+                        />
+                      ) : (
+                        <CollectionIcon
+                          className="ml-3 dark:text-dark-white h-4 w-4 text-gray-700"
+                          aria-hidden="true"
+                        />
+                      )}
+                    </button>
+                  </span>
                   <span className="text-blue-500 pl-2 border-l border-gray-200 dark:border-gray-400">
-                  <button
-                  type="button"
-                  onClick={() => dispatch(setTradeMove())}
-                  className={classNames(
-                    tradeUpData.tradeUpProducts.length == 0
-                      ? ' border-gray-100 dark:bg-dark-level-two pointer-events-none '
-                      : 'shadow-sm border-gray-200 dark:bg-dark-level-three dark:border-none',
-                    'order-1 ml-3 inline-flex items-center px-4 py-2 border dark:border-opacity-0 dark:text-dark-white text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0'
-                  )}
-                >
-                   {'Edit & review'}
-                  <CheckCircleIcon
-                    className="ml-3 dark:text-dark-white h-4 w-4 text-gray-700"
-                    aria-hidden="true"
-                  />
-                </button>
+                    <button
+                      type="button"
+                      onClick={() => dispatch(setTradeMove())}
+                      className={classNames(
+                        tradeUpData.tradeUpProducts.length == 0
+                          ? ' border-gray-100 dark:bg-dark-level-two pointer-events-none '
+                          : 'shadow-sm border-gray-200 dark:bg-dark-level-three dark:border-none',
+                        'order-1 ml-3 inline-flex items-center px-4 py-2 border dark:border-opacity-0 dark:text-dark-white text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0'
+                      )}
+                    >
+                      {'Edit & review'}
+                      <CheckCircleIcon
+                        className="ml-3 dark:text-dark-white h-4 w-4 text-gray-700"
+                        aria-hidden="true"
+                      />
+                    </button>
                   </span>
                 </span>
               </div>

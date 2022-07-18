@@ -18,6 +18,7 @@ import { setRenameModal } from 'renderer/store/actions/modalMove actions';
 import {
   moveFromAddCasketToStorages,
   moveFromRemoveCasket,
+  moveFromReset,
   moveFromSetFull,
   moveFromsetSearchFieldStorage,
 } from 'renderer/store/actions/moveFromActions';
@@ -53,10 +54,10 @@ function content() {
       return;
     }
     setLoadingSetStorage(true);
-    if (fromSelector.activeStorages.includes(storageRow.storage_id)) {
-      dispatch(moveFromAddCasketToStorages(storageRow.storage_id));
-      dispatch(clearStorageIDData(storageRow.storage_id));
-      dispatch(moveFromRemoveCasket(storageRow.storage_id));
+    if (fromSelector.activeStorages.includes(storageRow.item_id)) {
+      dispatch(moveFromAddCasketToStorages(storageRow.item_id));
+      dispatch(clearStorageIDData(storageRow.item_id));
+      dispatch(moveFromRemoveCasket(storageRow.item_id));
       setLoadingSetStorage(false);
     } else {
       new HandleStorageData(dispatch, currentState)
@@ -82,21 +83,7 @@ function content() {
 
   // Get all storage unit data
   async function unMarkAllStorages() {
-    const casketResults = await inventory.inventory.filter(function (row) {
-      if (!row.item_url.includes('casket')) {
-        return false; // skip
-      }
-      if (row.item_storage_total == 0) {
-        return false; // skip
-      }
-      return true;
-    });
-    for (const [_key, project] of Object.entries(casketResults)) {
-      let projectRow = project as any;
-      if (fromReducer.activeStorages.includes(projectRow.item_id)) {
-        await getStorageData(projectRow);
-      }
-    }
+    dispatch(moveFromReset())
   }
 
   // Get prices for storage units

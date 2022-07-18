@@ -8,10 +8,11 @@ export const setInventoryAction = (forwardPackage: any) => {
     }
 }
 
-export const addStorageInventoryData = (storageData, casketID, sortValue) => {
+export const addStorageInventoryData = (storageRowsRaw, storageData, casketID, sortValue) => {
     return {
         type: 'INVENTORY_STORAGES_ADD_TO',
         payload: {
+            storageRowsRaw: storageRowsRaw,
             storageData: storageData,
             casketID: casketID,
             sortValue: sortValue
@@ -19,9 +20,9 @@ export const addStorageInventoryData = (storageData, casketID, sortValue) => {
     }
 }
 
-export const inventorySetStoragesData = (storageData) => {
+export const inventorySetSortStorage = (storageData) => {
     return {
-        type: 'INVENTORY_STORAGES_SET_STORAGES',
+        type: 'INVENTORY_STORAGES_SET_SORT_STORAGES',
         payload: {
             storageData: storageData
         }
