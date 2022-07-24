@@ -1,4 +1,4 @@
-const itemCategories = [
+export const itemCategories = [
   {
     value: 'characters',
     name: 'Agents',
@@ -44,7 +44,9 @@ const itemCategories = [
   { value: 'tools', name: 'Tools', bgColorClass: 'bg-yellow-800', href: '#' },
 ];
 
-const itemSubCategories = {
+
+
+export const itemSubCategories = {
   majors: {
     "Antwerp 2022": {
       name: "Antwerp 2022",
@@ -133,4 +135,3 @@ const itemSubCategories = {
     }
   }
 }
-export {itemCategories, itemSubCategories}

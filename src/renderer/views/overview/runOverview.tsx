@@ -14,7 +14,6 @@ import {
 } from '@heroicons/react/solid';
 import { useSelector } from 'react-redux';
 import BarAppMajor from './barChatMajors';
-import RadarApp from './radarChart';
 import {
   HashRouter as Router,
   Route
@@ -24,6 +23,7 @@ import { State } from 'renderer/interfaces/states';
 import { ConvertPrices } from 'renderer/functionsClasses/prices';
 import { downloadReport } from 'renderer/functionsClasses/downloadReport';
 import { LoadButton } from 'renderer/components/content/loadStorageUnitsButton';
+import ItemDistributionByPrices from './itemsDistribution/byPrices';
 
 const transactions = [
   {
@@ -390,7 +390,7 @@ function Content() {
                       <BarAppMajor />
                     </div>
                     <div className="align-middle mw-5 overflow-x-auto row-span-3 shadow overflow-hidden bg-dark-level-three">
-                      <RadarApp />
+                      <ItemDistributionByPrices />
                     </div>
                   </div>
                 </div>
