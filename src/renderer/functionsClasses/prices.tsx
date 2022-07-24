@@ -15,11 +15,15 @@ export class ConvertPrices {
     return itemRow.item_name + itemRow.item_wear_name || '';
   }
 
-  getPrice(itemRow) {
+  getPrice(itemRow:ItemRow, nanToZero=false) {
     let itemPrice =
       this.prices.prices[this._getName(itemRow)]?.[
         this.settingsData.source.title
       ] * this.settingsData.currencyPrice[this.settingsData.currency];
+    
+    if (nanToZero && isNaN(itemPrice)) {
+      return 0
+    }
 
     return itemPrice
   }
