@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Disclosure } from '@headlessui/react';
 import {
   ArchiveIcon,
+  FilterIcon,
   SearchIcon,
   SwitchHorizontalIcon,
   UploadIcon,
@@ -18,7 +19,16 @@ import {
   moveToSetStorageAmount,
 } from 'renderer/store/actions/moveToActions';
 import PricingAmount from '../../shared/filters/pricingAmount';
+import FiltersDisclosure from '../../Inventory/filtersDisclosure';
+import { CharacteristicsFilter, ContainerFilter, FilterManager } from 'renderer/variables/filters';
 doCancel;
+const ClassFilters = new FilterManager()
+
+ClassFilters.loadFilter(CharacteristicsFilter, true, 'Include')
+ClassFilters.loadFilter(CharacteristicsFilter, false, 'Exclude')
+ClassFilters.loadFilter(ContainerFilter, true)
+ClassFilters.excludeFilter('Include', 'Storage moveable')
+ClassFilters.excludeFilter('Exclude', 'Storage moveable')
 function content() {
   const dispatch = useDispatch();
   const pricesResult = useSelector((state: any) => state.pricingReducer);
@@ -138,8 +148,17 @@ function content() {
       >
         <div className="relative col-start-1 row-start-1 py-4 flex justify-between">
           <div className="max-w-7xl flex items-center space-x-6 divide-x divide-gray-200 text-sm px-4 sm:px-6 lg:px-8">
+          <div>
+              <Disclosure.Button className="group text-gray-700 font-medium flex items-center text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-500">
+                <FilterIcon
+                  className="flex-none w-5 h-5 mr-2 text-gray-400 group-hover:text-gray-500"
+                  aria-hidden="true"
+                />
+                {inventoryFilters.inventoryFilter.length -1 == -1 ? 0 : inventoryFilters.inventoryFilter.length - 1} Filters
+              </Disclosure.Button>
+            </div>
 
-            <div className="">
+            <div className="pl-6">
               <button
                 type="button"
                 className="text-gray-500 dark:text-gray-400"
@@ -230,6 +249,7 @@ function content() {
             </div>
           </div>
         </div>
+        <FiltersDisclosure  ClassFilters={ClassFilters}/>
       </Disclosure>
     </div>
   );

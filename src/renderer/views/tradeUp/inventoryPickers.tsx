@@ -3,7 +3,10 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { RowHeader } from 'renderer/components/content/Inventory/inventoryRows/headerRows';
-import { classNames, sortDataFunctionTwo } from 'renderer/components/content/shared/filters/inventoryFunctions';
+import {
+  classNames,
+  sortDataFunctionTwo,
+} from 'renderer/components/content/shared/filters/inventoryFunctions';
 import itemRarities from 'renderer/components/content/shared/rarities';
 import { ConvertPricesFormatted } from 'renderer/functionsClasses/prices';
 import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
@@ -11,62 +14,81 @@ import { State } from 'renderer/interfaces/states';
 import { setRenameModal } from 'renderer/store/actions/modalMove actions';
 import { tradeUpAddRemove } from 'renderer/store/actions/tradeUpActions';
 
-
 function content() {
   const [stickerHover, setStickerHover] = useState('');
   const [itemHover, setItemHover] = useState('');
-  const currentState: State = new ReducerManager(useSelector).getStorage()
+  const currentState: State = new ReducerManager(useSelector).getStorage();
 
-  const inventory = currentState.inventoryReducer
-  const inventoryFilters = currentState.inventoryFiltersReducer
-  const pricesResult = currentState.pricingReducer
-  const settingsData = currentState.settingsReducer
-  const tradeUpData = currentState.tradeUpReducer
+  const inventory = currentState.inventoryReducer;
+  const inventoryFilters = currentState.inventoryFiltersReducer;
+  const pricesResult = currentState.pricingReducer;
+  const settingsData = currentState.settingsReducer;
+  const tradeUpData = currentState.tradeUpReducer;
 
   const dispatch = useDispatch();
 
   // Sort function
-  
 
   // Convert to dict for easier match
   let finalList = {};
-  let inventoryToUse = [...inventory.inventory, ...inventory.storageInventoryRaw]
-  inventoryToUse.forEach(element => {
+  let inventoryToUse = [
+    ...inventory.inventory,
+    ...inventory.storageInventoryRaw,
+  ];
+  inventoryToUse.forEach((element) => {
     if (finalList[element.item_name] == undefined) {
-      finalList[element.item_name] = [element]
-    }
-    else {
+      finalList[element.item_name] = [element];
+    } else {
       let listToUse = finalList[element.item_name];
-      listToUse.push(element)
-      finalList[element.item_name] = listToUse
-
+      listToUse.push(element);
+      finalList[element.item_name] = listToUse;
     }
   });
 
   // Inventory to use
   let finalInventoryToUse = [] as any;
   let seenNames = [] as any;
-  let inventoryFilter = [...inventoryFilters.inventoryFiltered, ...inventory.storageInventory]
+  let inventoryFilter = [
+    ...inventoryFilters.inventoryFiltered,
+    ...inventory.storageInventory,
+  ];
   inventoryFilter.forEach((projectRow) => {
-    if (finalList[projectRow.item_name] != undefined && seenNames.includes(projectRow.item_name) == false) {
-      finalInventoryToUse = [...finalInventoryToUse, ...finalList[projectRow.item_name]]
-      seenNames.push(projectRow.item_name)
+    if (
+      finalList[projectRow.item_name] != undefined &&
+      seenNames.includes(projectRow.item_name) == false
+    ) {
+      finalInventoryToUse = [
+        ...finalInventoryToUse,
+        ...finalList[projectRow.item_name],
+      ];
+      seenNames.push(projectRow.item_name);
     }
-  })
+  });
 
-  finalInventoryToUse =  sortDataFunctionTwo(inventoryFilters.sortValue, finalInventoryToUse, pricesResult.prices, settingsData?.source?.title)
+  finalInventoryToUse = sortDataFunctionTwo(
+    inventoryFilters.sortValue,
+    finalInventoryToUse,
+    pricesResult.prices,
+    settingsData?.source?.title
+  );
 
   finalInventoryToUse = finalInventoryToUse.filter(function (item) {
     if (!item.tradeUpConfirmed) {
       return false;
     }
-    if (tradeUpData.MinFloat > item.item_paint_wear || tradeUpData.MaxFloat < item.item_paint_wear) {
+    if (
+      tradeUpData.MinFloat > item.item_paint_wear ||
+      tradeUpData.MaxFloat < item.item_paint_wear
+    ) {
       return false;
     }
     if (tradeUpData.tradeUpProductsIDS.includes(item.item_id)) {
       return false;
     }
-    if (tradeUpData.collections.length > 0 && !tradeUpData.collections.includes(item?.collection)) {
+    if (
+      tradeUpData.collections.length > 0 &&
+      !tradeUpData.collections.includes(item?.collection)
+    ) {
       return false;
     }
     if (tradeUpData.options.includes('Hide equipped')) {
@@ -75,13 +97,13 @@ function content() {
       }
     }
     if (tradeUpData.tradeUpProducts.length != 0) {
-      let restrictRarity = tradeUpData.tradeUpProducts[0].rarityName
-      let restrictStattrak = tradeUpData.tradeUpProducts[0].stattrak
+      let restrictRarity = tradeUpData.tradeUpProducts[0].rarityName;
+      let restrictStattrak = tradeUpData.tradeUpProducts[0].stattrak;
       if (item.rarityName != restrictRarity) {
-        return false
+        return false;
       }
       if (item.stattrak != restrictStattrak) {
-        return false
+        return false;
       }
     }
 
@@ -91,22 +113,18 @@ function content() {
     return false;
   });
 
-  let itemR = {}
-  itemRarities.forEach(element => {
-    itemR[element.value] = element.bgColorClass
+  let itemR = {};
+  itemRarities.forEach((element) => {
+    itemR[element.value] = element.bgColorClass;
   });
-  finalInventoryToUse.forEach(element => {
-    element['rarityColor'] = itemR[element.rarityName]
+  finalInventoryToUse.forEach((element) => {
+    element['rarityColor'] = itemR[element.rarityName];
   });
 
-  const isFull = tradeUpData.tradeUpProducts.length == 10
+  const isFull = tradeUpData.tradeUpProducts.length == 10;
   if (inventoryFilters.sortBack) {
-    finalInventoryToUse.reverse()
+    finalInventoryToUse.reverse();
   }
-
-
-
-
 
   return (
     <>
@@ -118,11 +136,14 @@ function content() {
               'border-gray-200 sticky'
             )}
           >
-            <RowHeader headerName='Product' sortName='Product name' />
-            <RowHeader headerName='Collection' sortName='Collection' />
-            <RowHeader headerName='Price' sortName='Price' />
-            <RowHeader headerName='Stickers/Patches' sortName='Stickers' />
-            <RowHeader headerName='Float' sortName='wearValue' />
+            <RowHeader headerName="Product" sortName="Product name" />
+            <RowHeader headerName="Collection" sortName="Collection" />
+            <RowHeader headerName="Price" sortName="Price" />
+
+            <div className="hidden 2xl:table-cell">
+              <RowHeader headerName="Stickers/Patches" sortName="Stickers" />
+            </div>
+            <RowHeader headerName="Float" sortName="wearValue" />
             <th className="hidden lg:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
               <span className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400">
                 Move
@@ -137,26 +158,20 @@ function content() {
               className={classNames(
                 projectRow.item_name
                   ?.toLowerCase()
-                  .includes(
-                    tradeUpData.searchInput?.toLowerCase().trim()
-                  ) ||
+                  .includes(tradeUpData.searchInput?.toLowerCase().trim()) ||
                   projectRow.item_customname
                     ?.toLowerCase()
-                    .includes(
-                      tradeUpData.searchInput?.toLowerCase().trim()
-                    ) ||
+                    .includes(tradeUpData.searchInput?.toLowerCase().trim()) ||
                   projectRow.item_wear_name
                     ?.toLowerCase()
-                    .includes(
-                      tradeUpData.searchInput?.toLowerCase().trim()
-                    ) ||
+                    .includes(tradeUpData.searchInput?.toLowerCase().trim()) ||
                   tradeUpData.searchInput == undefined
                   ? ''
                   : 'hidden',
                 inventoryFilters.rarityFilter.length != 0
                   ? inventoryFilters.rarityFilter?.includes(
-                    projectRow.rarityColor
-                  )
+                      projectRow.rarityColor
+                    )
                     ? ''
                     : 'hidden'
                   : '',
@@ -186,16 +201,16 @@ function content() {
                       </div>
                     ) : (
                       <Link
-                        to={
-                          {
-                            pathname: `https://steamcommunity.com/market/listings/730/${projectRow.item_paint_wear == undefined
-                                ? projectRow.item_name
-                                : projectRow.item_name +
+                        to={{
+                          pathname: `https://steamcommunity.com/market/listings/730/${
+                            projectRow.item_paint_wear == undefined
+                              ? projectRow.item_name
+                              : projectRow.item_name +
                                 ' (' +
                                 projectRow.item_wear_name +
                                 ')'
-                              }`,
-                          }}
+                          }`,
+                        }}
                         target="_blank"
                       >
                         <div className="flex flex-shrink-0 -space-x-1">
@@ -252,19 +267,25 @@ function content() {
                         </span>
                       )}
                       {projectRow.item_name !== '' &&
-                        projectRow.item_customname !== null &&
-                        !projectRow.item_url.includes('casket') ? (
+                      projectRow.item_customname !== null &&
+                      !projectRow.item_url.includes('casket') ? (
                         <TagIcon className="h-3 w-3  ml-1" />
                       ) : (
                         ''
                       )}
                       {projectRow.equipped_t ? (
-                        <span className='ml-1 h-3 leading-3 pl-1 pr-1 text-white  dark:text-dark-white text-center font-medium	 bg-dark-level-four rounded-full   text-xs'> T </span>
+                        <span className="ml-1 h-3 leading-3 pl-1 pr-1 text-white  dark:text-dark-white text-center font-medium	 bg-dark-level-four rounded-full   text-xs">
+                          {' '}
+                          T{' '}
+                        </span>
                       ) : (
                         ''
                       )}
                       {projectRow.equipped_ct ? (
-                        <span className='ml-1 h-3 leading-3 pl-1 pr-1 text-center  text-white dark:text-dark-white font-medium	 bg-dark-level-four rounded-full   text-xs'> CT </span>
+                        <span className="ml-1 h-3 leading-3 pl-1 pr-1 text-center  text-white dark:text-dark-white font-medium	 bg-dark-level-four rounded-full   text-xs">
+                          {' '}
+                          CT{' '}
+                        </span>
                       ) : (
                         ''
                       )}
@@ -297,22 +318,24 @@ function content() {
                       {projectRow.item_customname !== null
                         ? projectRow.item_storage_total !== undefined
                           ? projectRow.item_name +
-                          ' (' +
-                          projectRow.item_storage_total +
-                          ')'
+                            ' (' +
+                            projectRow.item_storage_total +
+                            ')'
                           : projectRow.item_name
                         : ''}
 
                       {projectRow.item_customname !== null &&
-                        projectRow.item_paint_wear !== undefined
+                      projectRow.item_paint_wear !== undefined
                         ? ' - '
                         : ''}
 
                       {projectRow.item_paint_wear !== undefined
                         ? projectRow.item_wear_name
                         : ''}
-                        
-                       {projectRow.storage_name ? ' /' + projectRow.storage_name : ''}
+
+                      {projectRow.storage_name
+                        ? ' /' + projectRow.storage_name
+                        : ''}
                       {/*
                       {isShown == project.item_id  && project.item_paint_wear !== undefined?
                         <div>{project.item_paint_wear}</div>
@@ -323,32 +346,31 @@ function content() {
               </td>
               <td className="hidden xl:table-cell px-6 py-3 max-w-0 w-full whitespace-nowrap overflow-hidden text-sm font-normal text-gray-900">
                 <div className="flex items-center">
-
                   <span>
                     <span className="flex dark:text-dark-white">
-                      {projectRow.collection.replace('The ', '').replace(' Collection', '')}
-
+                      {projectRow.collection
+                        .replace('The ', '')
+                        .replace(' Collection', '')}
                     </span>
-
                   </span>
                 </div>
               </td>
 
-              {settingsData.columns.includes('Price') ? (
-                <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 font-medium">
-                  <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
-                    <div className="flex flex-shrink-0 -space-x-1 text-gray-500 dark:text-gray-400 font-normal">
-                      {pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || ''] == undefined
-                        ? ''
-                        : 
-                         new ConvertPricesFormatted(settingsData, pricesResult).getFormattedPrice(projectRow)}
-                    </div>
+              <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 font-medium">
+                <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
+                  <div className="flex flex-shrink-0 -space-x-1 text-gray-500 dark:text-gray-400 font-normal">
+                    {pricesResult.prices[
+                      projectRow.item_name + projectRow.item_wear_name || ''
+                    ] == undefined
+                      ? ''
+                      : new ConvertPricesFormatted(
+                          settingsData,
+                          pricesResult
+                        ).getFormattedPrice(projectRow)}
                   </div>
+                </div>
+              </td>
 
-                </td>
-              ) : (
-                ''
-              )}
               <td className="hidden 2xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
                 <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
                   <div className="flex flex-shrink-0 -space-x-1">
@@ -389,10 +411,14 @@ function content() {
                 {projectRow.item_paint_wear?.toString()?.substr(0, 9)}
               </td>
               <td className="table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
-                <div className={classNames(isFull ? 'hidden' : '', 'flex justify-center')}>
+                <div
+                  className={classNames(
+                    isFull ? 'hidden' : '',
+                    'flex justify-center'
+                  )}
+                >
                   <button
                     onClick={() => dispatch(tradeUpAddRemove(projectRow))}
-
                   >
                     <BeakerIcon
                       className={classNames(

@@ -203,7 +203,7 @@
   },
   "dependencies": {
     "@electron/remote": "^2.0.4",
-    "@headlessui/react": "^1.4.2",
+    "@headlessui/react": "^1.6.6",
     "@node-steam/vdf": "^2.2.0",
     "@redux-beacon/google-analytics": "^1.2.3",
     "@reduxjs/toolkit": "^1.7.1",

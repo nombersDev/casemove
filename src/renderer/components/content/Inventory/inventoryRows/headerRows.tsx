@@ -25,7 +25,7 @@ export function RowHeader({ headerName, sortName }) {
 }
 
 // Row header sort and condition
-export function RowHeaderCondition({ headerName, sortName, condition }) {
+export function RowHeaderCondition({ headerName, sortName, condition,  }) {
     const dispatch = useDispatch();
     const states = useSelector((state: any) => state);
 

@@ -1,14 +1,11 @@
-export const signIn = (forwardPackage: any) => {
+import { SignInActionPackage } from "renderer/interfaces/store/authReducerActionsInterfaces"
+
+
+
+export const signIn = (forwardPackage: SignInActionPackage) => {
     return {
         type: 'SIGN_IN',
-        payload: {
-            displayName: forwardPackage.displayName,
-            CSGOConnection: forwardPackage.CSGOConnection,
-            userProfilePicture: forwardPackage.userProfilePicture,
-            steamID: forwardPackage.steamID,
-            hasConnection: forwardPackage.hasConnection,
-            wallet: forwardPackage.wallet
-        }
+        payload: forwardPackage
     }
 }
 
@@ -38,5 +35,6 @@ export const setGC = (connectionStatus: boolean) => {
         payload: {
             CSGOConnection: connectionStatus
         }
-    }
+
+   }
 }

@@ -6,28 +6,24 @@ import {
 import { searchFilter } from 'renderer/functionsClasses/filters/search';
 import { ConvertPrices } from 'renderer/functionsClasses/prices';
 import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
-import { Filter } from 'renderer/interfaces/filters';
-import { addMajorsFilters, CharacteristicsFilter, ContainerFilter, FilterManager } from 'renderer/variables/filters';
+import { Filter, Filters } from 'renderer/interfaces/filters';
 import _ from 'lodash';
 import { State } from 'renderer/interfaces/states';
 
-const ClassFilters = new FilterManager()
 
-ClassFilters.loadFilter(CharacteristicsFilter)
-ClassFilters.loadFilter(ContainerFilter)
 
-export default function FiltersDisclosure() {
+export default function FiltersDisclosure({ClassFilters}) {
   const dispatch = useDispatch();
   const ReducerClass = new ReducerManager(useSelector)
   const currentState: State = ReducerClass.getStorage()
+
 
   const inventoryFilters = currentState.inventoryFiltersReducer
   const inventory = currentState.inventoryReducer
   const pricesResult = currentState.pricingReducer
   const settingsData = currentState.settingsReducer
-  addMajorsFilters(inventory.combinedInventory).then((returnValue) => {
-    ClassFilters.loadFilter(returnValue)
-  })
+
+
   // Update selected filter
   async function addRemoveFilter(filterValue: Filter) {
     dispatch(
@@ -62,14 +58,37 @@ export default function FiltersDisclosure() {
   });
   totalAmount = totalAmount.toFixed(0);
 
+  let totalSeen = 0;
+  let ignoreCategories: Array<Filter> = []
 
-  
+  Object.entries(ClassFilters.filters as Filters).map(([_key, filterObject]) => {
+    filterObject.map((filter, _optionIdx) => {
+      if (inventoryFilters.inventoryFilter.filter(filt => _.isEqual(filt, filter)).length > 0) {
+        totalSeen += 1
+        ignoreCategories.push(filter)
+      }
+    });
+  });
+  let categoriesToRemove: Array<Filter> = []
+  if (inventoryFilters.inventoryFilter.length > totalSeen) {
+    inventoryFilters.inventoryFilter.forEach(element => {
+      if (!_.some(ignoreCategories, element) && element.label != 'Storage moveable') {
+        categoriesToRemove.push(element)
+      }
+    });
+  }
+  categoriesToRemove.forEach(element => {
+    addRemoveFilter(element)
+  });
+
+
+
 
   return (
     <Disclosure.Panel className="border-t border-gray-200 py-10">
           <div className="mx-auto grid grid-cols-1 gap-x-4 px-4 text-sm sm:px-6 md:gap-x-6 lg:px-8 ">
             <div className="grid grid-cols-1 gap-y-10 auto-rows-min md:grid-cols-3 md:gap-x-6">
-            {Object.entries(ClassFilters.filters).map(([key, filterObject]) => (
+            {Object.entries(ClassFilters.filters as Filters).map(([key, filterObject]) => (
               <fieldset>
               <legend className="block font-medium dark:text-dark-white">{key}</legend>
               <div className="pt-6 space-y-6 sm:pt-4 sm:space-y-4">
@@ -101,7 +120,7 @@ export default function FiltersDisclosure() {
                       </label>
                     </div>
                 ))}
-                    
+
                     </div>
               </fieldset>
                   ))}

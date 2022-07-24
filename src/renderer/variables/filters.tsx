@@ -1,11 +1,10 @@
 import { itemSubCategories } from "renderer/components/content/shared/categories";
-import { Filter, Filters } from "renderer/interfaces/filters";
+import { Filter, FilterRequirement, Filters, FiltersRequirement } from "renderer/interfaces/filters";
 import { ItemRow } from "renderer/interfaces/items";
 import _ from "lodash";
 
 export class FilterManager {
     filters: Filters = {}
-    addedArray: Array<Filter> = []
 
 
     addFilter(keyToAddUnder: string, filterObject: Filter): void {
@@ -19,12 +18,15 @@ export class FilterManager {
         }
     }
 
-    addFilters(keyToAddUnder: string, filterObjects: Array<Filter>): void {
+    addFilters(keyToAddUnder: string, filterObjects: Array<FilterRequirement>, includeFilter: boolean): void {
         let arrayToAdd: Array<Filter> = []
         filterObjects.forEach(element => {
-            if (!_.some(this.addedArray, element)) {
-                this.addedArray.push(element)
-                arrayToAdd.push(element)
+            if (!_.some(this.filters?.[keyToAddUnder], element)) {
+                let finalFilter: Filter = {
+                  ...element,
+                  include: includeFilter
+                }
+                arrayToAdd.push(finalFilter)
             }
         });
         if (arrayToAdd.length > 0) {
@@ -35,52 +37,56 @@ export class FilterManager {
                 this.filters[keyToAddUnder] = [...arrayToAdd]
             }
         }
-        
+
 
     }
 
-    loadFilter(filterObject: Filters): void {
+    loadFilter(filterObject: FiltersRequirement, includeFilter: boolean, specialName: string = ''): void {
 
         for (const [key, value] of Object.entries(filterObject)) {
-            this.addFilters(key, value)
+          let keyToUse = key
+          if (specialName != '') {
+            keyToUse = specialName
+          }
+          this.addFilters(keyToUse, value, includeFilter)
         }
     }
 
+    excludeFilter(keyToAddUnder: string, filterLabel:string) {
+      let filtered = this.filters?.[keyToAddUnder]?.filter(filter => filter.label != filterLabel)
+      if (filtered.length > 0) {
+        this.filters[keyToAddUnder] = [...filtered]
+      }
+    }
 }
-export const CharacteristicsFilter: Filters = {
+export const CharacteristicsFilter: FiltersRequirement = {
     Characteristics: [
         {
-            include: true,
             label: 'Active tradehold',
             valueToCheck: 'trade_unlock',
             commandType: 'checkBooleanVariable'
         },
         {
-            include: true,
             label: 'Custom name',
             valueToCheck: 'item_customname',
             commandType: 'checkBooleanVariable'
         },
         {
-            include: true,
             label: 'Stickers/Patches applied',
             valueToCheck: 'item_has_stickers',
             commandType: 'checkBooleanVariable'
         },
         {
-            include: true,
             label: 'Storage moveable',
             valueToCheck: 'item_moveable',
             commandType: 'checkBooleanVariable'
         },
         {
-            include: true,
             label: 'Equipped CT',
             valueToCheck: 'equipped_ct',
             commandType: 'checkBooleanVariable'
         },
         {
-            include: true,
             label: 'Equipped T',
             valueToCheck: 'equipped_t',
             commandType: 'checkBooleanVariable'
@@ -89,28 +95,24 @@ export const CharacteristicsFilter: Filters = {
 }
 
 
-export const ContainerFilter: Filters = {
+export const ContainerFilter: FiltersRequirement = {
     Containers: [
         {
-            include: true,
             label: 'Cases',
             valueToCheck: 'Case',
             commandType: 'checkNameAndContainer'
         },
         {
-            include: true,
             label: 'Sticker Capsules',
             valueToCheck: 'Capsule',
             commandType: 'checkNameAndContainer'
         },
         {
-            include: true,
             label: 'Patch Packs',
             valueToCheck: 'Patch',
             commandType: 'checkNameAndContainer'
         },
         {
-            include: true,
             label: 'Pins Capsule',
             valueToCheck: 'Pins Capsule',
             commandType: 'checkNameAndContainer'

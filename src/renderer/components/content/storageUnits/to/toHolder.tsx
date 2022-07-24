@@ -3,16 +3,25 @@ import StorageRow from './toStorageRow';
 import StorageSelectorContent from './toSelector';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { classNames, sortDataFunction } from '../../shared/filters/inventoryFunctions';
+import {
+  classNames,
+  sortDataFunction,
+} from '../../shared/filters/inventoryFunctions';
 import { useState } from 'react';
 import { BanIcon, FireIcon } from '@heroicons/react/solid';
 import { searchFilter } from 'renderer/functionsClasses/filters/search';
 import { State } from 'renderer/interfaces/states';
-import { RowHeader, RowHeaderCondition, RowHeaderPlain } from '../../Inventory/inventoryRows/headerRows';
+import {
+  RowHeader,
+  RowHeaderCondition,
+  RowHeaderPlain,
+} from '../../Inventory/inventoryRows/headerRows';
 
 function StorageUnits() {
   const inventory = useSelector((state: State) => state.inventoryReducer);
-  const inventoryFilter = useSelector((state: State) => state.inventoryFiltersReducer);
+  const inventoryFilter = useSelector(
+    (state: State) => state.inventoryFiltersReducer
+  );
   const toReducer = useSelector((state: State) => state.moveToReducer);
   const pricesResult = useSelector((state: State) => state.pricingReducer);
   const settingsData = useSelector((state: State) => state.settingsReducer);
@@ -25,11 +34,11 @@ function StorageUnits() {
     return new Promise((resolve) => setTimeout(resolve, time));
   }
   async function ultimateFire() {
-    const runIndex = [] as any
+    const runIndex = [] as any;
     const relevantRows = document.getElementsByClassName(`findRow`);
     Array.from(relevantRows).forEach(function (element, index) {
       if (!element.classList.contains('hidden')) {
-        runIndex.push(index)
+        runIndex.push(index);
       }
     });
 
@@ -68,7 +77,7 @@ function StorageUnits() {
   async function storageResult() {
     const storageResult = await sortDataFunction(
       toReducer.sortValue,
-      inventory.combinedInventory,
+      inventoryFilter.inventoryFiltered,
       pricesResult.prices,
       settingsData?.source?.title
     );
@@ -76,16 +85,12 @@ function StorageUnits() {
   }
   storageResult();
   if (toReducer.sortBack == true) {
-    getStorage.reverse()
+    getStorage.reverse();
   }
-
-
-  let inventoryMoveable = searchFilter(getStorage, inventoryFilter, toReducer)
+  let inventoryMoveable = searchFilter(getStorage, inventoryFilter, toReducer);
   inventoryMoveable = inventoryMoveable.filter(function (item) {
-    return item[`item_moveable`] == true;
+    return item.item_moveable == true;
   });
-
-
 
   return (
     <>
@@ -107,21 +112,49 @@ function StorageUnits() {
       <div className="hidden sm:block">
         <div className="align-middle inline-block min-w-full border-b border-gray-200 dark:border-opacity-50 dark:text-gray-400">
           <table className="min-w-full">
-          <thead className="dark:bg-dark-level-two bg-gray-50">
-          <tr className={classNames(settingsData.os == 'win32' ? 'top-7' : 'top-0', 'border-gray-200 sticky')}>
-                <RowHeader headerName='Product' sortName='Product name'/>
-                <RowHeaderCondition headerName='Collection' sortName='Collection' condition='Collections'/>
-                <RowHeaderCondition headerName='Price' sortName='Price' condition='Price'/>
-                <RowHeaderCondition headerName='Stickers/Patches' sortName='Stickers' condition='Stickers/patches'/>
-                <RowHeaderCondition headerName='Float' sortName='wearValue' condition='Float'/>
-                <RowHeaderCondition headerName='Rarity' sortName='Rarity' condition='Rarity'/>
-                <RowHeaderCondition headerName='Storage' sortName='StorageName' condition='Storage'/>
-                <RowHeaderCondition headerName='Tradehold' sortName='tradehold' condition='Tradehold'/>
-                <RowHeader headerName='QTY' sortName='QTY'/>
-                <RowHeaderPlain headerName='Move' />
+            <thead className="dark:bg-dark-level-two bg-gray-50">
+              <tr
+                className={classNames(
+                  settingsData.os == 'win32' ? 'top-7' : 'top-0',
+                  'border-gray-200 sticky'
+                )}
+              >
+                <RowHeader headerName="Product" sortName="Product name" />
+                <RowHeaderCondition
+                  headerName="Collection"
+                  sortName="Collection"
+                  condition="Collections"
+                />
+                <RowHeaderCondition
+                  headerName="Price"
+                  sortName="Price"
+                  condition="Price"
+                />
+                <RowHeaderCondition
+                  headerName="Stickers/Patches"
+                  sortName="Stickers"
+                  condition="Stickers/patches"
+                />
+                <RowHeaderCondition
+                  headerName="Float"
+                  sortName="wearValue"
+                  condition="Float"
+                />
+                <RowHeaderCondition
+                  headerName="Rarity"
+                  sortName="Rarity"
+                  condition="Rarity"
+                />
+                <RowHeaderCondition
+                  headerName="Tradehold"
+                  sortName="tradehold"
+                  condition="Tradehold"
+                />
+                <RowHeader headerName="QTY" sortName="QTY" />
+                <RowHeaderPlain headerName="Move" />
 
                 <th className="table-cell px-6 py-2 border-b border-gray-200 bg-gray-50  dark:border-opacity-50 dark:bg-dark-level-two text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                <div className="flex">
+                  <div className="flex">
                     <button
                       onClick={() => ultimateFire()}
                       className={classNames(
@@ -129,7 +162,8 @@ function StorageUnits() {
                           toReducer.activeStoragesAmount -
                           toReducer.totalItemsToMove ==
                           0 ||
-                          toReducer.totalToMove.length == inventoryFilters.inventoryFiltered.length
+                          toReducer.totalToMove.length ==
+                            inventoryFilters.inventoryFiltered.length
                           ? 'pointer-events-none text-gray-200 dark:text-gray-600'
                           : 'text-gray-600 dark:text-gray-400'
                       )}

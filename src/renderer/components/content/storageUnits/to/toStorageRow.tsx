@@ -10,7 +10,6 @@ import { RowQTY } from '../../Inventory/inventoryRows/QTYRow';
 import { RowRarity } from '../../Inventory/inventoryRows/rarityRow';
 import { RowProduct } from '../../Inventory/inventoryRows/rowName';
 import { RowStickersPatches } from '../../Inventory/inventoryRows/stickerPatchesRow';
-import { RowStorage } from '../../Inventory/inventoryRows/storageRow';
 import { RowTradehold } from '../../Inventory/inventoryRows/tradeholdRow';
 import { classNames } from '../../shared/filters/inventoryFunctions';
 
@@ -88,7 +87,6 @@ function content({ projectRow, index }: {projectRow: any, index: number}) {
       <RowStickersPatches itemRow={projectRow} settingsData={settingsData}/>
       <RowFloat itemRow={projectRow} settingsData={settingsData} />
       <RowRarity itemRow={projectRow} settingsData={settingsData}/>
-      <RowStorage itemRow={projectRow} settingsData={settingsData} />
       <RowTradehold itemRow={projectRow} settingsData={settingsData}/>
       <RowQTY itemRow={projectRow}/>
       <td className="table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 hover:text-gray-200 text-right">

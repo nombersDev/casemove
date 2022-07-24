@@ -102,6 +102,15 @@ contextBridge.exposeInMainWorld('electron', {
     handleWindowsActions(action_type) {
       ipcRenderer.send('windowsActions', action_type);
     },
+
+    // Send Confirm Force
+    forceLogin(){
+      ipcRenderer.send(
+        'forceLogin'
+      );
+    },
+
+
     // USER CONNECTIONS
     loginUser(
       username,
@@ -134,7 +143,15 @@ contextBridge.exposeInMainWorld('electron', {
           clientjstoken
         );
         ipcRenderer.once('login-reply', (event, arg) => {
-          resolve(arg);
+          resolve(arg)
+        });
+      });
+    },
+
+    forceLoginReply() {
+      return new Promise((resolve) => {
+        ipcRenderer.once('login-reply', (event, arg) => {
+          resolve(arg)
         });
       });
     },
@@ -252,7 +269,8 @@ contextBridge.exposeInMainWorld('electron', {
         'getTradeUpPossible',
         'processTradeOrder',
         'setItemsPositions',
-        'openContainer'
+        'openContainer',
+        'forceLogin'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
@@ -281,7 +299,8 @@ contextBridge.exposeInMainWorld('electron', {
         'getTradeUpPossible',
         'processTradeOrder',
         'setItemsPositions',
-        'openContainer'
+        'openContainer',
+        'forceLogin'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`

@@ -19,8 +19,12 @@ import { ConvertPrices } from 'renderer/functionsClasses/prices';
 import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
 import { downloadReport } from 'renderer/functionsClasses/downloadReport';
 import FiltersDisclosure from './filtersDisclosure';
+import { addMajorsFilters, CharacteristicsFilter, ContainerFilter, FilterManager } from 'renderer/variables/filters';
 
+const ClassFilters = new FilterManager()
 
+ClassFilters.loadFilter(CharacteristicsFilter, true)
+ClassFilters.loadFilter(ContainerFilter, true)
 
 function content() {
   const dispatch = useDispatch();
@@ -57,9 +61,12 @@ function content() {
     }
   });
   totalAmount = totalAmount.toFixed(0);
+  addMajorsFilters(inventory.combinedInventory).then((returnValue) => {
+    ClassFilters.loadFilter(returnValue, true)
+  })
 
 
-  
+
 
   return (
     <div className="bg-white dark:bg-dark-level-one">
@@ -155,7 +162,7 @@ function content() {
             </div>
           </div>
         </div>
-        <FiltersDisclosure />
+        <FiltersDisclosure ClassFilters={ClassFilters}/>
 
 
       </Disclosure>
