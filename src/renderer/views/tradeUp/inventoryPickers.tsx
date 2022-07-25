@@ -2,7 +2,7 @@ import { BeakerIcon, PencilIcon, TagIcon } from '@heroicons/react/solid';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { RowHeader } from 'renderer/components/content/Inventory/inventoryRows/headerRows';
+import { RowHeader, RowHeaderHiddenXL } from 'renderer/components/content/Inventory/inventoryRows/headerRows';
 import {
   classNames,
   sortDataFunctionTwo,
@@ -140,9 +140,8 @@ function content() {
             <RowHeader headerName="Collection" sortName="Collection" />
             <RowHeader headerName="Price" sortName="Price" />
 
-            <div className="hidden 2xl:table-cell">
-              <RowHeader headerName="Stickers/Patches" sortName="Stickers" />
-            </div>
+
+            <RowHeaderHiddenXL headerName="Stickers/Patches" sortName="Stickers" />
             <RowHeader headerName="Float" sortName="wearValue" />
             <th className="hidden lg:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
               <span className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400">

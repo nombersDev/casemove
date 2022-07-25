@@ -22,8 +22,7 @@ import {
     Legend
   );
   
-  export default function PieChart({data}) {
-
+  export default function PieChart({data, headerName}) {
   
     // Radar options
     const options = {
@@ -37,7 +36,7 @@ import {
         },
         title: {
             display: true,
-            text: 'Item distribution',
+            text: headerName,
             color: '#d6d3cd'
         },
         datalabels: {

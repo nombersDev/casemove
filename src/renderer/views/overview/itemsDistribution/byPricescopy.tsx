@@ -84,7 +84,7 @@ export default function RadarApp() {
 
   return (
     <>
-    <PieChart data={data}/>
+    <PieChart data={data} headerName='string'/>
     </>
   );
 }

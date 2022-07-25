@@ -13,7 +13,6 @@ import {
   TagIcon,
 } from '@heroicons/react/solid';
 import { useSelector } from 'react-redux';
-import BarAppMajor from './barChatMajors';
 import {
   HashRouter as Router,
   Route
@@ -24,6 +23,7 @@ import { ConvertPrices } from 'renderer/functionsClasses/prices';
 import { downloadReport } from 'renderer/functionsClasses/downloadReport';
 import { LoadButton } from 'renderer/components/content/loadStorageUnitsButton';
 import ItemDistributionByPrices from './itemsDistribution/byPrices';
+import BarAppOverall from './barChartOverall';
 
 const transactions = [
   {
@@ -387,9 +387,9 @@ function Content() {
                 <div className="max-w-6xl mx-auto mt-8 px-4 sm:px-6 lg:px-8">
                   <div className="grid grid-rows-3 grid-flow-col gap-4 mt-2">
                     <div className="align-middle mw-5 overflow-x-auto row-span-3 overflow-hidden bg-dark-level-three">
-                      <BarAppMajor />
+                      <BarAppOverall />
                     </div>
-                    <div className="align-middle mw-5 overflow-x-auto row-span-3 shadow overflow-hidden bg-dark-level-three">
+                    <div className="align-middle mw-5 overflow-x-auto row-span-3 pb-5 shadow overflow-hidden bg-dark-level-three">
                       <ItemDistributionByPrices />
                     </div>
                   </div>

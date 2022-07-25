@@ -48,14 +48,14 @@ export default function ItemDistributionByPrices() {
   const inventory = ReducerClass.getStorage(ReducerClass.names.inventory)
   inventory.combinedInventory.forEach(element => {
     if (resultingData[element.category]) {
-      resultingData[element.category].inventory = PricingConverter.getPrice(element, true) * element.combined_QTY
+      resultingData[element.category].inventory += PricingConverter.getPrice(element, true) * element.combined_QTY
     }
   });
 
   // Go through Storage Units
   inventory.storageInventory.forEach(element => {
     if (resultingData[element.category]) {
-      resultingData[element.category].storageUnits = PricingConverter.getPrice(element, true) * element.combined_QTY
+      resultingData[element.category].storageUnits += PricingConverter.getPrice(element, true) * element.combined_QTY
     }
   });
 
@@ -69,6 +69,8 @@ export default function ItemDistributionByPrices() {
     rgbColorsToUse.push(categoriesColors[category])
     rgbColorsToUseBorder.push(categoriesColors[category]?.replace('0.2', '1'))
   });
+
+  console.log(finalDataToUse)
 
 
   const data = {
@@ -88,7 +90,7 @@ export default function ItemDistributionByPrices() {
 
   return (
     <>
-    <PieChart data={data}/>
+    <PieChart data={data} headerName="Item distribution by price"/>
     </>
   );
 }
