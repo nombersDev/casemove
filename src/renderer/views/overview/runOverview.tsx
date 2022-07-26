@@ -117,7 +117,7 @@ function Content() {
         </Transition.Root>
 
         <div className="">
-          <main className="flex-1 pb-8">
+          <main className="flex-1 pb-8 bg-dark-level-one">
             {/* Page header */}
             <div className="bg-dark-level-one shadow border-opacity-50 border-b border-gray-200">
               <div className="px-4 sm:px-6 lg:max-w-6xl lg:mx-auto lg:px-8">
@@ -386,7 +386,7 @@ function Content() {
               <div className="hidden sm:block">
                 <div className="max-w-6xl mx-auto mt-8 px-4 sm:px-6 lg:px-8">
                   <div className="grid grid-rows-3 grid-flow-col gap-4 mt-2">
-                    <div className="align-middle mw-5 overflow-x-auto row-span-3 overflow-hidden bg-dark-level-three">
+                    <div className="align-middle mw-5 pl-5 pr-5 overflow-x-auto row-span-3 overflow-hidden bg-dark-level-three">
                       <BarAppOverall />
                     </div>
                     <div className="align-middle mw-5 overflow-x-auto row-span-3 pb-5 shadow overflow-hidden bg-dark-level-three">

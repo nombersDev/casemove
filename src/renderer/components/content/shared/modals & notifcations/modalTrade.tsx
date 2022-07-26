@@ -46,7 +46,7 @@ export default function TradeModal() {
 
       dispatch(moveFromReset())
     }
-    return 
+    return
   }
 
   let doTransferFirst = false;
@@ -63,13 +63,14 @@ export default function TradeModal() {
       if (tradeUpData.tradeUpProducts[0]?.stattrak) {
         rarityToUse += 10
       }
-      window.electron.ipcRenderer.tradeOrder(tradeUpData.tradeUpProductsIDS, rarityToUse)
-
       let idsToGet = [] as any
       inventory.inventory.forEach(element => {
         idsToGet.push(element.item_id)
       });
       dispatch(setTradeConfirm(idsToGet))
+      rarityToUse
+      window.electron.ipcRenderer.tradeOrder(tradeUpData.tradeUpProductsIDS, rarityToUse)
+      window.electron.ipcRenderer.refreshInventory();
     })
   }
 

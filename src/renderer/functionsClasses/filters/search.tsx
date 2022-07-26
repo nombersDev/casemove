@@ -3,7 +3,11 @@ import { ItemRow } from "renderer/interfaces/items";
 import { InventoryFilters, MoveFromReducer, MoveToReducer } from "renderer/interfaces/states";
 
 
-export function searchFilter(itemsArray: Array<ItemRow>, inventoryFilters: InventoryFilters, chosenReducer: InventoryFilters  | MoveFromReducer  | MoveToReducer): Array<ItemRow> {
+export function searchFilter(itemsArray: Array<ItemRow>, inventoryFilters: InventoryFilters, chosenReducer: InventoryFilters  | MoveFromReducer  | MoveToReducer | undefined): Array<ItemRow> {
+  let searchString: string = ''
+  if (chosenReducer != undefined) {
+    searchString = chosenReducer.searchInput
+  }
   return itemsArray.filter(function (row) {
 
         if (
@@ -16,7 +20,7 @@ export function searchFilter(itemsArray: Array<ItemRow>, inventoryFilters: Inven
           row.item_name
             ?.toLowerCase()
             .trim()
-            .includes(chosenReducer.searchInput?.toLowerCase().trim())
+            .includes(searchString?.toLowerCase().trim())
         ) {
           return true; // skip
         }
@@ -24,7 +28,7 @@ export function searchFilter(itemsArray: Array<ItemRow>, inventoryFilters: Inven
           row.item_wear_name
             ?.toLowerCase()
             .trim()
-            .includes(chosenReducer.searchInput?.toLowerCase().trim())
+            .includes(searchString?.toLowerCase().trim())
         ) {
           return true; // skip
         }
@@ -32,11 +36,11 @@ export function searchFilter(itemsArray: Array<ItemRow>, inventoryFilters: Inven
           row.item_customname
             ?.toLowerCase()
             .trim()
-            .includes(chosenReducer.searchInput?.toLowerCase().trim())
+            .includes(searchString?.toLowerCase().trim())
         ) {
           return true; // skip
         }
-        if (chosenReducer.searchInput == undefined) {
+        if (searchString == undefined || searchString == '' ) {
           return true; // skip
         }
         return false;
