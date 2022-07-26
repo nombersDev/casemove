@@ -2,14 +2,11 @@ import { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import {
   ArchiveIcon,
-  BanIcon,
-  CashIcon,
-  CheckCircleIcon,
-  ChevronRightIcon,
   CollectionIcon,
-  CreditCardIcon,
   DatabaseIcon,
   DownloadIcon,
+  PresentationChartBarIcon,
+  PresentationChartLineIcon,
   TagIcon,
 } from '@heroicons/react/solid';
 import { useSelector } from 'react-redux';
@@ -22,22 +19,12 @@ import { State } from 'renderer/interfaces/states';
 import { ConvertPrices } from 'renderer/functionsClasses/prices';
 import { downloadReport } from 'renderer/functionsClasses/downloadReport';
 import { LoadButton } from 'renderer/components/content/loadStorageUnitsButton';
-import ItemDistributionByPrices from './itemsDistribution/byPrices';
-import BarAppOverall from './barChartOverall';
+import ListBoxOptions from './overviewOptionsDropdown';
+import { OverviewLeftCharts, OverviewRightCharts, OveviewBy } from 'renderer/variables/overviewOptions';
+import RightGraph from './rightGraph';
+import LeftGraph from './leftGraph';
 
-const transactions = [
-  {
-    id: 1,
-    name: 'Payment to Molly Sanders',
-    href: '#',
-    amount: '$20,000',
-    currency: 'USD',
-    status: 'success',
-    date: 'July 11, 2020',
-    datetime: '2020-07-11',
-  },
-  // More transactions...
-];
+
 
 function Content() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -77,6 +64,7 @@ function Content() {
       storageUnitsValue += itemPrice * element.combined_QTY
     }
   });
+
 
   return (
     <>
@@ -142,35 +130,27 @@ function Content() {
                           </h1>
                         </div>
                         <dl className="mt-6 flex flex-col sm:ml-3 sm:mt-1 sm:flex-row sm:flex-wrap">
-                          <dd className="mt-3 flex items-center text-sm text-gray-500 font-medium sm:mr-6 sm:mt-0 capitalize text-dark-white">
-                            {userDetails.CSGOConnection ? (
-                              <CheckCircleIcon
-                                className="flex-shrink-0 mr-1.5 h-5 w-5 text-green-400"
-                                aria-hidden="true"
-                              />
-                            ) : (
-                              <BanIcon
-                                className="flex-shrink-0 mr-1.5 h-5 w-5 text-red-400"
-                                aria-hidden="true"
-                              />
-                            )}
-                            {userDetails.CSGOConnection
-                              ? 'Connected'
-                              : 'Disconnected'}
-                          </dd>
-                          <dd className="flex items-center text-sm text-gray-500 font-medium capitalize sm:mr-6 text-dark-white">
-                            <CreditCardIcon
-                              className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                          <dd className="mt-3 flex items-center mb-2 text-sm text-gray-500 font-medium sm:mr-6 sm:mt-0 capitalize text-dark-white">
+                          <TagIcon
+                              className="flex-shrink-0 mr-1.5 h-5 w- text-gray-400"
                               aria-hidden="true"
                             />
-                            {settingsData.currency}
+                            
+                            <ListBoxOptions optionsObject={OveviewBy} keyToUse={'by'} />
                           </dd>
-                          <dd className="flex items-center text-sm text-gray-500 font-medium capitalize sm:mr-3 text-dark-white">
-                            <TagIcon
-                              className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                          <dd className="flex mb-2 items-center text-sm text-gray-500 font-medium capitalize sm:mr-6 text-dark-white">
+                            <PresentationChartBarIcon
+                              className="flex-shrink-0 mr-1.5 h-5 w- text-gray-400"
                               aria-hidden="true"
                             />
-                            {settingsData.source.name}
+                            <ListBoxOptions optionsObject={OverviewLeftCharts} keyToUse={'chartleft'} />
+                          </dd>
+                          <dd className="flex mb-2 items-center text-sm text-gray-500 font-medium capitalize sm:mr-3 text-dark-white">
+                            <PresentationChartLineIcon
+                              className="flex-shrink-0 mr-1.5 h-5 w-5  text-gray-400"
+                              aria-hidden="true"
+                            />
+                            <ListBoxOptions optionsObject={OverviewRightCharts} keyToUse={'chartRight'} />
                           </dd>
                           <dt className="sr-only">Account status</dt>
                         </dl>
@@ -318,79 +298,16 @@ function Content() {
                 </div>
               </div>
 
-              {/* Activity list (smallest breakpoint only) */}
-              <div className="shadow sm:hidden">
-                <ul
-                  role="list"
-                  className="mt-2 divide-y divide-gray-200 overflow-hidden shadow sm:hidden"
-                >
-                  {transactions.map((transaction) => (
-                    <li key={transaction.id}>
-                      <a
-                        href={transaction.href}
-                        className="block px-4 py-4 hover:bg-gray-50"
-                      >
-                        <span className="flex items-center space-x-4">
-                          <span className="flex-1 flex space-x-2 truncate">
-                            <CashIcon
-                              className="flex-shrink-0 h-5 w-5 text-gray-400"
-                              aria-hidden="true"
-                            />
-                            <span className="flex flex-col text-gray-500 text-sm truncate">
-                              <span className="truncate">
-                                {transaction.name}
-                              </span>
-                              <span>
-                                <span className="text-gray-900 font-medium">
-                                  {transaction.amount}
-                                </span>{' '}
-                                {transaction.currency}
-                              </span>
-                              <time dateTime={transaction.datetime}>
-                                {transaction.date}
-                              </time>
-                            </span>
-                          </span>
-                          <ChevronRightIcon
-                            className="flex-shrink-0 h-5 w-5 text-gray-400"
-                            aria-hidden="true"
-                          />
-                        </span>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-
-                <nav
-                  className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 border-opacity-50"
-                  aria-label="Pagination"
-                >
-                  <div className="flex-1 flex justify-between">
-                    <a
-                      href="#"
-                      className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:text-gray-500"
-                    >
-                      Previous
-                    </a>
-                    <a
-                      href="#"
-                      className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:text-gray-500"
-                    >
-                      Next
-                    </a>
-                  </div>
-                </nav>
-              </div>
 
               {/* Activity table (small breakpoint and up) */}
               <div className="hidden sm:block">
                 <div className="max-w-6xl mx-auto mt-8 px-4 sm:px-6 lg:px-8">
                   <div className="grid grid-rows-3 grid-flow-col gap-4 mt-2">
                     <div className="align-middle mw-5 pl-5 pr-5 overflow-x-auto row-span-3 overflow-hidden bg-dark-level-three">
-                      <BarAppOverall />
+                      <LeftGraph />
                     </div>
                     <div className="align-middle mw-5 overflow-x-auto row-span-3 pb-5 shadow overflow-hidden bg-dark-level-three">
-                      <ItemDistributionByPrices />
+                      <RightGraph />
                     </div>
                   </div>
                 </div>

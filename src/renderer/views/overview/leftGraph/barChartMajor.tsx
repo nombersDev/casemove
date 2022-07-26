@@ -4,10 +4,12 @@ import Chart from 'chart.js/auto';
 import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
 import { ItemRow } from 'renderer/interfaces/items';
 import { searchFilter } from 'renderer/functionsClasses/filters/search';
+import { Settings } from 'renderer/interfaces/states';
+import { ConvertPrices } from 'renderer/functionsClasses/prices';
 Chart;
 
-function runArray(arrayToRun: Array<ItemRow>, objectToUse: any) {
-  objectToUse = getObject(arrayToRun, objectToUse);
+function runArray(arrayToRun: Array<ItemRow>, objectToUse: any, by: string, PricingConverter) {
+  objectToUse = getObject(arrayToRun, objectToUse, by, PricingConverter);
   var items = Object.keys(objectToUse).map(function (key) {
     return [key, objectToUse[key]];
   });
@@ -19,22 +21,46 @@ function runArray(arrayToRun: Array<ItemRow>, objectToUse: any) {
   return items;
 }
 
-function getObject(arrayToRun: Array<ItemRow>, objectToUse: any) {
+function getObject(arrayToRun: Array<ItemRow>, objectToUse: any, by: string, PricingConverter) {
   arrayToRun = arrayToRun.filter((itemRow) => itemRow.item_moveable);
+  
 
   arrayToRun.forEach((element) => {
     if (objectToUse[element.item_name] == undefined) {
-      objectToUse[element.item_name] = element.combined_QTY;
+      switch (by) {
+        case 'price':
+
+          objectToUse[element.item_name] = PricingConverter.getPrice(element, true)  *  element.combined_QTY;
+          break
+        case 'volume':
+
+          objectToUse[element.item_name] = element.combined_QTY;
+          break
+        default:
+          break
+      }
     } else {
-      objectToUse[element.item_name] =
+      switch (by) {
+        case 'price':
+
+          objectToUse[element.item_name] =
+        objectToUse[element.item_name] + PricingConverter.getPrice(element, true)  *  element.combined_QTY;
+          break
+        case 'volume':
+
+          objectToUse[element.item_name] =
         objectToUse[element.item_name] + element.combined_QTY;
+          break
+        default:
+          break
+      }
     }
   });
   return objectToUse;
 }
 
 
-export default function BarAppOverall() {
+export default function OverallMajor() {
   // Bar options
   // @ts-ignore
   const options = {
@@ -48,7 +74,7 @@ export default function BarAppOverall() {
       },
       title: {
         display: true,
-        text: 'Overall',
+        text: 'Major',
         color: '#d6d3cd',
       },
     },
@@ -66,7 +92,7 @@ export default function BarAppOverall() {
         ticks: {
 
           beginAtZero: true,
-          callback: function(value) {if (value % 1 === 0) {return value;}}
+          callback: function (value) { if (value % 1 === 0) { return value; } }
         },
       },
     },
@@ -74,6 +100,9 @@ export default function BarAppOverall() {
 
   // Go through inventory and find matching categories
   let Reducer = new ReducerManager(useSelector);
+  let settingsdata: Settings = Reducer.getStorage(Reducer.names.settings)
+  let PricingConverter = new ConvertPrices(Reducer.getStorage(Reducer.names.settings), Reducer.getStorage(Reducer.names.pricing))
+  PricingConverter
   const inventory = Reducer.getStorage(Reducer.names.inventory);
 
   // Convert inventory to chart data
@@ -88,18 +117,22 @@ export default function BarAppOverall() {
 
   let overallData = runArray(
     [...inventoryFiltered, ...storageFiltered],
-    seenNamesOverall
+    seenNamesOverall,
+    settingsdata.overview.by,
+    PricingConverter
   );
   let inventoryData = getObject(
     inventoryFiltered,
-    seenNamesInventory
+    seenNamesInventory,
+    settingsdata.overview.by,
+    PricingConverter
   );
-  let storageData = getObject(storageFiltered, seenNamesStorage);
+  let storageData = getObject(storageFiltered, seenNamesStorage, settingsdata.overview.by, PricingConverter);
 
   console.log(overallData, inventoryData, storageData);
 
   const data = {
-    labels: overallData.slice(0, 20).map((itemRow) => itemRow[0]),
+    labels: overallData.slice(0, 20).map((itemRow) => itemRow[0]?.slice(0, 40)),
 
     datasets: [
       {

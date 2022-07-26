@@ -1,5 +1,6 @@
 import { ItemRow, ItemRowStorage } from "renderer/interfaces/items"
 import { Filter } from "./filters"
+import { OverviewOptionsLeftCharts, OverviewOptionsRightCharts } from "./overview"
 
 // Individual
 export interface MoveModalPayload {
@@ -130,7 +131,11 @@ export interface Prices {
   storageAmount: number,
   productsRequested: Array<string>,
 };
-
+export interface Overview {
+  by: string
+  chartleft: keyof OverviewOptionsLeftCharts
+  chartRight: keyof OverviewOptionsRightCharts
+}
 export interface Settings {
   fastMove: boolean,
   currency: string,
@@ -140,6 +145,7 @@ export interface Settings {
   columns: Array<string>,
   currencyPrice: { [key: string]: number },
   source: source
+  overview: Overview
 };
 
 

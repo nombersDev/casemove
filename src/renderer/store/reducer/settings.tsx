@@ -12,6 +12,11 @@ const initialState: Settings = {
     title: 'steam_listing',
     name: 'Steam Community Market',
     avatar: 'https://steamcommunity.com/favicon.ico'
+  },
+  overview: {
+    by: 'price',
+    chartleft: 'overall',
+    chartRight: 'itemDistribution'
   }
 };
 
@@ -57,6 +62,11 @@ const settingsReducer = (state = initialState, action) => {
         ...state,
         devmode: action.payload,
       };
+      case 'SETTINGS_SET_OVERVIEW':
+        return {
+          ...state,
+          overview: action.payload,
+        };
       case 'SETTINGS_ADD_CURRENCYPRICE':
         let currencyDict = state.currencyPrice
         currencyDict[action.payload.currency] = action.payload.rate

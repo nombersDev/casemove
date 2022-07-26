@@ -42,6 +42,7 @@ function content() {
 
 
   async function moveItems() {
+    
     let key = (Math.random() + 1).toString(36).substring(7);
     key;
     let totalCount = 0;

@@ -1,3 +1,4 @@
+import { Overview } from "renderer/interfaces/states"
 import { CurrencyReturnValue } from "shared/Interfaces.tsx/IPCReturn"
 
 export const setFastMove = (valueToSet) => {
@@ -49,5 +50,11 @@ export const setDevmode = (devmode) => {
   return {
       type: 'SETTINGS_SET_DEVMODE',
       payload: devmode
+  }
+}
+export const setOverview = (newObject: Overview) => {
+  return {
+      type: 'SETTINGS_SET_OVERVIEW',
+      payload: newObject
   }
 }
