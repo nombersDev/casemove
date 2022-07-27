@@ -12,6 +12,10 @@ export interface Filters {
     [key: string]: Array<Filter>
 }
 
+export interface ClassOptionFilter {
+  [key: string]: FilterRequirement
+}
+
 export interface FiltersRequirement {
   [key: string]: Array<FilterRequirement>
 

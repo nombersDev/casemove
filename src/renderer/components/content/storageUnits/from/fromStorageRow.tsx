@@ -63,7 +63,7 @@ function content({ projectRow, index }) {
       )
     );
   }
-  classNames
+  
 
   const isEmpty =
     fromReducer.totalToMove.filter((row) => row[0] == projectRow.item_id)
@@ -78,7 +78,7 @@ function content({ projectRow, index }) {
 
   return (
     <>
-      
+
       <RowProduct itemRow={projectRow} />
       <RowCollections itemRow={projectRow} settingsData={currentState.settingsReducer}/>
       <RowPrice itemRow={projectRow} settingsData={currentState.settingsReducer} pricesReducer={currentState.pricingReducer} />

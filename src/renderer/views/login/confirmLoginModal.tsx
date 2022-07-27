@@ -21,6 +21,7 @@ export default function ConfirmModal({open, setOpen, setLoadingButton}) {
   }
 
   async function cancel() {
+    window.electron.ipcRenderer.logUserOut();
     setLoadingButton(false)
     setOpen(false)
   }
@@ -88,7 +89,7 @@ export default function ConfirmModal({open, setOpen, setLoadingButton}) {
                   <button
                     type="button"
                     className="mt-3 w-full inline-flex justify-center rounded-md hover:bg-dark-level-four text-dark-white shadow-sm px-4 py-2 bg-dark-level-three text-base font-medium text-gray-700 sm:mt-0 sm:w-auto sm:text-sm"
-                    onClick={() => setOpen(false)}
+                    onClick={() => cancel()}
                   >
                     Cancel
                   </button>

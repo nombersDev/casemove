@@ -10,9 +10,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { LoadingButton } from 'renderer/components/content/shared/animations';
-import {
-  classNames,
-} from 'renderer/components/content/shared/filters/inventoryFunctions';
+import { classNames } from 'renderer/components/content/shared/filters/inventoryFunctions';
 import NotificationElement from 'renderer/components/content/shared/modals & notifcations/notification';
 import SteamLogo from 'renderer/components/content/shared/steamLogo';
 import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
@@ -101,9 +99,8 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
   }
 
   class HandleLogin {
-
-    command: keyof LoginOptions
-    relevantFunction: Function
+    command: keyof LoginOptions;
+    relevantFunction: Function;
     handleObject: HandleLoginObjectClass = {
       webtokenNotLoggedIn: this.handleWebTokenNotLoggedIn,
       webtokenNotJSON: this.handlewebtokenNotJson,
@@ -112,31 +109,30 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
       defaultError: this.handleUnknownError,
       steamGuardCodeIncorrect: this.handleWrongSteamGuard,
       playingElsewhere: this.handlePlayingElsewhere,
-      loggedIn: this.handleSuccesLogin
+      loggedIn: this.handleSuccesLogin,
     };
     constructor(command: keyof LoginOptions) {
-      this.command = command
-      this.relevantFunction = this.handleObject[this.command]
-
+      this.command = command;
+      this.relevantFunction = this.handleObject[this.command];
     }
 
     async handlewebtokenNotJson() {
-      openNotification(this.command)
+      openNotification(this.command);
       setLoadingButton(false);
       setClientjstoken('');
     }
 
     async handleWebTokenNotLoggedIn() {
-      openNotification(this.command)
+      openNotification(this.command);
       setLoadingButton(false);
       setClientjstoken('');
     }
 
-    async handleSteamGuardError() {
-      openNotification(this.command)
+    async handleSteamGuardError() {
+      openNotification(this.command);
     }
-    async handleUnknownError() {
-      openNotification(this.command)
+    async handleUnknownError() {
+      openNotification(this.command);
       setUsername('');
       setPassword('');
     }
@@ -144,31 +140,28 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
     async handleWrongLoginToken() {
       replaceLock();
       if (isLock) {
-        runDeleteUser(isLock)
+        runDeleteUser(isLock);
       } else {
-        runDeleteUser(username)
+        runDeleteUser(username);
       }
     }
 
     async handlePlayingElsewhere() {
       setOpen(true);
-      openNotification(this.command)
+      openNotification(this.command);
     }
 
-    async handleWrongSteamGuard() {
-      openNotification(this.command)
+    async handleWrongSteamGuard() {
+      openNotification(this.command);
     }
 
     async handleSuccesLogin() {
-      openNotification(this.command)
-
+      openNotification(this.command);
     }
   }
 
-
-
   async function handleError() {
-    setAuthCode('')
+    setAuthCode('');
     setLoadingButton(false);
   }
   async function validateWebToken() {
@@ -195,9 +188,8 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
     } else {
       clientjstokenToSend = '';
     }
-    return clientjstokenToSend
+    return clientjstokenToSend;
   }
-
 
   let hasChosenAccountLoginKey = false;
   if (isLock.length == 2 && isLock[1] != undefined) {
@@ -208,7 +200,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
   async function onSubmit() {
     setLoadingButton(true);
 
-    let clientjstokenToSend = await validateWebToken()
+    let clientjstokenToSend = await validateWebToken();
     let usernameToSend = username as any;
     let passwordToSend = password as any;
     let storePasswordToSend = storePassword as any;
@@ -228,12 +220,16 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
       );
 
     // Notification and react
-    const HandleClass = new HandleLogin(responseStatus.responseStatus)
-    HandleClass.relevantFunction()
+    const HandleClass = new HandleLogin(responseStatus.responseStatus);
+    HandleClass.relevantFunction();
     if (responseStatus.responseStatus == 'loggedIn') {
-      handleSuccess(responseStatus.returnPackage as LoginCommandReturnPackage, dispatch, currentState)
+      handleSuccess(
+        responseStatus.returnPackage as LoginCommandReturnPackage,
+        dispatch,
+        currentState
+      );
     } else {
-      handleError()
+      handleError();
     }
   }
   async function updateUsername(value) {
@@ -274,7 +270,11 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
 
   return (
     <>
-      <ConfirmModal open={open} setOpen={setOpen} setLoadingButton={setLoadingButton}/>
+      <ConfirmModal
+        open={open}
+        setOpen={setOpen}
+        setLoadingButton={setLoadingButton}
+      />
       <div className="min-h-full flex items-center  pt-32 justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full">
           <div>
@@ -315,6 +315,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
                     </label>
                     <input
                       id="password"
+                      spellCheck={false}
                       name="password"
                       type="password"
                       onChange={(e) => updatePassword(e.target.value)}
@@ -384,6 +385,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
                       />
                     </div>
                     <input
+                    spellCheck={false}
                       type="text"
                       name="clientjs"
                       id="clientjs"

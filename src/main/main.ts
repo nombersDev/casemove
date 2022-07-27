@@ -36,8 +36,7 @@ const Protos = require('globaloffensive/protobufs/generated/_load.js');
 const Language = require('globaloffensive/language.js');
 const currencyClass = new currency();
 let tradeUpClass = new tradeUps();
-const ClassLoginResponse = new LoginGenerator()
-
+const ClassLoginResponse = new LoginGenerator();
 
 // Electron stuff
 let mainWindow: BrowserWindow | null = null;
@@ -282,7 +281,6 @@ ipcMain.on('needUpdate', async (event: any) => {
 // Return 6 = Error with loginkey
 async function sendLoginReply(event: any) {
   event.reply('login-reply', ClassLoginResponse.returnValue);
-
 }
 ipcMain.on(
   'login',
@@ -335,8 +333,8 @@ ipcMain.on(
                         displayName,
                         haveGCSession: csgo.haveGCSession,
                         csgoInventory: newReturnValue,
-                        walletToSend: walletToSend
-                      }
+                        walletToSend: walletToSend,
+                      };
 
                       startEvents(csgo, user);
                       if (shouldRemember) {
@@ -348,9 +346,9 @@ ipcMain.on(
                           secretKey
                         );
                       }
-                      ClassLoginResponse.setResponseStatus('loggedIn')
-                      ClassLoginResponse.setPackage(returnPackage)
-                      sendLoginReply(event)
+                      ClassLoginResponse.setResponseStatus('loggedIn');
+                      ClassLoginResponse.setPackage(returnPackage);
+                      sendLoginReply(event);
                     });
                 });
             }
@@ -366,9 +364,9 @@ ipcMain.on(
               startGameCoordinator();
               gameCoordinate(resolve);
             } else {
-              ClassLoginResponse.setEmptyPackage()
-              ClassLoginResponse.setResponseStatus('playingElsewhere')
-              sendLoginReply(event)
+              ClassLoginResponse.setEmptyPackage();
+              ClassLoginResponse.setResponseStatus('playingElsewhere');
+              sendLoginReply(event);
               resolve('error');
             }
           });
@@ -401,6 +399,13 @@ ipcMain.on(
               }, 3000);
 
               ipcMain.removeAllListeners('forceLogin');
+              ipcMain.removeAllListeners('signOut');
+            });
+            ipcMain.on('signOut', async () => {
+              console.log('Sign out')
+              user.logOff();
+              ipcMain.removeAllListeners('forceLogin');
+              ipcMain.removeAllListeners('signOut');
             });
           }
           if (value == 'time') {
@@ -410,9 +415,9 @@ ipcMain.on(
             user.requestFreeLicense([730], function (err, packageIds, appIds) {
               if (err) {
                 console.log(err);
-                ClassLoginResponse.setEmptyPackage()
-                ClassLoginResponse.setResponseStatus('playingElsewhere')
-                sendLoginReply(event)
+                ClassLoginResponse.setEmptyPackage();
+                ClassLoginResponse.setResponseStatus('playingElsewhere');
+                sendLoginReply(event);
               }
               console.log('Granted package: ', packageIds);
               console.log('Granted App: ', appIds);
@@ -440,14 +445,14 @@ ipcMain.on(
         console.log('Last code wrong, try again!');
         cancelLogin(user);
 
-        ClassLoginResponse.setEmptyPackage()
-        ClassLoginResponse.setResponseStatus('steamGuardCodeIncorrect')
-        sendLoginReply(event)
+        ClassLoginResponse.setEmptyPackage();
+        ClassLoginResponse.setResponseStatus('steamGuardCodeIncorrect');
+        sendLoginReply(event);
       } else {
         cancelLogin(user);
-        ClassLoginResponse.setEmptyPackage()
-        ClassLoginResponse.setResponseStatus('steamGuardError')
-        sendLoginReply(event)
+        ClassLoginResponse.setEmptyPackage();
+        ClassLoginResponse.setResponseStatus('steamGuardError');
+        sendLoginReply(event);
       }
     });
 
@@ -802,8 +807,8 @@ ipcMain.on('getCurrency', async (event) => {
     currencyClass.getRate(returnValue).then((response) => {
       let returnObject: CurrencyReturnValue = {
         currency: returnValue,
-        rate: response as number
-      }
+        rate: response as number,
+      };
       event.reply('getCurrency-reply', returnObject);
     });
   });

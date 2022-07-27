@@ -20,11 +20,12 @@ export const addStorageInventoryData = (storageRowsRaw, storageData, casketID, s
     }
 }
 
-export const inventorySetSortStorage = (storageData) => {
+export const inventorySetSortStorage = (storageData, storageFiltered) => {
     return {
         type: 'INVENTORY_STORAGES_SET_SORT_STORAGES',
         payload: {
-            storageData: storageData
+            storageData,
+            storageFiltered
         }
     }
 }

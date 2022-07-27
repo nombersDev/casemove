@@ -3,6 +3,7 @@ import { Disclosure } from '@headlessui/react';
 import {
   ArchiveIcon,
   DocumentDownloadIcon,
+  FilterIcon,
   SaveAsIcon,
   SearchIcon,
   SwitchHorizontalIcon,
@@ -10,17 +11,23 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import {
   moveFromClearAll,
-  moveFromsetSearchField
+  moveFromsetSearchField,
 } from 'renderer/store/actions/moveFromActions';
 import MoveModal from '../../shared/modals & notifcations/modalMove';
 import { moveModalQuerySet } from 'renderer/store/actions/modalMove actions';
 import PricingAmount from '../../shared/filters/pricingAmount';
 import { downloadReport } from 'renderer/functionsClasses/downloadReport';
+import { classNames } from '../../shared/filters/inventoryFunctions';
 
+import StorageFilterDisclosure from './storageFilterDisclosure';
+import { fromGetFilterManager } from './fromFilterSetup';
+import { addMajorsFilters } from 'renderer/functionsClasses/filters/filters';
+import { searchFilter } from 'renderer/functionsClasses/filters/search';
+const ClassFilters = fromGetFilterManager();
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
+// ClassFilters.loadFilter(CharacteristicsFilter, true, 'Include');
+// ClassFilters.loadFilter(CharacteristicsFilter, false, 'Exclude');
+// ClassFilters.loadFilter(ContainerFilter, true);
 
 function content() {
   const dispatch = useDispatch();
@@ -31,11 +38,6 @@ function content() {
   const inventoryFilters = useSelector(
     (state: any) => state.inventoryFiltersReducer
   );
-
-
-  // States
-
-
 
   async function moveItems() {
     let key = (Math.random() + 1).toString(36).substring(7);
@@ -58,66 +60,50 @@ function content() {
         totalCount++;
       }
     }
-    console.log(queryNew);
     dispatch(moveModalQuerySet(queryNew));
   }
   // Calculate storage amount prices
   let totalAmount = 0 as any;
-  let inventoryFilter = inventory.storageInventory.filter(function (row) {
+  let storageDataToUse = inventoryFilters.storageFiltered;
+  if (
+    storageDataToUse.length == 0 &&
+    inventoryFilters.storageFilter.length == 0
+  ) {
+    storageDataToUse = inventory.storageInventory;
+  }
+  let inventoryFilter = searchFilter(
+    storageDataToUse,
+    inventoryFilters,
+    fromReducer
+  );
 
-    if (
-      inventoryFilters.categoryFilter.length != 0 ) {
-       if (!inventoryFilters.categoryFilter?.includes(row.bgColorClass)) {
-         return false
-       }
-      }
-    if (
-      row.item_name
-        ?.toLowerCase()
-        .trim()
-        .includes(fromReducer.searchInput?.toLowerCase().trim())
-    ) {
-      return true; // skip
-    }
-    if (
-      row.item_wear_name
-        ?.toLowerCase()
-        .trim()
-        .includes(fromReducer.searchInput?.toLowerCase().trim())
-    ) {
-      return true; // skip
-    }
-    if (
-      row.item_customname
-        ?.toLowerCase()
-        .trim()
-        .includes(fromReducer.searchInput?.toLowerCase().trim())
-    ) {
-      return true; // skip
-    }
-    if (fromReducer.searchInput == undefined) {
-      return true; // skip
-    }
-    return false;
-  });
-
-
-
-  let totalHighlighted = 0 as any
+  let totalHighlighted = 0 as any;
 
   inventoryFilter.forEach((projectRow) => {
-    let filtered = fromReducer.totalToMove.filter(row => row[0] == projectRow.item_id)
+    let filtered = fromReducer.totalToMove.filter(
+      (row) => row[0] == projectRow.item_id
+    );
     if (filtered.length > 0) {
-      totalHighlighted += pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[settingsData.source.title]  * settingsData.currencyPrice[settingsData.currency] * filtered[0][2].length
+      totalHighlighted +=
+        pricesResult.prices[
+          projectRow.item_name + projectRow.item_wear_name || ''
+        ]?.[settingsData.source.title] *
+        settingsData.currencyPrice[settingsData.currency] *
+        filtered[0][2].length;
     }
-    let individualPrice = projectRow.combined_QTY *
-    pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency]
-    totalAmount += individualPrice = individualPrice ? individualPrice : 0
+    let individualPrice =
+      projectRow.combined_QTY *
+      pricesResult.prices[
+        projectRow.item_name + projectRow.item_wear_name || ''
+      ]?.[settingsData.source.title] *
+      settingsData.currencyPrice[settingsData.currency];
+    totalAmount += individualPrice = individualPrice ? individualPrice : 0;
   });
-  totalHighlighted = totalHighlighted.toFixed(0)
+  totalHighlighted = totalHighlighted.toFixed(0);
   totalAmount = totalAmount.toFixed(0);
-
-  
+  addMajorsFilters(inventoryFilter).then((returnValue) => {
+    ClassFilters.loadFilter(returnValue, true);
+  });
 
   return (
     <div className="bg-white mt-8">
@@ -132,8 +118,18 @@ function content() {
       >
         <div className="relative col-start-1 row-start-1 py-4 flex justify-between">
           <div className="max-w-7xl flex items-center space-x-6 divide-x divide-gray-200 text-sm px-4 sm:px-6 lg:px-8">
-
-            <div className="">
+            <div>
+              <Disclosure.Button className="group text-gray-700 font-medium flex items-center text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-500">
+                <FilterIcon
+                  className="flex-none w-5 h-5 mr-2 text-gray-400 group-hover:text-gray-500"
+                  aria-hidden="true"
+                />
+                {inventoryFilters.storageFilter.length == 0
+                  ? inventoryFilters.storageFilter.length + ' Filters'
+                  : inventoryFilters.storageFilter.length + ' Filter'}
+              </Disclosure.Button>
+            </div>
+            <div className="pl-6">
               <button
                 type="button"
                 className="text-gray-500 dark:text-gray-400"
@@ -176,7 +172,9 @@ function content() {
                 <Link
                   to=""
                   type="button"
-                  onClick={() => downloadReport(settingsData, pricesResult, inventoryFilter)}
+                  onClick={() =>
+                    downloadReport(settingsData, pricesResult, inventoryFilter)
+                  }
                   className={classNames(
                     inventory.storageInventory.length == 0
                       ? 'pointer-events-none border-gray-100'
@@ -192,9 +190,13 @@ function content() {
                 </Link>
               </div>
               <div className="pl-3">
-                <PricingAmount totalAmount={new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(totalAmount)} pricingAmount={totalHighlighted}/>
-
-
+                <PricingAmount
+                  totalAmount={new Intl.NumberFormat(settingsData.locale, {
+                    style: 'currency',
+                    currency: settingsData.currency,
+                  }).format(totalAmount)}
+                  pricingAmount={totalHighlighted}
+                />
               </div>
               <div className="pl-3">
                 <span className="mr-3 flex items-center text-gray-500 text-xs font-medium uppercase tracking-wide">
@@ -228,9 +230,9 @@ function content() {
                   onClick={() => moveItems()}
                   className={classNames(
                     fromReducer.totalItemsToMove == 0
-                      ? 'pointer-events-none border-gray-100'
-                      : 'shadow-sm border-gray-200',
-                    'order-1 ml-3 inline-flex items-center px-4 py-2 border  dark:bg-dark-level-three dark:border-none dark:border-opacity-0 dark:text-dark-white text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0'
+                      ? 'pointer-events-none border-gray-100 bg-dark-level-one'
+                      : 'shadow-sm border-gray-200 bg-dark-level-three',
+                    'order-1 ml-3 inline-flex items-center px-4 py-2 border dark:border-none dark:border-opacity-0 dark:text-dark-white text-sm font-medium rounded-md text-gray-700 hover:bg-dark-level-four  sm:order-0 sm:ml-0'
                   )}
                 >
                   Move
@@ -243,6 +245,7 @@ function content() {
             </div>
           </div>
         </div>
+        <StorageFilterDisclosure ClassFilters={ClassFilters} />
       </Disclosure>
     </div>
   );

@@ -3,20 +3,20 @@ import StorageRow from './fromStorageRow';
 import StorageSelectorContent from './fromSelector';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import {  useSelector } from 'react-redux';
-import { classNames, sortDataFunction } from '../../shared/filters/inventoryFunctions';
-import { useState } from 'react';
+import { classNames } from '../../shared/filters/inventoryFunctions';
 import { BanIcon, FireIcon } from '@heroicons/react/solid';
 import { RowHeader, RowHeaderCondition, RowHeaderPlain } from '../../Inventory/inventoryRows/headerRows';
 import { searchFilter } from 'renderer/functionsClasses/filters/search';
 import { State } from 'renderer/interfaces/states';
+import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
 
 function StorageUnits() {
-  const inventory = useSelector((state: any) => state.inventoryReducer);
-  const inventoryFilters = useSelector((state: State) => state.inventoryFiltersReducer);
-  const fromReducer = useSelector((state: any) => state.moveFromReducer);
-  const pricesResult = useSelector((state: any) => state.pricingReducer);
-  const settingsData = useSelector((state: any) => state.settingsReducer);
-  const [getStorage, setStorage] = useState(inventory.storageInventory);
+  const ReducerClass = new ReducerManager(useSelector);
+  const currentState: State = ReducerClass.getStorage()
+  const inventory = currentState.inventoryReducer
+  const inventoryFilters = currentState.inventoryFiltersReducer
+  const fromReducer = currentState.moveFromReducer
+  const settingsData = currentState.settingsReducer
   function sleep(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
   }
@@ -62,23 +62,18 @@ function StorageUnits() {
     }
   }
 
-  async function storageResult() {
-    let storageResult = await sortDataFunction(
-      fromReducer.sortValue,
-      inventory.storageInventory,
-      pricesResult.prices,
-      settingsData?.source?.title
-    );
-
-    setStorage(storageResult);
+  let storageToUse = inventoryFilters.storageFiltered
+  if (storageToUse.length == 0 && inventoryFilters.storageFilter.length == 0 ) {
+    storageToUse = inventory.storageInventory
   }
 
-  storageResult();
-  if (fromReducer.sortBack == true) {
-    getStorage.reverse();
+
+  let storageFiltered = searchFilter(storageToUse, inventoryFilters, fromReducer)
+
+  if (fromReducer.sortBack) {
+    storageFiltered.reverse()
   }
 
-  let storageFiltered = searchFilter(getStorage, inventoryFilters, fromReducer)
   return (
     <>
       {/* Storage units */}

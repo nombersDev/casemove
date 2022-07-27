@@ -25,11 +25,15 @@ function StorageUnits() {
   const toReducer = useSelector((state: State) => state.moveToReducer);
   const pricesResult = useSelector((state: State) => state.pricingReducer);
   const settingsData = useSelector((state: State) => state.settingsReducer);
-  const [getStorage, setStorage] = useState(inventory.storageInventory);
-  getStorage;
   const inventoryFilters = useSelector(
     (state: any) => state.inventoryFiltersReducer
   );
+  let inventoryTouse = inventoryFilter.inventoryFiltered
+  if (inventoryTouse.length == 0 && inventoryFilters.inventoryFilter?.length == 0 ) {
+    inventoryTouse = inventory.combinedInventory
+  }
+  const [getStorage, setStorage] = useState(inventoryTouse);
+  getStorage;
   function sleep(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
   }
@@ -74,10 +78,11 @@ function StorageUnits() {
     }
   }
 
+
   async function storageResult() {
     const storageResult = await sortDataFunction(
       toReducer.sortValue,
-      inventoryFilter.inventoryFiltered,
+      inventoryTouse,
       pricesResult.prices,
       settingsData?.source?.title
     );

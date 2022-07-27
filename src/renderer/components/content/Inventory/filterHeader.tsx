@@ -18,13 +18,14 @@ import { searchFilter } from 'renderer/functionsClasses/filters/search';
 import { ConvertPrices } from 'renderer/functionsClasses/prices';
 import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
 import { downloadReport } from 'renderer/functionsClasses/downloadReport';
-import FiltersDisclosure from './filtersDisclosure';
-import { addMajorsFilters, CharacteristicsFilter, ContainerFilter, FilterManager } from 'renderer/variables/filters';
+import InventoryFiltersDisclosure from './filtersDisclosure';
+import { addMajorsFilters } from 'renderer/functionsClasses/filters/filters';
+import { InventoryGetFilterManager } from './inventoryFilterSetup';
 
-const ClassFilters = new FilterManager()
+const ClassFilters = InventoryGetFilterManager()
 
-ClassFilters.loadFilter(CharacteristicsFilter, true)
-ClassFilters.loadFilter(ContainerFilter, true)
+// ClassFilters.loadFilter(CharacteristicsFilter, true)
+// ClassFilters.loadFilter(ContainerFilter, true)
 
 function content() {
   const dispatch = useDispatch();
@@ -162,7 +163,7 @@ function content() {
             </div>
           </div>
         </div>
-        <FiltersDisclosure ClassFilters={ClassFilters}/>
+        <InventoryFiltersDisclosure ClassFilters={ClassFilters}/>
 
 
       </Disclosure>

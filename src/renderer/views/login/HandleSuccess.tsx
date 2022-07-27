@@ -3,7 +3,7 @@ import { filterItemRows } from "renderer/functionsClasses/filters/custom";
 import { DispatchIPC, DispatchStore } from "renderer/functionsClasses/rendererCommands/admin"
 import { State } from "renderer/interfaces/states";
 import { SignInActionPackage } from "renderer/interfaces/store/authReducerActionsInterfaces"
-import { inventory_setFiltered } from "renderer/store/actions/filtersInventoryActions";
+import { inventorySetFilter } from "renderer/store/actions/filtersInventoryActions";
 import { setInventoryAction } from "renderer/store/actions/inventoryActions";
 import { signIn } from "renderer/store/actions/userStatsActions";
 import { getURL } from "renderer/store/helpers/userStatusHelper";
@@ -69,7 +69,7 @@ export async function handleSuccess(returnSuccessPackage: LoginCommandReturnPack
   );
 
   dispatch(
-    inventory_setFiltered(
+    inventorySetFilter(
       currentState.inventoryFiltersReducer.inventoryFilter,
       currentState.inventoryFiltersReducer.sortValue,
       filteredInv

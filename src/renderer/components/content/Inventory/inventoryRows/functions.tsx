@@ -1,16 +1,21 @@
 
+
 import { State } from "renderer/interfaces/states";
 import { inventorySetSortStorage } from "renderer/store/actions/inventoryActions";
 import { SetSortOption } from "renderer/store/actions/moveFromActions";
 import { sortDataFunction } from "../../shared/filters/inventoryFunctions";
 
-export async function onSortChange(dispatch: Function, sortValue: string, states: State) {
+export async function onSortChange(dispatch: Function, sortValue: string, currentState: State) {
     dispatch(SetSortOption(sortValue));
     const storageResult = await sortDataFunction(
       sortValue,
-      states.inventoryReducer.storageInventory,
-      states.pricingReducer.prices,
-      states.settingsReducer?.source?.title
+      currentState.inventoryReducer.storageInventory,
+      currentState.pricingReducer.prices, currentState.settingsReducer?.source?.title
     );
-    dispatch(inventorySetSortStorage(storageResult));
+    const storageResultFiltered = await sortDataFunction(
+      sortValue,
+      currentState.inventoryFiltersReducer.storageFiltered,
+      currentState.pricingReducer.prices, currentState.settingsReducer?.source?.title
+    );
+    dispatch(inventorySetSortStorage(storageResult, storageResultFiltered));
   }

@@ -25,7 +25,7 @@ const inventoryReducer = (state = initialState, action) => {
         totalAccountItems: storageTotal
       }
     case 'INVENTORY_ITEM_ACCUIRED':
-       
+
       return {
         ...state
       }

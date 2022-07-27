@@ -15,14 +15,23 @@ export const allButClear = (filterString: any, sortValue, inventoryFiltered) => 
         }
     }
 }
-export const inventory_setFiltered = (filterString: any, sortValue, inventoryFiltered) => {
+export const inventorySetFilteredStorage = (storageFilter, storageFiltered) => {
+  return {
+      type: 'SET_FILTERED_STORAGE',
+      payload: {
+          storageFiltered,
+          storageFilter
+
+      }
+  }
+}
+export const inventorySetFilter = (inventoryFilter: any, sortValue, inventoryFiltered) => {
     return {
         type: 'SET_FILTERED',
         payload: {
-            inventoryFilter: filterString,
-            sortValue: sortValue,
-            inventoryFiltered: inventoryFiltered
-
+            inventoryFilter,
+            sortValue,
+            inventoryFiltered
         }
     }
 }
@@ -52,13 +61,35 @@ export const inventoryAddRarityFilter = (filterToAdd) => {
       payload: filterToAdd
   }
 }
+
+export async function storageInventoryAddOption(currentState: State, newFilter: Filter) {
+  let newFilterState = [] as Array<Filter>;
+  let wasSeen: boolean = false;
+  currentState.inventoryFiltersReducer.storageFilter.forEach(element => {
+      if (!_.isEqual(element, newFilter)) {
+          newFilterState.push(element)
+
+      } else {
+          wasSeen = true;
+      }
+  });
+
+  if (!wasSeen) {
+      newFilterState.push(newFilter)
+  }
+
+  let filteredStorage = await filterItemRows(currentState.inventoryReducer.storageInventory, newFilterState)
+  filteredStorage = await sortDataFunction(currentState.moveFromReducer.sortValue, filteredStorage, currentState.pricingReducer.prices, currentState.settingsReducer?.source?.title)
+  return inventorySetFilteredStorage(newFilterState, filteredStorage)
+}
+
 export async function filterInventoryAddOption(currentState: State, newFilter: Filter) {
     let newFilterState = [] as Array<Filter>;
     let wasSeen: boolean = false;
     currentState.inventoryFiltersReducer.inventoryFilter.forEach(element => {
         if (!_.isEqual(element, newFilter)) {
             newFilterState.push(element)
-            
+
         } else {
             wasSeen = true;
         }
@@ -69,7 +100,7 @@ export async function filterInventoryAddOption(currentState: State, newFilter: F
     }
     let filteredInv = await filterItemRows(currentState.inventoryReducer.combinedInventory, newFilterState)
     filteredInv = await sortDataFunction(currentState.inventoryFiltersReducer.sortValue, filteredInv, currentState.pricingReducer.prices, currentState.settingsReducer?.source?.title)
-    return inventory_setFiltered(newFilterState, currentState.inventoryFiltersReducer.sortValue, filteredInv)
+    return inventorySetFilter(newFilterState, currentState.inventoryFiltersReducer.sortValue, filteredInv)
 }
 
 export async function filterInventorySetSort(currentState: State, newSort: string) {

@@ -49,8 +49,10 @@ export interface source {
 // Store
 export interface InventoryFilters {
   inventoryFilter: Array<Filter>
+  storageFilter: Array<Filter>
   sortValue: string
   inventoryFiltered: Array<ItemRow>
+  storageFiltered: Array<ItemRow>
   searchInput: string
   sortBack: boolean
   categoryFilter: Array<string>

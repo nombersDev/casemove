@@ -43,7 +43,7 @@ import {
 import {
   inventoryAddCategoryFilter,
   inventoryAddRarityFilter,
-  inventory_setFiltered,
+  inventorySetFilter,
 } from './store/actions/filtersInventoryActions';
 import settingsPage from './views/settings/settings';
 import { pricing_addPrice } from './store/actions/pricingActions';
@@ -136,10 +136,9 @@ function AppContent() {
         currentState.pricingReducer.prices,
         currentState.settingsReducer?.source?.title
       );
-      console.log(filteredInv);
 
       dispatch(
-        inventory_setFiltered(
+        inventorySetFilter(
           currentState.inventoryFiltersReducer.inventoryFilter,
           currentState.inventoryFiltersReducer.sortValue,
           filteredInv

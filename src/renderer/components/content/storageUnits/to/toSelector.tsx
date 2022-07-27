@@ -12,11 +12,11 @@ import {
   moveTosetSearchFieldStorage,
 } from 'renderer/store/actions/moveToActions';
 import EmptyComponent from '../../shared/emptyState';
+import { classNames } from '../../shared/filters/inventoryFunctions';
 import RenameModal from '../../shared/modals & notifcations/modalRename';
+moveToClearAll
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
+
 function content() {
   const dispatch = useDispatch();
 
@@ -28,7 +28,7 @@ function content() {
   // This will return and convert a specific units data
   async function getStorageData(storageID, casketVolume) {
     dispatch(moveToAddCasketToStorages(storageID, casketVolume));
-    dispatch(moveToClearAll());
+    // dispatch(moveToClearAll());
   }
 
   // Get the inventory
@@ -59,7 +59,7 @@ function content() {
     <div className="px-4 sm:px-6 lg:px-8 dark:bg-dark-level-one">
       <RenameModal />
       <div className="border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between ">
-        
+
       <div className='flex items-center' >
         <h2 className="text-gray-500 text-xs font-medium uppercase mr-3 tracking-wide">
           Storage units
@@ -218,9 +218,9 @@ function content() {
               </span>
             </span>
           </Switch>
-          
-          
-        
+
+
+
             </div>
       </div>
       {inventoryToUse.filter(function (row) {

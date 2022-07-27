@@ -1,18 +1,17 @@
 import { Disclosure } from '@headlessui/react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  filterInventoryAddOption,
-} from 'renderer/store/actions/filtersInventoryActions';
+
 import { searchFilter } from 'renderer/functionsClasses/filters/search';
 import { ConvertPrices } from 'renderer/functionsClasses/prices';
 import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
 import { Filter, Filters } from 'renderer/interfaces/filters';
 import _ from 'lodash';
 import { State } from 'renderer/interfaces/states';
+import { storageInventoryAddOption } from 'renderer/store/actions/filtersInventoryActions';
 
 
 
-export default function InventoryFiltersDisclosure({ClassFilters}) {
+export default function StorageFilterDisclosure({ClassFilters}) {
   const dispatch = useDispatch();
   const ReducerClass = new ReducerManager(useSelector)
   const currentState: State = ReducerClass.getStorage()
@@ -27,7 +26,7 @@ export default function InventoryFiltersDisclosure({ClassFilters}) {
   // Update selected filter
   async function addRemoveFilter(filterValue: Filter) {
     dispatch(
-      await filterInventoryAddOption(currentState,
+      await storageInventoryAddOption(currentState,
         filterValue
       )
     );
@@ -35,10 +34,12 @@ export default function InventoryFiltersDisclosure({ClassFilters}) {
 
 
   let inventoryToUse = [] as any;
+  let filteredToUse = inventoryFilters.storageFiltered;
+  let filterToUse = inventoryFilters.storageFilter;
 
   if (
-    inventoryFilters.inventoryFiltered.length == 0 &&
-    inventoryFilters.inventoryFilter.length == 0
+    filteredToUse.length == 0 &&
+    filterToUse.length == 0
   ) {
     inventoryToUse = inventory.combinedInventory;
   } else {
@@ -63,15 +64,15 @@ export default function InventoryFiltersDisclosure({ClassFilters}) {
 
   Object.entries(ClassFilters.filters as Filters).map(([_key, filterObject]) => {
     filterObject.map((filter, _optionIdx) => {
-      if (inventoryFilters.inventoryFilter.filter(filt => _.isEqual(filt, filter)).length > 0) {
+      if (filterToUse.filter(filt => _.isEqual(filt, filter)).length > 0) {
         totalSeen += 1
         ignoreCategories.push(filter)
       }
     });
   });
   let categoriesToRemove: Array<Filter> = []
-  if (inventoryFilters.inventoryFilter.length > totalSeen) {
-    inventoryFilters.inventoryFilter.forEach(element => {
+  if (filterToUse.length > totalSeen) {
+    filterToUse.forEach(element => {
       if (!_.some(ignoreCategories, element) && element.label != 'Storage moveable') {
         categoriesToRemove.push(element)
       }
@@ -104,7 +105,7 @@ export default function InventoryFiltersDisclosure({ClassFilters}) {
                         className="flex-shrink-0 h-4 w-4 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500"
                         onClick={() => addRemoveFilter(filter)}
                         checked={
-                          inventoryFilters.inventoryFilter.filter(filt => _.isEqual(filt, filter)).length > 0
+                          filterToUse.filter(filt => _.isEqual(filt, filter)).length > 0
                             ? true
                             : false
                         }
