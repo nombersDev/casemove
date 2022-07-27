@@ -1,3 +1,6 @@
+import { Overview } from "renderer/interfaces/states"
+import { CurrencyReturnValue } from "shared/Interfaces.tsx/IPCReturn"
+
 export const setFastMove = (valueToSet) => {
     return {
         type: 'SETTINGS_SET_FASTMOVE',
@@ -28,12 +31,12 @@ export const setSourceValue = (valueToSet) => {
       payload: valueToSet
   }
 }
-export const setCurrencyRate = (currency, rate) => {
+export const setCurrencyRate = (returnPackage: CurrencyReturnValue) => {
   return {
       type: 'SETTINGS_ADD_CURRENCYPRICE',
       payload: {
-        currency: currency,
-        rate: rate
+        currency: returnPackage.currency,
+        rate: returnPackage.rate
       }
   }
 }
@@ -47,5 +50,11 @@ export const setDevmode = (devmode) => {
   return {
       type: 'SETTINGS_SET_DEVMODE',
       payload: devmode
+  }
+}
+export const setOverview = (newObject: Overview) => {
+  return {
+      type: 'SETTINGS_SET_OVERVIEW',
+      payload: newObject
   }
 }

@@ -11,6 +11,7 @@ import {
 } from 'react-router-dom';
 import inventoryContent from './components/content/Inventory/inventory';
 import {
+  ChartBarIcon,
   DownloadIcon,
   GiftIcon,
   InboxInIcon,
@@ -26,7 +27,7 @@ import {
   MenuAlt1Icon,
   BeakerIcon,
 } from '@heroicons/react/outline';
-import itemCategories from './components/content/shared/categories';
+import { itemCategories } from './components/content/shared/categories';
 import { toMoveContext } from './context/toMoveContext';
 import StorageUnitsComponent from './components/content/storageUnits/from/Content';
 import LoginPage from './views/login/login';
@@ -35,32 +36,32 @@ import { signOut } from './store/actions/userStatsActions';
 import { handleUserEvent } from './store/handleMessage';
 import Logo from './components/content/shared/iconsLogo/logo 2';
 import ToContent from './components/content/storageUnits/to/toHolder';
-import { classNames } from './components/content/shared/inventoryFunctions';
 import {
-  filterInventorySetSort,
+  classNames,
+  sortDataFunction,
+} from './components/content/shared/filters/inventoryFunctions';
+import {
   inventoryAddCategoryFilter,
   inventoryAddRarityFilter,
+  inventorySetFilter,
 } from './store/actions/filtersInventoryActions';
 import settingsPage from './views/settings/settings';
-import {
-  setColumns,
-  setCurrencyRate,
-  setDevmode,
-  setFastMove,
-  setLocale,
-  setOS,
-  setSourceValue,
-} from './store/actions/settings';
 import { pricing_addPrice } from './store/actions/pricingActions';
 import TitleBarWindows from './components/content/shared/titleBarWindows';
 import TradeupPage from './views/tradeUp/tradeUp';
 import itemRarities from './components/content/shared/rarities';
 import { setTradeFoundMatch } from './store/actions/modalTrade';
 import TradeResultModal from './components/content/shared/modals & notifcations/modalTradeResult';
+import OverviewPage from './views/overview/overview';
+import { State } from './interfaces/states';
+import { ReducerManager } from './functionsClasses/reducerManager';
+import { filterItemRows } from './functionsClasses/filters/custom';
+import { DispatchStore, DispatchIPC } from './functionsClasses/rendererCommands/admin';
 DocumentDownloadIcon;
 
 //{ name: 'Reports', href: '/reports', icon: DocumentDownloadIcon, current: false }
 const navigation = [
+  { name: 'Overview', href: '/stats', icon: ChartBarIcon, current: false },
   {
     name: 'Transfer | From',
     href: '/transferfrom',
@@ -95,19 +96,17 @@ function AppContent() {
   );
 
   // Redux user details
-  const userDetails = useSelector((state: any) => state.authReducer);
-  const modalData = useSelector((state: any) => state.modalMoveReducer);
-  const settingsData = useSelector((state: any) => state.settingsReducer);
-  const pricesResult = useSelector((state: any) => state.pricingReducer);
-  const inventoryData = useSelector((state: any) => state.inventoryReducer);
-  const tradeUpData = useSelector((state: any) => state.modalTradeReducer);
-  const inventory = useSelector((state: any) => state.inventoryReducer);
-  const filterDetails = useSelector(
-    (state: any) => state.inventoryFiltersReducer
-  );
+
+  const ReducerClass = new ReducerManager(useSelector);
+  const currentState: State = ReducerClass.getStorage();
+  const userDetails = currentState.authReducer;
+  const modalData = currentState.modalMoveReducer;
+  const settingsData = currentState.settingsReducer;
+  const tradeUpData = currentState.modalTradeReducer;
+  const inventory = currentState.inventoryReducer;
+  const filterDetails = currentState.inventoryFiltersReducer;
 
   document.documentElement.classList.add('dark');
-
   function updateAutomation(itemHref) {
     setSideMenuOption(itemHref);
     setSidebarOpen(false);
@@ -119,25 +118,30 @@ function AppContent() {
 
   // Log out of session
   const dispatch = useDispatch();
+  const StoreClass = new DispatchStore(dispatch);
+  const IPCClass = new DispatchIPC(dispatch);
 
   async function handleFilterData(combinedInventory) {
     if (
       filterDetails.inventoryFilter.length > 0 ||
       filterDetails.sortValue != 'Default'
     ) {
-      console.log(
+      let filteredInv = await filterItemRows(
         combinedInventory,
-        filterDetails.inventoryFilter,
-        filterDetails.sortValue
+        currentState.inventoryFiltersReducer.inventoryFilter
       );
+      filteredInv = await sortDataFunction(
+        currentState.inventoryFiltersReducer.sortValue,
+        filteredInv,
+        currentState.pricingReducer.prices,
+        currentState.settingsReducer?.source?.title
+      );
+
       dispatch(
-        await filterInventorySetSort(
-          inventoryData.inventory,
-          combinedInventory,
-          filterDetails,
-          filterDetails.sortValue,
-          pricesResult.prices,
-          settingsData?.source?.title
+        inventorySetFilter(
+          currentState.inventoryFiltersReducer.inventoryFilter,
+          currentState.inventoryFiltersReducer.sortValue,
+          filteredInv
         )
       );
     }
@@ -145,69 +149,21 @@ function AppContent() {
 
   // First time setup
   async function setFirstTimeSettings() {
-    if (settingsData.currencyPrice == {} || settingsData.source == undefined) {
-      // OS
-      await window.electron.store.get('os').then((returnValue) => {
-        console.log('OS', returnValue);
-        dispatch(setOS(returnValue));
-      });
-
-      // wear value
-      await window.electron.store.get('columns').then((returnValue) => {
-        console.log('columns', returnValue);
-        if (returnValue != undefined) {
-          dispatch(setColumns(returnValue));
-        }
-      });
-
-      // Dev mode
-      await window.electron.store.get('devmode.value').then((returnValue) => {
-        console.log('devmode.value', returnValue);
-        if (returnValue == undefined) {
-          returnValue = false;
-        }
-        dispatch(setDevmode(returnValue));
-      });
-
-      // Currency rate
-      if (userDetails.isLoggedIn) {
-        await window.electron.ipcRenderer
-        .getCurrencyRate()
-        .then((returnValue) => {
-          console.log('currencyrate', returnValue);
-          dispatch(setCurrencyRate(returnValue[0], returnValue[1]));
-        });
-      }
-      // Fastmove
-      console.log('Getting settings');
-      let storedFastMove = await window.electron.store.get('fastmove');
-      if (storedFastMove == undefined) {
-        storedFastMove = false;
-      }
-      dispatch(setFastMove(storedFastMove));
-      // Source
-      await window.electron.store.get('pricing.source').then((returnValue) => {
-        let valueToWrite = returnValue;
-        if (returnValue == undefined) {
-          valueToWrite = {
-            id: 1,
-            name: 'Steam Community Market',
-            title: 'steam_listing',
-            avatar: 'https://steamcommunity.com/favicon.ico',
-          };
-        }
-        dispatch(setSourceValue(valueToWrite));
-      });
-
-      await window.electron.store.get('locale').then((returnValue) => {
-        dispatch(setLocale(returnValue));
-      });
+    if (settingsData.currencyPrice[settingsData.currency] == undefined) {
+      IPCClass.run(IPCClass.buildingObject.currency);
+    }
+    if (settingsData.os == '') {
+      StoreClass.run(StoreClass.buildingObject.os);
+      StoreClass.run(StoreClass.buildingObject.columns);
+      StoreClass.run(StoreClass.buildingObject.devmode);
+      StoreClass.run(StoreClass.buildingObject.fastmove);
+      StoreClass.run(StoreClass.buildingObject.source);
+      StoreClass.run(StoreClass.buildingObject.locale);
     }
   }
 
   // Forward user event to Store
   if (isListening == false) {
-
     setFirstTimeSettings();
     window.electron.ipcRenderer.userEvents().then((messageValue) => {
       handleSubMessage(messageValue, settingsData);
@@ -222,14 +178,18 @@ function AppContent() {
       setIsListening(false);
       return;
     }
-    const actionToTake = (await handleUserEvent(
-      messageValue,
-      settingsData
-    )) as any;
-    dispatch(actionToTake);
-    if (messageValue[0] == 1) {
-      await handleFilterData(actionToTake.payload.combinedInventory);
+    if (messageValue.command == undefined) {
+      const actionToTake = (await handleUserEvent(
+        messageValue,
+        settingsData
+      )) as any;
+      dispatch(actionToTake);
+      if (messageValue[0] == 1) {
+        console.log(messageValue);
+        await handleFilterData(actionToTake.payload.combinedInventory);
+      }
     }
+
     setIsListening(false);
   }
 
@@ -243,18 +203,20 @@ function AppContent() {
   }
 
   // Should update status
-  const [shouldUpdate, setShouldUpdate] = useState(0);
+  const [shouldUpdate, setShouldUpdate] = useState(false);
+  const [shouldCheckUpdate, setShouldCheckUpdate] = useState(true);
+
   const [getVersion, setVersion] = useState('');
+  const [getDownloadLink, setDownloadLink] = useState('');
   async function getUpdate() {
     const doUpdate = await window.electron.ipcRenderer.needUpdate();
     console.log(doUpdate);
-    setVersion('v' + doUpdate[1]);
-    if (doUpdate[0] == true) {
-      setShouldUpdate(1);
-    }
+    setVersion('v' + doUpdate.currentVersion);
+    setShouldUpdate(doUpdate.requireUpdate);
+    setDownloadLink(doUpdate.githubResponse.downloadLink);
   }
-  if (shouldUpdate == 0) {
-    setShouldUpdate(2);
+  if (shouldCheckUpdate == true) {
+    setShouldCheckUpdate(false);
     getUpdate();
   }
 
@@ -283,15 +245,6 @@ function AppContent() {
 
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-white">
-        <body class="h-full">
-        ```
-      */}
-
       <TradeResultModal />
       {settingsData.os != 'win32' ? '' : <TitleBarWindows />}
       <div
@@ -474,7 +427,6 @@ function AppContent() {
                           {userDetails.displayName}
                         </span>
                         <span className="text-xs font-medium text-gray-500 group-hover:text-gray-500">
-
                           <span
                             className={classNames(
                               userDetails.CSGOConnection
@@ -482,18 +434,26 @@ function AppContent() {
                                 : 'text-red-400',
                               'text-xs font-medium'
                             )}
-                          ><div className='flex justify-between'>
-                            <div>
-                            {userDetails.CSGOConnection ? 'CSGO Online' : 'CSGO Offline'}
+                          >
+                            <div className="flex justify-between">
+                              <div>
+                                {userDetails.CSGOConnection
+                                  ? 'CSGO Online'
+                                  : 'CSGO Offline'}
+                              </div>
                             </div>
-
-                            </div>
-                            <div className='text-gray-500'>
-                              {userDetails.walletBalance?.balance == 0 || userDetails.walletBalance == null ? '' : new Intl.NumberFormat(settingsData.locale, {
-                  style: 'currency',
-                  currency: userDetails.walletBalance?.currency || settingsData.currency,
-                }).format(
-                  userDetails.walletBalance?.balance || 0)}
+                            <div className="text-gray-500">
+                              {userDetails.walletBalance?.balance == 0 ||
+                              userDetails.walletBalance == null
+                                ? ''
+                                : new Intl.NumberFormat(settingsData.locale, {
+                                    style: 'currency',
+                                    currency:
+                                      userDetails.walletBalance?.currency ||
+                                      settingsData.currency,
+                                  }).format(
+                                    userDetails.walletBalance?.balance || 0
+                                  )}
                             </div>
                           </span>
                         </span>
@@ -570,11 +530,8 @@ function AppContent() {
                   />
                   <span className="mr-3 text-green-900">Retry connection</span>
                 </button>
-              ) : shouldUpdate == 1 ? (
-                <a
-                  href="https://github.com/nombersDev/casemove/releases"
-                  target="_blank"
-                >
+              ) : shouldUpdate == true ? (
+                <a href={getDownloadLink} target="_blank">
                   <button
                     type="button"
                     className="inline-flex items-center bg-green-200 px-6 shadow-md py-3 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 hover:shadow-none focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
@@ -777,7 +734,7 @@ function AppContent() {
                         Retry connection
                       </span>
                     </button>
-                  ) : shouldUpdate == 1 ? (
+                  ) : shouldUpdate == false ? (
                     <a
                       href="https://steamcommunity.com/tradeoffer/new/?partner=1033744096&token=29ggoJY7"
                       target="_blank"
@@ -872,12 +829,12 @@ function AppContent() {
               <Switch>
                 <toMoveContext.Provider value={toMoveValue}>
                   {userDetails.isLoggedIn ? (
-                    <Redirect exact from="/" to="/transferfrom" />
+                    <Redirect exact from="/" to="/stats" />
                   ) : (
                     <Redirect from="*" to="/signin" />
                   )}
                   {userDetails.isLoggedIn ? (
-                    <Redirect exact from="/signin" to="/transferfrom" />
+                    <Redirect exact from="/signin" to="/stats" />
                   ) : (
                     ''
                   )}
@@ -890,6 +847,7 @@ function AppContent() {
                   <Route exact path="/inventory" component={inventoryContent} />
                   <Route exact path="/tradeup" component={TradeupPage} />
                   <Route exact path="/settings" component={settingsPage} />
+                  <Route exact path="/stats" component={OverviewPage} />
                 </toMoveContext.Provider>
               </Switch>
             </Router>

@@ -2,29 +2,25 @@ import StorageFilter from './fromFilters';
 import StorageRow from './fromStorageRow';
 import StorageSelectorContent from './fromSelector';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { sortDataFunction } from '../../shared/inventoryFunctions';
-import { useState } from 'react';
-import { moveFromSetSortOption } from 'renderer/store/actions/moveFromActions';
-import { inventorySetStoragesData } from 'renderer/store/actions/inventoryActions';
-import { BanIcon, FireIcon, SelectorIcon } from '@heroicons/react/solid';
+import {  useSelector } from 'react-redux';
+import { classNames } from '../../shared/filters/inventoryFunctions';
+import { BanIcon, FireIcon } from '@heroicons/react/solid';
+import { RowHeader, RowHeaderCondition, RowHeaderPlain } from '../../Inventory/inventoryRows/headerRows';
+import { searchFilter } from 'renderer/functionsClasses/filters/search';
+import { State } from 'renderer/interfaces/states';
+import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
 
 function StorageUnits() {
-  function classNames(...classes) {
-    return classes.filter(Boolean).join(' ');
-  }
-  const dispatch = useDispatch();
-  const inventory = useSelector((state: any) => state.inventoryReducer);
-  const fromReducer = useSelector((state: any) => state.moveFromReducer);
-  const pricesResult = useSelector((state: any) => state.pricingReducer);
-  const settingsData = useSelector((state: any) => state.settingsReducer);
-  const [getStorage, setStorage] = useState(inventory.storageInventory);
-  const inventoryFilters = useSelector(
-    (state: any) => state.inventoryFiltersReducer
-  );
+  const ReducerClass = new ReducerManager(useSelector);
+  const currentState: State = ReducerClass.getStorage()
+  const inventory = currentState.inventoryReducer
+  const inventoryFilters = currentState.inventoryFiltersReducer
+  const fromReducer = currentState.moveFromReducer
+  const settingsData = currentState.settingsReducer
   function sleep(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
   }
+
   async function ultimateFire() {
     const runIndex = [] as any
     const relevantRows = document.getElementsByClassName(`findRow`);
@@ -65,70 +61,19 @@ function StorageUnits() {
       i++;
     }
   }
-  async function onSortChange(sortValue) {
-    dispatch(moveFromSetSortOption(sortValue));
-    const storageResult = await sortDataFunction(
-      sortValue,
-      inventory.storageInventory,
-      pricesResult.prices,
-      settingsData?.source?.title
-    );
-    dispatch(inventorySetStoragesData(storageResult));
-  }
-  onSortChange;
-  async function storageResult() {
-    let storageResult = await sortDataFunction(
-      fromReducer.sortValue,
-      inventory.storageInventory,
-      pricesResult.prices,
-      settingsData?.source?.title
-    );
 
-    setStorage(storageResult);
+  let storageToUse = inventoryFilters.storageFiltered
+  if (storageToUse.length == 0 && inventoryFilters.storageFilter.length == 0 ) {
+    storageToUse = inventory.storageInventory
   }
 
-  storageResult();
-  if (fromReducer.sortBack == true) {
-    getStorage.reverse();
+
+  let storageFiltered = searchFilter(storageToUse, inventoryFilters, fromReducer)
+
+  if (fromReducer.sortBack) {
+    storageFiltered.reverse()
   }
 
-  let storageFiltered = getStorage.filter(function (row) {
-
-    if (
-      inventoryFilters.categoryFilter.length != 0 ) {
-       if (!inventoryFilters.categoryFilter?.includes(row.bgColorClass)) {
-         return false
-       }
-      }
-    if (
-      row.item_name
-        ?.toLowerCase()
-        .trim()
-        .includes(fromReducer.searchInput?.toLowerCase().trim())
-    ) {
-      return true; // skip
-    }
-    if (
-      row.item_wear_name
-        ?.toLowerCase()
-        .trim()
-        .includes(fromReducer.searchInput?.toLowerCase().trim())
-    ) {
-      return true; // skip
-    }
-    if (
-      row.item_customname
-        ?.toLowerCase()
-        .trim()
-        .includes(fromReducer.searchInput?.toLowerCase().trim())
-    ) {
-      return true; // skip
-    }
-    if (fromReducer.searchInput == undefined) {
-      return true; // skip
-    }
-    return false;
-  });
   return (
     <>
       {/* Storage units */}
@@ -148,112 +93,17 @@ function StorageUnits() {
                   'border-gray-200 sticky'
                 )}
               >
-                <th className="table-cell px-6 py-2 border-b border-gray-200 bg-gray-50 dark:border-opacity-50 dark:bg-dark-level-two text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  <button
-                    onClick={() => onSortChange('Product name')}
-                    className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    <span className="flex justify-between">
-                      Product <SelectorIcon className="h-2" />
-                    </span>
-                  </button>
-                </th>
-                {settingsData.columns.includes('Collections') ?
-                <th className="hidden xl:table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
-                  <button
-                    onClick={() => onSortChange('Collection')}
-                    className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    <span className="flex justify-between">
-                      Collection <SelectorIcon className="h-2" />
-                    </span>
-                  </button>
-                </th> : '' }
-              {settingsData.columns.includes('Price') ?
-                <th className="table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
-                  <button
-                    onClick={() => onSortChange('Price')}
-                    className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    <span className="flex justify-between">
-                      Price <SelectorIcon className="h-2" />
-                    </span>
-                  </button>
-                </th> : '' }
-                {settingsData.columns.includes('Stickers/patches') ?
-                <th className="hidden xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
-                <button
-                  onClick={() => onSortChange('Stickers')}
-                  className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-                >
-                  <span className="flex justify-between">
-                    Stickers/Patches <SelectorIcon className="h-2" />
-                  </span>
-                </button>
-              </th> : ''}
+                <RowHeader headerName='Product' sortName='Product name'/>
+                <RowHeaderCondition headerName='Collection' sortName='Collection' condition='Collections'/>
+                <RowHeaderCondition headerName='Price' sortName='Price' condition='Price'/>
+                <RowHeaderCondition headerName='Stickers/Patches' sortName='Stickers' condition='Stickers/patches'/>
+                <RowHeaderCondition headerName='Float' sortName='wearValue' condition='Float'/>
+                <RowHeaderCondition headerName='Rarity' sortName='Rarity' condition='Rarity'/>
+                <RowHeaderCondition headerName='Storage' sortName='StorageName' condition='Storage'/>
+                <RowHeaderCondition headerName='Tradehold' sortName='tradehold' condition='Tradehold'/>
+                <RowHeader headerName='QTY' sortName='QTY'/>
+                <RowHeaderPlain headerName='Move'/>
 
-              {settingsData.columns.includes('Float') ?
-              <th className="hidden xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
-                  <button
-                    onClick={() => onSortChange('wearValue')}
-                    className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    <span className="flex justify-between">
-                    Float <SelectorIcon className="h-2" />
-                    </span>
-                  </button>
-                </th> : '' }
-                {settingsData.columns.includes('Rarity') ?
-              <th className="hidden xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
-                  <button
-                    onClick={() => onSortChange('Rarity')}
-                    className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    <span className="flex justify-between">
-                    Rarity <SelectorIcon className="h-2" />
-                    </span>
-                  </button>
-                </th> : '' }
-
-
-                {settingsData.columns.includes('Storage') ?
-                <th className="hidden md:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
-                  <button
-                    onClick={() => onSortChange('StorageName')}
-                    className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    <span className="flex justify-between">
-                      Storage <SelectorIcon className="h-2" />
-                    </span>
-                  </button>
-                </th> : '' }
-
-                {settingsData.columns.includes('Tradehold') ?
-                <th className="hidden md:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two  ">
-                  <button
-                    onClick={() => onSortChange('tradehold')}
-                    className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    <span className="flex justify-between">
-                      Tradehold <SelectorIcon className="h-2" />
-                    </span>
-                  </button>
-                </th> : '' }
-                <th className="table-cell px-6 py-2 border-b border-gray-200 bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
-                  <button
-                    onClick={() => onSortChange('QTY')}
-                    className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    <span className="flex justify-between">
-                      QTY <SelectorIcon className="h-2" />
-                    </span>
-                  </button>
-                </th>
-                <th className="hidden md:table-cell px-6 py-2 border-b border-gray-200 bg-gray-50 dark:border-opacity-50 dark:bg-dark-level-two">
-                  <button className="text-gray-500 dark:text-gray-400 pointer-events-none tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400">
-                    Move
-                  </button>
-                </th>
                 <th className="table-cell px-6 py-2 border-b border-gray-200 bg-gray-50  dark:border-opacity-50 dark:bg-dark-level-two text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   <span className="md:hidden">move</span>
                   <div className="flex">

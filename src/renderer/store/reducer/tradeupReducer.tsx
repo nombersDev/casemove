@@ -1,12 +1,14 @@
-const initialState = {
-    tradeUpProducts: [] as any,
-    tradeUpProductsIDS: [] as any,
-    possibleOutcomes: [] as any,
+import { TradeUpActions } from "renderer/interfaces/states";
+
+const initialState: TradeUpActions = {
+    tradeUpProducts: [],
+    tradeUpProductsIDS: [],
+    possibleOutcomes: [],
     searchInput: '',
-    MinFloat: '0',
-    MaxFloat: '1',
-    collections: [] as any,
-    options: ["Hide equipped"] as any,
+    MinFloat: 0,
+    MaxFloat: 1,
+    collections: [],
+    options: ["Hide equipped"],
   };
 
   const tradeUpReducer = (state = initialState, action) => {
@@ -36,7 +38,7 @@ const initialState = {
               tradeUpProductsIDS: newTradeUpIDS,
            }
           }
-      
+
       case 'TRADEUP_ADDREMOVE_COLLECTION':
           let collectionAlreadyExists = state.collections.filter(row => row != action.payload)
           if (collectionAlreadyExists.length == state.collections.length) {
@@ -46,7 +48,7 @@ const initialState = {
             ...state,
             collections: collectionAlreadyExists
           }
-      
+
       case 'TRADEUP_ADDREMOVE_OPTION':
           let optionAlready = state.options.filter(row => row != action.payload)
           if (optionAlready.length == state.options.length) {
@@ -82,7 +84,7 @@ const initialState = {
               collections: state.collections
             }
 
-      
+
 
         case 'SIGN_OUT':
         return {

@@ -35,9 +35,9 @@ export const moveFromsetSearchFieldStorage = (searchField) => {
         }
     }
 }
-export const moveFromSetSortOption = (sortValue) => {
+export const SetSortOption = (sortValue) => {
     return {
-        type: 'MOVE_FROM_SET_SORT',
+        type: 'SET_SORT',
         payload: {
             sortValue: sortValue
         }
@@ -53,7 +53,7 @@ export const moveFromAddCasketToStorages = (casketID) => {
     }
 }
 
-export const moveFromAddRemove = (casketID, itemID, totalItems, itemName) => {
+export const moveFromAddRemove = (casketID: string, itemID: string, totalItems: Array<string>, itemName: string) => {
     return {
         type: 'MOVE_FROM_TOTAL_TO_ADD',
         payload: {

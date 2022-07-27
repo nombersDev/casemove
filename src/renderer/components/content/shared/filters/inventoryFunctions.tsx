@@ -1,13 +1,58 @@
-import itemCategories from './categories';
+import { ItemRow, ItemRowStorage } from 'renderer/interfaces/items';
+import { State } from 'renderer/interfaces/states';
+import { filterInventorySetSort } from 'renderer/store/actions/filtersInventoryActions';
+import {itemCategories, itemSubCategories} from '../categories';
+
+
+
+// Will get the categories
+async function getCategory(toLoopThrough: Array<ItemRow | ItemRowStorage>, additionalObjectToAdd: any = {}) {
+  let returnArray: Array<ItemRow | ItemRowStorage> = [];
+  let itemIdsFiltered: Array<string> = [];
+
+  for (const [_, value] of Object.entries(itemCategories)) {
+    let result = toLoopThrough.filter(itemRow => itemRow.item_url.includes(value.value));
+    result = result.map(function(el) {
+      itemIdsFiltered.push(el.item_id)
+      let o = Object.assign({}, el);
+      o.category = value.name
+      o.bgColorClass = value.bgColorClass
+
+      // Major
+      const majorRegex = new RegExp('(?:' + Object.keys(itemSubCategories.majors).join('|') + ')', 'g')
+      const majorMatch = el.item_name.match(majorRegex);
+      if (majorMatch) {
+        o.major = majorMatch[0]
+      }
+
+      // Additional keys to add
+      for (const [keyToAdd, valueToAdd] of Object.entries(additionalObjectToAdd)) {
+        o[keyToAdd] = valueToAdd
+      }
+      return o;
+    })
+
+
+    returnArray.push(...result)
+  }
+
+  // If any items are left behind - ie doesn't fit in a category, we add it back to the array.
+  if (toLoopThrough.length != returnArray.length) {
+
+    returnArray.push(...toLoopThrough.filter(itemRow => !itemIdsFiltered.includes(itemRow.item_id)));
+  }
+  return returnArray
+
+}
 
 // This will combine the inventory when specific conditions match
-export default function combineInventory(thisInventory, settings) {
+export default function combineInventory(thisInventory: Array<ItemRow | ItemRowStorage>, settings: any, additionalObjectToAdd: any = {}) {
 
   const seenProducts = [] as any;
   const newInventory = [] as any;
 
   for (const [, value] of Object.entries(thisInventory)) {
-    let valued = value as String;
+    let valued = value;
 
     // Create a string that matches the conditions
     let wearName = valued['item_wear_name']  || 0
@@ -27,7 +72,7 @@ export default function combineInventory(thisInventory, settings) {
 
     // Filter the inventory
     if (seenProducts.includes(valueConditions) == false) {
-      length = thisInventory.filter(function (item) {
+      let length = thisInventory.filter(function (item) {
         let wearName = item['item_wear_name']  || 0
         let itemConditions =
           item['item_name'] +
@@ -48,7 +93,7 @@ export default function combineInventory(thisInventory, settings) {
       // Get all ids
       let valuedList = [] as any;
       for (const [, filteredValue] of Object.entries(length)) {
-        let filteredValued = filteredValue as String;
+        let filteredValued = filteredValue
 
         valuedList.push(filteredValued['item_id']);
       }
@@ -62,112 +107,12 @@ export default function combineInventory(thisInventory, settings) {
       seenProducts.push(valueConditions);
     }
   }
-  newInventory.forEach(function (item) {
-    item['bgColorClass'] = 'bg-current';
-    item['category'] = 'None';
-    for (const [key, value] of Object.entries(itemCategories)) {
-      key;
-      if (item['item_url'].includes(value['value'])) {
-        item['bgColorClass'] = value['bgColorClass'];
-        item['category'] = value['name'];
-      }
-    }
-  });
-
-  return newInventory;
+  return getCategory(newInventory, additionalObjectToAdd).then((returnValue) => {
+    return returnValue
+  })
 }
 
-export async function getInventory(getInventoryData, prices, pricingSource, settings) {
-  var unfilteredInventory = await window.electron.ipcRenderer.runCommandTest(3);
-  var combinedInventory = await combineInventory(unfilteredInventory, settings);
-  combinedInventory = await filterInventory(
-    combinedInventory,
-    getInventoryData['filters'],
-    getInventoryData['sort'],
-    prices,
-    pricingSource
-  );
-  combinedInventory.forEach(function (item) {
-    item['bgColorClass'] = 'bg-current';
-    item['category'] = 'None';
-    for (const [key, value] of Object.entries(itemCategories)) {
-      key;
-      if (item['item_url'].includes(value['value'])) {
-        item['bgColorClass'] = value['bgColorClass'];
-        item['category'] = value['name'];
-      }
-    }
-  });
-  return combinedInventory;
-}
-
-export async function getStorageUnitDataReload(storageID, storageName, settings) {
-  let storageResult = await window.electron.ipcRenderer.runCommandTest(
-    2,
-    [],
-    storageID
-  );
-  storageResult = await combineInventory(storageResult, settings);
-  const newStorageData = [] as any;
-  await storageResult.forEach(function (item) {
-    item['bgColorClass'] = 'bg-current';
-    item['category'] = 'None';
-    for (const [, value] of Object.entries(itemCategories)) {
-      if (item['item_url'].includes(value['value'])) {
-        item['bgColorClass'] = value['bgColorClass'];
-        item['category'] = value['name'];
-      }
-    }
-    item['storage_id'] = storageID;
-    item['storage_name'] = storageName;
-    newStorageData.push(item);
-  });
-
-  return newStorageData;
-}
-
-export async function getStorageUnitData(
-  storageID,
-  storageName,
-  prices,
-  pricesRequested,
-  settings
-) {
-  let newStorageData = [] as any;
-  let productsToGet = [] as any;
-  let storageResult = await window.electron.ipcRenderer.getStorageUnitData(
-    storageID, storageName
-  );
-  console.log(storageResult[1])
-  storageResult = storageResult[1];
-
-  storageResult = await combineInventory(storageResult, settings);
-  await storageResult.forEach(function (item) {
-    item['bgColorClass'] = 'bg-current';
-    item['category'] = 'None';
-    for (const [, value] of Object.entries(itemCategories)) {
-      if (item['item_url'].includes(value['value'])) {
-        item['bgColorClass'] = value['bgColorClass'];
-        item['category'] = value['name'];
-      }
-    }
-    item['storage_id'] = storageID;
-    item['storage_name'] = storageName;
-    if (
-      prices[item.item_name] == undefined &&
-      pricesRequested.includes(item.item_name) == false
-    ) {
-      productsToGet.push(item);
-    }
-    newStorageData.push(item);
-  });
-  if (productsToGet.length > 0) {
-    window.electron.ipcRenderer.getPrice(productsToGet);
-  }
-  return [newStorageData, productsToGet];
-}
-
-export async function filterInventory(
+export async function filterInventoryd(
   combinedInventory,
   filtersData,
   sortData,
@@ -251,6 +196,16 @@ export async function filterInventory(
 }
 export function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
+}
+
+// Sort function
+export async function onSortChange(dispatch: Function, currentState: State, sortValue: string) {
+  dispatch(
+    await filterInventorySetSort(
+      currentState,
+      sortValue
+    )
+  );
 }
 
 export async function sortDataFunction(
@@ -396,44 +351,145 @@ export async function sortDataFunction(
   }
 }
 
-export async function downloadReport(storageData) {
-  let csvContent =
-    'Item Name,Item Custom Name,Price,Price Combined,Item Moveable,Storage Name,Tradehold,Category,Combined QTY,Item Wear Name,Item Paint Wear,Item Has Stickers/Patches,Stickers\n';
-  var csv = storageData
-    .map(function (d) {
-      let storageName = d.storage_name;
-      if (storageName == undefined) {
-        storageName = '#Inventory';
-      }
+export function sortDataFunctionTwo(
+  sortValue,
+  inventory,
+  prices,
+  pricingSource
+) {
+  function sortRun(valueOne, ValueTwo, useNaN = false) {
+    if (valueOne == undefined) {
+      valueOne = -90000000000
+    }
+    if (ValueTwo == undefined) {
+      ValueTwo = -90000000000
+    }
+    if (valueOne < ValueTwo) {
+      return -1;
+    }
+    if (valueOne > ValueTwo) {
+      return 1;
+    }
 
-      let stickersData = d.stickers;
-      if (stickersData != []) {
-        let newStickers = [] as any;
-        stickersData.forEach((element) => {
-          newStickers.push(element.sticker_name);
-        });
-        stickersData = newStickers.join(';');
-      }
-      const returnDict = {
-        item_name: d.item_name,
-        item_customname: d.item_customname,
-        price: d.item_price,
-        price_combined: d.item_price_combined,
-        item_moveable: d.item_moveable,
-        storage_name: storageName,
-        trade_unlock: d.trade_unlock,
-        category: d.category,
-        combined_QTY: d.combined_QTY,
-        item_wear_name: d.item_wear_name,
-        item_paint_wear: d.item_paint_wear,
-        item_has_stickers: d.item_has_stickers,
-        item_stickers: stickersData,
-      };
-      return JSON.stringify(Object.values(returnDict));
-    })
-    .join('\n')
-    .replaceAll('null', '')
-    .replace(/(^\[)|(\]$)/gm, '');
-  csv = csvContent + csv;
-  window.electron.ipcRenderer.downloadFile(csv);
+    if (useNaN && isNaN(valueOne)) {
+      return -1;
+    }
+    return 0;
+  }
+  function sortRunAlt(valueOne, ValueTwo) {
+    if (isNaN(valueOne)) {
+      valueOne = -90000000000
+    }
+    if (isNaN(ValueTwo)) {
+      ValueTwo = -90000000000
+    }
+    if (valueOne < ValueTwo) {
+      return -1;
+    }
+    if (valueOne > ValueTwo) {
+      return 1;
+    }
+
+    return 0;
+  }
+
+  // Check
+  if (sortValue == 'Storages') {
+    inventory.sort(function (a, b) {
+      return sortRun(a.item_customname, b.item_customname);
+    });
+    return inventory;
+  }
+  // First sort by Name
+  inventory.sort(function (a, b) {
+    return sortRun(
+      a.item_name.replaceAll('★', '').replaceAll(' ', ''),
+      b.item_name.replaceAll('★', '').replaceAll(' ', '')
+    );
+  });
+  switch (sortValue) {
+    case 'Default':
+      inventory.sort(function (a, b) {
+        return sortRun(a.item_id, b.item_id);
+      });
+      return inventory;
+
+    case 'Category':
+      inventory.sort(function (a, b) {
+        return sortRun(a.category, b.category);
+      });
+      return inventory;
+
+    case 'QTY':
+      inventory.sort(function (a, b) {
+        return -sortRun(a.combined_QTY, b.combined_QTY);
+      });
+      return inventory;
+
+    case 'Price':
+      inventory.sort(function (a, b) {
+        return sortRunAlt(
+          prices[a.item_name  + a.item_wear_name || '']?.[pricingSource] * a.combined_QTY || 1,
+          prices[b.item_name  + b.item_wear_name || '']?.[pricingSource] * b.combined_QTY || 1
+        );
+      });
+      return inventory;
+
+    case 'Stickers':
+      inventory.sort(function (a, b) {
+        return -sortRun(a?.stickers?.length, b?.stickers?.length);
+      });
+      return inventory;
+
+    case 'wearValue':
+      inventory.sort(function (a, b) {
+        return -sortRun(a.item_paint_wear, b.item_paint_wear, true);
+      });
+      return inventory;
+
+    case 'Collection':
+      inventory.sort(function (a, b) {
+        if (b == undefined) {
+          return -1
+        }
+        return sortRun(a.collection?.toLowerCase(), b.collection?.toLowerCase(), true);
+      });
+      return inventory;
+
+    case 'Rarity':
+      inventory.sort(function (a, b) {
+        var valueAToTest = a.rarity;
+        var valueBToTest = b.rarity;
+        if (valueAToTest == undefined) {
+          valueAToTest = 99;
+        }
+
+        if (valueBToTest == undefined) {
+          valueBToTest = 99;
+        }
+
+        return sortRun(valueAToTest, valueBToTest, true);
+      });
+      return inventory;
+
+    case 'StorageName':
+      inventory.sort(function (a, b) {
+        return sortRun(a?.storage_name, b?.storage_name);
+      });
+      return inventory;
+
+    case 'tradehold':
+      const now = new Date();
+      inventory.sort(function (a, b) {
+        return sortRun(
+          a?.trade_unlock?.getTime() - now.getTime(),
+          b?.trade_unlock?.getTime() - now.getTime(),
+          true
+        );
+      });
+      return inventory;
+
+    default:
+      return inventory;
+  }
 }

@@ -1,3 +1,5 @@
+import { ItemRow } from "renderer/interfaces/items"
+
 export const pricing_addPrice = (itemRows) => {
     return {
         type: 'PRICING_ADD_TO',
@@ -24,7 +26,7 @@ export const pricing_add_storage_total = (amountToAdd) => {
   }
 }
 
-export const pricing_add_to_requested = (itemRows) => {
+export const pricing_add_to_requested = (itemRows: Array<ItemRow>) => {
   return {
       type: 'PRICING_ADD_TO_REQUESTED',
       payload: {

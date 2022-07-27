@@ -46,7 +46,7 @@ export default function MoveModal() {
       if (modalData.doCancel.includes(modalData.modalPayload['key']) == false) {
         if (modalData.modalPayload['type'] == 'to') {
 
-          if (fastMode) {
+          if (fastMode  && modalData.query.length > 1) {
             window.electron.ipcRenderer.moveToStorageUnit(
               modalData.modalPayload['storageID'],
               modalData.modalPayload['itemID'],

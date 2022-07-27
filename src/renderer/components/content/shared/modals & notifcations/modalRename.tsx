@@ -3,11 +3,9 @@ import { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeRenameModal } from 'renderer/store/actions/modalMove actions';
+import { classNames } from '../filters/inventoryFunctions';
 
 export default function RenameModal() {
-  function classNames(...classes) {
-    return classes.filter(Boolean).join(' ');
-  }
 
   const dispatch = useDispatch();
   const modalData = useSelector((state: any) => state.modalRenameReducer);

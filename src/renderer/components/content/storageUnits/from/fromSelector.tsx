@@ -1,32 +1,38 @@
 import { Menu, Transition, Switch } from '@headlessui/react';
-import { CheckIcon, DotsVerticalIcon, RefreshIcon, SearchIcon, XIcon } from '@heroicons/react/solid';
+import {
+  CheckIcon,
+  DotsVerticalIcon,
+  RefreshIcon,
+  SearchIcon,
+  XIcon,
+} from '@heroicons/react/solid';
 import { Fragment, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import {
-  addStorageInventoryData,
-  clearStorageIDData,
-} from 'renderer/store/actions/inventoryActions';
+import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
+import { HandleStorageData } from 'renderer/functionsClasses/storageUnits/storageUnitsClass';
+import { getAllStorages } from 'renderer/functionsClasses/storageUnits/storageUnitsFunctions';
+import { ItemRowStorage } from 'renderer/interfaces/items';
+import { clearStorageIDData } from 'renderer/store/actions/inventoryActions';
 import { setRenameModal } from 'renderer/store/actions/modalMove actions';
 import {
   moveFromAddCasketToStorages,
   moveFromRemoveCasket,
+  moveFromReset,
   moveFromSetFull,
   moveFromsetSearchFieldStorage,
 } from 'renderer/store/actions/moveFromActions';
-import { pricing_add_to_requested } from 'renderer/store/actions/pricingActions';
 import { LoadingButton } from '../../shared/animations';
 import EmptyComponent from '../../shared/emptyState';
-import {
-  classNames,
-  getStorageUnitData,
-} from '../../shared/inventoryFunctions';
+import { classNames } from '../../shared/filters/inventoryFunctions';
 import RenameModal from '../../shared/modals & notifcations/modalRename';
 
 function content() {
   const dispatch = useDispatch();
   const fromReducer = useSelector((state: any) => state.moveFromReducer);
+  let ReducerClass = new ReducerManager(useSelector);
 
+  let currentState = ReducerClass.getStorage();
 
   const [getLoadingButton, setLoadingButton] = useState(false);
   const [storageLoading, setStorageLoading] = useState(false);
@@ -37,32 +43,29 @@ function content() {
 
   // Clear all filters
 
+  async function setLoadingSetStorage(valueToSet: boolean) {
+    setLoadingButton(valueToSet);
+    setStorageLoading(valueToSet);
+  }
+
   // This will return and convert a specific units data
-  async function getStorageData(storageID, storageName) {
+  async function getStorageData(storageRow: ItemRowStorage) {
     if (storageLoading == true) {
       return;
     }
-    setLoadingButton(true);
-    setStorageLoading(true);
-    if (fromSelector.activeStorages.includes(storageID)) {
-      dispatch(moveFromAddCasketToStorages(storageID));
-      dispatch(clearStorageIDData(storageID));
-      dispatch(moveFromRemoveCasket(storageID));
+    setLoadingSetStorage(true);
+    if (fromSelector.activeStorages.includes(storageRow.item_id)) {
+      dispatch(moveFromAddCasketToStorages(storageRow.item_id));
+      dispatch(clearStorageIDData(storageRow.item_id));
+      dispatch(moveFromRemoveCasket(storageRow.item_id));
+      setLoadingSetStorage(false);
     } else {
-      dispatch(moveFromAddCasketToStorages(storageID));
-      let storageResult = await getStorageUnitData(storageID, storageName, pricesResult.prices, pricesResult.productsRequested, settingsData);
-      let pricesRequested = storageResult[1]
-      if (pricesRequested.length > 0) {
-        dispatch(pricing_add_to_requested(pricesRequested))
-      }
-      storageResult = storageResult[0]
-
-      dispatch(
-        addStorageInventoryData(storageResult, storageID, fromReducer.sortValue)
-      );
+      new HandleStorageData(dispatch, currentState)
+        .addStorage(storageRow)
+        .then(() => {
+          setLoadingSetStorage(false);
+        });
     }
-    setLoadingButton(false);
-    setStorageLoading(false);
   }
 
   // Get the inventory
@@ -71,66 +74,33 @@ function content() {
   }
 
   // Get all storage unit data
-  
-  async function getAllStorages() {
-    const casketResults = await inventory.inventory.filter(function (row) {
-      if (!row.item_url.includes('casket')) {
-        return false; // skip
-      }
-      if (row.item_storage_total == 0) {
-        return false; // skip
-      }
-      return true;
-    });
-    for (const [_key, project] of Object.entries(casketResults.sort(function (a, b) {
-      let a_customName = a.item_customname
-      let b_customName = b.item_customname
-      if (a_customName == undefined) {
-        a_customName = '0000'
-      }
-      if (b_customName == undefined) {
-        b_customName = '0000'
-      }
-      return sortRun(a_customName, b_customName);
-    }))) {
-      let projectRow = project as any;
-      if (!fromReducer.activeStorages.includes(projectRow.item_id)) {
-        await getStorageData(projectRow.item_id, projectRow.item_customname);
-      }
-    }
+  async function getAllStor() {
+    setLoadingSetStorage(true)
+    getAllStorages(dispatch, currentState).then(() => {
+      setLoadingSetStorage(false)
+    })
   }
 
   // Get all storage unit data
   async function unMarkAllStorages() {
-    console.log('unmark')
-    const casketResults = await inventory.inventory.filter(function (row) {
-      if (!row.item_url.includes('casket')) {
-        return false; // skip
-      }
-      if (row.item_storage_total == 0) {
-        return false; // skip
-      }
-      return true;
-    });
-    for (const [_key, project] of Object.entries(casketResults)) {
-      let projectRow = project as any;
-      if (fromReducer.activeStorages.includes(projectRow.item_id)) {
-        await getStorageData(projectRow.item_id, projectRow.item_customname);
-      }
-    }
+    dispatch(moveFromReset())
   }
 
-
   // Get prices for storage units
-  let totalDict = {} as any
+  let totalDict = {} as any;
   inventory.storageInventory.forEach((projectRow) => {
     if (totalDict[projectRow.storage_id] == undefined) {
-      totalDict[projectRow.storage_id] = 0
+      totalDict[projectRow.storage_id] = 0;
     }
 
-    let pricingAmount = totalDict[projectRow.storage_id]
-    pricingAmount += projectRow.combined_QTY * pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || '']?.[settingsData.source.title] * settingsData.currencyPrice[settingsData.currency]
-    totalDict[projectRow.storage_id] = pricingAmount
+    let pricingAmount = totalDict[projectRow.storage_id];
+    pricingAmount +=
+      projectRow.combined_QTY *
+      pricesResult.prices[
+        projectRow.item_name + projectRow.item_wear_name || ''
+      ]?.[settingsData.source.title] *
+      settingsData.currencyPrice[settingsData.currency];
+    totalDict[projectRow.storage_id] = pricingAmount;
   });
 
   // Sort run
@@ -150,69 +120,63 @@ function content() {
 
   let inventoryToUse = inventory.inventory;
 
-
-
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <RenameModal />
       <div className="border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between ">
-      <div className='flex items-center' >
-        <h2 className="text-gray-500 text-xs font-medium uppercase mr-3 tracking-wide">
-          Storage units
-        </h2>
-        <label htmlFor="search" className="sr-only">
-              Search storages
-            </label>
-            <div className="relative rounded-md dark:border-opacity-50 border-gray-200 border-l-2 focus:outline-none focus:outline-none">
-              <div
-                className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+        <div className="flex items-center">
+          <h2 className="text-gray-500 text-xs font-medium uppercase mr-3 tracking-wide">
+            Storage units
+          </h2>
+          <label htmlFor="search" className="sr-only">
+            Search storages
+          </label>
+          <div className="relative rounded-md dark:border-opacity-50 border-gray-200 border-l-2 focus:outline-none focus:outline-none">
+            <div
+              className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+              aria-hidden="true"
+            >
+              <SearchIcon
+                className="mr-3 h-4 w-4 text-gray-400"
                 aria-hidden="true"
-              >
-                <SearchIcon
-                  className="mr-3 h-4 w-4 text-gray-400"
-                  aria-hidden="true"
-                />
-              </div>
-              <input
-                type="text"
-                name="search"
-                id="search"
-                value={fromSelector.searchInputStorage}
-                className="block w-full pb-0.5  focus:outline-none dark:text-dark-white pl-9 sm:text-sm border-gray-300 h-7 dark:bg-dark-level-one dark:rounded-none dark:bg-dark-level-one dark:rounded-none"
-                placeholder="Search storages"
-                spellCheck="false"
-                onChange={(e) =>
-                  dispatch(moveFromsetSearchFieldStorage(e.target.value))
-                }
               />
             </div>
+            <input
+              type="text"
+              name="search"
+              id="search"
+              value={fromSelector.searchInputStorage}
+              className="block w-full pb-0.5  focus:outline-none dark:text-dark-white pl-9 sm:text-sm border-gray-300 h-7 dark:bg-dark-level-one dark:rounded-none dark:bg-dark-level-one dark:rounded-none"
+              placeholder="Search storages"
+              spellCheck="false"
+              onChange={(e) =>
+                dispatch(moveFromsetSearchFieldStorage(e.target.value))
+              }
+            />
+          </div>
         </div>
         <div className="mt-4 flex items-center sm:mt-0 sm:ml-4">
           <Link
             to=""
             type="button"
-            onClick={() => getAllStorages()}
+            onClick={() => getAllStor()}
             className="focus:outline-none focus:bg-dark-level-four order-1 ml-3  order-1 inline-flex items-center px-4 py-2 hover:border hover:shadow-sm dark:hover:bg-dark-level-four  text-sm font-medium rounded-md text-gray-700  hover:bg-gray-50 sm:order-0 sm:ml-0"
-
           >
-
             <CheckIcon
-                    className=" h-4 w-4 text-gray-700 dark:text-dark-white "
-                    aria-hidden="true"
-                  />
+              className=" h-4 w-4 text-gray-700 dark:text-dark-white "
+              aria-hidden="true"
+            />
           </Link>
           <Link
             to=""
             type="button"
             onClick={() => unMarkAllStorages()}
             className="focus:outline-none focus:bg-dark-level-four order-1 ml-3  order-1 inline-flex items-center px-4 py-2 hover:border hover:shadow-sm dark:hover:bg-dark-level-four  text-sm font-medium rounded-md text-gray-700  hover:bg-gray-50 sm:order-0 sm:ml-0"
-
           >
-
             <XIcon
-                    className="h-4 w-4 text-gray-700 dark:text-dark-white"
-                    aria-hidden="true"
-                  />
+              className="h-4 w-4 text-gray-700 dark:text-dark-white"
+              aria-hidden="true"
+            />
           </Link>
 
           <Link
@@ -237,7 +201,9 @@ function content() {
             checked={fromReducer.hideFull}
             onChange={() => dispatch(moveFromSetFull())}
             className={classNames(
-              fromReducer.hideFull ? 'bg-indigo-600 dark:bg-indigo-700' : 'bg-gray-200',
+              fromReducer.hideFull
+                ? 'bg-indigo-600 dark:bg-indigo-700'
+                : 'bg-gray-200',
               'relative inline-flex mr-3 flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none'
             )}
           >
@@ -289,7 +255,6 @@ function content() {
               </span>
             </span>
           </Switch>
-         
         </div>
       </div>
       {inventoryToUse.filter(function (row) {
@@ -299,7 +264,12 @@ function content() {
         if (row.item_storage_total == 0) {
           return false; // skip
         }
-        if (fromSelector.searchInputStorage != '' && !row?.item_customname?.toLowerCase()?.includes(fromSelector.searchInputStorage)) {
+        if (
+          fromSelector.searchInputStorage != '' &&
+          !row?.item_customname
+            ?.toLowerCase()
+            ?.includes(fromSelector.searchInputStorage)
+        ) {
           return false; // skip
         }
         if (row.item_storage_total == 1000 && fromReducer.hideFull) {
@@ -319,21 +289,27 @@ function content() {
               if (row.item_storage_total == 0) {
                 return false; // skip
               }
-              if (fromSelector.searchInputStorage != '' && !row?.item_customname?.toLowerCase()?.includes(fromSelector.searchInputStorage)) {
+              if (
+                fromSelector.searchInputStorage != '' &&
+                !row?.item_customname
+                  ?.toLowerCase()
+                  ?.includes(fromSelector.searchInputStorage)
+              ) {
                 return false; // skip
               }
               if (row.item_storage_total == 1000 && fromReducer.hideFull) {
                 return false; // skip
               }
               return true;
-            }).sort(function (a, b) {
-              let a_customName = a.item_customname
-              let b_customName = b.item_customname
+            })
+            .sort(function (a, b) {
+              let a_customName = a.item_customname;
+              let b_customName = b.item_customname;
               if (a_customName == undefined) {
-                a_customName = '0000'
+                a_customName = '0000';
               }
               if (b_customName == undefined) {
-                b_customName = '0000'
+                b_customName = '0000';
               }
               return sortRun(a_customName, b_customName);
             })
@@ -352,16 +328,14 @@ function content() {
                   className={classNames(
                     project.item_customname != null ? '' : 'pointer-events-none'
                   )}
-                  onClick={() =>
-                    getStorageData(project.item_id, project.item_customname)
-                  }
+                  onClick={() => getStorageData(project)}
                   key={project.item_id}
                 >
                   <div
                     className={classNames(
                       fromSelector.activeStorages.includes(project.item_id)
-                          ? 'border-green-300 '
-                          : 'border-gray-200 ',
+                        ? 'border-green-300 '
+                        : 'border-gray-200 ',
                       'flex-shrink-0 h-full  flex items-center justify-center w-16 dark:border-opacity-50 text-white border-t border-l border-b rounded-l-md dark:bg-dark-level-two'
                     )}
                   >
@@ -380,17 +354,17 @@ function content() {
                     />
                   </div>
                 </Link>
-                <div className={classNames(
-                        fromSelector.activeStorages.includes(project.item_id)
-                          ? 'border-green-300'
-                          : 'border-gray-200',
-                        'flex-1 dark:bg-dark-level-two dark:border-opacity-50 flex items-center justify-between border-t border-r border-b bg-white rounded-r-md truncate'
-                      )}>
+                <div
+                  className={classNames(
+                    fromSelector.activeStorages.includes(project.item_id)
+                      ? 'border-green-300'
+                      : 'border-gray-200',
+                    'flex-1 dark:bg-dark-level-two dark:border-opacity-50 flex items-center justify-between border-t border-r border-b bg-white rounded-r-md truncate'
+                  )}
+                >
                   <Link
                     to=""
-                    onClick={() =>
-                      getStorageData(project.item_id, project.item_customname)
-                    }
+                    onClick={() => getStorageData(project)}
                     className={classNames(
                       project.item_customname != null
                         ? ''
@@ -424,7 +398,14 @@ function content() {
                       )}
                       <p className="text-gray-500">
                         {project.item_storage_total} Items
-                        {totalDict[project.item_id] != undefined ? ' | ' +new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency, minimumFractionDigits: 0 }).format(totalDict[project.item_id].toFixed(0)): project.storage_id}
+                        {totalDict[project.item_id] != undefined
+                          ? ' | ' +
+                            new Intl.NumberFormat(settingsData.locale, {
+                              style: 'currency',
+                              currency: settingsData.currency,
+                              minimumFractionDigits: 0,
+                            }).format(totalDict[project.item_id].toFixed(0))
+                          : project.storage_id}
                       </p>
                     </div>
                   </Link>

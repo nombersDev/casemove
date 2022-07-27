@@ -2,24 +2,26 @@ import { Fragment } from 'react'
 import {  Popover, Transition } from '@headlessui/react'
 import { useDispatch, useSelector } from 'react-redux';
 import { tradeUpCollectionsAddRemove } from 'renderer/store/actions/tradeUpActions';
-import { classNames } from 'renderer/components/content/shared/inventoryFunctions';
+import { classNames } from 'renderer/components/content/shared/filters/inventoryFunctions';
+import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
+import { State } from 'renderer/interfaces/states';
 
 export default function CollectionsDropDown() {
-
-  const tradeUpData = useSelector((state: any) => state.tradeUpReducer);
-  const inventory = useSelector((state: any) => state.inventoryReducer);
-
-  const inventoryFilters = useSelector(
-    (state: any) => state.inventoryFiltersReducer
-  );
+  const currentState: State = new ReducerManager(useSelector).getStorage()
+  const tradeUpData = currentState.tradeUpReducer;
+  const inventory = currentState.inventoryReducer
+  const inventoryFilters = currentState.inventoryFiltersReducer;
   const dispatch = useDispatch();
-  dispatch
-  let inventoryToUse = [...inventory.inventory];
+
+  let inventoryToUse = [...inventory.inventory, ...inventory.storageInventoryRaw] as any;
   let collections = [...tradeUpData.collections] as any;
 
 
   inventoryToUse = inventoryToUse.filter(function (item) {
     if (!item.tradeUpConfirmed) {
+      return false;
+    }
+    if (item.item_paint_wear == undefined) {
       return false;
     }
     if (tradeUpData.MinFloat > item.item_paint_wear || tradeUpData.MaxFloat < item.item_paint_wear) {

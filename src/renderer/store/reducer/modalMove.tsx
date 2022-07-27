@@ -1,10 +1,16 @@
-const initialState = {
+import { ModalMove } from "renderer/interfaces/states";
+
+const initialState: ModalMove = {
     moveOpen: false,
     notifcationOpen: false,
-    storageIdsToClearFrom: [] as any,
-    modalPayload: {},
-    doCancel: [] as any,
-    query: [] as any,
+    storageIdsToClearFrom: [],
+    modalPayload: {
+      number: 0,
+      itemID: '',
+      isLast: false
+    },
+    doCancel: [],
+    query: [],
     totalFailed: 0
   };
 

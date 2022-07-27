@@ -1,11 +1,23 @@
-const initialState = {
+import { Settings } from "renderer/interfaces/states";
+
+const initialState: Settings = {
   fastMove: false,
   currency: 'USD',
   locale: 'EN-GB',
   os: '',
   devmode: false,
   columns: ["Price", "Stickers/patches", "Storage", "Tradehold", 'Moveable', 'Inventory link'],
-  currencyPrice: {}
+  currencyPrice: {},
+  source: {
+    title: 'steam_listing',
+    name: 'Steam Community Market',
+    avatar: 'https://steamcommunity.com/favicon.ico'
+  },
+  overview: {
+    by: 'price',
+    chartleft: 'overall',
+    chartRight: 'itemDistribution'
+  }
 };
 
 const settingsReducer = (state = initialState, action) => {
@@ -50,6 +62,11 @@ const settingsReducer = (state = initialState, action) => {
         ...state,
         devmode: action.payload,
       };
+      case 'SETTINGS_SET_OVERVIEW':
+        return {
+          ...state,
+          overview: action.payload,
+        };
       case 'SETTINGS_ADD_CURRENCYPRICE':
         let currencyDict = state.currencyPrice
         currencyDict[action.payload.currency] = action.payload.rate

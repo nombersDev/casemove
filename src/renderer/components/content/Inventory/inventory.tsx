@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import InventoryFilters from './inventoryFilters';
+import InventoryFilters from './filterHeader';
 import InventoryRowsComponent from './inventoryRows';
 import { useState } from 'react';
 import { LoadingButton } from '../shared/animations';

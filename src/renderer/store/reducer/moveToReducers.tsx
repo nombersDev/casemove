@@ -1,9 +1,11 @@
-const initialState = {
+import { MoveToReducer } from "renderer/interfaces/states";
+
+const initialState: MoveToReducer = {
     doHide: false,
     hideFull: true,
-    activeStorages: [] as any,
+    activeStorages: [],
     activeStoragesAmount: 0,
-    totalToMove: [] as any,
+    totalToMove: [],
     totalItemsToMove: 0,
     searchInput: '',
     searchInputStorage: '',
@@ -18,13 +20,13 @@ const initialState = {
           return {
               ...state,
               doHide: !state.doHide
-           } 
-      
+           }
+
       case 'MOVE_TO_SET_FULL':
           return {
               ...state,
               hideFull: !state.hideFull
-           } 
+           }
       case 'MOVE_TO_ADD_TO':
         // Add to or remove from active storages
         console.log(action.payload.casketID)
@@ -42,11 +44,11 @@ const initialState = {
             ...state,
             activeStorages: chosenActiveCopy,
             activeStoragesAmount: storageAmount
-            
+
         }
-       case 'MOVE_TO_TOTAL_TO_ADD': 
+       case 'MOVE_TO_TOTAL_TO_ADD':
         let toMoveAlreadyExists = state.totalToMove.filter(row => row[0] != action.payload.itemID)
-        
+
         if (action.payload.toMove.length > 0) {
             toMoveAlreadyExists.push([action.payload.itemID, action.payload.casketID, action.payload.toMove, action.payload.itemName])
         }
@@ -60,9 +62,9 @@ const initialState = {
             totalItemsToMove: newTotalItemsToMove
         }
 
-        case 'SET_STORAGE_AMOUNT': 
+        case 'SET_STORAGE_AMOUNT':
         return {
-          ...state, 
+          ...state,
           activeStoragesAmount: action.payload.storageAmount
         }
 
@@ -70,17 +72,17 @@ const initialState = {
           return {
               ...state,
               searchInput: action.payload.searchField
-           } 
-        
+           }
+
         case 'MOVE_TO_SET_SEARCH_STORAGE':
           return {
               ...state,
               searchInputStorage: action.payload.searchField
-           } 
-        case 'MOVE_TO_SET_SORT':
+           }
+        case 'SET_SORT':
           if (state.sortValue == action.payload.sortValue) {
             return {
-              ...state, 
+              ...state,
               sortBack: !state.sortBack
             }
           } else {
@@ -88,7 +90,7 @@ const initialState = {
               ...state,
               sortValue: action.payload.sortValue,
               sortBack: initialState.sortBack
-           } 
+           }
           }
         case 'MOVE_TO_CLEAR_ALL':
           return {
@@ -97,23 +99,23 @@ const initialState = {
               totalItemsToMove: 0,
               searchInput: '',
               sortValue: 'Default'
-           } 
+           }
         case 'DO_CANCEL':
-            
+
           return {
               ...state,
               doCancel: action.payload.doCancel
-           } 
-        case 'SIGN_OUT': 
+           }
+        case 'SIGN_OUT':
             return {
           ...initialState
         }
 
 
-        
+
       default:
         return {...state}
-      
+
     }
   };
 

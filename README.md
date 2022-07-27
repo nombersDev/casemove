@@ -4,14 +4,14 @@
 
 ----
 
-## Download Latest Version (Casemove 1.6.6)
+## Download Latest Version (Casemove 2.0.0)
 
 This is the latest stable version and can be downloaded from the [releases](https://github.com/nombersDev/casemove/releases) page, or directly from:
 
-- [Windows - (Casemove-1.6.6)](https://github.com/nombersDev/casemove/releases/download/1.6.6/Casemove.Setup.1.6.6.exe)
-- [Mac - (Casemove-1.6.6)](https://github.com/nombersDev/casemove/releases/download/1.6.6/Casemove-1.6.6.dmg)
-- [Mac ARM 64 (M1) - (Casemove-1.6.6)](https://github.com/nombersDev/casemove/releases/download/1.6.6/Casemove-1.6.6-arm64.dmg)
-- [Linux AppImage - (Casemove-1.6.6)](https://github.com/nombersDev/casemove/releases/download/1.6.6/casemove-1.6.6.zip)
+- [Windows - (Casemove-2.0.0)](https://github.com/nombersDev/casemove/releases/download/2.0.0/Casemove.Setup.2.0.0.exe)
+- [Mac - (Casemove-2.0.0)](https://github.com/nombersDev/casemove/releases/download/2.0.0/Casemove-2.0.0.dmg)
+- [Mac ARM 64 (M1) - (Casemove-2.0.0)](https://github.com/nombersDev/casemove/releases/download/2.0.0/Casemove-2.0.0-arm64.dmg)
+- [Linux AppImage - (Casemove-2.0.0)](https://github.com/nombersDev/casemove/releases/download/2.0.0/casemove-2.0.0.zip)
 
 Install the Linux version by unzipping the contents of the zip-file into a folder and click on the AppImage file. 
 
@@ -24,7 +24,7 @@ https://user-images.githubusercontent.com/98760010/160420993-c62435b7-8962-4c32-
 
 
 Features include:
-
+  * An overview page of your storage contentsn
   * Log in without entering your password / Steam Guard
   * View your inventory
   * View your storage units contents
@@ -82,7 +82,7 @@ The browser login feature works by you logging in to the regular Steam website w
 
 #### Where can I read more about the safety?
 
-Casemove is comparable to the software "Archi Steam Farm" and since Archi has made a terric wiki on this issue, I'd refer over this wiki for further [reading](https://github.com/JustArchiNET/ArchiSteamFarm/wiki/FAQ#security--privacy--vac--bans--tos)
+Casemove is comparable to the software "Archi Steam Farm" and since Archi has made a terrific wiki on this issue, I'd refer over this wiki for further [reading](https://github.com/JustArchiNET/ArchiSteamFarm/wiki/FAQ#security--privacy--vac--bans--tos)
 
 As with anything, It's important to know that the using this software is distributed "as is" and without any warranty. 
 

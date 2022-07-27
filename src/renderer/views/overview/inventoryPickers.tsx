@@ -2,9 +2,11 @@ import { BeakerIcon, PencilIcon, SelectorIcon, TagIcon } from '@heroicons/react/
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { classNames } from 'renderer/components/content/shared/inventoryFunctions';
+import { classNames, onSortChange } from 'renderer/components/content/shared/filters/inventoryFunctions';
 import itemRarities from 'renderer/components/content/shared/rarities';
-import { filterInventorySetSort } from 'renderer/store/actions/filtersInventoryActions';
+import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
+import { State } from 'renderer/interfaces/states';
+//import { sortDataFunction } from 'renderer/context/inventoryFiltersContext';
 import { setRenameModal } from 'renderer/store/actions/modalMove actions';
 import { pricing_add_to_requested } from 'renderer/store/actions/pricingActions';
 import { tradeUpAddRemove } from 'renderer/store/actions/tradeUpActions';
@@ -13,34 +15,44 @@ import { tradeUpAddRemove } from 'renderer/store/actions/tradeUpActions';
 function content() {
   const [stickerHover, setStickerHover] = useState('');
   const [itemHover, setItemHover] = useState('');
-  const inventory = useSelector((state: any) => state.inventoryReducer);
-  const inventoryFilters = useSelector(
-    (state: any) => state.inventoryFiltersReducer
-  );
-  const pricesResult = useSelector((state: any) => state.pricingReducer);
-  const settingsData = useSelector((state: any) => state.settingsReducer);
-  const tradeUpData = useSelector((state: any) => state.tradeUpReducer);
+  const ReducerClass = new ReducerManager(useSelector)
+  const currentState: State = ReducerClass.getStorage()
+  const inventory = currentState.inventoryReducer;
+  const inventoryFilters = currentState.inventoryFiltersReducer;
+  const pricesResult = currentState.pricingReducer;
+  const settingsData = currentState.settingsReducer;
+  const tradeUpData = currentState.tradeUpReducer;
 
   const dispatch = useDispatch();
 
-  // Sort function
-  async function onSortChange(sortValue) {
-    dispatch(
-      await filterInventorySetSort(
-        inventory.inventory,
-        inventory.combinedInventory,
-        inventoryFilters,
-        sortValue,
-        pricesResult.prices,
-        settingsData?.source?.title
-      )
-    );
-  }
+  
 
-  let inventoryToUse = [...inventory.inventory];
+  // Convert to dict for easier match
+    let finalList = {};
+    inventory.inventory.forEach(element => {
+      if (finalList[element.item_name] == undefined) {
+        finalList[element.item_name] = [element]
+      }
+      else {
+        let listToUse = finalList[element.item_name];
+        listToUse.push(element)
+        finalList[element.item_name] = listToUse
+
+      }
+    });
+
+    // Inventory to use
+    let finalInventoryToUse = [] as any;
+    let seenNames = [] as any;
+    inventoryFilters.inventoryFiltered.forEach((projectRow) => {
+      if (finalList[projectRow.item_name] != undefined && seenNames.includes(projectRow.item_name) == false) {
+        finalInventoryToUse = [...finalInventoryToUse, ...finalList[projectRow.item_name]]
+        seenNames.push(projectRow.item_name)
+      }
+    })
 
 
-  inventoryToUse = inventoryToUse.filter(function (item) {
+    finalInventoryToUse = finalInventoryToUse.filter(function (item) {
     if (!item.tradeUpConfirmed) {
       return false;
     }
@@ -79,7 +91,7 @@ function content() {
   itemRarities.forEach(element => {
     itemR[element.value] = element.bgColorClass
   });
-  inventoryToUse.forEach(element => {
+  finalInventoryToUse.forEach(element => {
     element['rarityColor'] =itemR[element.rarityName]
   });
 
@@ -87,7 +99,7 @@ function content() {
 
   // Prices
   let pricesToGet = [] as any;
-  inventoryToUse.forEach((projectRow) => {
+  finalInventoryToUse.forEach((projectRow) => {
     if (
       pricesResult.prices[projectRow.item_name + projectRow.item_wear_name || ''] == undefined &&
       pricesResult.productsRequested.includes(projectRow.item_name + projectRow.item_wear_name || '') == false
@@ -100,11 +112,73 @@ function content() {
     dispatch(pricing_add_to_requested(pricesToGet));
   }
 
-  // Is it full ?
-  const isFull = tradeUpData.tradeUpProducts.length == 10
-  if (inventoryFilters.sortBack) {
-    inventoryToUse.reverse()
+
+  function sortRun(valueOne, ValueTwo, useNaN = false) {
+    if (valueOne == undefined) {
+      valueOne = -90000000000
+    }
+    if (ValueTwo == undefined) {
+      ValueTwo = -90000000000
+    }
+    if (valueOne < ValueTwo) {
+      return -1;
+    }
+    if (valueOne > ValueTwo) {
+      return 1;
+    }
+
+    if (useNaN && isNaN(valueOne)) {
+      return -1;
+    }
+    return 0;
   }
+
+  // SORT Fix for prices
+    function sortRunAlt(valueOne, ValueTwo) {
+      if (isNaN(valueOne)) {
+        valueOne = -90000000000
+      }
+      if (isNaN(ValueTwo)) {
+        ValueTwo = -90000000000
+      }
+      if (valueOne < ValueTwo) {
+        return -1;
+      }
+      if (valueOne > ValueTwo) {
+        return 1;
+      }
+
+      return 0;
+    }
+
+
+
+
+    if (inventoryFilters.sortValue == 'Price'){
+      finalInventoryToUse.sort(function (a, b) {
+        return sortRunAlt(
+          pricesResult.prices[a.item_name  + a.item_wear_name || '']?.[settingsData?.source?.title],
+          pricesResult.prices[b.item_name  + b.item_wear_name || '']?.[settingsData?.source?.title]
+        );
+      });
+  }
+  if (inventoryFilters.sortValue == 'wearValue'){
+    finalInventoryToUse.sort(function (a, b) {
+      return -sortRun(a.item_paint_wear, b.item_paint_wear, true);
+    });
+}
+if (inventoryFilters.sortValue == 'Stickers'){
+  finalInventoryToUse.sort(function (a, b) {
+    return -sortRun(a?.stickers?.length, b?.stickers?.length);
+  });
+}
+const isFull = tradeUpData.tradeUpProducts.length == 10
+    if (inventoryFilters.sortBack) {
+      finalInventoryToUse.reverse()
+    }
+
+
+
 
 
   return (
@@ -119,7 +193,7 @@ function content() {
           >
             <th className="table-cell px-6 py-2 border-b border-gray-200 bg-gray-50 dark:border-opacity-50 dark:bg-dark-level-two text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               <button
-                onClick={() => onSortChange('Product name')}
+                onClick={() => onSortChange(dispatch,currentState, 'Product name')}
                 className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
               >
                 <span className="flex justify-between">
@@ -129,7 +203,7 @@ function content() {
             </th>
             <th className="hidden xl:table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
               <button
-                onClick={() => onSortChange('Collection')}
+                onClick={() => onSortChange(dispatch,currentState, 'Collection')}
                 className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
               >
                 <span className="flex justify-between">
@@ -140,7 +214,7 @@ function content() {
 
             <th className="hidden xl:table-cell px-6 py-2 border-b border-gray-200 pointer-events-auto bg-gray-50 text-center dark:border-opacity-50 dark:bg-dark-level-two">
               <button
-                onClick={() => onSortChange('Price')}
+                onClick={() => onSortChange(dispatch,currentState, 'Price') }
                 className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
               >
                 <span className="flex justify-between">
@@ -151,7 +225,7 @@ function content() {
 
             <th className="hidden 2xl:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
               <button
-                onClick={() => onSortChange('Stickers')}
+                onClick={() => onSortChange(dispatch,currentState, 'Stickers')  }
                 className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
               >
                 <span className="flex justify-between">
@@ -162,7 +236,7 @@ function content() {
 
             <th className="hidden lg:table-cell px-6 py-2 border-b bg-gray-50 border-gray-200 dark:border-opacity-50 dark:bg-dark-level-two">
               <button
-                onClick={() => onSortChange('wearValue')}
+                onClick={() => onSortChange(dispatch,currentState, 'wearValue')}
                 className="text-gray-500 dark:text-gray-400 tracking-wider uppercase text-center text-xs font-medium text-gray-500 dark:text-gray-400"
               >
                 <span className="flex justify-between">
@@ -178,7 +252,7 @@ function content() {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-100 dark:bg-dark-level-one dark:divide-gray-500">
-          {inventoryToUse.map((projectRow) => (
+          {finalInventoryToUse.map((projectRow) => (
             <tr
               key={projectRow.item_id}
               className={classNames(

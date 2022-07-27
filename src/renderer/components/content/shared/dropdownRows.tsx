@@ -3,7 +3,7 @@ import { Menu, Transition, Popover } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/solid';
 import { useDispatch, useSelector } from 'react-redux';
 import { setColumns } from 'renderer/store/actions/settings';
-import { classNames } from './inventoryFunctions';
+import { classNames } from './filters/inventoryFunctions';
 import { moveFromReset } from 'renderer/store/actions/moveFromActions';
 
 const columns = [
