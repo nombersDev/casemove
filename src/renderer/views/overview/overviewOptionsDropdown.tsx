@@ -14,7 +14,7 @@ interface params {
 }
 
 export default function ListBoxOptions({optionsObject, keyToUse}: params) {
-    
+
     const dispatch = useDispatch();
     const ReducerClass = new ReducerManager(useSelector);
     const settingsData: Settings = ReducerClass.getStorage(ReducerClass.names.settings)
@@ -49,14 +49,14 @@ export default function ListBoxOptions({optionsObject, keyToUse}: params) {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+              <Listbox.Options className="absolute z-10 mt-1 w-full bg-dark-level-three shadow-lg max-h-60 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
                 {Object.entries(optionsObject).map(([key, name]: any) => (
                   <Listbox.Option
                     key={name}
                     className={({ active }) =>
                       classNames(
-                        active ? 'text-white bg-indigo-600' : 'text-gray-900',
-                        'cursor-default select-none relative py-2 pl-3 pr-9'
+                        active ? 'bg-dark-level-four' : '',
+                        'cursor-default select-none text-dark-white relative py-2 pl-3 pr-9'
                       )
                     }
                     value={key}
@@ -70,7 +70,7 @@ export default function ListBoxOptions({optionsObject, keyToUse}: params) {
                         {selected ? (
                           <span
                             className={classNames(
-                              active ? 'text-white' : 'text-indigo-600',
+                              active ? 'text-dark-white' : 'text-dark-white',
                               'absolute inset-y-0 right-0 flex items-center pr-4'
                             )}
                           >
