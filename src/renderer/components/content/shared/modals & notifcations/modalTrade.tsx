@@ -18,6 +18,7 @@ import { tradeUpAddRemove } from 'renderer/store/actions/tradeUpActions';
 import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
 import { State } from 'renderer/interfaces/states';
 import { moveFromReset } from 'renderer/store/actions/moveFromActions';
+import { ConvertPricesFormatted } from 'renderer/functionsClasses/prices';
 setTradeConfirm
 export default function TradeModal() {
   let currentState: State = new ReducerManager(useSelector).getStorage();
@@ -26,6 +27,8 @@ export default function TradeModal() {
   const modalData = currentState.modalTradeReducer
   const pricesResult = currentState.pricingReducer
   const inventory = currentState.inventoryReducer
+
+  const pricesFormat = new ConvertPricesFormatted(settingsData, pricesResult)
 
 
 
@@ -63,7 +66,7 @@ export default function TradeModal() {
       if (tradeUpData.tradeUpProducts[0]?.stattrak) {
         rarityToUse += 10
       }
-      let idsToGet = [] as any
+      let idsToGet = [...tradeUpData.tradeUpProductsIDS] as any
       inventory.inventory.forEach(element => {
         idsToGet.push(element.item_id)
       });
@@ -170,15 +173,7 @@ export default function TradeModal() {
 
                             <div className="flex justify-between">
                               <p className="text-gray-400 dark:text-gray-500">
-                                {new Intl.NumberFormat(settingsData.locale, {
-                                  style: 'currency',
-                                  currency: settingsData.currency,
-                                }).format(
-                                  pricesResult.prices[project.item_name + project.item_wear_name || '']?.[
-                                  settingsData?.source?.title
-                                  ] *
-                                  settingsData.currencyPrice[settingsData.currency]
-                                )}
+                                {pricesFormat.getFormattedPrice(project)}
 
                               </p>
                               <p className="text-gray-400 dark:text-gray-500">

@@ -9,14 +9,14 @@ import {
   PresentationChartLineIcon,
   TagIcon,
 } from '@heroicons/react/solid';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   HashRouter as Router,
   Route
 } from 'react-router-dom';
 import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
 import { State } from 'renderer/interfaces/states';
-import { ConvertPrices } from 'renderer/functionsClasses/prices';
+import { ConvertPrices, RequestPrices } from 'renderer/functionsClasses/prices';
 import { downloadReport } from 'renderer/functionsClasses/downloadReport';
 import { LoadButton } from 'renderer/components/content/loadStorageUnitsButton';
 import ListBoxOptions from './overviewOptionsDropdown';
@@ -45,6 +45,12 @@ function Content() {
   } else if (hr >= 0 && hr <= 3) {
     goodMessage = 'Wassup';
   }
+  const dispatch = useDispatch()
+
+  
+  let PricingRequest = new RequestPrices(dispatch, settingsData, currentState.pricingReducer)
+  PricingRequest.handleRequestArray(currentState.inventoryReducer.inventory)
+
 
 
   // Inventory prices
