@@ -17,7 +17,7 @@ export class HandleStorageData {
     this.state = state;
   }
 
-  async addStorage(storageRow: ItemRow) {
+  async addStorage(storageRow: ItemRow, addArray: Array<ItemRow> = []) {
     // Adding the casket ID
     this.dispatch(moveFromAddCasketToStorages(storageRow.item_id));
 
@@ -29,8 +29,11 @@ export class HandleStorageData {
       this.state.pricingReducer
     );
     ClassRequest.handleRequestArray(storageResult.combinedStorages);
+    if (addArray.length == 0) {
+      addArray = this.state.inventoryReducer.storageInventory
+    }
     let filteredStorage = await filterItemRows(
-      [...this.state.inventoryReducer.storageInventory, ...storageResult.combinedStorages],
+      [...addArray, ...storageResult.combinedStorages],
       this.state.inventoryFiltersReducer.storageFilter
     );
     filteredStorage = await sortDataFunction(
@@ -49,6 +52,7 @@ export class HandleStorageData {
         this.state.moveFromReducer.sortValue
       )
     );
+    return storageResult.combinedStorages
   }
 
   // Get storage unit

@@ -53,11 +53,14 @@ export async function getAllStorages(
 
   async function sendArrayAddStorage(returnValue: Array<any>) {
     let StorageClass = new HandleStorageData(dispatch, state)
+    let addArray: Array<ItemRow> = []
     for (const [_key, project] of Object.entries(returnValue)) {
       if (!state.moveFromReducer.activeStorages.includes(project.item_id)) {
-        await StorageClass.addStorage(
-          project as ItemRowStorage
-        );
+        addArray = [...addArray, ...await StorageClass.addStorage(
+          project as ItemRowStorage,
+          addArray
+
+        )]
       }
     }
     return

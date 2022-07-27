@@ -74,6 +74,8 @@ const inventoryFiltersReducer = (state = initialState, action) => {
       return {
         ...state,
         categoryFilter: initialState.categoryFilter,
+        storageFiltered: initialState.storageFiltered,
+        storageFilter: initialState.storageFilter
       };
 
     case 'MOVE_FROM_CLEAR_ALL':
