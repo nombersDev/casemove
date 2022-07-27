@@ -23,6 +23,7 @@ import { searchFilter } from 'renderer/functionsClasses/filters/search';
 import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
 import { ConvertPrices } from 'renderer/functionsClasses/prices';
 import { toGetFilterManager } from './toFilterSetup';
+import { addMajorsFilters } from 'renderer/functionsClasses/filters/filters';
 const ClassFilters = toGetFilterManager()
 
 function content() {
@@ -101,6 +102,9 @@ function content() {
   });
   totalHighlighted = totalHighlighted.toFixed(0);
   totalAmount = totalAmount.toFixed(0);
+  addMajorsFilters(inventory.combinedInventory).then((returnValue) => {
+    ClassFilters.loadFilter(returnValue, true)
+  })
 
   return (
     <div className="bg-white mt-8 dark:bg-dark-level-one">

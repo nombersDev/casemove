@@ -120,7 +120,7 @@ export const containers: ClassOptionFilter = {
   stickerCapsules: {
     label: 'Sticker Capsules',
     valueToCheck: 'Capsule',
-    commandType: 'checkNameAndContainer',
+    commandType: 'checkCapsule',
   },
   patchPacks: {
     label: 'Patch Packs',

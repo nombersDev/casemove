@@ -261,7 +261,6 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
     onSubmit();
     shouldSubmit(false);
   }
-  console.log(sendSubmit);
 
   async function handleSubmit(e) {
     e.preventDefault();

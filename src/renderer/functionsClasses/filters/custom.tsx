@@ -28,6 +28,8 @@ class CheckFilter {
 
 }
 
+
+
 function filterLogic(itemRow: ItemRow, IndividualFilter: Filter): boolean {
     const FilterClass = new CheckFilter(itemRow, IndividualFilter)
     let returnValue: boolean = false;
@@ -51,6 +53,17 @@ function filterLogic(itemRow: ItemRow, IndividualFilter: Filter): boolean {
         case 'checkNameAndContainer':
             returnValue = FilterClass.checkContainerSubValue('item_name')
             break
+
+        case 'checkCapsule':
+            returnValue = FilterClass.checkContainerSubValue('item_name')
+            if (itemRow.item_name.includes('Challengers') || itemRow.item_name.includes('Legends') || itemRow.item_name.includes('Contenders')) {
+                if (!itemRow.item_name.includes('Patch')) {
+                    returnValue = true;
+
+                }
+            }
+
+            break;
 
         default:
             break

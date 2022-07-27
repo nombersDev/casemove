@@ -2,7 +2,7 @@
 export interface FilterRequirement {
     label: string
     valueToCheck: string
-    commandType: 'checkBooleanVariable' | 'checkURL' | 'checkName'  | 'checkMajor' | 'checkNameAndContainer'
+    commandType: 'checkBooleanVariable' | 'checkURL' | 'checkName'  | 'checkMajor' | 'checkNameAndContainer' | 'checkCapsule'
 }
 export interface Filter extends FilterRequirement{
   include: boolean
