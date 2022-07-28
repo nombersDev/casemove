@@ -23,7 +23,7 @@ https://user-images.githubusercontent.com/98760010/181345579-e4fd11be-1af9-4b8b-
 
 
 Features include:
-  * An overview page of your storage contentsn
+  * An overview page of your storage contents
   * Log in without entering your password / Steam Guard
   * View your inventory
   * View your storage units contents
