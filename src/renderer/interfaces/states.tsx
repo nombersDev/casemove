@@ -59,12 +59,14 @@ export interface InventoryFilters {
   rarityFilter: Array<string>
 }
 
+
 export interface Inventory {
   inventory: Array<ItemRow>,
   combinedInventory: Array<ItemRow>,
   storageInventory: Array<ItemRowStorage>,
   storageInventoryRaw: Array<ItemRowStorage>
   totalAccountItems: number,
+  itemsLookUp: { [itemID: string]: 'storage_units'  | 'inventory'  }
 };
 
 export interface InventoryNew {

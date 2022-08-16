@@ -1,3 +1,5 @@
+import { ItemRow } from "./items"
+
 export interface MessageMain {
     command: number
     text: string
@@ -5,6 +7,6 @@ export interface MessageMain {
 }
 
 export interface MessageItems extends MessageMain {
-    returnValue: itemRow
+    returnValue: ItemRow
 }
 

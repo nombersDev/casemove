@@ -4,7 +4,7 @@ import { DispatchIPC, DispatchStore } from "renderer/functionsClasses/rendererCo
 import { State } from "renderer/interfaces/states";
 import { SignInActionPackage } from "renderer/interfaces/store/authReducerActionsInterfaces"
 import { inventorySetFilter } from "renderer/store/actions/filtersInventoryActions";
-import { setInventoryAction } from "renderer/store/actions/inventoryActions";
+import { setInventoryAction } from "renderer/store/inventory/inventoryActions";
 import { signIn } from "renderer/store/actions/userStatsActions";
 import { getURL } from "renderer/store/helpers/userStatusHelper";
 import { LoginCommandReturnPackage } from "shared/Interfaces.tsx/store"

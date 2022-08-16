@@ -78,6 +78,7 @@ const navigation = [
   { name: 'Trade up', href: '/tradeup', icon: BeakerIcon, current: false },
 ];
 
+
 function AppContent() {
   SearchIcon;
   const location = useLocation();
@@ -185,7 +186,6 @@ function AppContent() {
       )) as any;
       dispatch(actionToTake);
       if (messageValue[0] == 1) {
-        console.log(messageValue);
         await handleFilterData(actionToTake.payload.combinedInventory);
       }
     }

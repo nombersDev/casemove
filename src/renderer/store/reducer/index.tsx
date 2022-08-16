@@ -1,5 +1,5 @@
 import { combineReducers } from "redux";
-import inventoryReducer from "./inventory";
+// import inventoryReducer from "../inventory/inventoryReducer";
 import authReducer from "./userStatus";
 import inventoryFiltersReducer from './inventoryFiltersRed'
 import modalMoveReducer from './modalMove'
@@ -10,6 +10,7 @@ import settingsReducer from "./settings";
 import pricingReducer from "./pricing";
 import tradeUpReducer from "./tradeupReducer";
 import modalTradeReducer from './modalTrade'
+import { inventoryReducer } from "../inventory/inventoryClass";
 
 const rootReducers = combineReducers({
     authReducer,

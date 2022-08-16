@@ -1,3 +1,4 @@
+
 import { Inventory } from "renderer/interfaces/states";
 
 const initialState: Inventory = {
@@ -6,6 +7,7 @@ const initialState: Inventory = {
   storageInventory: [],
   storageInventoryRaw: [],
   totalAccountItems: 0,
+  itemsLookUp: {}
 };
 
 const inventoryReducer = (state = initialState, action) => {
@@ -18,16 +20,13 @@ const inventoryReducer = (state = initialState, action) => {
           storageTotal += element.item_storage_total
         }
       });
+
+
       return {
         ...state,
         inventory: action.payload.inventory,
         combinedInventory: action.payload.combinedInventory,
         totalAccountItems: storageTotal
-      }
-    case 'INVENTORY_ITEM_ACCUIRED':
-
-      return {
-        ...state
       }
     case 'INVENTORY_STORAGES_ADD_TO':
       console.log(state)
@@ -63,10 +62,7 @@ const inventoryReducer = (state = initialState, action) => {
       }
     case 'MOVE_FROM_CLEAR':
       return {
-        ...state,
-        storageInventory: initialState.storageInventory,
-        storageInventoryRaw: initialState.storageInventoryRaw
-
+        ...state
       }
     case 'MOVE_FROM_RESET':
       return {

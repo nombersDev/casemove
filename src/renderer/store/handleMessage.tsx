@@ -4,7 +4,7 @@
 // 3: CSGO Connection
 
 import combineInventory from "renderer/components/content/shared/filters/inventoryFunctions"
-import { setInventoryAction } from "./actions/inventoryActions"
+import { setInventoryAction } from "./inventory/inventoryActions"
 import { setConnection, setGC, signOut, setWalletBalance } from "./actions/userStatsActions"
 
 export async function handleLogonSuccess(message) {

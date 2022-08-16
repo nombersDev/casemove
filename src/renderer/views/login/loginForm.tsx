@@ -157,6 +157,8 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
 
     async handleSuccesLogin() {
       openNotification(this.command);
+      window.electron.ipcRenderer.refreshInventory();
+      
     }
   }
 
