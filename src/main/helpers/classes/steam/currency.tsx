@@ -55,8 +55,13 @@ class currency {
         resolve(this.rates[exchangeTo])
       }
       this.currencyConverter.from('USD').to(exchangeTo).amount(100).convert().then((response) => {
-        this.seenRates[exchangeTo] = response / 100
-        resolve(response / 100)
+        let rate = response / 100
+        if (typeof rate === 'number' && !Number.isNaN(rate)) {
+          this.seenRates[exchangeTo] = rate
+          resolve(rate)
+        } else {
+          resolve(this.rates[exchangeTo])
+        }
       }).catch(error => {
         console.log('error occurred', error)
         resolve(this.rates[exchangeTo])

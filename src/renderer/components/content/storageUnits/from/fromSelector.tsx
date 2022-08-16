@@ -13,7 +13,7 @@ import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
 import { HandleStorageData } from 'renderer/functionsClasses/storageUnits/storageUnitsClass';
 import { getAllStorages } from 'renderer/functionsClasses/storageUnits/storageUnitsFunctions';
 import { ItemRowStorage } from 'renderer/interfaces/items';
-import { clearStorageIDData } from 'renderer/store/actions/inventoryActions';
+import { clearStorageIDData } from 'renderer/store/inventory/inventoryActions';
 import { setRenameModal } from 'renderer/store/actions/modalMove actions';
 import {
   moveFromAddCasketToStorages,

@@ -4,7 +4,7 @@ import combineInventory, {
 import { ItemRow, ItemRowStorage } from 'renderer/interfaces/items';
 import { State } from 'renderer/interfaces/states';
 import { inventorySetFilteredStorage } from 'renderer/store/actions/filtersInventoryActions';
-import { addStorageInventoryData } from 'renderer/store/actions/inventoryActions';
+import { addStorageInventoryData } from 'renderer/store/inventory/inventoryActions';
 import { moveFromAddCasketToStorages } from 'renderer/store/actions/moveFromActions';
 import { filterItemRows } from '../filters/custom';
 import { RequestPrices } from '../prices';

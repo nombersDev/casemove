@@ -1,4 +1,6 @@
-export const setInventoryAction = (forwardPackage: any) => {
+import { SetInventory } from "./inventoryInterfaces"
+
+export const setInventoryAction = (forwardPackage: any): SetInventory => {
     return {
         type: 'INVENTORY_SET_INVENTORY',
         payload: {

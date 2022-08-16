@@ -551,6 +551,7 @@ async function startEvents(csgo, user) {
   // CSGO listeners
   // Inventory events
   async function startChangeEvents() {
+    console.log('Start events')
     csgo.on('itemRemoved', (item) => {
       if (
         !Object.keys(item).includes('casket_id') &&
@@ -639,10 +640,14 @@ async function startEvents(csgo, user) {
   });
 
   // Get commands from Renderer
-  ipcMain.on('refreshInventory', async () => {
+  async function removeInventoryListeners() {
+    console.log('Removed inventory listeners')
     csgo.removeAllListeners('itemRemoved');
     csgo.removeAllListeners('itemChanged');
     csgo.removeAllListeners('itemAcquired');
+  }
+  ipcMain.on('refreshInventory', async () => {
+    removeInventoryListeners()
     startChangeEvents();
 
     fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
@@ -706,9 +711,7 @@ async function startEvents(csgo, user) {
   ipcMain.on(
     'removeFromStorageUnit',
     async (event, casketID, itemID, fastMode) => {
-      csgo.removeAllListeners('itemRemoved');
-      csgo.removeAllListeners('itemChanged');
-      csgo.removeAllListeners('itemAcquired');
+      removeInventoryListeners()
       csgo.removeFromCasket(casketID, itemID);
 
       if (fastMode == false) {
@@ -733,9 +736,7 @@ async function startEvents(csgo, user) {
     csgo.addToCasket(casketID, itemID);
     //if (fastMode) {
 
-    csgo.removeAllListeners('itemRemoved');
-    csgo.removeAllListeners('itemChanged');
-    csgo.removeAllListeners('itemAcquired');
+      removeInventoryListeners()
 
     // }
 
@@ -778,9 +779,7 @@ async function startEvents(csgo, user) {
   async function clearForNewSession() {
     console.log('Signout');
     // Remove for CSGO
-    csgo.removeAllListeners('itemRemoved');
-    csgo.removeAllListeners('itemChanged');
-    csgo.removeAllListeners('itemAcquired');
+    removeInventoryListeners()
     csgo.removeAllListeners('connectedToGC');
     csgo.removeAllListeners('disconnectedFromGC');
 
