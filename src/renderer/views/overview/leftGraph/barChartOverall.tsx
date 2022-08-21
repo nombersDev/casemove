@@ -154,6 +154,7 @@ export default function OverallVolume() {
         },
       },
       y: {
+        stacked: true,
         ticks: {
           beginAtZero: true,
           callback: function (value) {

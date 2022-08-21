@@ -601,7 +601,7 @@ async function startEvents(csgo, user) {
               ]);
             });
           });
-        }, 5000);
+        }, 1000);
 
         fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
           tradeUpClass.getTradeUp(returnValue).then((newReturnValue: any) => {
