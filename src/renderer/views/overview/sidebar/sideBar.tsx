@@ -15,7 +15,7 @@ export default function TradeUpSideBar() {
   });
   totalFloat = totalFloat / tradeUpData.tradeUpProducts.length;
 
-
+  
   let productsToUse = [...tradeUpData.tradeUpProducts];
 
   while (true) {

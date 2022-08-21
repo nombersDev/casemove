@@ -20,7 +20,7 @@ export class ConvertPrices {
       this.prices.prices[this._getName(itemRow)]?.[
         this.settingsData.source.title
       ] * this.settingsData.currencyPrice[this.settingsData.currency];
-    
+
     if (nanToZero && isNaN(itemPrice)) {
       return 0
     }
@@ -34,11 +34,15 @@ export class ConvertPricesFormatted extends ConvertPrices {
     super(settingsData, prices);
   }
 
-  getFormattedPrice(itemRow: ItemRow) {
+  formatPrice(price: number) {
     return new Intl.NumberFormat(this.settingsData.locale, {
       style: 'currency',
       currency: this.settingsData.currency,
-    }).format(this.getPrice(itemRow));
+    }).format(price);
+  }
+
+  getFormattedPrice(itemRow: ItemRow) {
+    return this.formatPrice(this.getPrice(itemRow));
   }
   getFormattedPriceCombined(itemRow: ItemRow) {
     let comQty = itemRow?.combined_QTY as number;

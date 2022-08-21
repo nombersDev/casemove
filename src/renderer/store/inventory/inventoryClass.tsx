@@ -19,7 +19,9 @@ export class InventoryActionsReducer {
         'INVENTORY_STORAGES_CLEAR_CASKET': this.clearStorageUnitItems,
         'INVENTORY_STORAGES_SET_SORT_STORAGES': this.setSortStorageUnits,
         'INVENTORY_STORAGES_CLEAR_ALL': this.clearAllStorageUnits,
-        'MOVE_FROM_CLEAR': this.clearAllStorageUnits
+        'MOVE_FROM_CLEAR': this.clearAllStorageUnits,
+        'SIGN_OUT': this.initialState
+
     }
     relevantFunction: Function
     state: Inventory

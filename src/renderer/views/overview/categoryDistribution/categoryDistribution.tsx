@@ -91,7 +91,7 @@ function getData(ReducerClass, by) {
 }
 export default function ItemDistributionByVolume() {
   const ReducerClass = new ReducerManager(useSelector)
-  const settingsData: Settings = ReducerClass.getStorage(ReducerClass.names.settings)
+  let settingsData: Settings = ReducerClass.getStorage(ReducerClass.names.settings);
 
   let returnObject: any = {
     labels: [],
@@ -111,8 +111,6 @@ export default function ItemDistributionByVolume() {
     default:
       break;
   }
-
-
 
 
 
