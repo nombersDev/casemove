@@ -8,6 +8,7 @@ export interface InventoryMethods {
     'INVENTORY_STORAGES_SET_SORT_STORAGES': string
     'INVENTORY_STORAGES_CLEAR_ALL': string
     'MOVE_FROM_CLEAR': string
+    'SIGN_OUT': string
 }
 
 export type InventoryMatchingObject = {

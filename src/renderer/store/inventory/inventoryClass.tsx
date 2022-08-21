@@ -19,7 +19,9 @@ export class InventoryActionsReducer {
         'INVENTORY_STORAGES_CLEAR_CASKET': this.clearStorageUnitItems,
         'INVENTORY_STORAGES_SET_SORT_STORAGES': this.setSortStorageUnits,
         'INVENTORY_STORAGES_CLEAR_ALL': this.clearAllStorageUnits,
-        'MOVE_FROM_CLEAR': this.initialState
+        'MOVE_FROM_CLEAR': this.clearAllStorageUnits,
+        'SIGN_OUT': this.initialState
+
     }
     relevantFunction: Function
     state: Inventory
@@ -48,7 +50,7 @@ export class InventoryActionsReducer {
         }
     }
 
-    
+
 
     // Set the inventory whenever it changes
     setInventory() {
@@ -114,7 +116,7 @@ export class InventoryActionsReducer {
             storageInventoryRaw: initialState.storageInventoryRaw
           }
     }
-    
+
 }
 
 export function inventoryReducer(state = initialState, action) {

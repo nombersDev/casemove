@@ -13,7 +13,6 @@ import inventoryContent from './components/content/Inventory/inventory';
 import {
   ChartBarIcon,
   DownloadIcon,
-  GiftIcon,
   InboxInIcon,
   RefreshIcon,
   SearchIcon,
@@ -515,7 +514,7 @@ function AppContent() {
               </Transition>
             </Menu>
 
-            <div className="px-3 mt-5">
+            <div className={shouldUpdate ? "px-3 mt-5" : ''}>
               {userDetails.CSGOConnection == false &&
               userDetails.isLoggedIn == true ? (
                 <button
@@ -530,7 +529,7 @@ function AppContent() {
                   />
                   <span className="mr-3 text-green-900">Retry connection</span>
                 </button>
-              ) : shouldUpdate == true ? (
+              ) : shouldUpdate ? (
                 <a href={getDownloadLink} target="_blank">
                   <button
                     type="button"
@@ -544,8 +543,9 @@ function AppContent() {
                     <span className="mr-3">Update ready</span>
                   </button>
                 </a>
-              ) : (
-                <a
+              ) : ''}
+            </div>
+            {/*  <a
                   href="https://steamcommunity.com/tradeoffer/new/?partner=1033744096&token=29ggoJY7"
                   target="_blank"
                 >
@@ -560,9 +560,7 @@ function AppContent() {
                     />
                     <span className="mr-3">Support the project</span>
                   </button>
-                </a>
-              )}
-            </div>
+                </a> */}
             {/* Navigation */}
             <nav className="px-3 mt-5">
               <div className="space-y-1">

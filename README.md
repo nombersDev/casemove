@@ -4,14 +4,14 @@
 
 ----
 
-## Download Latest Version (Casemove 2.0.1)
+## Download Latest Version (Casemove 2.0.2)
 
 This is the latest stable version and can be downloaded from the [releases](https://github.com/nombersDev/casemove/releases) page, or directly from:
 
-- [Windows - (Casemove-2.0.1)](https://github.com/nombersDev/casemove/releases/download/2.0.1/Casemove.Setup.2.0.1.exe)
-- [Mac - (Casemove-2.0.1)](https://github.com/nombersDev/casemove/releases/download/2.0.1/Casemove-2.0.1.dmg)
-- [Mac ARM 64 (M1) - (Casemove-2.0.1)](https://github.com/nombersDev/casemove/releases/download/2.0.1/Casemove-2.0.1-arm64.dmg)
-- [Linux AppImage - (Casemove-2.0.1)](https://github.com/nombersDev/casemove/releases/download/2.0.1/casemove-2.0.1.zip)
+- [Windows - (Casemove-2.0.2)](https://github.com/nombersDev/casemove/releases/download/2.0.2/Casemove.Setup.2.0.2.exe)
+- [Mac - (Casemove-2.0.2)](https://github.com/nombersDev/casemove/releases/download/2.0.2/Casemove-2.0.2.dmg)
+- [Mac ARM 64 (M1) - (Casemove-2.0.2)](https://github.com/nombersDev/casemove/releases/download/2.0.2/Casemove-2.0.2-arm64.dmg)
+- [Linux AppImage - (Casemove-2.0.2)](https://github.com/nombersDev/casemove/releases/download/2.0.2/casemove-2.0.2.zip)
 
 Install the Linux version by unzipping the contents of the zip-file into a folder and click on the AppImage file. 
 
@@ -96,9 +96,9 @@ As with anything, It's important to know that the using this software is distrib
 
 Casemove was created by Nombers.
 
-- Bitcoin donations can be sent to `1Fuy4cX8q739NAtEFexEsZYqza8GVfH9sb`
-- Skin donations can be sent [here](https://steamcommunity.com/tradeoffer/new/?partner=1033744096&token=29ggoJY7)
-
+- Steam: https://steamcommunity.com/id/realNombers/
+- Reddit: https://www.reddit.com/user/nubbiners
+- Discord: Nombers#1046
 ----
 
 ## How to build
