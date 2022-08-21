@@ -94,7 +94,14 @@ export default function PieChart({ data, headerName }) {
             percentageData.push(percentage);
           });
 
-          return percentageData[context.dataIndex] >= 2;
+          if (percentageData[context.dataIndex] > 4) {
+            return true;
+          }
+          if (percentageData[context.dataIndex] > 2) {
+            return 'auto';
+          }
+          return false;
+
         },
       },
     },
