@@ -96,9 +96,9 @@ As with anything, It's important to know that the using this software is distrib
 
 Casemove was created by Nombers.
 
-- Bitcoin donations can be sent to `1Fuy4cX8q739NAtEFexEsZYqza8GVfH9sb`
-- Skin donations can be sent [here](https://steamcommunity.com/tradeoffer/new/?partner=1033744096&token=29ggoJY7)
-
+- Steam: https://steamcommunity.com/id/realNombers/
+- Reddit: https://www.reddit.com/user/nubbiners
+- Discord: Nombers#1046
 ----
 
 ## How to build
