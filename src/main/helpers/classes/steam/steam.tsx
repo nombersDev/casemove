@@ -5,10 +5,13 @@ import {
   getValue,
 } from './settings';
 import SteamTotp from 'steam-totp';
-import { LoginGenerator } from '../IPCGenerators/loginGenerator';
+import { LoginGenerator } from '../../../steamEngine/login/loginResponseGenerator';
 
 const ClassLoginResponse = new LoginGenerator()
-// 1: If the user has remembered the account, check if login key exists. If login fails, notify renderer, delete Loginkey (not password)
+
+
+
+
 class login {
   steamUser = {} as any;
   rememberedDetails = {} as any;

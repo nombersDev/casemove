@@ -8,16 +8,10 @@ import { fetchItems } from './helpers/classes/steam/items/getCommands';
 import os from 'os';
 import SteamUser from 'steam-user';
 import GlobalOffensive from 'globaloffensive';
-import { getGithubVersion } from './scripts/versionHelper';
-import * as fs from 'fs';
-import { login } from './helpers/classes/steam/steam';
 import {
   storeUserAccount,
-  deleteUserData,
   getValue,
-  storeLoginKey,
   setValue,
-  setAccountPosition,
 } from './helpers/classes/steam/settings';
 import {
   pricingEmitter,
@@ -26,9 +20,13 @@ import {
 } from './helpers/classes/steam/pricing';
 import { currency } from './helpers/classes/steam/currency';
 import { tradeUps } from './helpers/classes/steam/tradeup';
-import { LoginGenerator } from './helpers/classes/IPCGenerators/loginGenerator';
-import { LoginCommandReturnPackage } from 'shared/Interfaces.tsx/store';
+import { LoginGenerator } from './steamEngine/login/loginResponseGenerator';
+import { ReturnLoginPackage } from 'shared/Interfaces.tsx/loginInterface';
 import { CurrencyReturnValue } from 'shared/Interfaces.tsx/IPCReturn';
+import { LoginUserDetails } from 'shared/Interfaces.tsx/rendererToMainMessages';
+import { SteamLogin } from './steamEngine/01-steamLogin';
+import { SteamBase } from './steamEngine/steamBase';
+import { startIPC } from './IPC/starter';
 
 // Define helpers
 var ByteBuffer = require('bytebuffer');
@@ -40,11 +38,9 @@ const ClassLoginResponse = new LoginGenerator();
 
 // Electron stuff
 let mainWindow: BrowserWindow | null = null;
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
-});
+
+// Start IPC Events
+startIPC(mainWindow)
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -104,12 +100,6 @@ const createWindow = async () => {
   });
   mainWindow.webContents.session.clearStorageData();
 
-  ipcMain.on('download', (_event, info) => {
-    let fileP = path.join(os.homedir(), '/Downloads/casemove.csv');
-
-    fs.writeFileSync(fileP, info, 'utf-8');
-    shell.showItemInFolder(fileP);
-  });
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
@@ -142,27 +132,6 @@ const createWindow = async () => {
     mainWindow.removeMenu();
   }
 };
-
-/**
- * Add event listeners...
- */
-// Windows actions
-
-ipcMain.on('windowsActions', async (_event, message) => {
-  if (message == 'min') {
-    mainWindow?.minimize();
-  }
-  if (message == 'max') {
-    if (mainWindow?.isMaximized()) {
-      mainWindow.restore();
-    } else {
-      mainWindow?.maximize();
-    }
-  }
-  if (message == 'close') {
-    mainWindow?.close();
-  }
-});
 
 let currentLocale = 'da-dk';
 
@@ -239,46 +208,10 @@ if (!gotTheLock) {
 
 var fetchItemClass = new fetchItems();
 
+
+
 // Version manager
 
-let gitHub = 0;
-ipcMain.on('needUpdate', async (event: any) => {
-  try {
-    if (gitHub == 0) {
-      getGithubVersion(process.platform).then((returnValue) => {
-        // Get the current version
-        const version = parseInt(
-          app.getVersion().toString().replaceAll('.', '')
-        );
-
-        // Check success status
-        let successStatus: boolean = false;
-        if (returnValue.version > version) {
-          successStatus = true;
-        } else {
-          successStatus = false;
-        }
-
-        // Send the event back back
-        event.reply('needUpdate-reply', {
-          requireUpdate: successStatus,
-          currentVersion: app.getVersion(),
-          githubResponse: returnValue,
-        });
-      });
-    }
-  } catch {
-    event.reply('needUpdate-reply', [false, app.getVersion(), 0]);
-    gitHub = 1;
-  }
-});
-
-// Return 1 = Success
-// Return 2 = Steam Guard
-// Return 3 = Steam Guard wrong
-// Return 4 = Wrong password
-// Return 5 = Unknown
-// Return 6 = Error with loginkey
 async function sendLoginReply(event: any) {
   event.reply('login-reply', ClassLoginResponse.returnValue);
 }
@@ -328,7 +261,7 @@ ipcMain.on(
                         walletToSend.currency =
                           currencyCodes?.[walletToSend?.currency];
                       }
-                      const returnPackage: LoginCommandReturnPackage = {
+                      const returnPackage: ReturnLoginPackage = {
                         steamID: user.logOnResult.client_supplied_steamid,
                         displayName,
                         haveGCSession: csgo.haveGCSession,
@@ -430,48 +363,24 @@ ipcMain.on(
       });
     });
 
-    // Should remember
-    if (shouldRemember) {
-      user.once('loginKey', function (key) {
-        storeLoginKey(username, key);
-      });
-    }
-
-    // Steam guard
-    user.once('steamGuard', function (domain, callback, lastCodeWrong) {
-      domain;
-      callback;
-      if (lastCodeWrong) {
-        console.log('Last code wrong, try again!');
-        cancelLogin(user);
-
-        ClassLoginResponse.setEmptyPackage();
-        ClassLoginResponse.setResponseStatus('steamGuardCodeIncorrect');
-        sendLoginReply(event);
-      } else {
-        cancelLogin(user);
-        ClassLoginResponse.setEmptyPackage();
-        ClassLoginResponse.setResponseStatus('steamGuardError');
-        sendLoginReply(event);
-      }
-    });
 
     // Login
-    let loginClass = new login();
-    loginClass
-      .mainLogin(
-        user,
-        username,
-        shouldRemember,
-        password,
-        steamGuard,
-        secretKey,
-        clientjstoken
-      )
-      .then((returnValue: any) => {
-        event.reply('login-reply', returnValue);
-      });
-    // Start the game coordinator for CSGO
+    let loginMethod: LoginUserDetails = {
+      user,
+      username,
+      shouldRemember,
+      password,
+      steamGuard,
+      secretKey,
+      clientjstoken,
+    };
+
+    const steamBase = new SteamBase()
+
+
+
+    new SteamLogin(loginMethod, steamBase, event).login();
+
     async function startGameCoordinator() {
       user.setPersona(SteamUser.EPersonaState.Online);
 
@@ -490,6 +399,7 @@ async function cancelLogin(user) {
   user.removeAllListeners('steamGuard');
   user.removeAllListeners('error');
 }
+cancelLogin
 
 // Adds events listeners the user
 // Forward Steam notifications to renderer
@@ -590,17 +500,19 @@ async function startEvents(csgo, user) {
         console.log('Item ' + item.id + ' was acquired');
         removeInventoryListeners();
         setTimeout(function () {
-          console.log('ran')
+          console.log('ran');
           startChangeEvents();
-          fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
-            tradeUpClass.getTradeUp(returnValue).then((newReturnValue) => {
-              mainWindow?.webContents.send('userEvents', [
-                1,
-                'itemAcquired',
-                [{}, newReturnValue],
-              ]);
+          fetchItemClass
+            .convertInventory(csgo.inventory)
+            .then((returnValue) => {
+              tradeUpClass.getTradeUp(returnValue).then((newReturnValue) => {
+                mainWindow?.webContents.send('userEvents', [
+                  1,
+                  'itemAcquired',
+                  [{}, newReturnValue],
+                ]);
+              });
             });
-          });
         }, 1000);
 
         fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
@@ -664,7 +576,6 @@ async function startEvents(csgo, user) {
   ipcMain.on('refreshInventory', async () => {
     removeInventoryListeners();
     startChangeEvents();
-
 
     fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
       tradeUpClass.getTradeUp(returnValue).then((newReturnValue) => {
@@ -848,37 +759,4 @@ settingsSetup();
 // Set platform
 setValue('os', process.platform);
 
-// Kinda store
-ipcMain.on('electron-store-getAccountDetails', async (event) => {
-  const accountDetails = await getValue('account');
-  event.returnValue = event.reply(
-    'electron-store-getAccountDetails-reply',
-    accountDetails
-  );
-});
 
-ipcMain.on('electron-store-deleteAccountDetails', async (_event, username) => {
-  deleteUserData(username);
-});
-
-ipcMain.on(
-  'electron-store-setAccountPosition',
-  async (_event, username, position) => {
-    setAccountPosition(username, position);
-  }
-);
-
-// Store IPC
-ipcMain.on('electron-store-get', async (event, val, key) => {
-  if (val == 'locale') {
-    event.reply('electron-store-get-reply' + key, currentLocale);
-    return;
-  }
-  getValue(val).then((returnValue) => {
-    event.reply('electron-store-get-reply' + key, returnValue);
-  });
-});
-ipcMain.on('electron-store-set', async (event, key, val) => {
-  event;
-  setValue(key, val);
-});

@@ -1,29 +1,37 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { Fragment } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
-import {  XIcon } from '@heroicons/react/outline'
-import { LoginIcon } from '@heroicons/react/solid'
-import { handleSuccess } from './HandleSuccess'
-import { LoginCommand, LoginCommandReturnPackage } from 'shared/Interfaces.tsx/store'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'renderer/interfaces/states'
-import { ReducerManager } from 'renderer/functionsClasses/reducerManager'
+import { Fragment } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { XIcon } from '@heroicons/react/outline';
+import { LoginIcon } from '@heroicons/react/solid';
+import { handleSuccess } from './HandleSuccess';
+import {
+  LoginCommand,
+  ReturnLoginPackage,
+} from 'shared/Interfaces.tsx/loginInterface';
+import { useDispatch, useSelector } from 'react-redux';
+import { State } from 'renderer/interfaces/states';
+import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
 
-export default function ConfirmModal({open, setOpen, setLoadingButton}) {
+export default function ConfirmModal({ open, setOpen, setLoadingButton }) {
   const dispatch = useDispatch();
   const currentState: State = new ReducerManager(useSelector).getStorage();
   async function confirm() {
-    setLoadingButton(true)
-    setOpen(false)
-    window.electron.ipcRenderer.forceLogin()
-    let responseStatus: LoginCommand = await window.electron.ipcRenderer.forceLoginReply()
-    handleSuccess(responseStatus.returnPackage as LoginCommandReturnPackage, dispatch, currentState)
+    setLoadingButton(true);
+    setOpen(false);
+    window.electron.ipcRenderer.forceLogin();
+    let responseStatus: LoginCommand =
+      await window.electron.ipcRenderer.forceLoginReply();
+    handleSuccess(
+      responseStatus.returnPackage as ReturnLoginPackage,
+      dispatch,
+      currentState
+    );
   }
 
   async function cancel() {
     window.electron.ipcRenderer.logUserOut();
-    setLoadingButton(false)
-    setOpen(false)
+    setLoadingButton(false);
+    setOpen(false);
   }
 
   return (
@@ -65,15 +73,23 @@ export default function ConfirmModal({open, setOpen, setLoadingButton}) {
                 </div>
                 <div className="sm:flex sm:items-start">
                   <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-500 sm:mx-0 sm:h-10 sm:w-10">
-                    <LoginIcon className="h-6 w-6 text-green-700" aria-hidden="true" />
+                    <LoginIcon
+                      className="h-6 w-6 text-green-700"
+                      aria-hidden="true"
+                    />
                   </div>
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                    <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-dark-white">
+                    <Dialog.Title
+                      as="h3"
+                      className="text-lg leading-6 font-medium text-dark-white"
+                    >
                       Confirm Logon
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-gray-400">
-                        Your account is currently playing a game elsewhere. Would you like login here instead? This will log out the other instance.
+                        Your account is currently playing a game elsewhere.
+                        Would you like login here instead? This will log out the
+                        other instance.
                       </p>
                     </div>
                   </div>
@@ -100,5 +116,5 @@ export default function ConfirmModal({open, setOpen, setLoadingButton}) {
         </div>
       </Dialog>
     </Transition.Root>
-  )
+  );
 }
