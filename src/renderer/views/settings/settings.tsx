@@ -3,14 +3,25 @@ import { Listbox, Switch, Transition } from '@headlessui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setCurrencyValue,
+  setPersonaState,
   setDevmode,
   setFastMove,
   setSourceValue,
 } from 'renderer/store/actions/settings';
+// import SteamUser from 'steam-user';
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid';
 import { classNames } from 'renderer/components/content/shared/filters/inventoryFunctions';
 import ColumnsDropDown from 'renderer/components/content/shared/dropdownRows';
 import { DispatchIPC } from 'renderer/functionsClasses/rendererCommands/admin';
+
+const PersonaStates = [
+  "Offline",
+  "Online",
+  "Busy",
+  "Away",
+  "Snooze",
+  "Invisible",
+];
 
 const sources = [
   {
@@ -197,7 +208,15 @@ export default function settingsPage() {
   }
   const [fastMoveStatus, setFastMoveStatus] = useState(settingsData.fastMove);
 
-  // Dark mode
+  // Persona State
+  async function updatePersonaState(valueToSet) {
+    setPersonaStateStatus(valueToSet);
+    dispatch(setPersonaState(valueToSet));
+    window.electron.store.set('personaState', valueToSet);
+  }
+  const [personaState, setPersonaStateStatus] = useState(settingsData.personaState);
+  
+  // Dev mode
   async function updateDevMode() {
     const correctValue = !(await window.electron.store.get('devmode.value'));
     setDevModeStatus(correctValue);
@@ -342,6 +361,37 @@ export default function settingsPage() {
                                 </span>
                               </dd>
                             </div>
+
+                            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+                              <dt className="text-sm font-medium text-gray-900 dark:text-dark-white">
+                                Steam Status<br />
+                                <span className="text-gray-400">
+                                  {' '}
+                                  Select which Steam Status will be set on login
+                                </span>
+                              </dt>
+                              <dd className="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                <span className="flex-grow"></span>
+                                <span className="flex items-center ml-4 flex-shrink-0">
+                                  <div>
+                                    <select
+                                      id="location"
+                                      name="location"
+                                      className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-dark-level-one dark:text-dark-white"
+                                      value={personaState}
+                                      onChange={(e) =>
+                                        updatePersonaState(e.target.value)
+                                      }
+                                    >
+                                      {PersonaStates.map((state) => (
+                                        <option key={state}>{state}</option>
+                                      ))}
+                                    </select>
+                                  </div>
+                                </span>
+                              </dd>
+                            </div>
+
                             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
 
                               <dt className="text-sm font-medium text-gray-900 dark:text-dark-white">

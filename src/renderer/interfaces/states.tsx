@@ -146,6 +146,7 @@ export interface Settings {
   locale: string,
   os: string,
   devmode: Boolean,
+  personaState: string,
   columns: Array<string>,
   currencyPrice: { [key: string]: number },
   source: source

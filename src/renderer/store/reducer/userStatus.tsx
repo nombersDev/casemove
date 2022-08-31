@@ -3,9 +3,9 @@ import { AuthReducer } from "renderer/interfaces/states";
 const initialState: AuthReducer = {
     displayName: null ,
     CSGOConnection: false,
-    userProfilePicture: null ,
+    userProfilePicture: null,
     steamID: null,
-    isLoggedIn: false ,
+    isLoggedIn: false,
     hasConnection: false,
     walletBalance: {
       hasWallet: false,

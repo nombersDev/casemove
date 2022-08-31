@@ -10,6 +10,7 @@ export type DispatchStoreHandleBuildingOptionsClass = {
 
 export interface DispatchStoresettingsOptions {
   source: string
+  personaState: string,
   locale: string
   os: string
   columns: string

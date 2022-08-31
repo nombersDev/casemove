@@ -6,6 +6,7 @@ import {
   setFastMove,
   setLocale,
   setOS,
+  setPersonaState,
   setSourceValue,
 } from 'renderer/store/actions/settings';
 import {
@@ -38,6 +39,10 @@ export class DispatchStore extends IPCCommunication {
     source: {
       name: 'pricing.source',
       action: setSourceValue,
+    },
+    personaState: {
+      name: 'personaState',
+      action: setPersonaState,
     },
     locale: {
       name: 'locale',

@@ -42,6 +42,7 @@ interface StorageOverviewInterface {
 export interface Storage {
   account: StorageAccountInterface,
   fastmove: boolean,
+  personaState: string,
   pricing: StoragePricingInterface
   os: string
   accountKeyList: Array<string>

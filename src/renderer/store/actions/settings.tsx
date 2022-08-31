@@ -7,6 +7,12 @@ export const setFastMove = (valueToSet) => {
         payload: valueToSet
     }
 }
+export const setPersonaState = (valueToSet) => {
+  return {
+    type: 'SETTINGS_SET_PERSONA_STATE',
+    payload: valueToSet
+}
+}
 export const setColumns = (valueToSet) => {
   return {
       type: 'SETTINGS_SET_COLUMNS',

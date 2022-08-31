@@ -1,5 +1,6 @@
 import EventEmitter from 'events';
 import { SteamLogin } from '../01-steamLogin';
+import { getValue } from '../../helpers/classes/steam/settings';
 import SteamUser from 'steam-user';
 
 class GCStarterEmitter extends EventEmitter {
@@ -28,11 +29,16 @@ export class GCStarter extends GCStarterEmitter {
   // Start the GC
   startGameCoordinator() {
     const user = this.baseInstance.steamUserBaseInstance.steamUser
-    user.setPersona(SteamUser.EPersonaState.Online);
 
-      setTimeout(() => {
-        user.setPersona(SteamUser.EPersonaState.Online);
-        user.gamesPlayed([730], true);
-      }, 3000);
+    getValue('personaState').then((personaState: string) => {
+      user.setPersona(SteamUser.EPersonaState[personaState]);
+    })
+
+    setTimeout(() => {
+      getValue('personaState').then((personaState: string) => {
+        user.setPersona(SteamUser.EPersonaState[personaState]);
+      })
+      user.gamesPlayed([730], true);
+    }, 3000);
   }
 }

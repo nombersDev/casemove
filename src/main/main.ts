@@ -326,7 +326,9 @@ ipcMain.on(
             ipcMain.on('forceLogin', async () => {
               console.log('forceLogin');
               setTimeout(() => {
-                user.setPersona(SteamUser.EPersonaState.Online);
+                getValue('personaState').then((personaState: string) => {
+                  user.setPersona(SteamUser.EPersonaState[personaState]);
+                })
                 gameCoordinate();
                 user.gamesPlayed([730], true);
               }, 3000);
@@ -382,10 +384,14 @@ ipcMain.on(
     new SteamLogin(loginMethod, steamBase, event).login();
 
     async function startGameCoordinator() {
-      user.setPersona(SteamUser.EPersonaState.Online);
+      getValue('personaState').then((personaState: string) => {
+        user.setPersona(SteamUser.EPersonaState[personaState]);
+      })
 
       setTimeout(() => {
-        user.setPersona(SteamUser.EPersonaState.Online);
+        getValue('personaState').then((personaState: string) => {
+          user.setPersona(SteamUser.EPersonaState[personaState]);
+        })
         user.gamesPlayed([730], true);
       }, 3000);
     }
@@ -751,6 +757,11 @@ async function settingsSetup() {
     if (returnValue == undefined) {
       console.log('fastmove', returnValue);
       setValue('fastmove', false);
+    }
+  });
+  getValue('personaState').then((returnValue) => {
+    if (returnValue == undefined) {
+      setValue('personaState', 'Online');
     }
   });
 }

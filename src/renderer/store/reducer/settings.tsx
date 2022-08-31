@@ -6,6 +6,7 @@ const initialState: Settings = {
   locale: 'EN-GB',
   os: '',
   devmode: false,
+  personaState: 'Online',
   columns: ["Price", "Stickers/patches", "Storage", "Tradehold", 'Moveable', 'Inventory link'],
   currencyPrice: {},
   source: {
@@ -26,6 +27,11 @@ const settingsReducer = (state = initialState, action) => {
       return {
         ...state,
         fastMove: action.payload,
+      };
+    case 'SETTINGS_SET_PERSONA_STATE':
+      return {
+        ...state,
+        personaState: action.payload,
       };
     case 'SETTINGS_SET_COLUMNS':
       return {
