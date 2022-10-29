@@ -62,6 +62,7 @@ async function updateItems(items) {
         paint_kits: {},
         prefabs: {},
         sticker_kits: {},
+        casket_icons: {}
       };
       const data = response.data;
       const jsonData = VDF.parse(data);
@@ -77,6 +78,11 @@ async function updateItems(items) {
         jsonData,
         'graffiti_tints'
       );
+
+      dict_to_write['casket_icons'] = updateItemsLoop(
+        jsonData,
+        'alternate_icons2'
+      )['casket_icons']
 
       return dict_to_write;
     });
@@ -124,6 +130,10 @@ class items {
     }
 
     for (const [key, value] of Object.entries(inventoryResult)) {
+
+      
+      
+
       if (value['def_index'] == undefined) {
         continue;
       }
@@ -145,7 +155,12 @@ class items {
 
       const returnDict = {};
       // URL
-      const imageURL = this.handleError(this.itemProcessorImageUrl, [value]);
+      let imageURL = this.handleError(this.itemProcessorImageUrl, [value]);
+      
+      const iconMatch = getAttributeValueBytes(value, 70)?.readUInt32LE(0)
+      if (value['def_index'] == 1201 && iconMatch && this.csgoItems['casket_icons']?.[iconMatch]?.icon_path) {
+        imageURL = this.csgoItems['casket_icons']?.[iconMatch]?.icon_path
+      }
       // Check names
       returnDict['item_name'] = this.handleError(this.itemProcessorName, [
         value,
@@ -203,7 +218,7 @@ class items {
         this.itemProcessorHasStickersApplied,
         [returnDict, value]
       );
-      let equipped  = this.handleError(
+      let equipped = this.handleError(
         this.itemProcessorisEquipped,
         [value]
       );
@@ -305,7 +320,7 @@ class items {
         T = true;
       }
       if (value?.new_class == 3) {
-          CT = true
+        CT = true
       }
     }
     return [CT, T]
