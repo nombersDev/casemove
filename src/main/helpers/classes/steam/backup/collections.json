@@ -7377,7 +7377,7 @@
             "image": "http://cdn.steamcommunity.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FABz7PLfYQJF-dKxmomZqPv9NLPF2G0JuMYj0ryYodzz3wG3qBJpa27wJdKdJ1dqZwqE8gPrwL3ujcO_tM_XiSw0r8Krvkk=/160fx160f",
             "imageURL": "http://media.steampowered.com/apps/730/icons/econ/default_generated/weapon_awp_gs_awp_gungnir_light_large.f80c285940f75cca58731d8ead6bd8be1c18e38b.png"
         },
-        "Negev | MjÃ¶lnir": {
+        "Negev | Mjölnir": {
             "quality": "Classified",
             "min-wear": "0.00",
             "max-wear": "0.60",
@@ -7386,7 +7386,7 @@
             "trade_up": true,
             "image": "http://cdn.steamcommunity.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpouL-iLhFf1OD3fzhF6cqJgIiEhcj4OrzZgiUEuJMhi77ArN2migXj-kU6Mj_0cY6UJwc6ZAzW_wS-k-rvjZfuvp2f1zI97W3x1GQC=/160fx160f"
         },
-        "P90 | Astral JÃ¶rmungandr": {
+        "P90 | Astral Jörmungandr": {
             "quality": "Restricted",
             "min-wear": "0.00",
             "max-wear": "0.50",
@@ -7395,7 +7395,7 @@
             "trade_up": true,
             "image": "http://cdn.steamcommunity.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpopuP1FAZt7PnHYzB97tCjkb-HnvD8J_WFkjoEuZcgj7jAp9Wg2gTmqUdqMW73IYTHclc3Y1-D-lG3kru915W7ot2Xnprrf7F4=/160fx160f"
         },
-        "Desert Eagle | Emerald JÃ¶rmungandr": {
+        "Desert Eagle | Emerald Jörmungandr": {
             "quality": "Restricted",
             "min-wear": "0.00",
             "max-wear": "0.50",
@@ -7404,7 +7404,7 @@
             "trade_up": true,
             "image": "http://cdn.steamcommunity.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgposr-kLAtl7PLFTjdN_tGJk5KOkvnLP7LWnn8f7Mcg2r2U84nw2FWy-UA6YWGhdoLEJFBqYF7UrlG5lO2-1MLouJ-cmmwj5HeT0A2gTg=/160fx160f"
         },
-        "AUG | Flame JÃ¶rmungandr": {
+        "AUG | Flame Jörmungandr": {
             "quality": "Restricted",
             "min-wear": "0.00",
             "max-wear": "0.50",
