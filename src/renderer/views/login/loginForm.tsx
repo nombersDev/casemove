@@ -18,10 +18,10 @@ import { State } from 'renderer/interfaces/states';
 import {
   HandleLoginObjectClass,
   LoginCommand,
-  ReturnLoginPackage,
+  LoginCommandReturnPackage,
   LoginNotificationObject,
-  ReturnLoginStatus,
-} from 'shared/Interfaces.tsx/loginInterface';
+  LoginOptions,
+} from 'shared/Interfaces.tsx/store';
 import ConfirmModal from './confirmLoginModal';
 import { handleSuccess } from './HandleSuccess';
 
@@ -91,7 +91,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
   // Handle login
   const dispatch = useDispatch();
 
-  async function openNotification(keyValue: keyof ReturnLoginStatus) {
+  async function openNotification(keyValue: keyof LoginOptions) {
     setWasSuccess(loginResponseObject?.[keyValue]?.success);
     setTitleToDisplay(loginResponseObject?.[keyValue]?.title);
     setTextToDisplay(loginResponseObject?.[keyValue]?.text);
@@ -99,7 +99,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
   }
 
   class HandleLogin {
-    command: keyof ReturnLoginStatus;
+    command: keyof LoginOptions;
     relevantFunction: Function;
     handleObject: HandleLoginObjectClass = {
       webtokenNotLoggedIn: this.handleWebTokenNotLoggedIn,
@@ -111,7 +111,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
       playingElsewhere: this.handlePlayingElsewhere,
       loggedIn: this.handleSuccesLogin,
     };
-    constructor(command: keyof ReturnLoginStatus) {
+    constructor(command: keyof LoginOptions) {
       this.command = command;
       this.relevantFunction = this.handleObject[this.command];
     }
@@ -158,6 +158,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
     async handleSuccesLogin() {
       openNotification(this.command);
       window.electron.ipcRenderer.refreshInventory();
+      
     }
   }
 
@@ -225,7 +226,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
     HandleClass.relevantFunction();
     if (responseStatus.responseStatus == 'loggedIn') {
       handleSuccess(
-        responseStatus.returnPackage as ReturnLoginPackage,
+        responseStatus.returnPackage as LoginCommandReturnPackage,
         dispatch,
         currentState
       );
@@ -385,7 +386,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
                       />
                     </div>
                     <input
-                      spellCheck={false}
+                    spellCheck={false}
                       type="text"
                       name="clientjs"
                       id="clientjs"

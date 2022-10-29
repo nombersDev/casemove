@@ -13,7 +13,7 @@ import {
   DispatchIPCHandleBuildingOptionsClass,
   DispatchStoreBuildingObject,
   DispatchStoreHandleBuildingOptionsClass,
-} from 'shared/Interfaces.tsx/settingsInterface';
+} from 'shared/Interfaces.tsx/login';
 
 export class IPCCommunication {
   ipc = window.electron.ipcRenderer;
