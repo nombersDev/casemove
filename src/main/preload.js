@@ -11,6 +11,14 @@ contextBridge.exposeInMainWorld('electron', {
     refreshInventory() {
       ipcRenderer.send('refreshInventory');
     },
+
+    checkSteam() {
+      return ipcRenderer.invoke('check-steam')
+    },
+
+    closeSteam() {
+      return ipcRenderer.invoke('close-steam')
+    },
     // User commands
     needUpdate() {
       return new Promise((resolve) => {
@@ -270,7 +278,9 @@ contextBridge.exposeInMainWorld('electron', {
         'processTradeOrder',
         'setItemsPositions',
         'openContainer',
-        'forceLogin'
+        'forceLogin',
+        'checkSteam',
+        'closeSteam'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
@@ -300,7 +310,9 @@ contextBridge.exposeInMainWorld('electron', {
         'processTradeOrder',
         'setItemsPositions',
         'openContainer',
-        'forceLogin'
+        'forceLogin',
+        'checkSteam',
+        'closeSteam'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`

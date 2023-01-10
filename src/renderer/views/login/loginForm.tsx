@@ -6,7 +6,7 @@ import {
   LockClosedIcon,
   WifiIcon,
 } from '@heroicons/react/solid';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { LoadingButton } from 'renderer/components/content/shared/animations';
@@ -22,6 +22,7 @@ import {
   LoginNotificationObject,
   LoginOptions,
 } from 'shared/Interfaces.tsx/store';
+import SteamCloseModal from './closeSteamModal';
 import ConfirmModal from './confirmLoginModal';
 import { handleSuccess } from './HandleSuccess';
 
@@ -158,7 +159,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
     async handleSuccesLogin() {
       openNotification(this.command);
       window.electron.ipcRenderer.refreshInventory();
-      
+
     }
   }
 
@@ -199,9 +200,28 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
   }
   hasChosenAccountLoginKey;
   isLock = isLock[0];
+  const [closeSteamOpen, setCloseSteamOpen] = useState(false);
+  const [hasAskedCloseSteam, setHasAskedCloseSteam] = useState(false);
+
+  useEffect(() => {
+    if (!closeSteamOpen) {
+      setLoadingButton(false);
+    }
+  }, [closeSteamOpen]);
+
+
   async function onSubmit() {
     setLoadingButton(true);
 
+    if (!hasAskedCloseSteam) {
+      setHasAskedCloseSteam(true);
+      const steamRunning = await window.electron.ipcRenderer.checkSteam();
+      console.log('steam running', steamRunning);
+      if (steamRunning) {
+        setCloseSteamOpen(true);
+        return;
+      }
+    }
     let clientjstokenToSend = await validateWebToken();
     let usernameToSend = username as any;
     let passwordToSend = password as any;
@@ -267,10 +287,22 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
   async function handleSubmit(e) {
     e.preventDefault();
   }
+
+
+  /* useEffect(() => {
+    if (!closeSteamOpen) {
+      setCloseSteamOpen(window.electron.ipcRenderer.checkSteam())
+    }
+  }, [closeSteamOpen]); */
   // setOpen(true)
 
   return (
     <>
+      <SteamCloseModal
+        open={closeSteamOpen}
+        setOpen={setCloseSteamOpen}
+        loginWithouClosingSteam={() => onSubmit()}
+      />
       <ConfirmModal
         open={open}
         setOpen={setOpen}
@@ -386,7 +418,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
                       />
                     </div>
                     <input
-                    spellCheck={false}
+                      spellCheck={false}
                       type="text"
                       name="clientjs"
                       id="clientjs"
