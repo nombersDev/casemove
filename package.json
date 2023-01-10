@@ -221,6 +221,7 @@
     "electron-store": "^8.0.1",
     "electron-updater": "^4.3.9",
     "fernet": "^0.4.0",
+    "find-process": "^1.4.7",
     "globaloffensive": "^2.1.0",
     "history": "4.x.x",
     "lodash": "^4.17.21",

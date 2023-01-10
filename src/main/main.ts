@@ -30,6 +30,45 @@ import { LoginGenerator } from './helpers/classes/IPCGenerators/loginGenerator';
 import { LoginCommandReturnPackage } from 'shared/Interfaces.tsx/store';
 import { CurrencyReturnValue } from 'shared/Interfaces.tsx/IPCReturn';
 
+const find = require('find-process');
+
+async function checkSteam(): Promise<{
+  pid?: number;
+  status: boolean;
+}> {
+  let steamName = 'steam.exe';
+  if (process.platform == 'linux') {
+    return {
+      status: false,
+    }
+  }
+  if (process.platform == 'darwin') {
+    return {
+      status: false,
+    }
+    steamName = 'steam_osx';
+  }
+  return await find('name', steamName, true)
+    .then(function (list) {
+      console.log(list, list.length > 0);
+      if (list.length > 0) {
+        return {
+          pid: list[0].pid,
+          status: true,
+        };
+      }
+      return {
+        status: false,
+      };
+    })
+    .catch(function (_err) {
+      return {
+        status: false,
+      };
+    });
+}
+checkSteam();
+
 // Define helpers
 var ByteBuffer = require('bytebuffer');
 const Protos = require('globaloffensive/protobufs/generated/_load.js');
@@ -100,6 +139,8 @@ const createWindow = async () => {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       webSecurity: false,
+      sandbox: false,
+      enableBlinkFeatures: "CSSColorSchemeUARendering",
     },
   });
   mainWindow.webContents.session.clearStorageData();
@@ -282,6 +323,25 @@ ipcMain.on('needUpdate', async (event: any) => {
 async function sendLoginReply(event: any) {
   event.reply('login-reply', ClassLoginResponse.returnValue);
 }
+
+ipcMain.handle('check-steam', async () => {
+  const pid = await checkSteam()
+  if (pid.status) {
+    return true;
+  }
+  return false
+});
+
+ipcMain.handle('close-steam', async () => {
+  const pid = await checkSteam()
+  if (pid.status) {
+    process.kill(pid.pid as number);
+    return true;
+  }
+  return false
+});
+
+
 ipcMain.on(
   'login',
   async (
@@ -393,7 +453,7 @@ ipcMain.on(
             ipcMain.on('forceLogin', async () => {
               console.log('forceLogin');
               setTimeout(() => {
-                user.setPersona(SteamUser.EPersonaState.Online);
+                // user.setPersona(SteamUser.EPersonaState.Online);
                 gameCoordinate();
                 user.gamesPlayed([730], true);
               }, 3000);
@@ -473,10 +533,10 @@ ipcMain.on(
       });
     // Start the game coordinator for CSGO
     async function startGameCoordinator() {
-      user.setPersona(SteamUser.EPersonaState.Online);
+       // user.setPersona(SteamUser.EPersonaState.Online);
 
       setTimeout(() => {
-        user.setPersona(SteamUser.EPersonaState.Online);
+        // user.setPersona(SteamUser.EPersonaState.Online);
         user.gamesPlayed([730], true);
       }, 3000);
     }
