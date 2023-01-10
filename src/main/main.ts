@@ -36,7 +36,19 @@ async function checkSteam(): Promise<{
   pid?: number;
   status: boolean;
 }> {
-  return await find('name', 'steam.exe', true)
+  let steamName = 'steam.exe';
+  if (process.platform == 'linux') {
+    return {
+      status: false,
+    }
+  }
+  if (process.platform == 'darwin') {
+    return {
+      status: false,
+    }
+    steamName = 'steam_osx';
+  }
+  return await find('name', steamName, true)
     .then(function (list) {
       console.log(list, list.length > 0);
       if (list.length > 0) {
@@ -55,7 +67,7 @@ async function checkSteam(): Promise<{
       };
     });
 }
-
+checkSteam();
 
 // Define helpers
 var ByteBuffer = require('bytebuffer');
@@ -328,7 +340,7 @@ ipcMain.handle('close-steam', async () => {
   }
   return false
 });
-  
+
 
 ipcMain.on(
   'login',
