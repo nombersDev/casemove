@@ -46,6 +46,12 @@ export const setOS = (os) => {
       payload: os
   }
 }
+export const setSteamLoginShow = (loginShow) => {
+  return {
+      type: 'SETTINGS_SET_STEAMLOGINSHOW',
+      payload: loginShow
+  }
+}
 export const setDevmode = (devmode) => {
   return {
       type: 'SETTINGS_SET_DEVMODE',

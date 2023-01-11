@@ -5,6 +5,7 @@ const initialState: Settings = {
   currency: 'USD',
   locale: 'EN-GB',
   os: '',
+  steamLoginShow: true,
   devmode: false,
   columns: ["Price", "Stickers/patches", "Storage", "Tradehold", 'Moveable', 'Inventory link'],
   currencyPrice: {},
@@ -42,6 +43,13 @@ const settingsReducer = (state = initialState, action) => {
         ...state,
         currency: action.payload,
       };
+    
+    case 'SETTINGS_SET_STEAMLOGINSHOW':
+      return {
+        ...state,
+        steamLoginShow: action.payload,
+      };
+      
     case 'SETTINGS_SET_SOURCE':
       return {
         ...state,

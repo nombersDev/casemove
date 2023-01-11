@@ -25,7 +25,7 @@ import {
 import SteamCloseModal from './closeSteamModal';
 import ConfirmModal from './confirmLoginModal';
 import { handleSuccess } from './HandleSuccess';
-
+useEffect
 const loginResponseObject: LoginNotificationObject = {
   loggedIn: {
     success: true,
@@ -202,18 +202,14 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
   isLock = isLock[0];
   const [closeSteamOpen, setCloseSteamOpen] = useState(false);
   const [hasAskedCloseSteam, setHasAskedCloseSteam] = useState(false);
+  setLoadingButton
 
-  useEffect(() => {
-    if (!closeSteamOpen) {
-      setLoadingButton(false);
-    }
-  }, [closeSteamOpen]);
 
 
   async function onSubmit() {
     setLoadingButton(true);
 
-    if (!hasAskedCloseSteam) {
+    if (!hasAskedCloseSteam && currentState.settingsReducer.steamLoginShow) {
       setHasAskedCloseSteam(true);
       const steamRunning = await window.electron.ipcRenderer.checkSteam();
       console.log('steam running', steamRunning);
@@ -302,6 +298,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
         open={closeSteamOpen}
         setOpen={setCloseSteamOpen}
         loginWithouClosingSteam={() => onSubmit()}
+        setLoadingButton={setLoadingButton}
       />
       <ConfirmModal
         open={open}

@@ -160,6 +160,7 @@ function AppContent() {
       StoreClass.run(StoreClass.buildingObject.fastmove);
       StoreClass.run(StoreClass.buildingObject.source);
       StoreClass.run(StoreClass.buildingObject.locale);
+      StoreClass.run(StoreClass.buildingObject.steamLoginShow);
     }
   }
 

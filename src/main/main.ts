@@ -50,7 +50,6 @@ async function checkSteam(): Promise<{
   }
   return await find('name', steamName, true)
     .then(function (list) {
-      console.log(list, list.length > 0);
       if (list.length > 0) {
         return {
           pid: list[0].pid,
