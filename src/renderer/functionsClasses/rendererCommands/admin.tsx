@@ -7,6 +7,7 @@ import {
   setLocale,
   setOS,
   setSourceValue,
+  setSteamLoginShow,
 } from 'renderer/store/actions/settings';
 import {
   DispatchIPCBuildingObject,
@@ -62,6 +63,10 @@ export class DispatchStore extends IPCCommunication {
     currency: {
       name: 'currency',
       action: setCurrencyValue
+    },
+    steamLoginShow: {
+      name: 'steamLogin',
+      action: setSteamLoginShow
     }
   };
   constructor(dispatch: Function) {

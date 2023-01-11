@@ -144,6 +144,7 @@ export interface Settings {
   fastMove: boolean,
   currency: string,
   locale: string,
+  steamLoginShow: boolean,
   os: string,
   devmode: Boolean,
   columns: Array<string>,

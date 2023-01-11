@@ -16,6 +16,7 @@ export interface DispatchStoresettingsOptions {
   devmode: string
   fastmove: string
   currency: string
+  steamLoginShow: string
 }
 
 
