@@ -11174,5 +11174,160 @@
             "image": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_ump45_gs_ump_roadblock_light_large.d6b1372a575db666a8a7f039a39c05597d6cb60b.png",
             "trade_up": true
         }
+    },
+    "The Revolution Collection": {
+        "M4A4 | Temukau": {
+            "rarity": "Covert",
+            "imageURL": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_m4a1_cu_m4a4_temukau_light_large.a41eb80c70cbbee5d84e53b5cd1eaa10954c938d.png",
+            "best_quality": 10,
+            "min-wear": "0.00",
+            "max-wear": "0.80",
+            "image": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_m4a1_cu_m4a4_temukau_light_large.a41eb80c70cbbee5d84e53b5cd1eaa10954c938d.png",
+            "trade_up": false
+        },
+        "AK-47 | Head Shot": {
+            "rarity": "Covert",
+            "imageURL": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_ak47_cu_ak_head_shot_holo_light_large.85be84ba7c07917493b8e8a66c9d95c928ebe8b6.png",
+            "best_quality": 10,
+            "min-wear": "0.00",
+            "max-wear": "1.00",
+            "image": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_ak47_cu_ak_head_shot_holo_light_large.85be84ba7c07917493b8e8a66c9d95c928ebe8b6.png",
+            "trade_up": false
+        },
+        "AWP | Doodle Lore": {
+            "rarity": "Classified",
+            "imageURL": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_awp_cu_awp_doodle_lore_light_large.ee6d96299089503712d6398ffc2b04081d357b1c.png",
+            "best_quality": 8,
+            "min-wear": "0.00",
+            "max-wear": "0.80",
+            "image": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_awp_cu_awp_doodle_lore_light_large.ee6d96299089503712d6398ffc2b04081d357b1c.png",
+            "trade_up": true
+        },
+        "P2000 | Wicked Sick": {
+            "rarity": "Classified",
+            "imageURL": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_hkp2000_cu_p2000_decline_light_large.7f57145674a5e41b3b8e7fe70be4ffbb57ec6f84.png",
+            "best_quality": 8,
+            "min-wear": "0.00",
+            "max-wear": "1.00",
+            "image": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_hkp2000_cu_p2000_decline_light_large.7f57145674a5e41b3b8e7fe70be4ffbb57ec6f84.png",
+            "trade_up": true
+        },
+        "UMP-45 | Wild Child": {
+            "rarity": "Classified",
+            "imageURL": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_ump45_cu_ump_clutch_kick_light_large.b57e43c07b433517b1c3bdaa1e52ce44878af481.png",
+            "best_quality": 8,
+            "min-wear": "0.00",
+            "max-wear": "1.00",
+            "image": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_ump45_cu_ump_clutch_kick_light_large.b57e43c07b433517b1c3bdaa1e52ce44878af481.png",
+            "trade_up": true
+        },
+        "M4A1-S | Emphorosaur-S": {
+            "rarity": "Restricted",
+            "imageURL": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_m4a1_silencer_cu_m4a1s_feeding_frenzy_light_large.e1cb803e0e10ae4457e42d34ec8515b1500f4762.png",
+            "best_quality": 6,
+            "min-wear": "0.00",
+            "max-wear": "0.80",
+            "image": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_m4a1_silencer_cu_m4a1s_feeding_frenzy_light_large.e1cb803e0e10ae4457e42d34ec8515b1500f4762.png",
+            "trade_up": true
+        },
+        "R8 Revolver | Banana Cannon": {
+            "rarity": "Restricted",
+            "imageURL": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_revolver_gs_r8_banana_light_large.50f0b729a36a405d48b41d58463234dbbd15b9cf.png",
+            "best_quality": 6,
+            "min-wear": "0.00",
+            "max-wear": "1.00",
+            "image": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_revolver_gs_r8_banana_light_large.50f0b729a36a405d48b41d58463234dbbd15b9cf.png",
+            "trade_up": true
+        },
+        "P90 | Neoqueen": {
+            "rarity": "Restricted",
+            "imageURL": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_p90_gs_p90_neoqueen_light_large.fa2a81f8c7906b2683b5eb4b562edd2529ad2cf0.png",
+            "best_quality": 6,
+            "min-wear": "0.00",
+            "max-wear": "0.60",
+            "image": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_p90_gs_p90_neoqueen_light_large.fa2a81f8c7906b2683b5eb4b562edd2529ad2cf0.png",
+            "trade_up": true
+        },
+        "Glock-18 | Umbral Rabbit": {
+            "rarity": "Restricted",
+            "imageURL": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_glock_cu_glock_moon_rabbit_light_large.9063b9745250446c657632eb13a6325f51d101f2.png",
+            "best_quality": 6,
+            "min-wear": "0.00",
+            "max-wear": "0.75",
+            "image": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_glock_cu_glock_moon_rabbit_light_large.9063b9745250446c657632eb13a6325f51d101f2.png",
+            "trade_up": true
+        },
+        "MAC-10 | Sakkaku": {
+            "rarity": "Restricted",
+            "imageURL": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_mac10_cu_mac10_sakkaku_light_large.b590689d0ca099e8a759dd0a86da0710a58bca42.png",
+            "best_quality": 6,
+            "min-wear": "0.21",
+            "max-wear": "0.79",
+            "image": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_mac10_cu_mac10_sakkaku_light_large.b590689d0ca099e8a759dd0a86da0710a58bca42.png",
+            "trade_up": true
+        },
+        "MP5-SD | Liquidation": {
+            "rarity": "Mil-Spec",
+            "imageURL": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_mp5sd_cu_mp5sd_quick_liquidation_light_large.2b446c710928debe38469e33b3b9030bd218c0e3.png",
+            "best_quality": 4,
+            "min-wear": "0.00",
+            "max-wear": "1.00",
+            "image": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_mp5sd_cu_mp5sd_quick_liquidation_light_large.2b446c710928debe38469e33b3b9030bd218c0e3.png",
+            "trade_up": true
+        },
+        "MP9 | Featherweight": {
+            "rarity": "Mil-Spec",
+            "imageURL": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_mp9_cu_mp9_superlight_light_large.81ad837f4c889f250fa03b227ef74555614de55d.png",
+            "best_quality": 4,
+            "min-wear": "0.00",
+            "max-wear": "1.00",
+            "image": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_mp9_cu_mp9_superlight_light_large.81ad837f4c889f250fa03b227ef74555614de55d.png",
+            "trade_up": true
+        },
+        "P250 | Re.built": {
+            "rarity": "Mil-Spec",
+            "imageURL": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_p250_cu_p250_rebuilt_light_large.69d4fcb9a8151d09818d1c26cf4c7b03d046b5a1.png",
+            "best_quality": 4,
+            "min-wear": "0.00",
+            "max-wear": "0.90",
+            "image": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_p250_cu_p250_rebuilt_light_large.69d4fcb9a8151d09818d1c26cf4c7b03d046b5a1.png",
+            "trade_up": true
+        },
+        "SG 553 | Cyberforce": {
+            "rarity": "Mil-Spec",
+            "imageURL": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_sg556_cu_sg553_cyberforce_light_large.63aa4e611195d801eb706ac65d38df68f98e2b76.png",
+            "best_quality": 4,
+            "min-wear": "0.00",
+            "max-wear": "0.90",
+            "image": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_sg556_cu_sg553_cyberforce_light_large.63aa4e611195d801eb706ac65d38df68f98e2b76.png",
+            "trade_up": true
+        },
+        "MAG-7 | Insomnia": {
+            "rarity": "Mil-Spec",
+            "imageURL": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_mag7_cu_mag7_insomnia_light_large.0d971fb17ca0bb1df7baed6a1caa902c56c1ea5b.png",
+            "best_quality": 4,
+            "min-wear": "0.00",
+            "max-wear": "1.00",
+            "image": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_mag7_cu_mag7_insomnia_light_large.0d971fb17ca0bb1df7baed6a1caa902c56c1ea5b.png",
+            "trade_up": true
+        },
+        "SCAR-20 | Fragments": {
+            "rarity": "Mil-Spec",
+            "imageURL": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_scar20_gs_scar_fragments_black_light_large.d6bde287b06ba2380ba07621a0b06c36b13c4025.png",
+            "best_quality": 4,
+            "min-wear": "0.00",
+            "max-wear": "0.78",
+            "image": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_scar20_gs_scar_fragments_black_light_large.d6bde287b06ba2380ba07621a0b06c36b13c4025.png",
+            "trade_up": true
+        },
+        "Tec-9 | Rebel": {
+            "rarity": "Mil-Spec",
+            "imageURL": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_tec9_cu_tec9_freedom_light_large.bb79585222a88d4dd3b154915c5527cac7e507d1.png",
+            "best_quality": 4,
+            "min-wear": "0.00",
+            "max-wear": "1.00",
+            "image": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_tec9_cu_tec9_freedom_light_large.bb79585222a88d4dd3b154915c5527cac7e507d1.png",
+            "trade_up": true
+        }
     }
 }

@@ -29,8 +29,45 @@ import { tradeUps } from './helpers/classes/steam/tradeup';
 import { LoginGenerator } from './helpers/classes/IPCGenerators/loginGenerator';
 import { LoginCommandReturnPackage } from 'shared/Interfaces.tsx/store';
 import { CurrencyReturnValue } from 'shared/Interfaces.tsx/IPCReturn';
+// import log from 'electron-log';
+
+// log.transports.file.level = 'info';
+// log.info('App starting...');
 
 const find = require('find-process');
+/* function sendStatus(text) {
+  if (mainWindow) {
+    mainWindow.webContents.send('message', text);
+  }
+}
+autoUpdater.on('checking-for-update', () => {
+  sendStatus('Checking for update...');
+})
+
+autoUpdater.on('update-available', (_ev, info) => {
+  sendStatus('Update available.');
+  log.info('info', info);
+})
+autoUpdater.on('update-not-available', (_ev: any, info) => {
+  sendStatus('Update not available.');
+  log.info('info', info);
+})
+
+autoUpdater.on('update-downloaded', (_ev, info) => {
+  sendStatus('Update downloaded.  Will quit and install in 5 seconds.');
+  log.info('info', info);
+  // Wait 5 seconds, then quit and install
+  // setTimeout(function() {
+  //   autoUpdater.quitAndInstall();  
+  // }, 5000)
+}) 
+// Wait a second for the window to exist before checking for updates.
+//autoUpdater.setFeedURL('http://127.0.0.1:8080/');
+setTimeout(function() {
+  log.info('starting update check');
+  autoUpdater.checkForUpdates()  
+}, 1000);*/
+
 
 async function checkSteam(): Promise<{
   pid?: number;
