@@ -13,7 +13,7 @@ async function getProfilePicture(steamID: string): Promise<string> {
     const profilePicture = await getURL(steamID);
     return profilePicture as string;
   } catch (error) {
-    return 'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/econ/characters/customplayer_tm_separatist.png';
+    return 'https://raw.githubusercontent.com/steamdatabase/gametracking-csgo/108f1682bf7eeb1420caaf2357da88b614a7e1b0/csgo/pak01_dir/resource/flash/econ/characters/customplayer_tm_separatist.png';
   }
 }
 export async function handleSuccess(returnSuccessPackage: LoginCommandReturnPackage, dispatch: Function, currentState: State) {
