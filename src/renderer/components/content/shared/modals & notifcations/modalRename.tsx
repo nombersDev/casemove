@@ -63,7 +63,7 @@ export default function RenameModal() {
                 <div className="mx-auto flex items-center justify-center h-16 w-16">
                   <img
                     className="w-16 text-green-600"
-                    src="https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/econ/tools/casket.png"
+                    src="https://raw.githubusercontent.com/steamdatabase/gametracking-csgo/108f1682bf7eeb1420caaf2357da88b614a7e1b0/csgo/pak01_dir/resource/flash/econ/tools/casket.png"
                   ></img>
                 </div>
                 <div className="mt-3 text-center sm:mt-5">

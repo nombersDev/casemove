@@ -147,7 +147,7 @@ export default function TradeModal() {
                             {project.item_id == activeHover ? <button onClick={() => dispatch(tradeUpAddRemove(project))} className="w-full absolute justify-items-center h-full flex items-center justify-center z-10 "> <XIcon className="h-4 w-4 text-gray-400" /> </button> : <img
                               className="max-w-none h-7 w-7  object-cover z-10 absolute"
                               src={
-                                'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
+                                'https://raw.githubusercontent.com/steamdatabase/gametracking-csgo/108f1682bf7eeb1420caaf2357da88b614a7e1b0/csgo/pak01_dir/resource/flash/' +
                                 project.item_url +
                                 '.png'
                               }
@@ -155,7 +155,7 @@ export default function TradeModal() {
                             {project.storage_name != undefined && project.item_id != activeHover ? <img
                               className="max-w-none h-7 w-7  object-cover absolute z-0 opacity-50 "
                               src={
-                                'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/econ/tools/casket.png'
+                                'https://raw.githubusercontent.com/steamdatabase/gametracking-csgo/108f1682bf7eeb1420caaf2357da88b614a7e1b0/csgo/pak01_dir/resource/flash/econ/tools/casket.png'
                               }
                             /> : ''}
                           </div>

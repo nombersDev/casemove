@@ -301,7 +301,7 @@ function content() {
                         'max-w-none h-11 w-11  object-cover'
                       )}
                       src={
-                        'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/pak01_dir/resource/flash/' +
+                        'https://raw.githubusercontent.com/steamdatabase/gametracking-csgo/108f1682bf7eeb1420caaf2357da88b614a7e1b0/csgo/pak01_dir/resource/flash/' +
                         project.item_url +
                         '.png'
                       }

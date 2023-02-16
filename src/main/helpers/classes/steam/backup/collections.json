@@ -11194,13 +11194,13 @@
             "image": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_ak47_cu_ak_head_shot_holo_light_large.85be84ba7c07917493b8e8a66c9d95c928ebe8b6.png",
             "trade_up": false
         },
-        "AWP | Doodle Lore": {
+        "AWP | Duality": {
             "rarity": "Classified",
-            "imageURL": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_awp_cu_awp_doodle_lore_light_large.ee6d96299089503712d6398ffc2b04081d357b1c.png",
+            "imageURL": "https://raw.githubusercontent.com/steamdatabase/gametracking-csgo/108f1682bf7eeb1420caaf2357da88b614a7e1b0/csgo/pak01_dir/resource/flash/econ/default_generated/weapon_awp_gs_awp_limbo_snake_light_large.png",
             "best_quality": 8,
             "min-wear": "0.00",
-            "max-wear": "0.80",
-            "image": "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_awp_cu_awp_doodle_lore_light_large.ee6d96299089503712d6398ffc2b04081d357b1c.png",
+            "max-wear": "0.70",
+            "image": "https://raw.githubusercontent.com/steamdatabase/gametracking-csgo/108f1682bf7eeb1420caaf2357da88b614a7e1b0/csgo/pak01_dir/resource/flash/econ/default_generated/weapon_awp_gs_awp_limbo_snake_light_large.png",
             "trade_up": true
         },
         "P2000 | Wicked Sick": {
