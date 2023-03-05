@@ -17,16 +17,20 @@ async function getPrices(cas) {
   axios
     .get(url)
     .then(function (response) {
-      console.log('prices, response', typeof response === 'object', response !== null)
+      console.log(
+        'prices, response',
+        typeof response === 'object',
+        response !== null
+      );
       if (typeof response === 'object' && response !== null) {
-        cas.setPricing(response.data, 'normal')
+        cas.setPricing(response.data, 'normal');
       } else {
         getPricesBackup(cas);
       }
     })
     .catch(function (error) {
       console.log('Error prices', error);
-      getPricesBackup(cas)
+      getPricesBackup(cas);
     });
 }
 
@@ -103,69 +107,85 @@ class runItems {
     });
   }
   async setPricing(pricingData, commandFrom) {
-    console.log('pricingSet', commandFrom)
+    console.log('pricingSet', commandFrom);
     this.prices = pricingData;
   }
   async makeSinglerequest(itemRow) {
-    let itemNamePricing = itemRow.item_name.replaceAll('(Holo/Foil)', '(Holo-Foil)');
+    let itemNamePricing = itemRow.item_name.replaceAll(
+      '(Holo/Foil)',
+      '(Holo-Foil)'
+    );
     if (itemRow.item_wear_name !== undefined) {
       itemNamePricing = itemRow.item_name + ' (' + itemRow.item_wear_name + ')';
       if (!this.prices[itemNamePricing] && this.prices[itemRow.item_name]) {
-        itemNamePricing = itemRow.item_name
+        itemNamePricing = itemRow.item_name;
       }
     }
 
     if (this.prices[itemNamePricing] !== undefined) {
       let pricingDict = {
         buff163: this.prices[itemNamePricing]?.buff163.starting_at?.price,
-        steam_listing: this.prices[itemNamePricing]?.steam?.last_7d,
+        steam_listing: this.prices[itemNamePricing]?.steam?.last_90d,
         skinport: this.prices[itemNamePricing]?.skinport?.starting_at,
         bitskins: this.prices[itemNamePricing]?.bitskins?.price,
       };
-      if (this.prices[itemNamePricing]?.steam?.last_7d == 0 && this.prices[itemNamePricing]?.buff163.starting_at?.price > 2000) {
-        pricingDict.steam_listing = 2000
+      if (this.prices[itemNamePricing]?.steam?.last_30d) {
+        pricingDict.steam_listing =
+          this.prices[itemNamePricing]?.steam?.last_30d;
       }
-      itemRow['pricing'] = pricingDict
-      return itemRow
+      if (this.prices[itemNamePricing]?.steam?.last_7d) {
+        pricingDict.steam_listing =
+          this.prices[itemNamePricing]?.steam?.last_7d;
+      }
+
+      if (this.prices[itemNamePricing]?.steam?.last_24h) {
+        pricingDict.steam_listing =
+          this.prices[itemNamePricing]?.steam?.last_24h;
+      }
+      if (
+        this.prices[itemNamePricing]?.steam?.last_7d == 0 &&
+        this.prices[itemNamePricing]?.buff163.starting_at?.price > 2000
+      ) {
+        pricingDict.steam_listing = this.prices[itemNamePricing]?.buff163.starting_at?.price * 0.8;
+      }
+      itemRow['pricing'] = pricingDict;
+      return itemRow;
     } else {
       let pricingDict = {
         buff163: 0,
         steam_listing: 0,
         skinport: 0,
-        bitskins: 0
-      }
-      itemRow['pricing'] = pricingDict
-      return itemRow
+        bitskins: 0,
+      };
+      itemRow['pricing'] = pricingDict;
+      return itemRow;
     }
-
   }
   async handleItem(itemRow) {
     let returnRows = [] as any;
-    itemRow.forEach(element => {
+    itemRow.forEach((element) => {
       if (element.item_name !== undefined && element.item_moveable == true) {
         this.makeSinglerequest(element).then((returnValue) => {
-          returnRows.push(returnValue)
-        })
+          returnRows.push(returnValue);
+        });
       }
     });
     pricingEmitter.emit('result', itemRow);
-
   }
 
   async handleTradeUp(itemRow) {
     let returnRows = [] as any;
-    itemRow.forEach(element => {
+    itemRow.forEach((element) => {
       this.makeSinglerequest(element).then((returnValue) => {
-        returnRows.push(returnValue)
-      })
+        returnRows.push(returnValue);
+      });
     });
     pricingEmitter.emit('result', itemRow);
-
   }
 }
 module.exports = {
   runItems,
   pricingEmitter,
-  currencyCodes
+  currencyCodes,
 };
 export { runItems, pricingEmitter, currencyCodes };
