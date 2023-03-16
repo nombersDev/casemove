@@ -131,8 +131,8 @@ class items {
 
     for (const [key, value] of Object.entries(inventoryResult)) {
 
-      
-      
+
+
 
       if (value['def_index'] == undefined) {
         continue;
@@ -156,7 +156,7 @@ class items {
       const returnDict = {};
       // URL
       let imageURL = this.handleError(this.itemProcessorImageUrl, [value]);
-      
+
       const iconMatch = getAttributeValueBytes(value, 70)?.readUInt32LE(0)
       if (value['def_index'] == 1201 && iconMatch && this.csgoItems['casket_icons']?.[iconMatch]?.icon_path) {
         imageURL = this.csgoItems['casket_icons']?.[iconMatch]?.icon_path
@@ -483,6 +483,10 @@ class items {
         return false;
       }
       if (returnDict['item_url'].includes('econ/status_icons/service_medal_')) {
+        return false;
+      }
+
+      if (storageRow['def_index'] == 987) {
         return false;
       }
 
