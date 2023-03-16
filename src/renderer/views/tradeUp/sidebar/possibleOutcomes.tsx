@@ -143,7 +143,7 @@ export default function PossibleOutcomes() {
                   <p className="text-gray-500"></p>
                   <div className="flex items-center">
                     <p className="text-gray-500">
-                      Prices are the SCM 7 day average
+                      Prices are the SCM prices
                     </p>
                     <p className="text-gray-500"></p>
                   </div>
