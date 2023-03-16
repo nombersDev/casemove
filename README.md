@@ -4,14 +4,14 @@
 
 ----
 
-## Download Latest Version (Casemove 2.0.7)
+## Download Latest Version (Casemove 2.1.0)
 
 This is the latest stable version and can be downloaded from the [releases](https://github.com/nombersDev/casemove/releases) page, or directly from:
 
-- [Windows - (Casemove-2.0.7)](https://github.com/nombersDev/casemove/releases/download/2.0.7/Casemove.Setup.2.0.7.exe)
-- [Mac - (Casemove-2.0.7)](https://github.com/nombersDev/casemove/releases/download/2.0.7/Casemove-2.0.7.dmg)
-- [Mac ARM 64 (M1) - (Casemove-2.0.7)](https://github.com/nombersDev/casemove/releases/download/2.0.7/Casemove-2.0.7-arm64.dmg)
-- [Linux AppImage - (Casemove-2.0.7)](https://github.com/nombersDev/casemove/releases/download/2.0.7/casemove-2.0.7.zip)
+- [Windows - (Casemove-2.1.0)](https://github.com/nombersDev/casemove/releases/download/2.1.0/Casemove.Setup.2.1.0.exe)
+- [Mac - (Casemove-2.1.0)](https://github.com/nombersDev/casemove/releases/download/2.1.0/Casemove-2.1.0.dmg)
+- [Mac ARM 64 (M1) - (Casemove-2.1.0)](https://github.com/nombersDev/casemove/releases/download/2.1.0/Casemove-2.1.0-arm64.dmg)
+- [Linux AppImage - (Casemove-2.1.0)](https://github.com/nombersDev/casemove/releases/download/2.1.0/casemove-2.1.0.zip)
 
 Install the Linux version by unzipping the contents of the zip-file into a folder and click on the AppImage file. 
 
