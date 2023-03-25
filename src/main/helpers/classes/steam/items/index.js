@@ -123,6 +123,7 @@ class items {
 
   inventoryConverter(inventoryResult, isCasket = false) {
     var returnList = [];
+
     if (typeof inventoryResult === 'object' && inventoryResult !== null) {
       returnList
     } else {
@@ -130,9 +131,6 @@ class items {
     }
 
     for (const [key, value] of Object.entries(inventoryResult)) {
-
-
-
 
       if (value['def_index'] == undefined) {
         continue;
@@ -177,6 +175,9 @@ class items {
       returnDict['item_customname'] = value['custom_name'];
       returnDict['item_url'] = imageURL;
       returnDict['item_id'] = value['id'];
+
+      returnDict['item_paint_index'] = value['paint_index'] || null;
+
       returnDict['position'] = 9999;
       if (value['position'] != null) {
         returnDict['position'] = value['position'];

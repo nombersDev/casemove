@@ -34,6 +34,33 @@ async function getPrices(cas) {
     });
 }
 
+const dopplers = {
+  418: 'Phase 1',
+  419: 'Phase 2',
+  420: 'Phase 3',
+  421: 'Phase 4',
+  415: 'Ruby',
+  416: 'Sapphire',
+  417: 'Black Pearl',
+  569: 'Phase 1',
+  570: 'Phase 2',
+  571: 'Phase 3',
+  572: 'Phase 4',
+  568: 'Emerald',
+  618: 'Phase 2',
+  619: 'Sapphire',
+  617: 'Black Pearl',
+  852: 'Phase 1',
+  853: 'Phase 2',
+  854: 'Phase 3',
+  855: 'Phase 4',
+  1119: 'Emerald',
+  1120: 'Phase 1',
+  1121: 'Phase 2',
+  1122: 'Phase 3',
+  1123: 'Phase 4',
+};
+
 let currencyCodes = {
   1: 'USD',
   2: 'GBP',
@@ -101,7 +128,7 @@ class runItems {
     this.packageToSend = {};
     getPrices(this);
     getValue('pricing.currency').then((returnValue) => {
-      if (returnValue == undefined) {
+      if (returnValue == undefined) { 
         setValue('pricing.currency', currencyCodes[steamUser.wallet.currency]);
       }
     });
@@ -111,10 +138,12 @@ class runItems {
     this.prices = pricingData;
   }
   async makeSinglerequest(itemRow) {
+
     let itemNamePricing = itemRow.item_name.replaceAll(
       '(Holo/Foil)',
       '(Holo-Foil)'
     );
+
     if (itemRow.item_wear_name !== undefined) {
       itemNamePricing = itemRow.item_name + ' (' + itemRow.item_wear_name + ')';
       if (!this.prices[itemNamePricing] && this.prices[itemRow.item_name]) {
@@ -123,12 +152,26 @@ class runItems {
     }
 
     if (this.prices[itemNamePricing] !== undefined) {
+      const phaseName = dopplers[itemRow.item_paint_index];
+
+      if (itemRow.item_name.includes('Doppler')) {
+        console.log(itemRow); 
+      }
+
+      let buffPrice = this.prices[itemNamePricing]?.buff163.starting_at?.price;
+
+      if (phaseName) {
+        buffPrice = this.prices[itemNamePricing]?.buff163.starting_at?.doppler[phaseName]; 
+      }
+      
       let pricingDict = {
-        buff163: this.prices[itemNamePricing]?.buff163.starting_at?.price,
+        buff163: buffPrice,
         steam_listing: this.prices[itemNamePricing]?.steam?.last_90d,
         skinport: this.prices[itemNamePricing]?.skinport?.starting_at,
         bitskins: this.prices[itemNamePricing]?.bitskins?.price,
       };
+
+      // if(doppler)
       if (this.prices[itemNamePricing]?.steam?.last_30d) {
         pricingDict.steam_listing =
           this.prices[itemNamePricing]?.steam?.last_30d;
@@ -148,6 +191,7 @@ class runItems {
       ) {
         pricingDict.steam_listing = this.prices[itemNamePricing]?.buff163.starting_at?.price * 0.8;
       }
+
       itemRow['pricing'] = pricingDict;
       return itemRow;
     } else {

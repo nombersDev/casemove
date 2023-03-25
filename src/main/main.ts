@@ -413,6 +413,7 @@ ipcMain.on(
             console.log('Connected to GC!');
             if (csgo.haveGCSession) {
               console.log('Have Session!');
+
               fetchItemClass
                 .convertInventory(csgo.inventory)
                 .then((returnValue) => {
@@ -569,7 +570,7 @@ ipcMain.on(
       });
     // Start the game coordinator for CSGO
     async function startGameCoordinator() {
-       // user.setPersona(SteamUser.EPersonaState.Online);
+      // user.setPersona(SteamUser.EPersonaState.Online);
 
       setTimeout(() => {
         // user.setPersona(SteamUser.EPersonaState.Online);
