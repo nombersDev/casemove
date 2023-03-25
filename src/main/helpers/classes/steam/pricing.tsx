@@ -128,7 +128,7 @@ class runItems {
     this.packageToSend = {};
     getPrices(this);
     getValue('pricing.currency').then((returnValue) => {
-      if (returnValue == undefined) { 
+      if (returnValue == undefined) {
         setValue('pricing.currency', currencyCodes[steamUser.wallet.currency]);
       }
     });
@@ -137,13 +137,11 @@ class runItems {
     console.log('pricingSet', commandFrom);
     this.prices = pricingData;
   }
-  async makeSinglerequest(itemRow) {
-
+  async makeSinglerequest(itemRow) { 
     let itemNamePricing = itemRow.item_name.replaceAll(
       '(Holo/Foil)',
       '(Holo-Foil)'
-    );
-
+    ); 
     if (itemRow.item_wear_name !== undefined) {
       itemNamePricing = itemRow.item_name + ' (' + itemRow.item_wear_name + ')';
       if (!this.prices[itemNamePricing] && this.prices[itemRow.item_name]) {
@@ -152,11 +150,8 @@ class runItems {
     }
 
     if (this.prices[itemNamePricing] !== undefined) {
-      const phaseName = dopplers[itemRow.item_paint_index];
 
-      if (itemRow.item_name.includes('Doppler')) {
-        console.log(itemRow); 
-      }
+      const phaseName = dopplers[itemRow.item_paint_index];
 
       let buffPrice = this.prices[itemNamePricing]?.buff163.starting_at?.price;
 
@@ -170,8 +165,6 @@ class runItems {
         skinport: this.prices[itemNamePricing]?.skinport?.starting_at,
         bitskins: this.prices[itemNamePricing]?.bitskins?.price,
       };
-
-      // if(doppler)
       if (this.prices[itemNamePricing]?.steam?.last_30d) {
         pricingDict.steam_listing =
           this.prices[itemNamePricing]?.steam?.last_30d;
@@ -191,7 +184,6 @@ class runItems {
       ) {
         pricingDict.steam_listing = this.prices[itemNamePricing]?.buff163.starting_at?.price * 0.8;
       }
-
       itemRow['pricing'] = pricingDict;
       return itemRow;
     } else {

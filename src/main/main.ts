@@ -413,7 +413,6 @@ ipcMain.on(
             console.log('Connected to GC!');
             if (csgo.haveGCSession) {
               console.log('Have Session!');
-
               fetchItemClass
                 .convertInventory(csgo.inventory)
                 .then((returnValue) => {
