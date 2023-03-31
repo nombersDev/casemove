@@ -27,7 +27,7 @@ async function getGithubVersion(platform: string): Promise<GithubResponse> {
 
               case 'linux':
                 value.assets.forEach((element) => {
-                  if (element.name.includes('.zip')) {
+                  if (element.name.includes('.dmg')) {
                     downloadLink = element.browser_download_url;
                   }
                 });
@@ -38,7 +38,7 @@ async function getGithubVersion(platform: string): Promise<GithubResponse> {
             }
 
             resolve({
-              version: parseInt(value.tag_name.replaceAll('.', '')),
+              version: parseInt(value.tag_name.replaceAll('.', '').replaceAll('v', '')),
               downloadLink: downloadLink,
             });
             break;
