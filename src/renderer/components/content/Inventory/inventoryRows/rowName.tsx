@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { setRenameModal } from "renderer/store/actions/modalMove actions";
+import { createCSGOImage } from "../../../../functionsClasses/createCSGOImage";
 import { classNames } from "../../shared/filters/inventoryFunctions";
 
 
@@ -44,9 +45,7 @@ export function RowProduct({ itemRow }) {
                   'max-w-none h-11 w-11 transition duration-500 ease-in-out  dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300'
                 )}
                 src={
-                  'https://raw.githubusercontent.com/steamdatabase/gametracking-csgo/108f1682bf7eeb1420caaf2357da88b614a7e1b0/csgo/pak01_dir/resource/flash/' +
-                  itemRow.item_url +
-                  '.png'
+                 createCSGOImage(itemRow.item_url)
                 }
               />
             </div>
