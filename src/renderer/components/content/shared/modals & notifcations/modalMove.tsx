@@ -17,6 +17,7 @@ import {
 } from 'renderer/store/actions/moveFromActions';
 
 export default function MoveModal() {
+  const waitTime = 100;
   // const [hasRun, setRun] = useState(false);
   const [seenID, setID] = useState('');
   const [seenStorage, setStorage] = useState('');
@@ -52,7 +53,7 @@ export default function MoveModal() {
               modalData.modalPayload['itemID'],
               true
             );
-            await new Promise(r => setTimeout(r, 25));
+            await new Promise(r => setTimeout(r, waitTime));
           } else {
             try {
               await window.electron.ipcRenderer.moveToStorageUnit(
@@ -72,13 +73,13 @@ export default function MoveModal() {
         }
         if (modalData.modalPayload['type'] == 'from') {
           if (fastMode) {
-            
+
             window.electron.ipcRenderer.moveFromStorageUnit(
               modalData.modalPayload['storageID'],
               modalData.modalPayload['itemID'],
               true
             );
-            await new Promise(r => setTimeout(r, 25));
+            await new Promise(r => setTimeout(r, waitTime));
 
           } else {
             try {
@@ -87,7 +88,7 @@ export default function MoveModal() {
                modalData.modalPayload['itemID'],
                false
              );
-             // await new Promise(r => setTimeout(r, 25));
+             // await new Promise(r => setTimeout(r, waitTime));
            } catch {
              dispatch(moveModalAddToFail());
            }

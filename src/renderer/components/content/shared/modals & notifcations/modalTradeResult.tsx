@@ -3,6 +3,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setTradeMoveResult } from 'renderer/store/actions/modalTrade';
 import { tradeUpResetPossible } from 'renderer/store/actions/tradeUpActions';
+import { createCSGOImage } from '../../../../functionsClasses/createCSGOImage';
 
 export default function TradeResultModal() {
   const dispatch = useDispatch();
@@ -58,9 +59,7 @@ export default function TradeResultModal() {
               <img
                           className="max-w-none h-16 w-16 dark:from-gray-300 dark:to-gray-400 rounded-full ring-2 ring-transparent object-cover bg-gradient-to-t from-gray-100 to-gray-300"
                           src={
-                            'https://raw.githubusercontent.com/steamdatabase/gametracking-csgo/108f1682bf7eeb1420caaf2357da88b614a7e1b0/csgo/pak01_dir/resource/flash/' +
-                            modalData.rowToMatch?.item_url +
-                            '.png'
+                            createCSGOImage(modalData.rowToMatch?.item_url)
                           }
                         /></div>
                 <div className="mt-3 text-center sm:mt-5">

@@ -11,6 +11,7 @@ import {
   moveToSetHide,
   moveTosetSearchFieldStorage,
 } from 'renderer/store/actions/moveToActions';
+import { createCSGOImage } from '../../../../functionsClasses/createCSGOImage';
 import EmptyComponent from '../../shared/emptyState';
 import { classNames } from '../../shared/filters/inventoryFunctions';
 import RenameModal from '../../shared/modals & notifcations/modalRename';
@@ -301,9 +302,7 @@ function content() {
                         'max-w-none h-11 w-11  object-cover'
                       )}
                       src={
-                        'https://raw.githubusercontent.com/steamdatabase/gametracking-csgo/108f1682bf7eeb1420caaf2357da88b614a7e1b0/csgo/pak01_dir/resource/flash/' +
-                        project.item_url +
-                        '.png'
+                        createCSGOImage(project.item_url)
                       }
                     />
                   </div>

@@ -4,6 +4,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeRenameModal } from 'renderer/store/actions/modalMove actions';
 import { classNames } from '../filters/inventoryFunctions';
+import { createCSGOImage } from '../../../../functionsClasses/createCSGOImage';
 
 export default function RenameModal() {
 
@@ -63,7 +64,9 @@ export default function RenameModal() {
                 <div className="mx-auto flex items-center justify-center h-16 w-16">
                   <img
                     className="w-16 text-green-600"
-                    src="https://raw.githubusercontent.com/steamdatabase/gametracking-csgo/108f1682bf7eeb1420caaf2357da88b614a7e1b0/csgo/pak01_dir/resource/flash/econ/tools/casket.png"
+                    src={
+                      createCSGOImage("econ/tools/casket")
+                    }
                   ></img>
                 </div>
                 <div className="mt-3 text-center sm:mt-5">
