@@ -30,7 +30,7 @@ import { LoginGenerator } from './helpers/classes/IPCGenerators/loginGenerator';
 import { LoginCommandReturnPackage } from 'shared/Interfaces.tsx/store';
 import { CurrencyReturnValue } from 'shared/Interfaces.tsx/IPCReturn';
 // import log from 'electron-log';
-import { autoUpdater } from "electron-updater"
+import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 
 autoUpdater.logger = log;
@@ -38,12 +38,40 @@ autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
 log.info('App starting...');
 
-app.on('ready', function()  {
+app.on('ready', function () {
   autoUpdater.checkForUpdatesAndNotify();
 });
 
 const find = require('find-process');
 
+autoUpdater.on('checking-for-update', () => {
+  sendUpdaterStatusToWindow('Checking for update...');
+});
+autoUpdater.on('update-available', (_info) => {
+  sendUpdaterStatusToWindow('Update available.');
+});
+autoUpdater.on('update-not-available', (_info) => {
+  sendUpdaterStatusToWindow('Update not available.');
+});
+autoUpdater.on('error', (err) => {
+  sendUpdaterStatusToWindow('Error in auto-updater. ' + err);
+});
+autoUpdater.on('download-progress', (progressObj) => {
+  let log_message = 'Download speed: ' + progressObj.bytesPerSecond;
+  log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
+  log_message =
+    log_message +
+    ' (' +
+    progressObj.transferred +
+    '/' +
+    progressObj.total +
+    ')';
+  sendUpdaterStatusToWindow(log_message);
+});
+autoUpdater.on('update-downloaded', (_info) => {
+  
+  sendUpdaterStatusToWindow('Update downloaded');
+});
 
 async function checkSteam(): Promise<{
   pid?: number;
@@ -53,12 +81,12 @@ async function checkSteam(): Promise<{
   if (process.platform == 'linux') {
     return {
       status: false,
-    }
+    };
   }
   if (process.platform == 'darwin') {
     return {
       status: false,
-    }
+    };
     steamName = 'steam_osx';
   }
   return await find('name', steamName, true)
@@ -152,7 +180,7 @@ const createWindow = async () => {
       preload: path.join(__dirname, 'preload.js'),
       webSecurity: false,
       sandbox: false,
-      enableBlinkFeatures: "CSSColorSchemeUARendering",
+      enableBlinkFeatures: 'CSSColorSchemeUARendering',
     },
   });
   mainWindow.webContents.session.clearStorageData();
@@ -337,22 +365,21 @@ async function sendLoginReply(event: any) {
 }
 
 ipcMain.handle('check-steam', async () => {
-  const pid = await checkSteam()
+  const pid = await checkSteam();
   if (pid.status) {
     return true;
   }
-  return false
+  return false;
 });
 
 ipcMain.handle('close-steam', async () => {
-  const pid = await checkSteam()
+  const pid = await checkSteam();
   if (pid.status) {
     process.kill(pid.pid as number);
     return true;
   }
-  return false
+  return false;
 });
-
 
 ipcMain.on(
   'login',
@@ -545,7 +572,7 @@ ipcMain.on(
       });
     // Start the game coordinator for CSGO
     async function startGameCoordinator() {
-       // user.setPersona(SteamUser.EPersonaState.Online);
+      // user.setPersona(SteamUser.EPersonaState.Online);
 
       setTimeout(() => {
         // user.setPersona(SteamUser.EPersonaState.Online);
@@ -561,6 +588,11 @@ async function cancelLogin(user) {
   user.removeAllListeners('loginKey');
   user.removeAllListeners('steamGuard');
   user.removeAllListeners('error');
+}
+
+function sendUpdaterStatusToWindow(text) {
+  log.info(text);
+  mainWindow?.webContents.send('updater', [text]);
 }
 
 // Adds events listeners the user
@@ -662,17 +694,19 @@ async function startEvents(csgo, user) {
         console.log('Item ' + item.id + ' was acquired');
         removeInventoryListeners();
         setTimeout(function () {
-          console.log('ran')
+          console.log('ran');
           startChangeEvents();
-          fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
-            tradeUpClass.getTradeUp(returnValue).then((newReturnValue) => {
-              mainWindow?.webContents.send('userEvents', [
-                1,
-                'itemAcquired',
-                [{}, newReturnValue],
-              ]);
+          fetchItemClass
+            .convertInventory(csgo.inventory)
+            .then((returnValue) => {
+              tradeUpClass.getTradeUp(returnValue).then((newReturnValue) => {
+                mainWindow?.webContents.send('userEvents', [
+                  1,
+                  'itemAcquired',
+                  [{}, newReturnValue],
+                ]);
+              });
             });
-          });
         }, 1000);
 
         fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
@@ -736,7 +770,6 @@ async function startEvents(csgo, user) {
   ipcMain.on('refreshInventory', async () => {
     removeInventoryListeners();
     startChangeEvents();
-
 
     fetchItemClass.convertInventory(csgo.inventory).then((returnValue) => {
       tradeUpClass.getTradeUp(returnValue).then((newReturnValue) => {
