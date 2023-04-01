@@ -230,6 +230,10 @@ function AppContent() {
       console.log(message);
       dispatch(pricing_addPrice(message[0]));
     });
+
+    window.electron.ipcRenderer.on('updater', (message) => {
+      console.log(message);
+    });
   }
 
   // Trade up

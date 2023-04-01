@@ -280,7 +280,8 @@ contextBridge.exposeInMainWorld('electron', {
         'openContainer',
         'forceLogin',
         'checkSteam',
-        'closeSteam'
+        'closeSteam',
+        'updater'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
@@ -312,7 +313,8 @@ contextBridge.exposeInMainWorld('electron', {
         'openContainer',
         'forceLogin',
         'checkSteam',
-        'closeSteam'
+        'closeSteam',
+        'updater'
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`

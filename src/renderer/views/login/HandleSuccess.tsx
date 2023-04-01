@@ -8,12 +8,13 @@ import { setInventoryAction } from "renderer/store/inventory/inventoryActions";
 import { signIn } from "renderer/store/actions/userStatsActions";
 import { getURL } from "renderer/store/helpers/userStatusHelper";
 import { LoginCommandReturnPackage } from "shared/Interfaces.tsx/store"
+import { createCSGOImage } from "../../functionsClasses/createCSGOImage";
 async function getProfilePicture(steamID: string): Promise<string> {
   try {
     const profilePicture = await getURL(steamID);
     return profilePicture as string;
   } catch (error) {
-    return 'https://raw.githubusercontent.com/steamdatabase/gametracking-csgo/108f1682bf7eeb1420caaf2357da88b614a7e1b0/csgo/pak01_dir/resource/flash/econ/characters/customplayer_tm_separatist.png';
+    return createCSGOImage("econ/characters/customplayer_tm_separatist");
   }
 }
 export async function handleSuccess(returnSuccessPackage: LoginCommandReturnPackage, dispatch: Function, currentState: State) {

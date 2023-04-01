@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { createCSGOImage } from "../../../../functionsClasses/createCSGOImage";
 import { classNames } from "../../shared/filters/inventoryFunctions";
 
-export function RowStickersPatches({itemRow, settingsData}) { 
+export function RowStickersPatches({itemRow, settingsData}) {
     const [stickerHover, setStickerHover] = useState('');
-    
+
     return (
         <>
-          
+
           {settingsData.columns.includes('Stickers/patches') ?
         <td className="hidden xl:table-cell px-6 py-3 text-sm text-gray-500 dark:text-gray-400 font-medium">
           <div className="flex items-center space-x-2 justify-center rounded-full drop-shadow-lg">
@@ -32,9 +33,7 @@ export function RowStickersPatches({itemRow, settingsData}) {
                       'max-w-none h-8 w-8 rounded-full hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-green-600 ring-2 object-cover ring-transparent bg-gradient-to-t from-gray-100 to-gray-300 dark:from-gray-300 dark:to-gray-400'
                     )}
                     src={
-                      'https://raw.githubusercontent.com/steamdatabase/gametracking-csgo/108f1682bf7eeb1420caaf2357da88b614a7e1b0/csgo/pak01_dir/resource/flash/' +
-                      sticker.sticker_url +
-                      '.png'
+                      createCSGOImage(sticker.sticker_url)
                     }
                     alt={sticker.sticker_name}
                     title={sticker.sticker_name}
@@ -44,7 +43,7 @@ export function RowStickersPatches({itemRow, settingsData}) {
             </div>
           </div>
         </td> : '' }
-            
+
         </>
       );
 }
