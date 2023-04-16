@@ -1,37 +1,38 @@
 import 'core-js/stable';
-import 'regenerator-runtime/runtime';
-import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, session } from 'electron';
-import MenuBuilder from './menu';
-import { resolveHtmlPath } from './util';
-import { fetchItems } from './helpers/classes/steam/items/getCommands';
-import os from 'os';
-import SteamUser from 'steam-user';
-import GlobalOffensive from 'globaloffensive';
-import { getGithubVersion } from './scripts/versionHelper';
+import { BrowserWindow, app, ipcMain, session, shell } from 'electron';
 import * as fs from 'fs';
-import { login } from './helpers/classes/steam/steam';
+import GlobalOffensive from 'globaloffensive';
+import os from 'os';
+import path from 'path';
+import 'regenerator-runtime/runtime';
+import { CurrencyReturnValue } from 'shared/Interfaces.tsx/IPCReturn';
+import { LoginCommandReturnPackage } from 'shared/Interfaces.tsx/store';
+import SteamUser from 'steam-user';
+import { LoginGenerator } from './helpers/classes/IPCGenerators/loginGenerator';
+import { currency } from './helpers/classes/steam/currency';
+import { fetchItems } from './helpers/classes/steam/items/getCommands';
 import {
-  storeUserAccount,
-  deleteUserData,
-  getValue,
-  storeLoginKey,
-  setValue,
-  setAccountPosition,
-} from './helpers/classes/steam/settings';
-import {
+  currencyCodes,
   pricingEmitter,
   runItems,
-  currencyCodes,
 } from './helpers/classes/steam/pricing';
-import { currency } from './helpers/classes/steam/currency';
+import {
+  deleteUserData,
+  getValue,
+  setAccountPosition,
+  setValue,
+  storeUserAccount,
+} from './helpers/classes/steam/settings';
+import { login } from './helpers/classes/steam/steam';
 import { tradeUps } from './helpers/classes/steam/tradeup';
-import { LoginGenerator } from './helpers/classes/IPCGenerators/loginGenerator';
-import { LoginCommandReturnPackage } from 'shared/Interfaces.tsx/store';
-import { CurrencyReturnValue } from 'shared/Interfaces.tsx/IPCReturn';
+import MenuBuilder from './menu';
+import { getGithubVersion } from './scripts/versionHelper';
+import { resolveHtmlPath } from './util';
 // import log from 'electron-log';
-import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import { autoUpdater } from 'electron-updater';
+import { emitterAccount } from '../emitters';
+import { flowLoginRegularQR } from './helpers/login/flowLoginRegularQR';
 
 autoUpdater.logger = log;
 // @ts-ignore
@@ -69,7 +70,6 @@ autoUpdater.on('download-progress', (progressObj) => {
   sendUpdaterStatusToWindow(log_message);
 });
 autoUpdater.on('update-downloaded', (_info) => {
-  
   sendUpdaterStatusToWindow('Update downloaded');
 });
 
@@ -381,160 +381,145 @@ ipcMain.handle('close-steam', async () => {
   return false;
 });
 
-ipcMain.on(
+emitterAccount.on(
   'login',
   async (
     event,
-    username,
-    password = null,
-    shouldRemember,
-    steamGuard = null,
-    secretKey = null,
-    clientjstoken = null
+    user: SteamUser,
+    csgo: GlobalOffensive,
+    username: string,
+    shouldRemember: boolean,
+    secretKey: string | null
   ) => {
-    let user = new SteamUser();
-    let csgo = new GlobalOffensive(user);
     // Success
-    user.once('loggedOn', () => {
+    user.once('accountInfo', (displayName) => {
+      console.log('Logged into Steam as main ' + displayName);
+      getValue('pricing.currency').then((returnValue) => {
+        if (returnValue == undefined) {
+          setValue(
+            'pricing.currency',
+            currencyCodes?.[user?.wallet?.currency] || 'USD'
+          );
+        }
+      });
       console.log('logged on main');
-      user.once('accountInfo', (displayName) => {
-        console.log('Logged into Steam as ' + displayName);
-        getValue('pricing.currency').then((returnValue) => {
-          if (returnValue == undefined) {
-            setValue(
-              'pricing.currency',
-              currencyCodes?.[user?.wallet?.currency] || 'USD'
-            );
+
+      async function gameCoordinate(resolve: any = null) {
+        csgo.once('connectedToGC', () => {
+          if (resolve) {
+            resolve('GC');
+          }
+          console.log('Connected to GC!');
+          if (csgo.haveGCSession) {
+            console.log('Have Session!');
+            fetchItemClass
+              .convertInventory(csgo.inventory)
+              .then((returnValue) => {
+                tradeUpClass
+                  .getTradeUp(returnValue)
+                  .then((newReturnValue: any) => {
+                    let walletToSend = user.wallet;
+                    if (walletToSend) {
+                      walletToSend.currency =
+                        currencyCodes?.[walletToSend?.currency];
+                    }
+                    const returnPackage: LoginCommandReturnPackage = {
+                      steamID: user.logOnResult.client_supplied_steamid,
+                      displayName,
+                      haveGCSession: csgo.haveGCSession,
+                      csgoInventory: newReturnValue,
+                      walletToSend: walletToSend,
+                    };
+
+                    startEvents(csgo, user);
+                    if (shouldRemember) {
+                      storeUserAccount(
+                        username,
+                        displayName,
+                        user.logOnResult.client_supplied_steamid,
+                        secretKey
+                      );
+                    }
+                    ClassLoginResponse.setResponseStatus('loggedIn');
+                    ClassLoginResponse.setPackage(returnPackage);
+                    sendLoginReply(event);
+                  });
+              });
           }
         });
+      }
 
-        async function gameCoordinate(resolve: any = null) {
-          csgo.once('connectedToGC', () => {
-            if (resolve) {
-              resolve('GC');
-            }
-            console.log('Connected to GC!');
-            if (csgo.haveGCSession) {
-              console.log('Have Session!');
-              fetchItemClass
-                .convertInventory(csgo.inventory)
-                .then((returnValue) => {
-                  tradeUpClass
-                    .getTradeUp(returnValue)
-                    .then((newReturnValue: any) => {
-                      let walletToSend = user.wallet;
-                      if (walletToSend) {
-                        walletToSend.currency =
-                          currencyCodes?.[walletToSend?.currency];
-                      }
-                      const returnPackage: LoginCommandReturnPackage = {
-                        steamID: user.logOnResult.client_supplied_steamid,
-                        displayName,
-                        haveGCSession: csgo.haveGCSession,
-                        csgoInventory: newReturnValue,
-                        walletToSend: walletToSend,
-                      };
+      // // Create a timeout race to catch an infinite loading error in case the Steam account hasnt added the CSGO license
+      // Run the normal version
 
-                      startEvents(csgo, user);
-                      if (shouldRemember) {
-                        storeUserAccount(
-                          username,
-                          displayName,
-                          password,
-                          user.logOnResult.client_supplied_steamid,
-                          secretKey
-                        );
-                      }
-                      ClassLoginResponse.setResponseStatus('loggedIn');
-                      ClassLoginResponse.setPackage(returnPackage);
-                      sendLoginReply(event);
-                    });
-                });
-            }
+      let GCResponse = new Promise((resolve) => {
+        user.once('playingState', function (blocked, _playingApp) {
+          if (!blocked) {
+            startGameCoordinator();
+            gameCoordinate(resolve);
+          } else {
+            ClassLoginResponse.setEmptyPackage();
+            ClassLoginResponse.setResponseStatus('playingElsewhere');
+            sendLoginReply(event);
+            resolve('error');
+          }
+        });
+      });
+
+      // Run the timeout
+      let timeout = new Promise((resolve, _reject) => {
+        setTimeout(resolve, 10000, 'time');
+      });
+
+      // Run the timeout
+      let error = new Promise((resolve, _reject) => {
+        user.once('error', (error) => {
+          if (error == 'Error: LoggedInElsewhere') {
+            resolve('error');
+          }
+        });
+      });
+
+      // Race the two
+      Promise.race([timeout, GCResponse, error]).then((value) => {
+        if (value == 'error') {
+          // Force login
+          ipcMain.on('forceLogin', async () => {
+            console.log('forceLogin');
+            setTimeout(() => {
+              // user.setPersona(SteamUser.EPersonaState.Online);
+              gameCoordinate();
+              user.gamesPlayed([730], true);
+            }, 3000);
+
+            ipcMain.removeAllListeners('forceLogin');
+            ipcMain.removeAllListeners('signOut');
+          });
+          ipcMain.once('signOut', async () => {
+            console.log('Sign out');
+            user.logOff();
+            ipcMain.removeAllListeners('forceLogin');
+            ipcMain.removeAllListeners('signOut');
           });
         }
-
-        // // Create a timeout race to catch an infinite loading error in case the Steam account hasnt added the CSGO license
-        // Run the normal version
-
-        let GCResponse = new Promise((resolve) => {
-          user.once('playingState', function (blocked, _playingApp) {
-            if (!blocked) {
-              startGameCoordinator();
-              gameCoordinate(resolve);
-            } else {
+        if (value == 'time') {
+          console.log(
+            'GC didnt start in time, adding CSGO to the library and retrying.'
+          );
+          user.requestFreeLicense([730], function (err, packageIds, appIds) {
+            if (err) {
+              console.log(err);
               ClassLoginResponse.setEmptyPackage();
               ClassLoginResponse.setResponseStatus('playingElsewhere');
               sendLoginReply(event);
-              resolve('error');
             }
+            console.log('Granted package: ', packageIds);
+            console.log('Granted App: ', appIds);
+            startGameCoordinator();
           });
-        });
-
-        // Run the timeout
-        let timeout = new Promise((resolve, _reject) => {
-          setTimeout(resolve, 10000, 'time');
-        });
-
-        // Run the timeout
-        let error = new Promise((resolve, _reject) => {
-          user.once('error', (error) => {
-            if (error == 'Error: LoggedInElsewhere') {
-              resolve('error');
-            }
-          });
-        });
-
-        // Race the two
-        Promise.race([timeout, GCResponse, error]).then((value) => {
-          if (value == 'error') {
-            // Force login
-            ipcMain.on('forceLogin', async () => {
-              console.log('forceLogin');
-              setTimeout(() => {
-                // user.setPersona(SteamUser.EPersonaState.Online);
-                gameCoordinate();
-                user.gamesPlayed([730], true);
-              }, 3000);
-
-              ipcMain.removeAllListeners('forceLogin');
-              ipcMain.removeAllListeners('signOut');
-            });
-            ipcMain.on('signOut', async () => {
-              console.log('Sign out');
-              user.logOff();
-              ipcMain.removeAllListeners('forceLogin');
-              ipcMain.removeAllListeners('signOut');
-            });
-          }
-          if (value == 'time') {
-            console.log(
-              'GC didnt start in time, adding CSGO to the library and retrying.'
-            );
-            user.requestFreeLicense([730], function (err, packageIds, appIds) {
-              if (err) {
-                console.log(err);
-                ClassLoginResponse.setEmptyPackage();
-                ClassLoginResponse.setResponseStatus('playingElsewhere');
-                sendLoginReply(event);
-              }
-              console.log('Granted package: ', packageIds);
-              console.log('Granted App: ', appIds);
-              startGameCoordinator();
-
-              // gameCoordinate();
-            });
-          }
-        });
+        }
       });
     });
-
-    // Should remember
-    if (shouldRemember) {
-      user.once('loginKey', function (key) {
-        storeLoginKey(username, key);
-      });
-    }
 
     // Steam guard
     user.once('steamGuard', function (domain, callback, lastCodeWrong) {
@@ -556,6 +541,41 @@ ipcMain.on(
     });
 
     // Login
+
+    // Start the game coordinator for CSGO
+    async function startGameCoordinator() {
+      // user.setPersona(SteamUser.EPersonaState.Online);
+
+      setTimeout(() => {
+        // user.setPersona(SteamUser.EPersonaState.Online);
+        user.gamesPlayed([730], true);
+      }, 3000);
+    }
+  }
+);
+
+ipcMain.on(
+  'login',
+  async (
+    event,
+    username,
+    password = null,
+    shouldRemember,
+    steamGuard = null,
+    secretKey = null,
+    clientjstoken = null
+  ) => {
+    let user = new SteamUser();
+    let csgo = new GlobalOffensive(user);
+    emitterAccount.emit(
+      'login',
+      event,
+      user,
+      csgo,
+      username,
+      shouldRemember,
+      secretKey
+    );
     let loginClass = new login();
     loginClass
       .mainLogin(
@@ -568,19 +588,53 @@ ipcMain.on(
         clientjstoken
       )
       .then((returnValue: any) => {
+        console.log(returnValue);
         event.reply('login-reply', returnValue);
       });
-    // Start the game coordinator for CSGO
-    async function startGameCoordinator() {
-      // user.setPersona(SteamUser.EPersonaState.Online);
-
-      setTimeout(() => {
-        // user.setPersona(SteamUser.EPersonaState.Online);
-        user.gamesPlayed([730], true);
-      }, 3000);
-    }
   }
 );
+
+emitterAccount.on('qrLogin:show', async (qrChallengeLogin) => {
+  mainWindow?.webContents.send('qrLogin:show', qrChallengeLogin);
+});
+ipcMain.on('startQRLogin', async (event, shouldRemember) => {
+  let user = new SteamUser();
+  let csgo = new GlobalOffensive(user);
+  let loginClass = new login();
+  emitterAccount.emit('qrLogin:cancel')
+  flowLoginRegularQR(shouldRemember).then((returnValue) => {
+    if (!returnValue.session) {
+      return;
+    }
+
+    emitterAccount.emit(
+      'login',
+      event,
+      user,
+      csgo,
+      returnValue.session.accountName,
+      shouldRemember
+    );
+    loginClass
+      .mainLogin(
+        user,
+        returnValue.session.accountName,
+        shouldRemember,
+        null,
+        null,
+        null,
+        null,
+        returnValue.session.refreshToken
+      )
+      .then((returnValue: any) => {
+        event.reply('login-reply', returnValue);
+      });
+  });
+});
+
+ipcMain.on('qrLogin:cancel', async () => {
+  emitterAccount.emit('qrLogin:cancel');
+});
 
 async function cancelLogin(user) {
   console.log('Cancel login');

@@ -29,13 +29,14 @@ const store = new Store({
 });
 
 // Store user data
-async function storeLoginKey(username, loginKey = null) {
+async function storeRefreshToken(username: string, loginKey?: string) {
   // Get account details
   let accountDetails = store.get('account');
-  if (accountDetails == undefined) {
+  if (!accountDetails) {
     accountDetails = {};
   }
-  if (accountDetails[username] == undefined) {
+
+  if (!accountDetails[username]) {
     accountDetails[username] = {};
   }
 
@@ -44,15 +45,15 @@ async function storeLoginKey(username, loginKey = null) {
     const buffer = safeStorage.encryptString(loginKey);
 
     // Add to account details
-    accountDetails[username]['safeLoginKey'] = buffer.toString('latin1')
+    accountDetails[username]['refreshToken'] = buffer.toString('latin1')
   } else {
-    if (accountDetails[username]['safeLoginKey']) {
-      delete accountDetails[username]['safeLoginKey']
+    if (accountDetails[username]['refreshToken']) {
+      delete accountDetails[username]['refreshToken']
     }
   }
 
   // Set store
-  console.log('saving loginkey')
+  console.log('saving refreshToken')
   store.set({
     account: accountDetails,
   });
@@ -62,9 +63,8 @@ async function storeLoginKey(username, loginKey = null) {
 async function storeUserAccount(
   username,
   displayName,
-  password,
   steamID,
-  secretKey = null
+  secretKey: string | null
 ) {
   // Get the profile picture
   let imageURL = undefined as any;
@@ -91,9 +91,8 @@ async function storeUserAccount(
   accountDetails[username]['displayName'] = displayName;
   accountDetails[username]['imageURL'] = imageURL;
   // Encrypt sensitive data
-  if (password) {
+  if (secretKey) {
     const dictToWrite = {
-      password: password,
       secretKey: secretKey,
     };
     const buffer = safeStorage.encryptString(JSON.stringify(dictToWrite));
@@ -148,9 +147,9 @@ async function getLoginDetails(username) {
   return JSON.parse(secretData);
 }
 // Get login details
-async function getSafeKey(username) {
+async function getRefreshToken(username) {
   const secretData = safeStorage.decryptString(
-    Buffer.from(store.get('account.' + username + '.safeLoginKey'), 'latin1')
+    Buffer.from(store.get('account.' + username + '.refreshToken'), 'latin1')
   );
   return secretData;
 }
@@ -173,8 +172,8 @@ module.exports = {
   getAllAccountDetails,
   deleteUserData,
   setAccountPosition,
-  storeLoginKey,
-  getSafeKey,
+  storeRefreshToken,
+  getRefreshToken,
   setValue,
   getValue,
 };
@@ -184,8 +183,8 @@ export {
   getAllAccountDetails,
   deleteUserData,
   setAccountPosition,
-  getSafeKey,
-  storeLoginKey,
+  getRefreshToken ,
+  storeRefreshToken,
   setValue,
   getValue,
 };

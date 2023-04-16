@@ -1,13 +1,14 @@
+import { StartLoginSessionWithCredentialsDetails } from 'steam-session/dist/interfaces-external';
+import SteamTotp from 'steam-totp';
+import { flowLoginRegular } from '../../login/loginRegular';
+import { LoginGenerator } from '../IPCGenerators/loginGenerator';
 import {
   getLoginDetails,
-  getSafeKey,
-  storeLoginKey,
-  getValue,
+  getRefreshToken,
+  getValue
 } from './settings';
-import SteamTotp from 'steam-totp';
-import { LoginGenerator } from '../IPCGenerators/loginGenerator';
 
-const ClassLoginResponse = new LoginGenerator()
+const ClassLoginResponse = new LoginGenerator();
 // 1: If the user has remembered the account, check if login key exists. If login fails, notify renderer, delete Loginkey (not password)
 class login {
   steamUser = {} as any;
@@ -18,9 +19,16 @@ class login {
   steamGuard;
   secretKey;
   clientjstoken;
+  refreshToken: string | null = null;
   shouldRemember = false;
-  logInOptions = {} as any;
+  logInOptions: StartLoginSessionWithCredentialsDetails = {
+    accountName: '',
+    password: '',
+  };
+  loginOptionsLegacy = {} as any;
   resolve;
+
+
 
   mainLogin(
     steamuser,
@@ -29,7 +37,8 @@ class login {
     password = null,
     steamGuard = null,
     secretKey = null,
-    clientjstoken = null
+    clientjstoken = null,
+    refreshToken: string | null = null
   ) {
     return new Promise((resolve) => {
       this.resolve = resolve;
@@ -40,6 +49,8 @@ class login {
       this.secretKey = secretKey;
       this.steamUser = steamuser;
       this.clientjstoken = clientjstoken;
+      this.refreshToken = refreshToken;
+
 
       // Get all account details
       getValue('account').then((returnValue) => {
@@ -72,17 +83,14 @@ class login {
       return;
     }
 
-    if (!this.password && this.rememberedSensitive?.password) {
-      this.password = this.rememberedSensitive?.password;
-    }
     // 1
-    if (this.rememberedDetails['safeLoginKey']) {
-      this._login_loginKey();
+    if (this.rememberedDetails['refreshToken'] || this.refreshToken) {
+      this._login_refreshToken();
       return;
     }
     if (!this.password && !this.rememberedSensitive?.password) {
-      ClassLoginResponse.setEmptyPackage()
-      ClassLoginResponse.setResponseStatus('defaultError')
+      ClassLoginResponse.setEmptyPackage();
+      ClassLoginResponse.setResponseStatus('defaultError');
       this._returnToSender();
       return;
     }
@@ -108,21 +116,36 @@ class login {
   }
 
   // Login functions
+  _loginStartLegacy() {
+    this.steamUser.logOn(this.loginOptionsLegacy);
+  }
+
   _loginStart() {
-    this.steamUser.logOn(this.logInOptions);
+    flowLoginRegular(this.logInOptions, this.shouldRemember).then(
+      (returnValue) => {
+        if (returnValue.responseStatus == 'loggedIn') {
+
+          this.steamUser.logOn({
+            refreshToken: returnValue.refreshToken,
+          });
+        } else {
+          ClassLoginResponse.setEmptyPackage();
+          ClassLoginResponse.setResponseStatus(returnValue.responseStatus);
+          this._returnToSender();
+        }
+      }
+    );
   }
 
   _defaultError() {
     this.steamUser.once('error', (error) => {
-      console.log('Error login: ', error);
       if (error == 'Error: LoggedInElsewhere') {
-        ClassLoginResponse.setEmptyPackage()
-        ClassLoginResponse.setResponseStatus('playingElsewhere')
+        ClassLoginResponse.setEmptyPackage();
+        ClassLoginResponse.setResponseStatus('playingElsewhere');
         this._returnToSender();
       } else {
-
-        ClassLoginResponse.setEmptyPackage()
-        ClassLoginResponse.setResponseStatus('defaultError')
+        ClassLoginResponse.setEmptyPackage();
+        ClassLoginResponse.setResponseStatus('defaultError');
         this._returnToSender();
       }
     });
@@ -130,53 +153,35 @@ class login {
   // 0 - Client
   _login_clientjstoken() {
     this._defaultError();
-    this.logInOptions = {
+    this.loginOptionsLegacy = {
       accountName: this.clientjstoken?.account_name,
       webLogonToken: this.clientjstoken?.token,
       steamID: this.clientjstoken?.steamid,
     };
-    this._loginStart();
+    this._loginStartLegacy();
   }
 
   // 1 - Login key
-  _login_loginKey() {
-    this.steamUser.once('error', (error) => {
-      console.log('Error login 1: ', error);
-      storeLoginKey(this.username);
-      if (this.rememberedSensitive?.secretKey) {
-        console.log('Secret key');
-        this._login_secretKey();
-      } else {
-        ClassLoginResponse.setEmptyPackage()
-        ClassLoginResponse.setResponseStatus('wrongLoginToken')
-        this._returnToSender();
-      }
-    });
-
-    getSafeKey(this.username).then((loginKey) => {
-      this.logInOptions = {
-        accountName: this.username,
-        loginKey: loginKey,
-        rememberPassword: true,
+  _login_refreshToken() {
+    getRefreshToken(this.username).then((refreshToken) => {
+      this.loginOptionsLegacy = {
+        refreshToken: refreshToken,
       };
-      this._loginStart();
+      this._loginStartLegacy();
     });
   }
 
   // 2 - Shared Secret
   _login_secretKey() {
     this._defaultError();
+    this.shouldRemember = true;
     this.logInOptions = {
       accountName: this.username,
       password: this.password,
-      twoFactorCode: SteamTotp.generateAuthCode(
+      steamGuardCode: SteamTotp.generateAuthCode(
         this.rememberedSensitive?.secretKey
       ),
-      rememberPassword: true,
     };
-    this.steamUser.once('loggedOn', () => {
-      console.log('logged on');
-    });
     this._loginStart();
   }
 
@@ -186,8 +191,7 @@ class login {
     this.logInOptions = {
       accountName: this.username,
       password: this.password,
-      twoFactorCode: this.steamGuard,
-      rememberPassword: this.shouldRemember,
+      steamGuardCode: this.steamGuard,
     };
     this._loginStart();
   }
@@ -198,7 +202,6 @@ class login {
     this.logInOptions = {
       accountName: this.username,
       password: this.password,
-      rememberPassword: this.shouldRemember,
     };
     this._loginStart();
   }
