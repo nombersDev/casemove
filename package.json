@@ -242,8 +242,9 @@
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.4.1",
     "regenerator-runtime": "^0.13.9",
+    "steam-session": "^1.1.1",
     "steam-totp": "^2.1.1",
-    "steam-user": "^4.20.2",
+    "steam-user": "^4.25.0",
     "update-electron-app": "^2.0.1",
     "xmldom": "^0.6.0"
   },
