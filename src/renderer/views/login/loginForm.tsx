@@ -2,11 +2,10 @@ import {
   ClipboardCheckIcon,
   ClipboardCopyIcon,
   ExternalLinkIcon,
-  KeyIcon,
   LockClosedIcon,
-  WifiIcon,
 } from '@heroicons/react/solid';
 import { useEffect, useState } from 'react';
+import QRCode from 'react-qr-code';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { LoadingButton } from 'renderer/components/content/shared/animations';
@@ -22,10 +21,12 @@ import {
   LoginNotificationObject,
   LoginOptions,
 } from 'shared/Interfaces.tsx/store';
-import SteamCloseModal from './closeSteamModal';
-import ConfirmModal from './confirmLoginModal';
 import { handleSuccess } from './HandleSuccess';
-useEffect
+import SteamCloseModal from './closeSteamModal';
+import LoginTabs from './components/LoginTabs';
+import ConfirmModal from './confirmLoginModal';
+import { LoginMethod } from './types/LoginMethod';
+useEffect;
 const loginResponseObject: LoginNotificationObject = {
   loggedIn: {
     success: true,
@@ -83,7 +84,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
   const [wasSuccess, setWasSuccess] = useState(false);
   const [titleToDisplay, setTitleToDisplay] = useState('test');
   const [textToDisplay, setTextToDisplay] = useState('test');
-  const [storePassword, setStorePassword] = useState(false);
+  const [storeRefreshToken, setStoreRefreshToken] = useState(false);
   const [getLoadingButton, setLoadingButton] = useState(false);
   const [secretEnabled, setSecretEnabled] = useState(false);
 
@@ -159,7 +160,6 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
     async handleSuccesLogin() {
       openNotification(this.command);
       window.electron.ipcRenderer.refreshInventory();
-
     }
   }
 
@@ -170,7 +170,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
   async function validateWebToken() {
     let clientjstokenToSend = clientjstoken as any;
     // Validate web token
-    if (webToken) {
+    if (loginMethod == 'WEBTOKEN') {
       // Is json string?
       try {
         clientjstokenToSend = JSON.parse(clientjstoken);
@@ -202,9 +202,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
   isLock = isLock[0];
   const [closeSteamOpen, setCloseSteamOpen] = useState(false);
   const [hasAskedCloseSteam, setHasAskedCloseSteam] = useState(false);
-  setLoadingButton
-
-
+  setLoadingButton;
 
   async function onSubmit() {
     setLoadingButton(true);
@@ -221,7 +219,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
     let clientjstokenToSend = await validateWebToken();
     let usernameToSend = username as any;
     let passwordToSend = password as any;
-    let storePasswordToSend = storePassword as any;
+    let storePasswordToSend = storeRefreshToken as any;
     if (isLock != '') {
       usernameToSend = isLock;
       passwordToSend = null;
@@ -264,8 +262,9 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
   }
 
   const [seenOnce, setOnce] = useState(false);
-  const [webToken, setWebToken] = useState(false);
+  const [loginMethod, setLoginMethod] = useState<LoginMethod>('REGULAR');
   const [sendSubmit, shouldSubmit] = useState(false);
+  const [qrURL, setQrURL] = useState('');
   if (seenOnce == false) {
     document.addEventListener('keyup', ({ key }) => {
       if (key == 'Enter') {
@@ -284,13 +283,48 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
     e.preventDefault();
   }
 
-
   /* useEffect(() => {
     if (!closeSteamOpen) {
       setCloseSteamOpen(window.electron.ipcRenderer.checkSteam())
     }
   }, [closeSteamOpen]); */
   // setOpen(true)
+  setQrURL;
+  qrURL;
+
+  useEffect(() => {
+
+    if (loginMethod !== 'QR') {
+      return;
+    }
+
+
+    window.electron.ipcRenderer.once('qrLogin:show', (pack) => {
+      setQrURL(pack);
+    });
+
+    window.electron.ipcRenderer
+      .startQRLogin(storeRefreshToken)
+      .then((responseStatus) => {
+        // Notification and react
+        console.log('response status', responseStatus);
+        const HandleClass = new HandleLogin(responseStatus.responseStatus);
+        HandleClass.relevantFunction();
+        if (responseStatus.responseStatus == 'loggedIn') {
+          handleSuccess(
+            responseStatus.returnPackage as LoginCommandReturnPackage,
+            dispatch,
+            currentState
+          );
+        } else {
+          handleError();
+        }
+      });
+
+    return () => {
+      window.electron.ipcRenderer.cancelQRLogin();
+    };
+  }, [loginMethod, storeRefreshToken]);
 
   return (
     <>
@@ -309,19 +343,29 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
         <div className="max-w-md w-full">
           <div>
             <SteamLogo />
+            <LoginTabs
+              selectedTab={loginMethod}
+              setSelectedTab={setLoginMethod}
+            />
             <h2 className="mt-6 text-center dark:text-dark-white text-3xl font-extrabold text-gray-900">
-              {!webToken ? 'Connect to Steam' : 'Connect from browser'}
+              {loginMethod === 'REGULAR'
+                ? 'Connect to Steam'
+                : loginMethod === 'QR'
+                ? 'Scan QR Code'
+                : 'Connect from browser'}
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
-              {!webToken
+              {loginMethod === 'REGULAR'
                 ? 'The application needs to have an active Steam connection to manage your CSGO items. You should not have any games open on the Steam account.'
+                : loginMethod === 'QR'
+                ? 'Scan the QR code with your Steam mobile app. You should be logged into the account you wish to connect Casemove with.'
                 : 'Open the URL by clicking on the button, or by copying it to the clipboard. You should be logged into the account you wish to connect Casemove with. Paste the entire string below.'}
             </p>
           </div>
 
           <form className="mt-8 mb-6" onSubmit={(e) => handleSubmit(e)}>
             <input type="hidden" name="remember" defaultValue="true" />
-            {!webToken ? (
+            {loginMethod === 'REGULAR' ? (
               <div className="rounded-md mb-6">
                 <div>
                   <label htmlFor="email-address" className="sr-only">
@@ -404,7 +448,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
                   ''
                 )}
               </div>
-            ) : (
+            ) : loginMethod === 'WEBTOKEN' ? (
               <div className="rounded-md mb-6">
                 <div className="mt-1 flex rounded-md shadow-sm">
                   <div className="relative flex items-stretch flex-grow focus-within:z-10">
@@ -453,11 +497,33 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
                   </Link>
                 </div>
               </div>
+            ) : (
+              <>
+                <div className="flex justify-center bg-white py-4">
+                  <QRCode size={235} value={qrURL} viewBox={`0 0 235 235`} />
+                </div>
+                <div className="flex pt-2 items-center">
+                  <input
+                    id="remember-me"
+                    name="remember-me"
+                    type="checkbox"
+                    defaultChecked={storeRefreshToken}
+                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                    onChange={() => setStoreRefreshToken(!storeRefreshToken)}
+                  />
+                  <label
+                    htmlFor="remember-me"
+                    className="ml-2 block pl-1 text-sm text-gray-900 dark:text-dark-white"
+                  >
+                    Remember for later
+                  </label>
+                </div>
+              </>
             )}
             {!hasChosenAccountLoginKey ? (
               <div
                 className={classNames(
-                  !webToken ? '' : 'hidden',
+                  loginMethod === 'REGULAR' ? '' : 'hidden',
                   'flex items-center justify-between'
                 )}
               >
@@ -467,9 +533,9 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
                       id="remember-me"
                       name="remember-me"
                       type="checkbox"
-                      defaultChecked={storePassword}
+                      defaultChecked={storeRefreshToken}
                       className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                      onChange={() => setStorePassword(!storePassword)}
+                      onChange={() => setStoreRefreshToken(!storeRefreshToken)}
                     />
                   ) : !hasChosenAccountLoginKey ? (
                     <input
@@ -478,7 +544,7 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
                       type="checkbox"
                       checked={true}
                       className=" pointer-events-none h-4 w-4 text-indigo-600 focus:ring-indigo-500 dark:text-opacity-50 border-gray-300 rounded"
-                      onChange={() => setStorePassword(!storePassword)}
+                      onChange={() => setStoreRefreshToken(!storeRefreshToken)}
                     />
                   ) : (
                     ''
@@ -525,49 +591,27 @@ export default function LoginForm({ isLock, replaceLock, runDeleteUser }) {
             ) : (
               ''
             )}
-
-            <div className="flex justify-between mt-6">
-              <button
-                className=" group text-dark-white relative w-1/2 flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-dark-level-two hover:bg-dark-level-three "
-                onClick={() => setWebToken(!webToken)}
-                type="button"
-              >
-                <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                  {webToken ? (
-                    <KeyIcon
-                      className="h-5 w-5 text-dark-white"
-                      aria-hidden="true"
-                    />
-                  ) : (
-                    <WifiIcon
-                      className="h-5 w-5 text-dark-white"
-                      aria-hidden="true"
-                    />
-                  )}
-                </span>
-                <span className="pl-3">
-                  {!webToken ? 'Browser' : 'Credentials'}
-                </span>
-              </button>
-
-              <button
-                className="focus:bg-indigo-700 group relative w-full flex justify-center py-2 px-4 ml-3 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 "
-                onClick={() => onSubmit()}
-                type="button"
-              >
-                <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                  {getLoadingButton ? (
-                    <LoadingButton />
-                  ) : (
-                    <LockClosedIcon
-                      className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400"
-                      aria-hidden="true"
-                    />
-                  )}
-                </span>
-                Sign in
-              </button>
-            </div>
+            {loginMethod !== 'QR' ? (
+              <div className="flex justify-between mt-6">
+                <button
+                  className="focus:bg-indigo-700 group relative w-full flex justify-center py-2 px-4 ml-3 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 "
+                  onClick={() => onSubmit()}
+                  type="button"
+                >
+                  <span className="absolute left-0 inset-y-0 flex items-center pl-3">
+                    {getLoadingButton ? (
+                      <LoadingButton />
+                    ) : (
+                      <LockClosedIcon
+                        className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400"
+                        aria-hidden="true"
+                      />
+                    )}
+                  </span>
+                  Sign in
+                </button>
+              </div>
+            ) : null}
           </form>
         </div>
       </div>

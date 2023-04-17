@@ -1,5 +1,5 @@
 const { contextBridge, ipcRenderer } = require('electron');
-var ByteBuffer = require("bytebuffer");
+var ByteBuffer = require('bytebuffer');
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
@@ -13,11 +13,11 @@ contextBridge.exposeInMainWorld('electron', {
     },
 
     checkSteam() {
-      return ipcRenderer.invoke('check-steam')
+      return ipcRenderer.invoke('check-steam');
     },
 
     closeSteam() {
-      return ipcRenderer.invoke('close-steam')
+      return ipcRenderer.invoke('close-steam');
     },
     // User commands
     needUpdate() {
@@ -43,16 +43,13 @@ contextBridge.exposeInMainWorld('electron', {
 
     // User account
     getPossibleOutcomes(resultsToGet) {
-      console.log(resultsToGet)
+      console.log(resultsToGet);
       return new Promise((resolve) => {
         ipcRenderer.send('getTradeUpPossible', resultsToGet);
-        ipcRenderer.once(
-          'getTradeUpPossible-reply',
-          (evt, message) => {
-            console.log(message)
-            resolve(message);
-          }
-        );
+        ipcRenderer.once('getTradeUpPossible-reply', (evt, message) => {
+          console.log(message);
+          resolve(message);
+        });
       });
     },
 
@@ -69,7 +66,6 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.send('openContainer', listToUse);
     },
 
-
     // User account
     deleteAccountDetails(username) {
       ipcRenderer.send('electron-store-deleteAccountDetails', username);
@@ -77,7 +73,11 @@ contextBridge.exposeInMainWorld('electron', {
 
     // User account
     setAccountPosition(username, indexPosition) {
-      ipcRenderer.send('electron-store-setAccountPosition', username, indexPosition);
+      ipcRenderer.send(
+        'electron-store-setAccountPosition',
+        username,
+        indexPosition
+      );
     },
 
     downloadFile(data) {
@@ -89,13 +89,10 @@ contextBridge.exposeInMainWorld('electron', {
     getCurrencyRate() {
       return new Promise((resolve) => {
         ipcRenderer.send('getCurrency');
-        ipcRenderer.once(
-          'getCurrency-reply',
-          (evt, message) => {
-            console.log(message)
-            resolve(message);
-          }
-        );
+        ipcRenderer.once('getCurrency-reply', (evt, message) => {
+          console.log(message);
+          resolve(message);
+        });
       });
     },
     // User commands
@@ -112,12 +109,24 @@ contextBridge.exposeInMainWorld('electron', {
     },
 
     // Send Confirm Force
-    forceLogin(){
-      ipcRenderer.send(
-        'forceLogin'
-      );
+    forceLogin() {
+      ipcRenderer.send('forceLogin');
     },
 
+    startQRLogin(shouldRemember) {
+      return new Promise((resolve) => {
+        ipcRenderer.removeAllListeners('login-reply');
+        
+        ipcRenderer.send('startQRLogin', shouldRemember);
+        ipcRenderer.once('login-reply', (event, arg) => {
+          resolve(arg);
+        });
+      });
+    },
+
+    cancelQRLogin() {
+      ipcRenderer.send('cancelQRLogin');
+    },
 
     // USER CONNECTIONS
     loginUser(
@@ -127,9 +136,8 @@ contextBridge.exposeInMainWorld('electron', {
       authcode,
       sharedSecret,
       clientjstoken
-    )
-    {
-      console.log(clientjstoken)
+    ) {
+      console.log(clientjstoken);
 
       if (authcode == '') {
         authcode = null;
@@ -138,7 +146,7 @@ contextBridge.exposeInMainWorld('electron', {
         sharedSecret = null;
       }
       if (clientjstoken == '') {
-        clientjstoken = null
+        clientjstoken = null;
       }
       return new Promise((resolve) => {
         ipcRenderer.send(
@@ -151,7 +159,7 @@ contextBridge.exposeInMainWorld('electron', {
           clientjstoken
         );
         ipcRenderer.once('login-reply', (event, arg) => {
-          resolve(arg)
+          resolve(arg);
         });
       });
     },
@@ -159,7 +167,7 @@ contextBridge.exposeInMainWorld('electron', {
     forceLoginReply() {
       return new Promise((resolve) => {
         ipcRenderer.once('login-reply', (event, arg) => {
-          resolve(arg)
+          resolve(arg);
         });
       });
     },
@@ -196,23 +204,20 @@ contextBridge.exposeInMainWorld('electron', {
 
     // Commands
     moveFromStorageUnit(casketID, itemID, fastMode) {
-
       // Create a promise that rejects in <ms> milliseconds
       let storageUnitResponse = new Promise((resolve) => {
         ipcRenderer.send('removeFromStorageUnit', casketID, itemID, fastMode);
 
         if (fastMode) {
-          resolve(fastMode)
-        }
-        else {
+          resolve(fastMode);
+        } else {
           ipcRenderer.once('removeFromStorageUnit-reply', (event, arg) => {
             resolve(arg);
           });
         }
-
       });
       if (fastMode) {
-        return true
+        return true;
       } else {
         let timeout = new Promise((_resolve, reject) => {
           let id = setTimeout(() => {
@@ -222,26 +227,22 @@ contextBridge.exposeInMainWorld('electron', {
         });
         return Promise.race([storageUnitResponse, timeout]);
       }
-
     },
     // Commands
     moveToStorageUnit(casketID, itemID, fastMode) {
       let storageUnitResponse = new Promise((resolve) => {
         ipcRenderer.send('moveToStorageUnit', casketID, itemID, fastMode);
         if (fastMode) {
-          resolve(fastMode)
-        }
-        else {
+          resolve(fastMode);
+        } else {
           ipcRenderer.once('moveToStorageUnit-reply', (event, arg) => {
             resolve(arg);
           });
         }
-
-
       });
 
       if (fastMode) {
-        return true
+        return true;
       } else {
         let timeout = new Promise((_resolve, reject) => {
           let id = setTimeout(() => {
@@ -250,9 +251,8 @@ contextBridge.exposeInMainWorld('electron', {
           }, 10000);
         });
 
-      return Promise.race([storageUnitResponse, timeout]);
+        return Promise.race([storageUnitResponse, timeout]);
       }
-
     },
 
     on(channel, func) {
@@ -281,7 +281,10 @@ contextBridge.exposeInMainWorld('electron', {
         'forceLogin',
         'checkSteam',
         'closeSteam',
-        'updater'
+        'updater',
+        'startQRLogin',
+        'cancelQRLogin',
+        'qrLogin:show',
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
@@ -314,7 +317,10 @@ contextBridge.exposeInMainWorld('electron', {
         'forceLogin',
         'checkSteam',
         'closeSteam',
-        'updater'
+        'updater',
+        'startQRLogin',
+        'cancelQRLogin',
+        'qrLogin:show',
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
@@ -325,13 +331,17 @@ contextBridge.exposeInMainWorld('electron', {
   store: {
     // Commands
     get(val) {
-
-      const key = Math.random().toString(36).substr(2, 3) + "-" + Math.random().toString(36).substr(2, 3) + "-" + Math.random().toString(36).substr(2, 4);
+      const key =
+        Math.random().toString(36).substr(2, 3) +
+        '-' +
+        Math.random().toString(36).substr(2, 3) +
+        '-' +
+        Math.random().toString(36).substr(2, 4);
       return new Promise((resolve) => {
         ipcRenderer.send('electron-store-get', val, key);
 
         ipcRenderer.once('electron-store-get-reply' + key, (event, arg) => {
-          console.log(arg)
+          console.log(arg);
           resolve(arg);
         });
       });

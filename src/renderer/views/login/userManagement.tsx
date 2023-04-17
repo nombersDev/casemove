@@ -86,7 +86,7 @@ export default function UserGrid({ clickOnProfile, deleteUser,  runDeleteUser })
     items.splice(result.destination.index, 0, reorderedItem);
     setUsers(items);
 
-    // Store for next session
+    // Storex for next session
     const orderToStore = [] as any;
     items.forEach(element => {
       let e = element as any
@@ -162,7 +162,7 @@ export default function UserGrid({ clickOnProfile, deleteUser,  runDeleteUser })
                         </div>
                         <button
                           type="button"
-                          onClick={() => clickOnProfile([person.username, person.safeLoginKey])}
+                          onClick={() => clickOnProfile([person.username, person.refreshToken])}
                           className="inline-flex items-center dark:text-dark-white p-1 border border-transparent rounded-full hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-green-600 transform hover:-translate-y-1 hover:scale-110"
                         >
                           <CheckIcon className="h-5 w-5" aria-hidden="true" />
