@@ -11,8 +11,9 @@ async function handleDownload(storageData) {
         if (storageName == undefined) {
           storageName = '#Inventory';
         }
-  
+
         let stickersData = d.stickers;
+        // @ts-ignore
         if (stickersData != []) {
           let newStickers = [] as any;
           stickersData.forEach((element) => {
@@ -43,7 +44,7 @@ async function handleDownload(storageData) {
     csv = csvContent + csv;
     window.electron.ipcRenderer.downloadFile(csv);
   }
-  
+
 export async function downloadReport(settingsData: Settings, pricesReducer: Prices, itemArray: Array<ItemRow | ItemRowStorage> ) {
     const PricesClassFormatted = new ConvertPricesFormatted(settingsData, pricesReducer)
     itemArray.forEach((element: any) => {

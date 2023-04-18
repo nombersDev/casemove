@@ -4,14 +4,14 @@
 
 ----
 
-## Download Latest Version (Casemove 2.2.0)
+## Download Latest Version (Casemove 2.2.1)
 
 This is the latest stable version and can be downloaded from the [releases](https://github.com/nombersDev/casemove/releases) page, or directly from:
 
-- [Windows - (Casemove-2.2.0)](https://github.com/nombersDev/casemove/releases/download/2.1.1/Casemove-Setup-2.2.0.exe)
-- [Mac - (Casemove-2.2.0)](https://github.com/nombersDev/casemove/releases/download/2.2.0/Casemove-2.2.0.dmg)
-- [Mac ARM 64 (M1) - (Casemove-2.2.0)](https://github.com/nombersDev/casemove/releases/download/2.2.0/Casemove-2.2.0-arm64.dmg)
-- [Linux AppImage - (Casemove-2.2.0)](https://github.com/nombersDev/casemove/releases/download/2.2.0/casemove-2.2.0.zip)
+- [Windows - (Casemove-2.2.1)](https://github.com/nombersDev/casemove/releases/download/v2.1.1/Casemove-Setup-2.2.1.exe)
+- [Mac - (Casemove-2.2.1)](https://github.com/nombersDev/casemove/releases/download/v2.2.1/Casemove-2.2.1.dmg)
+- [Mac ARM 64 (M1) - (Casemove-2.2.1)](https://github.com/nombersDev/casemove/releases/download/v2.2.1/Casemove-2.2.1-arm64.dmg)
+- [Linux AppImage - (Casemove-2.2.1)](https://github.com/nombersDev/casemove/releases/download/v2.2.1/casemove-2.2.1.zip)
 
 
 Install the Linux version by unzipping the contents of the zip-file into a folder and click on the AppImage file. 
@@ -70,7 +70,7 @@ Furthermore, the libraries [Steam-user](https://github.com/DoctorMcKay/node-stea
 
 #### Does Casemove store any of my information?
 
-No, Casemove doesn’t store any information on your computer, except for when you ask it to remember your refresh token. As of Casemove 2.2.0, Casemove no longer stores your password when you login. The refresh token is stored safely using [safeStore](https://www.electronjs.org/docs/latest/api/safe-storage). Casemove doesn’t send any information to anyone outside of Steam.
+No, Casemove doesn’t store any information on your computer, except for when you ask it to remember your refresh token. As of Casemove 2.2.1, Casemove no longer stores your password when you login. The refresh token is stored safely using [safeStore](https://www.electronjs.org/docs/latest/api/safe-storage). Casemove doesn’t send any information to anyone outside of Steam.
 
 #### Why can't I just log in using the Steam Web authentication?
 

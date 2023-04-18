@@ -230,7 +230,7 @@
     "electron-updater": "^4.3.9",
     "fernet": "^0.4.0",
     "find-process": "^1.4.7",
-    "globaloffensive": "^2.1.0",
+    "globaloffensive": "^2.3.0",
     "history": "4.x.x",
     "lodash": "^4.17.21",
     "react": "^17.0.2",
@@ -245,7 +245,7 @@
     "regenerator-runtime": "^0.13.9",
     "steam-session": "^1.1.1",
     "steam-totp": "^2.1.1",
-    "steam-user": "^4.25.0",
+    "steam-user": "^4.28.1",
     "update-electron-app": "^2.0.1",
     "xmldom": "^0.6.0"
   },
