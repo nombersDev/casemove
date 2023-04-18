@@ -14,6 +14,7 @@ This is the latest stable version and can be downloaded from the [releases](http
 - [Linux AppImage - (Casemove-2.2.1)](https://github.com/nombersDev/casemove/releases/download/v2.2.1/casemove-2.2.1.zip)
 
 
+
 Install the Linux version by unzipping the contents of the zip-file into a folder and click on the AppImage file. 
 
 
