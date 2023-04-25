@@ -4,14 +4,15 @@
 
 ----
 
-## Download Latest Version (Casemove 2.2.1)
+## Download Latest Version (Casemove 2.2.2)
 
 This is the latest stable version and can be downloaded from the [releases](https://github.com/nombersDev/casemove/releases) page, or directly from:
 
-- [Windows - (Casemove-2.2.1)](https://github.com/nombersDev/casemove/releases/download/v2.2.1/Casemove-Setup-2.2.1.exe)
-- [Mac - (Casemove-2.2.1)](https://github.com/nombersDev/casemove/releases/download/v2.2.1/Casemove-2.2.1.dmg)
-- [Mac ARM 64 (M1) - (Casemove-2.2.1)](https://github.com/nombersDev/casemove/releases/download/v2.2.1/Casemove-2.2.1-arm64.dmg)
-- [Linux Deb - (Casemove-2.2.1)](https://github.com/nombersDev/casemove/releases/download/v2.2.1/casemove_2.2.1_amd64.deb)
+
+- [Windows - (Casemove-2.2.2)](https://github.com/nombersDev/casemove/releases/download/v2.1.1/Casemove-Setup-2.2.2.exe)
+- [Mac - (Casemove-2.2.2)](https://github.com/nombersDev/casemove/releases/download/v2.2.2/Casemove-2.2.2.dmg)
+- [Mac ARM 64 (M1) - (Casemove-2.2.2)](https://github.com/nombersDev/casemove/releases/download/v2.2.2/Casemove-2.2.2-arm64.dmg)
+- [Linux Deb - (Casemove-2.2.2)](https://github.com/nombersDev/casemove/releases/download/v2.2.2/casemove_2.2.2_amd64.deb)
 
 
 
@@ -71,7 +72,7 @@ Furthermore, the libraries [Steam-user](https://github.com/DoctorMcKay/node-stea
 
 #### Does Casemove store any of my information?
 
-No, Casemove doesn’t store any information on your computer, except for when you ask it to remember your refresh token. As of Casemove 2.2.1, Casemove no longer stores your password when you login. The refresh token is stored safely using [safeStore](https://www.electronjs.org/docs/latest/api/safe-storage). Casemove doesn’t send any information to anyone outside of Steam.
+No, Casemove doesn’t store any information on your computer, except for when you ask it to remember your refresh token. As of Casemove 2.2.2, Casemove no longer stores your password when you login. The refresh token is stored safely using [safeStore](https://www.electronjs.org/docs/latest/api/safe-storage). Casemove doesn’t send any information to anyone outside of Steam.
 
 #### Why can't I just log in using the Steam Web authentication?
 
