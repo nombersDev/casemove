@@ -537,7 +537,7 @@ function AppContent() {
                   />
                   <span className="mr-3 text-green-900">Retry connection</span>
                 </button>
-              ) : shouldUpdate || true ? (
+              ) : shouldUpdate ? (
                 <a href={getDownloadLink} target="_blank">
                   <button
                     type="button"
