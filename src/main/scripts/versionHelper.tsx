@@ -19,7 +19,7 @@ async function getGithubVersion(platform: string): Promise<GithubResponse> {
             switch (platform) {
               case 'win32':
                 value.assets.forEach((element) => {
-                  if (element.name.includes('.exe')) {
+                  if (element.name.includes('.exe') && !element.name?.toLowerCase()?.includes('blockmap')) {
                     downloadLink = element.browser_download_url;
                   }
                 });
