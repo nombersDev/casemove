@@ -83,6 +83,12 @@ class login {
       return;
     }
 
+    // 3
+    if (this.steamGuard) {
+      this._login_steamGuard();
+      return;
+    }
+
     // 1
     if (this.rememberedDetails['refreshToken'] || this.refreshToken) {
       this._login_refreshToken();
@@ -98,12 +104,6 @@ class login {
     // 2
     if (this.rememberedSensitive?.secretKey) {
       this._login_secretKey();
-      return;
-    }
-
-    // 3
-    if (this.steamGuard) {
-      this._login_steamGuard();
       return;
     }
 
