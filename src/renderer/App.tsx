@@ -56,7 +56,10 @@ import OverviewPage from './views/overview/overview';
 import { State } from './interfaces/states';
 import { ReducerManager } from './functionsClasses/reducerManager';
 import { filterItemRows } from './functionsClasses/filters/custom';
-import { DispatchStore, DispatchIPC } from './functionsClasses/rendererCommands/admin';
+import {
+  DispatchStore,
+  DispatchIPC,
+} from './functionsClasses/rendererCommands/admin';
 DocumentDownloadIcon;
 
 //{ name: 'Reports', href: '/reports', icon: DocumentDownloadIcon, current: false }
@@ -77,7 +80,6 @@ const navigation = [
   { name: 'Inventory', href: '/inventory', icon: ArchiveIcon, current: false },
   { name: 'Trade up', href: '/tradeup', icon: BeakerIcon, current: false },
 ];
-
 
 function AppContent() {
   SearchIcon;
@@ -449,16 +451,16 @@ function AppContent() {
                             </div>
                             <div className="text-gray-500">
                               {userDetails.walletBalance?.balance == 0 ||
-                                userDetails.walletBalance == null
+                              userDetails.walletBalance == null
                                 ? ''
                                 : new Intl.NumberFormat(settingsData.locale, {
-                                  style: 'currency',
-                                  currency:
-                                    userDetails.walletBalance?.currency ||
-                                    settingsData.currency,
-                                }).format(
-                                  userDetails.walletBalance?.balance || 0
-                                )}
+                                    style: 'currency',
+                                    currency:
+                                      userDetails.walletBalance?.currency ||
+                                      settingsData.currency,
+                                  }).format(
+                                    userDetails.walletBalance?.balance || 0
+                                  )}
                             </div>
                           </span>
                         </span>
@@ -520,9 +522,9 @@ function AppContent() {
               </Transition>
             </Menu>
 
-            <div className={shouldUpdate ? "px-3 mt-5" : 'px-3 mt-5 '}>
+            <div className={shouldUpdate ? 'px-3 mt-5' : 'px-3 mt-5 '}>
               {userDetails.CSGOConnection == false &&
-                userDetails.isLoggedIn == true ? (
+              userDetails.isLoggedIn == true ? (
                 <button
                   type="button"
                   onClick={() => retryConnection()}
@@ -535,36 +537,41 @@ function AppContent() {
                   />
                   <span className="mr-3 text-green-900">Retry connection</span>
                 </button>
-              ) : shouldUpdate ? (
-                <a href={getDownloadLink} target="_blank" >
+              ) : shouldUpdate || true ? (
+                <a href={getDownloadLink} target="_blank">
                   <button
                     type="button"
-                    className="inline-flex items-center bg-green-200 px-6 shadow-md py-3 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 hover:shadow-none focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
+                    className="inline-flex items-center my-4 bg-green-200 px-6 shadow-md py-3 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 hover:shadow-none focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
                   >
                     <InboxInIcon
                       className="mr-3 h-4 w-4 text-gray-500"
                       style={{ marginLeft: -22 }}
                       aria-hidden="true"
                     />
-                    <span className="mr-3">Update ready</span>
+                    <span className="mr-3 ">
+                      Update ready. <br />
+                      Restart or download.
+                    </span>
                   </button>
                 </a>
-              ) : <a
-                href="https://steamcommunity.com/tradeoffer/new/?partner=1033744096&token=29ggoJY7"
-                target="_blank"
-              >
-                <button
-                  type="button"
-                  className="inline-flex  dark:text-dark-white items-center px-6 py-3 border border-gray-200 dark:bg-dark-level-three   dark:border-opacity-0  text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
+              ) : (
+                <a
+                  href="https://steamcommunity.com/tradeoffer/new/?partner=1033744096&token=29ggoJY7"
+                  target="_blank"
                 >
-                  <GiftIcon
-                    className="mr-3  h-4 w-4 text-gray-500"
-                    style={{ marginLeft: -25 }}
-                    aria-hidden="true"
-                  />
-                  <span className="mr-3">Support the project</span>
-                </button>
-              </a>}
+                  <button
+                    type="button"
+                    className="inline-flex  dark:text-dark-white items-center px-6 py-3 border border-gray-200 dark:bg-dark-level-three   dark:border-opacity-0  text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
+                  >
+                    <GiftIcon
+                      className="mr-3  h-4 w-4 text-gray-500"
+                      style={{ marginLeft: -25 }}
+                      aria-hidden="true"
+                    />
+                    <span className="mr-3">Support the project</span>
+                  </button>
+                </a>
+              )}
             </div>
 
             {/* Navigation */}
@@ -723,7 +730,7 @@ function AppContent() {
               <div className="flex-1 items-center justify-end flex">
                 <div className="px-3">
                   {userDetails.CSGOConnection == false &&
-                    userDetails.isLoggedIn == true ? (
+                  userDetails.isLoggedIn == true ? (
                     <button
                       type="button"
                       onClick={() => retryConnection()}
