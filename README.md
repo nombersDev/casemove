@@ -9,7 +9,7 @@
 This is the latest stable version and can be downloaded from the [releases](https://github.com/nombersDev/casemove/releases) page, or directly from:
 
 
-- [Windows - (Casemove-2.2.2)](https://github.com/nombersDev/casemove/releases/download/v2.1.1/Casemove-Setup-2.2.2.exe)
+- [Windows - (Casemove-2.2.2)](https://github.com/nombersDev/casemove/releases/download/v2.2.2/Casemove-Setup-2.2.2.exe)
 - [Mac - (Casemove-2.2.2)](https://github.com/nombersDev/casemove/releases/download/v2.2.2/Casemove-2.2.2.dmg)
 - [Mac ARM 64 (M1) - (Casemove-2.2.2)](https://github.com/nombersDev/casemove/releases/download/v2.2.2/Casemove-2.2.2-arm64.dmg)
 - [Linux Deb - (Casemove-2.2.2)](https://github.com/nombersDev/casemove/releases/download/v2.2.2/casemove_2.2.2_amd64.deb)
