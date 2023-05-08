@@ -11200,7 +11200,7 @@
             "imageURL": "https://raw.githubusercontent.com/steamdatabase/gametracking-csgo/108f1682bf7eeb1420caaf2357da88b614a7e1b0/csgo/pak01_dir/resource/flash/econ/default_generated/weapon_awp_gs_awp_limbo_snake_light_large.png",
             "best_quality": 8,
             "min-wear": 0.00,
-            "max-wear": 0.70,
+            "max-wear": 0.80,
             "image": "https://raw.githubusercontent.com/steamdatabase/gametracking-csgo/108f1682bf7eeb1420caaf2357da88b614a7e1b0/csgo/pak01_dir/resource/flash/econ/default_generated/weapon_awp_gs_awp_limbo_snake_light_large.png",
             "trade_up": true
         },
