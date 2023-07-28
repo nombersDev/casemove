@@ -79,7 +79,13 @@
     },
     "linux": {
       "target": [
-        "deb"
+        "deb",
+        "rpm",
+        "pacman",
+        "freebsd",
+        "AppImage",
+        "flatpak",
+        "snap"
       ],
       "category": "Development"
     },
