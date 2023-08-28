@@ -445,8 +445,8 @@ function AppContent() {
                             <div className="flex justify-between">
                               <div>
                                 {userDetails.CSGOConnection
-                                  ? 'CSGO Online'
-                                  : 'CSGO Offline'}
+                                  ? 'CS:GO Online'
+                                  : 'CS:GO Offline'}
                               </div>
                             </div>
                             <div className="text-gray-500">
