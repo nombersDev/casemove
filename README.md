@@ -1,6 +1,6 @@
 # CASEMOVE
 
-*Casemove is an open-source desktop application that helps you easily move items out of and into Storage Units in Counter-Strike: Global Offensive. The app utilizes the [Steam-user](https://github.com/DoctorMcKay/node-steam-user) & [Global Offensive](https://github.com/DoctorMcKay/node-globaloffensive) libraries to establish a connection with Steam and interact with the Global Offensive game coordinator.* 
+*Casemove is an open-source desktop application that helps you easily move items out of and into Storage Units in Counter-Strike 2. The app utilizes the [Steam-user](https://github.com/DoctorMcKay/node-steam-user) & [Global Offensive](https://github.com/DoctorMcKay/node-globaloffensive) libraries to establish a connection with Steam and interact with the CS2 game coordinator.* 
 
 ----
 
@@ -14,11 +14,9 @@ This is the latest stable version and can be downloaded from the [releases](http
 - [Mac ARM 64 (M1) - (Casemove-2.2.4)](https://github.com/nombersDev/casemove/releases/download/v2.2.4/Casemove-2.2.4-arm64.dmg)
 - [Linux Deb - (Casemove-2.2.4)](https://github.com/nombersDev/casemove/releases/download/v2.2.4/casemove_2.2.4_amd64.deb)
 
+## Support
 
-
-Install the Linux version by unzipping the contents of the zip-file into a folder and click on the AppImage file. 
-
-
+Please join the Casemove discord for support: https://discord.gg/4dSBdt4uJ3
 
 https://user-images.githubusercontent.com/98760010/181345579-e4fd11be-1af9-4b8b-a211-5747fdd414aa.mp4
 
@@ -66,7 +64,7 @@ To use:
 #### Can I be VAC banned?
 
 No.
-The app doesn’t interact with your CSGO game client. It doesn’t inject any code into the game. You don’t even need to have the game installed for the app to run. All the app does is connect to Steam and emulate a CSGO connection.
+The app doesn’t interact with your CS2 game client. It doesn’t inject any code into the game. You don’t even need to have the game installed for the app to run. All the app does is connect to Steam and emulate a CS2 connection.
 
 Furthermore, the libraries [Steam-user](https://github.com/DoctorMcKay/node-steam-user) & [Global Offensive](https://github.com/DoctorMcKay/node-globaloffensive) have been used by thousands of people, and this app is merely a cosmetic rendition of these libraries.
 
@@ -76,7 +74,7 @@ No, Casemove doesn’t store any information on your computer, except for when y
 
 #### Why can't I just log in using the Steam Web authentication?
 
-In order to move items in and out of Storage Units, the app needs to have an active connection with the CSGO game coordinator. This is not possible when using the web authentication method. However, take a look at the question below. 
+In order to move items in and out of Storage Units, the app needs to have an active connection with the CS2 game coordinator. This is not possible when using the web authentication method. However, take a look at the question below. 
 
 #### How does the browser login work?
 
