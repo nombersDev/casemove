@@ -1,7 +1,7 @@
 {
   "name": "casemove",
   "productName": "Casemove",
-  "description": "CSGO Storage unit manager that helps you move items in bulk without the awful clicking. ",
+  "description": "Counter-Strike 2 Storage unit manager that helps you move items in bulk without the clicking. ",
   "scripts": {
     "build": "concurrently \"npm run build:main\" \"npm run build:renderer\"",
     "build:main": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.main.prod.ts",
