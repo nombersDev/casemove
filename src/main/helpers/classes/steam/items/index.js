@@ -62,7 +62,7 @@ async function updateItems(items) {
         paint_kits: {},
         prefabs: {},
         sticker_kits: {},
-        casket_icons: {}
+        casket_icons: {},
       };
       const data = response.data;
       const jsonData = VDF.parse(data);
@@ -82,7 +82,7 @@ async function updateItems(items) {
       dict_to_write['casket_icons'] = updateItemsLoop(
         jsonData,
         'alternate_icons2'
-      )['casket_icons']
+      )['casket_icons'];
 
       return dict_to_write;
     });
@@ -124,18 +124,21 @@ class items {
   inventoryConverter(inventoryResult, isCasket = false) {
     var returnList = [];
     if (typeof inventoryResult === 'object' && inventoryResult !== null) {
-      returnList
+      returnList;
     } else {
-      return returnList
+      return returnList;
     }
 
     for (const [key, value] of Object.entries(inventoryResult)) {
 
-
-
-
+      
       if (value['def_index'] == undefined) {
         continue;
+      }
+      const freeRewardStatusBytes = getAttributeValueBytes(value, 277);
+      if (freeRewardStatusBytes && freeRewardStatusBytes.readUInt32LE(0) === 1) {
+        continue;
+        
       }
       let musicIndexBytes = getAttributeValueBytes(value, 166);
       if (musicIndexBytes) {
@@ -153,13 +156,18 @@ class items {
       }
       // console.log(value['item_id'])
 
+
       const returnDict = {};
       // URL
       let imageURL = this.handleError(this.itemProcessorImageUrl, [value]);
 
-      const iconMatch = getAttributeValueBytes(value, 70)?.readUInt32LE(0)
-      if (value['def_index'] == 1201 && iconMatch && this.csgoItems['casket_icons']?.[iconMatch]?.icon_path) {
-        imageURL = this.csgoItems['casket_icons']?.[iconMatch]?.icon_path
+      const iconMatch = getAttributeValueBytes(value, 70)?.readUInt32LE(0);
+      if (
+        value['def_index'] == 1201 &&
+        iconMatch &&
+        this.csgoItems['casket_icons']?.[iconMatch]?.icon_path
+      ) {
+        imageURL = this.csgoItems['casket_icons']?.[iconMatch]?.icon_path;
       }
       // Check names
       returnDict['item_name'] = this.handleError(this.itemProcessorName, [
@@ -218,12 +226,9 @@ class items {
         this.itemProcessorHasStickersApplied,
         [returnDict, value]
       );
-      let equipped = this.handleError(
-        this.itemProcessorisEquipped,
-        [value]
-      );
-      returnDict['equipped_ct'] = equipped[0]
-      returnDict['equipped_t'] = equipped[1]
+      let equipped = this.handleError(this.itemProcessorisEquipped, [value]);
+      returnDict['equipped_ct'] = equipped[0];
+      returnDict['equipped_t'] = equipped[1];
       returnDict['def_index'] = value['def_index'];
 
       if (returnDict['item_has_stickers']) {
@@ -312,18 +317,18 @@ class items {
   itemProcessorisEquipped(storageRow) {
     // 2 = CT
     // 3 = T
-    let CT = false
-    let T = false
+    let CT = false;
+    let T = false;
 
     for (const [key, value] of Object.entries(storageRow?.equipped_state)) {
       if (value?.new_class == 2) {
         T = true;
       }
       if (value?.new_class == 3) {
-        CT = true
+        CT = true;
       }
     }
-    return [CT, T]
+    return [CT, T];
   }
 
   isStatTrak(storageRow) {
@@ -420,7 +425,7 @@ class items {
         this.getGraffitiKitName(graffitiKitIndex).replaceAll('_', ' ')
       );
       var finalName = finalName + ' (' + graffitiKitResult + ')';
-      var finalName = finalName.replace('Swat', "SWAT")
+      var finalName = finalName.replace('Swat', 'SWAT');
     }
 
     return finalName;
@@ -568,7 +573,6 @@ class items {
   getStickerDetails(stickerID) {
     return this.csgoItems['sticker_kits'][stickerID];
   }
-
 
   checkIfAttributeIsThere(item, attribDefIndex) {
     let attrib = (item.attribute || []).find(

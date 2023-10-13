@@ -1,8 +1,8 @@
 {
   "name": "casemove",
   "productName": "casemove",
-  "version": "2.2.4",
-  "description": "CSGO Storage unit manager that helps you move stuff. ",
+  "version": "2.2.5",
+  "description": "Counter-Strike 2 Storage unit manager that helps you move stuff. ",
   "main": "./dist/main/main.js",
   "author": {
     "name": "Nombers",

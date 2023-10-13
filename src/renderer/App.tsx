@@ -1,65 +1,64 @@
-import { Fragment, useMemo, useState } from 'react';
-import { Dialog, Transition, Menu } from '@headlessui/react';
-import 'tailwindcss/tailwind.css';
+import { Dialog, Menu, Transition } from '@headlessui/react';
 import {
-  HashRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useLocation,
-  Redirect,
-} from 'react-router-dom';
-import inventoryContent from './components/content/Inventory/inventory';
+  ArchiveIcon,
+  BeakerIcon,
+  DocumentDownloadIcon,
+  MenuAlt1Icon,
+  XIcon,
+} from '@heroicons/react/outline';
 import {
   ChartBarIcon,
   DownloadIcon,
-  GiftIcon,
   InboxInIcon,
   RefreshIcon,
   SearchIcon,
   SelectorIcon,
   UploadIcon,
 } from '@heroicons/react/solid';
-import {
-  ArchiveIcon,
-  DocumentDownloadIcon,
-  XIcon,
-  MenuAlt1Icon,
-  BeakerIcon,
-} from '@heroicons/react/outline';
-import { itemCategories } from './components/content/shared/categories';
-import { toMoveContext } from './context/toMoveContext';
-import StorageUnitsComponent from './components/content/storageUnits/from/Content';
-import LoginPage from './views/login/login';
+import { Fragment, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { signOut } from './store/actions/userStatsActions';
-import { handleUserEvent } from './store/handleMessage';
-import Logo from './components/content/shared/iconsLogo/logo 2';
-import ToContent from './components/content/storageUnits/to/toHolder';
+import {
+  Link,
+  Redirect,
+  Route,
+  HashRouter as Router,
+  Switch,
+  useLocation,
+} from 'react-router-dom';
+import 'tailwindcss/tailwind.css';
+import inventoryContent from './components/content/Inventory/inventory';
+import { itemCategories } from './components/content/shared/categories';
 import {
   classNames,
   sortDataFunction,
 } from './components/content/shared/filters/inventoryFunctions';
+import Logo from './components/content/shared/iconsLogo/logo 2';
+import TradeResultModal from './components/content/shared/modals & notifcations/modalTradeResult';
+import itemRarities from './components/content/shared/rarities';
+import TitleBarWindows from './components/content/shared/titleBarWindows';
+import StorageUnitsComponent from './components/content/storageUnits/from/Content';
+import ToContent from './components/content/storageUnits/to/toHolder';
+import { toMoveContext } from './context/toMoveContext';
+import { filterItemRows } from './functionsClasses/filters/custom';
+import { ReducerManager } from './functionsClasses/reducerManager';
+import {
+  DispatchIPC,
+  DispatchStore,
+} from './functionsClasses/rendererCommands/admin';
+import { State } from './interfaces/states';
 import {
   inventoryAddCategoryFilter,
   inventoryAddRarityFilter,
   inventorySetFilter,
 } from './store/actions/filtersInventoryActions';
-import settingsPage from './views/settings/settings';
-import { pricing_addPrice } from './store/actions/pricingActions';
-import TitleBarWindows from './components/content/shared/titleBarWindows';
-import TradeupPage from './views/tradeUp/tradeUp';
-import itemRarities from './components/content/shared/rarities';
 import { setTradeFoundMatch } from './store/actions/modalTrade';
-import TradeResultModal from './components/content/shared/modals & notifcations/modalTradeResult';
+import { pricing_addPrice } from './store/actions/pricingActions';
+import { signOut } from './store/actions/userStatsActions';
+import { handleUserEvent } from './store/handleMessage';
+import LoginPage from './views/login/login';
 import OverviewPage from './views/overview/overview';
-import { State } from './interfaces/states';
-import { ReducerManager } from './functionsClasses/reducerManager';
-import { filterItemRows } from './functionsClasses/filters/custom';
-import {
-  DispatchStore,
-  DispatchIPC,
-} from './functionsClasses/rendererCommands/admin';
+import settingsPage from './views/settings/settings';
+import TradeupPage from './views/tradeUp/tradeUp';
 DocumentDownloadIcon;
 
 //{ name: 'Reports', href: '/reports', icon: DocumentDownloadIcon, current: false }
@@ -445,8 +444,8 @@ function AppContent() {
                             <div className="flex justify-between">
                               <div>
                                 {userDetails.CSGOConnection
-                                  ? 'CSGO Online'
-                                  : 'CSGO Offline'}
+                                  ? 'Connected'
+                                  : 'Not connected'}
                               </div>
                             </div>
                             <div className="text-gray-500">
@@ -555,20 +554,34 @@ function AppContent() {
                   </button>
                 </a>
               ) : (
-                <a
-                  href="https://steamcommunity.com/tradeoffer/new/?partner=1033744096&token=29ggoJY7"
-                  target="_blank"
-                >
+                <a href="https://discord.gg/n8QExYF7Qs" target="_blank">
                   <button
                     type="button"
-                    className="inline-flex  dark:text-dark-white items-center px-6 py-3 border border-gray-200 dark:bg-dark-level-three   dark:border-opacity-0  text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
+                    className="flex  dark:text-dark-white items-center px-6 py-3 border border-gray-200 dark:bg-dark-level-three   dark:border-opacity-0  text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
                   >
-                    <GiftIcon
+                    <div
                       className="mr-3  h-4 w-4 text-gray-500"
-                      style={{ marginLeft: -25 }}
                       aria-hidden="true"
-                    />
-                    <span className="mr-3">Support the project</span>
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 127.14 96.36"
+                        className="pt-0.5"
+                      >
+                        <g data-name="\u56FE\u5C42 2">
+                          <g data-name="Discord Logos">
+                            <path
+                              d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.11 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.1 105.25 105.25 0 0 0 32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69Zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69Z"
+                              data-name="Discord Logo - Large - White"
+                              style={{
+                                fill: '#fff',
+                              }}
+                            />
+                          </g>
+                        </g>
+                      </svg>
+                    </div>
+                    <span className="mr-3">Join the discord</span>
                   </button>
                 </a>
               )}
@@ -711,8 +724,30 @@ function AppContent() {
               )}
             </nav>
           </div>
-
-          <span className="text-xs pl-4 text-gray-500">{getVersion}</span>
+          <div className="flex items-center gap-3">
+            <span className="text-xs pl-4 text-gray-500">{getVersion}</span>
+            <a className="flex items-center text-xs gap-2 text-dark-white hover:scale-110 transform duration-200" href='https://discord.gg/n8QExYF7Qs' target="_blank">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 127.14 96.36"
+                className=" h-4 w-4  pt-0.5"
+              >
+                <g data-name="\u56FE\u5C42 2">
+                  <g data-name="Discord Logos">
+                    <path
+                      d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.11 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.1 105.25 105.25 0 0 0 32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69Zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69Z"
+                      data-name="Discord Logo - Large - White"
+                      style={{
+                        fill: '#d6d3cd',
+                      }}
+                    />
+                  </g>
+                </g>
+              </svg>
+              Support
+            </a>
+            <span className="text-xs pl-4 text-gray-500 top-3.5">Soon...</span>
+          </div>
         </div>
         {/* Main column */}
         <div className="lg:pl-64 flex flex-col">
