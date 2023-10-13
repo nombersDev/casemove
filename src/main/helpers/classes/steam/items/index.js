@@ -135,7 +135,7 @@ class items {
       if (value['def_index'] == undefined) {
         continue;
       }
-      const freeRewardStatusBytes = await getAttributeValueBytes(value, 277);
+      const freeRewardStatusBytes = getAttributeValueBytes(value, 277);
       if (freeRewardStatusBytes && freeRewardStatusBytes.readUInt32LE(0) === 1) {
         continue;
         
