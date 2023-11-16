@@ -33,13 +33,6 @@ const sources = [
     title: 'skinport',
     avatar: 'https://skinport.com/static/favicon.ico',
   },
-  {
-    id: 4,
-    name: 'Bitskins',
-    title: 'bitskins',
-    avatar:
-      'https://i.pinimg.com/favicons/49c7e11eff082a1d5fd30978c4d013c033a371ddfcc6c54cbb4d126e.png',
-  },
 ];
 const currencyCode = [
   'AFN',
