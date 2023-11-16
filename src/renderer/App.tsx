@@ -209,13 +209,11 @@ function AppContent() {
   const [shouldCheckUpdate, setShouldCheckUpdate] = useState(true);
 
   const [getVersion, setVersion] = useState('');
-  const [getDownloadLink, setDownloadLink] = useState('');
   async function getUpdate() {
     const doUpdate = await window.electron.ipcRenderer.needUpdate();
     console.log(doUpdate);
     setVersion('v' + doUpdate.currentVersion);
     setShouldUpdate(doUpdate.requireUpdate);
-    setDownloadLink(doUpdate.githubResponse.downloadLink);
   }
   if (shouldCheckUpdate == true) {
     setShouldCheckUpdate(false);
@@ -537,9 +535,9 @@ function AppContent() {
                   <span className="mr-3 text-green-900">Retry connection</span>
                 </button>
               ) : shouldUpdate ? (
-                <a href={getDownloadLink} target="_blank">
                   <button
                     type="button"
+                    disabled={true}
                     className="inline-flex items-center my-4 bg-green-200 px-6 shadow-md py-3 text-left text-base w-full font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 hover:shadow-none focus:outline-none pl-9 sm:text-sm border-gray-300 rounded-md h-9 text-gray-400"
                   >
                     <InboxInIcon
@@ -552,7 +550,6 @@ function AppContent() {
                       Restart or download.
                     </span>
                   </button>
-                </a>
               ) : (
                 <a href="https://discord.gg/n8QExYF7Qs" target="_blank">
                   <button

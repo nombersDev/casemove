@@ -13,7 +13,7 @@ async function getPricesBackup(cas) {
   cas.setPricing(pricesBackup);
 }
 async function getPrices(cas) {
-  const url = 'https://prices.csgotrader.app/latest/prices_v6.json';
+  const url = 'https://cdn.skinledger.com/casemove/prices.json';
   axios
     .get(url)
     .then(function (response) {
@@ -127,7 +127,7 @@ class runItems {
         buff163: this.prices[itemNamePricing]?.buff163.starting_at?.price,
         steam_listing: this.prices[itemNamePricing]?.steam?.last_90d,
         skinport: this.prices[itemNamePricing]?.skinport?.starting_at,
-        bitskins: this.prices[itemNamePricing]?.bitskins?.price,
+        bitskins: 0,
       };
       if (this.prices[itemNamePricing]?.steam?.last_30d) {
         pricingDict.steam_listing =
