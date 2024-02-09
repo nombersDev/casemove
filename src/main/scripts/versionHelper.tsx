@@ -27,7 +27,7 @@ async function getGithubVersion(platform: string): Promise<GithubResponse> {
 
               case 'linux':
                 value.assets.forEach((element) => {
-                  if (element.name.includes('.dmg')) {
+                  if (element.name.includes('.deb')) {
                     downloadLink = element.browser_download_url;
                   }
                 });
