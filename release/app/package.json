@@ -1,7 +1,7 @@
 {
   "name": "casemove",
   "productName": "casemove",
-  "version": "2.3.1",
+  "version": "2.3.3",
   "description": "Counter-Strike 2 Storage unit manager that helps you move stuff. ",
   "main": "./dist/main/main.js",
   "author": {
@@ -15,7 +15,7 @@
     "postinstall": "npm run electron-rebuild && npm run link-modules"
   },
   "dependencies": {
-    "globaloffensive": "^3.0.1",
+    "globaloffensive": "^3.1.0",
     "steam-user": "^4.28.1",
     "steam-totp": "^2.1.1",
     "steam-session": "^1.1.1"
