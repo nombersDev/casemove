@@ -4,14 +4,14 @@
 
 ----
 
-## Download Latest Version (Casemove 2.3.1)
+## Download Latest Version (Casemove 2.3.2)
 
 This is the latest stable version and can be downloaded from the [releases](https://github.com/nombersDev/casemove/releases) page, or directly from:
 
 
-- [Windows - (Casemove-2.3.1)](https://github.com/nombersDev/casemove/releases/download/v2.3.1/Casemove-Setup-2.3.1.exe)
-- [Mac - (Casemove-2.3.1)](https://github.com/nombersDev/casemove/releases/download/v2.3.1/Casemove-2.3.1.dmg)
-- [Mac ARM 64 (M1) - (Casemove-2.3.1)](https://github.com/nombersDev/casemove/releases/download/v2.3.1/Casemove-2.3.1-arm64.dmg)
+- [Windows - (Casemove-2.3.2)](https://github.com/nombersDev/casemove/releases/download/v2.3.2/Casemove-Setup-2.3.2.exe)
+- [Mac - (Casemove-2.3.2)](https://github.com/nombersDev/casemove/releases/download/v2.3.2/Casemove-2.3.2.dmg)
+- [Mac ARM 64 (M1) - (Casemove-2.3.2)](https://github.com/nombersDev/casemove/releases/download/v2.3.2/Casemove-2.3.2-arm64.dmg)
 - [Linux Deb - (Casemove-2.3.1)](https://github.com/nombersDev/casemove/releases/download/v2.3.1/casemove_2.3.1_amd64.deb)
 
 ## Support
