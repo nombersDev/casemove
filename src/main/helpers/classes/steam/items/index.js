@@ -2,10 +2,9 @@ const fs = require('fs');
 const VDF = require('@node-steam/vdf');
 const axios = require('axios');
 
-const itemsLink =
-  'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/scripts/items/items_game.txt';
+const itemsLink = 'files.skinledger.com/counterstrike/items_game.txt';
 const translationsLink =
-  'https://raw.githubusercontent.com/SteamDatabase/GameTracking-CSGO/master/csgo/resource/csgo_english.txt';
+  'https://files.skinledger.com/counterstrike/csgo_english.txt';
 
 function fileCatcher(endNote) {
   return `${csgo_install_directory}${endNote}`;
@@ -130,15 +129,15 @@ class items {
     }
 
     for (const [key, value] of Object.entries(inventoryResult)) {
-
-      
       if (value['def_index'] == undefined) {
         continue;
       }
       const freeRewardStatusBytes = getAttributeValueBytes(value, 277);
-      if (freeRewardStatusBytes && freeRewardStatusBytes.readUInt32LE(0) === 1) {
+      if (
+        freeRewardStatusBytes &&
+        freeRewardStatusBytes.readUInt32LE(0) === 1
+      ) {
         continue;
-        
       }
       let musicIndexBytes = getAttributeValueBytes(value, 166);
       if (musicIndexBytes) {
@@ -155,7 +154,6 @@ class items {
         continue;
       }
       // console.log(value['item_id'])
-
 
       const returnDict = {};
       // URL
