@@ -98,7 +98,6 @@ As with anything, It's important to know that the using this software is distrib
 Casemove was created by Nombers.
 
 - Steam: https://steamcommunity.com/id/realNombers/
-- Reddit: https://www.reddit.com/user/nubbiners
 - Discord: Nombers#1046
 ----
 
