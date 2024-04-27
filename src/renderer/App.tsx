@@ -1,10 +1,9 @@
 import { Dialog, Menu, Transition } from '@headlessui/react';
 import {
   ArchiveIcon,
-  BeakerIcon,
   DocumentDownloadIcon,
   MenuAlt1Icon,
-  XIcon,
+  XIcon
 } from '@heroicons/react/outline';
 import {
   ChartBarIcon,
@@ -33,6 +32,7 @@ import {
   sortDataFunction,
 } from './components/content/shared/filters/inventoryFunctions';
 import Logo from './components/content/shared/iconsLogo/logo 2';
+import { InfoModal } from './components/content/shared/infoModal';
 import TradeResultModal from './components/content/shared/modals & notifcations/modalTradeResult';
 import itemRarities from './components/content/shared/rarities';
 import TitleBarWindows from './components/content/shared/titleBarWindows';
@@ -59,7 +59,6 @@ import LoginPage from './views/login/login';
 import OverviewPage from './views/overview/overview';
 import settingsPage from './views/settings/settings';
 import TradeupPage from './views/tradeUp/tradeUp';
-import { InfoModal } from './components/content/shared/infoModal';
 DocumentDownloadIcon;
 
 //{ name: 'Reports', href: '/reports', icon: DocumentDownloadIcon, current: false }
@@ -78,7 +77,6 @@ const navigation = [
     current: false,
   },
   { name: 'Inventory', href: '/inventory', icon: ArchiveIcon, current: false },
-  { name: 'Trade up', href: '/tradeup', icon: BeakerIcon, current: false },
 ];
 
 function AppContent() {

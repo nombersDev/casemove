@@ -56,21 +56,26 @@ export function InfoModal({
                     <p className="text-sm text-gray-300">
                       Casemove is still in development, however, this version of
                       Casemove will no longer receive any updates unless it
-                      breaks completely. This also means that you won&apos;t be
-                      able to see any Copenhagen, Anubis, Kilowatt or other new
-                      items in this app until I relaunch the app with an
-                      entirely new design during the summer.
+                      breaks completely. This also means that you after adding
+                      in the latest items with this update, this version of
+                      Casemove will no longer get future updates and will break
+                      eventually.
                       <br />
                       <br />
-                      If you want access to the latest items, you can join the
-                      free beta for Skinledger which is essentially the new
-                      version of Casemove, but with a lot more features.
+                      You can join the free beta for Skinledger which is
+                      essentially the new version of Casemove, but with a lot
+                      more features.
                       <br />
                       <br />
                       I understand this may be frustrating for some of you as I
                       know how much you love Casemove, but I promise you that I
                       will still maintain a free version of Casemove that allows
-                      you to move items in the game.
+                      you to move items in the game. The new version of Casemove will still
+                      have it's source code available on GitHub. It won't have the same features that you're used to currently, 
+                      as many of these are too time consuming and expensive to maintain for free.
+                      <br />
+                      <br />
+                      Trade ups have been disabled in this version of Casemove and you will need to use Skinledger for this going forward.
                       <br />
                       <br />
                       Thanks for your understanding and if you have any
