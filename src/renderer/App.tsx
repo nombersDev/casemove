@@ -59,6 +59,7 @@ import LoginPage from './views/login/login';
 import OverviewPage from './views/overview/overview';
 import settingsPage from './views/settings/settings';
 import TradeupPage from './views/tradeUp/tradeUp';
+import { InfoModal } from './components/content/shared/infoModal';
 DocumentDownloadIcon;
 
 //{ name: 'Reports', href: '/reports', icon: DocumentDownloadIcon, current: false }
@@ -84,6 +85,7 @@ function AppContent() {
   SearchIcon;
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [currentSideMenuOption, setSideMenuOption] = useState(
     location.pathname
@@ -249,6 +251,7 @@ function AppContent() {
 
   return (
     <>
+      <InfoModal isOpen={isInfoModalOpen} setIsOpen={setIsInfoModalOpen} />
       <TradeResultModal />
       {settingsData.os != 'win32' ? '' : <TitleBarWindows />}
       <div
@@ -551,7 +554,7 @@ function AppContent() {
                   </span>
                 </button>
               ) : (
-                <div className='flex flex-col gap-3'>
+                <div className="flex flex-col gap-3">
                   <a href="https://discord.gg/n8QExYF7Qs" target="_blank">
                     <button
                       type="button"
