@@ -18,22 +18,8 @@ export function InfoModal({
     setIsOpen(false);
   }
 
-  function openModal() {
-    setIsOpen(true);
-  }
-
   return (
     <>
-      <div className="fixed inset-0 flex items-center justify-center">
-        <button
-          type="button"
-          onClick={openModal}
-          className="rounded-md bg-black/20 px-4 py-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
-        >
-          Open dialog
-        </button>
-      </div>
-
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={closeModal}>
           <Transition.Child
@@ -45,7 +31,7 @@ export function InfoModal({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black/25" />
+            <div className="fixed inset-0 bg-black opacity-25" />
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
@@ -62,12 +48,12 @@ export function InfoModal({
                 <Dialog.Panel className="w-full max-w-md transform overflow-hidden bg-dark-level-two p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900"
+                    className="text-lg font-medium leading-6 text-dark-white"
                   >
                     The future of Casemove
                   </Dialog.Title>
                   <div className="mt-2">
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-300">
                       Casemove is still in development, however, this version of
                       Casemove will no longer receive any updates unless it
                       breaks completely. This also means that you won&apos;t be
@@ -93,31 +79,30 @@ export function InfoModal({
                     </p>
                   </div>
 
-                  <div className="mt-4">
-                    <a href="https://skinledger.com">
+                  <div className="mt-4 flex gap-2">
+                    <a href="https://skinledger.com" target="_blank">
                       <button
                         type="button"
-                        className="inline-flex justify-center border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                        onClick={closeModal}
+                        className="focus:bg-indigo-700 group relative w-full flex justify-center py-2 px-4 ml-3 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 "
                       >
-                        Check out skinledger
+                        Skinledger
                       </button>
                     </a>
-                    <a href="https://discord.gg/n8QExYF7Qs">
+
+                    <a href="https://discord.gg/n8QExYF7Qs" target="_blank">
                       <button
                         type="button"
-                        className="inline-flex justify-center border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                        onClick={closeModal}
+                        className="focus:bg-indigo-700 group relative w-full flex justify-center py-2 px-4 ml-3 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 "
                       >
-                        Join the discord
+                        Discord
                       </button>
                     </a>
                     <button
                       type="button"
-                      className="inline-flex justify-center border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      className="focus:bg-indigo-700 group relative w-full flex justify-center py-2 px-4 ml-3 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 "
                       onClick={closeModal}
                     >
-                      Got it, thanks!
+                      Close modal
                     </button>
                   </div>
                 </Dialog.Panel>

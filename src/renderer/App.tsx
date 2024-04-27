@@ -15,7 +15,7 @@ import {
   SelectorIcon,
   UploadIcon,
 } from '@heroicons/react/solid';
-import { Fragment, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Link,
@@ -98,6 +98,19 @@ function AppContent() {
     () => ({ getToMoveContext, setToMoveContext }),
     [getToMoveContext, setToMoveContext]
   );
+
+  const handleInfo = async () => {
+    const key = 'hasSeenInfoModal';
+    const value = await window.electron.store.get(key);
+    if (!value) {
+      setIsInfoModalOpen(true);
+      window.electron.store.set(key, true);
+    }
+  };
+
+  useEffect(() => {
+    handleInfo();
+  }, []);
 
   // Redux user details
 
@@ -585,6 +598,15 @@ function AppContent() {
                       <span className="mr-3">Join the discord</span>
                     </button>
                   </a>
+                  <div className="flex items-center justify-center">
+                    <button
+                      type="button"
+                      onClick={() => setIsInfoModalOpen(true)}
+                      className="focus:bg-indigo-700 group relative w-full flex justify-center py-2  border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 "
+                    >
+                      Casemove's future
+                    </button>
+                  </div>
                   {/* <a href="https://skinledger.com" target="_blank">
                     <button
                       type="button"
