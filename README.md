@@ -98,7 +98,6 @@ As with anything, It's important to know that the using this software is distrib
 Casemove was created by Nombers.
 
 - Steam: https://steamcommunity.com/id/realNombers/
-- Reddit: https://www.reddit.com/user/nubbiners
 - Discord: Nombers#1046
 ----
 
@@ -112,12 +111,4 @@ I've built the app using [NVM](https://github.com/nvm-sh/nvm) with node version 
 
 ## License
 
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License  along with this program.  If not, see http://www.gnu.org/licenses/.
-
-
-<!--- Frycus will never know this is here ---> 
-
+Please view the license section for more details. 
