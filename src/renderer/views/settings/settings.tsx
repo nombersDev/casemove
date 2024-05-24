@@ -1,37 +1,39 @@
-import { Fragment, useState } from 'react';
 import { Listbox, Switch, Transition } from '@headlessui/react';
+import { LockClosedIcon } from '@heroicons/react/outline';
+import { CheckIcon, SelectorIcon } from '@heroicons/react/solid';
+import { Fragment, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import ColumnsDropDown from 'renderer/components/content/shared/dropdownRows';
+import { classNames } from 'renderer/components/content/shared/filters/inventoryFunctions';
+import { DispatchIPC } from 'renderer/functionsClasses/rendererCommands/admin';
 import {
   setCurrencyValue,
   setDevmode,
-  setFastMove,
-  setSourceValue,
   setSteamLoginShow,
 } from 'renderer/store/actions/settings';
-import { CheckIcon, SelectorIcon } from '@heroicons/react/solid';
-import { classNames } from 'renderer/components/content/shared/filters/inventoryFunctions';
-import ColumnsDropDown from 'renderer/components/content/shared/dropdownRows';
-import { DispatchIPC } from 'renderer/functionsClasses/rendererCommands/admin';
 
 const sources = [
   {
     id: 1,
     name: 'Steam Community Market',
     title: 'steam_listing',
+    isLocked: false,
     avatar: 'https://steamcommunity.com/favicon.ico',
   },
   {
     id: 2,
     name: 'Buff 163',
     title: 'buff163',
+    isLocked: true,
     avatar:
       'https://g.fp.ps.netease.com/market/file/59b156975e6027bce06e8f6ceTyFGdsj',
   },
   {
     id: 3,
-    name: 'Skinport',
-    title: 'skinport',
-    avatar: 'https://skinport.com/static/favicon.ico',
+    name: 'Float ',
+    title: 'float',
+    isLocked: true,
+    avatar: 'https://csfloat.com/assets/n-mini-logo.png',
   },
 ];
 const currencyCode = [
@@ -182,7 +184,6 @@ export default function settingsPage() {
   const dispatch = useDispatch();
   const settingsData = useSelector((state: any) => state.settingsReducer);
 
-  
   // Fastmove
   async function updateShowSteamLogin() {
     const correctValue = !(await window.electron.store.get('steamLogin'));
@@ -190,16 +191,11 @@ export default function settingsPage() {
     await window.electron.store.set('steamLogin', correctValue);
     dispatch(setSteamLoginShow(correctValue));
   }
-  const [showSteamLogin, setShowSteamLogin] = useState(settingsData.steamLoginShow);
+  const [showSteamLogin, setShowSteamLogin] = useState(
+    settingsData.steamLoginShow
+  );
 
   // Fastmove
-  async function updateFastMove() {
-    const correctValue = !(await window.electron.store.get('fastmove'));
-    setFastMoveStatus(correctValue);
-    await window.electron.store.set('fastmove', correctValue);
-    dispatch(setFastMove(correctValue));
-  }
-  const [fastMoveStatus, setFastMoveStatus] = useState(settingsData.fastMove);
 
   // Dark mode
   async function updateDevMode() {
@@ -210,26 +206,15 @@ export default function settingsPage() {
   }
   const [devModeStatus, setDevModeStatus] = useState(settingsData.devmode);
 
-
   // Pricing - currency
   async function updateCurrency(valueToSet) {
     setCurrency(valueToSet);
     dispatch(setCurrencyValue(valueToSet));
     window.electron.store.set('pricing.currency', valueToSet);
-    const IPCClass = new DispatchIPC(dispatch)
-    IPCClass.run(IPCClass.buildingObject.currency)
+    const IPCClass = new DispatchIPC(dispatch);
+    IPCClass.run(IPCClass.buildingObject.currency);
   }
   const [currency, setCurrency] = useState(settingsData.currency);
-
-  // Pricing - source
-  async function updateSource(valueToSet) {
-
-    setSource(valueToSet);
-    dispatch(setSourceValue(valueToSet));
-    window.electron.store.set('pricing.source', valueToSet);
-    window.electron.ipcRenderer.refreshInventory();
-  }
-  const [source, setSource] = useState(settingsData.source);
 
   return (
     <>
@@ -261,29 +246,28 @@ export default function settingsPage() {
                       {/* Description list with inline editing */}
                       <div className="divide-y divide-gray-200">
                         <div className="">
-                        <h3 className="text-lg pt-5 leading-6 font-medium text-gray-900 dark:text-dark-white">
-                                General settings
-                              </h3>
-                              <p className="max-w-2xl text-sm text-gray-500">
-                                Toggles the general application settings
-                              </p>
+                          <h3 className="text-lg pt-5 leading-6 font-medium text-gray-900 dark:text-dark-white">
+                            General settings
+                          </h3>
+                          <p className="max-w-2xl text-sm text-gray-500">
+                            Toggles the general application settings
+                          </p>
                           <dl className="divide-y divide-gray-200 dark:divide-opacity-50">
-
-                            
-                          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-                            <dt className="text-sm font-medium text-gray-900 dark:text-dark-white">
+                            <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+                              <dt className="text-sm font-medium text-gray-900 dark:text-dark-white">
                                 Show close popup <br />
                                 <span className="text-gray-400">
                                   {' '}
-                                  Shows a popup when you login and steam is open to close it.
+                                  Shows a popup when you login and steam is open
+                                  to close it.
                                 </span>
                               </dt>
-                             
+
                               <dd className="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                 <span className="flex-grow"></span>
                                 <span className="flex items-center ml-4 flex-shrink-0">
                                   <Switch
-                                     checked={showSteamLogin}
+                                    checked={showSteamLogin}
                                     onChange={() => updateShowSteamLogin()}
                                     className={classNames(
                                       showSteamLogin
@@ -325,7 +309,7 @@ export default function settingsPage() {
                                       </span>
                                       <span
                                         className={classNames(
-                                          fastMoveStatus
+                                          showSteamLogin
                                             ? 'opacity-100 ease-in duration-200'
                                             : 'opacity-0 ease-out duration-100',
                                           'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity'
@@ -346,32 +330,35 @@ export default function settingsPage() {
                               </dd>
                             </div>
                             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-                            
                               <dt className="text-sm font-medium text-gray-900 dark:text-dark-white">
                                 Fastmove <br />
                                 <span className="text-gray-400">
                                   {' '}
-                                  Increases the speed, moving might fail more often.
+                                  Increases the speed, moving might fail more
+                                  often.
                                 </span>
                               </dt>
                               <dd className="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                 <span className="flex-grow"></span>
                                 <span className="flex items-center ml-4 flex-shrink-0">
+                                  <p className="text-dark-white">
+                                    Skinledger only
+                                  </p>
+                                  <LockClosedIcon className="h-5 w-5 text-dark-white" />
                                   <Switch
                                     checked={window.electron.store.get(
                                       'fastmove'
                                     )}
-                                    onChange={() => updateFastMove()}
                                     className={classNames(
-                                      fastMoveStatus
+                                      false
                                         ? 'bg-indigo-600 dark:bg-indigo-700'
                                         : 'bg-gray-200',
-                                      'relative inline-flex mr-3 flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none'
+                                      'relative inline-flex mr-3 opacity-50 flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none'
                                     )}
                                   >
                                     <span
                                       className={classNames(
-                                        fastMoveStatus
+                                        false
                                           ? 'translate-x-5'
                                           : 'translate-x-0',
                                         'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
@@ -379,7 +366,7 @@ export default function settingsPage() {
                                     >
                                       <span
                                         className={classNames(
-                                          fastMoveStatus
+                                          false
                                             ? 'opacity-0 ease-out duration-100'
                                             : 'opacity-100 ease-in duration-200',
                                           'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity'
@@ -402,7 +389,7 @@ export default function settingsPage() {
                                       </span>
                                       <span
                                         className={classNames(
-                                          fastMoveStatus
+                                          false
                                             ? 'opacity-100 ease-in duration-200'
                                             : 'opacity-0 ease-out duration-100',
                                           'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity'
@@ -423,7 +410,6 @@ export default function settingsPage() {
                               </dd>
                             </div>
                             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-
                               <dt className="text-sm font-medium text-gray-900 dark:text-dark-white">
                                 Dev mode <br />
                                 <span className="text-gray-400">
@@ -498,9 +484,8 @@ export default function settingsPage() {
                               </dd>
                             </div>
                             <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-
                               <dt className="text-sm font-medium text-gray-900 dark:text-dark-white">
-                              Columns <br />
+                                Columns <br />
                                 <span className="text-gray-400">
                                   {' '}
                                   Select which columns to display
@@ -538,8 +523,14 @@ export default function settingsPage() {
                                 <span className="flex-grow"></span>
                                 <span className="flex items-center ml-4 flex-shrink-0">
                                   <Listbox
-                                    value={source}
-                                    onChange={(e) => updateSource(e)}
+                                    value={{
+                                      id: 1,
+                                      name: 'Steam Community Market',
+                                      title: 'steam_listing',
+                                      isLocked: false,
+                                      avatar:
+                                        'https://steamcommunity.com/favicon.ico',
+                                    }}
                                   >
                                     {({ open }) => (
                                       <>
@@ -547,12 +538,14 @@ export default function settingsPage() {
                                           <Listbox.Button className="relative w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:bg-dark-level-one dark:text-dark-white focus:border-indigo-500 sm:text-sm">
                                             <span className="flex items-center">
                                               <img
-                                                src={source?.avatar}
+                                                src={
+                                                  'https://steamcommunity.com/favicon.ico'
+                                                }
                                                 alt=""
                                                 className="flex-shrink-0 h-6 w-6 rounded-full"
                                               />
                                               <span className="ml-3 block truncate">
-                                                {source?.name}
+                                                Steam Community Market
                                               </span>
                                             </span>
                                             <span className="ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
@@ -571,9 +564,9 @@ export default function settingsPage() {
                                             leaveTo="opacity-0"
                                           >
                                             <Listbox.Options className="absolute z-10 mt-1 w-full bg-white dark:bg-dark-level-three shadow-lg max-h-56 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                                              {sources.map((person) => (
+                                              {sources.map((source) => (
                                                 <Listbox.Option
-                                                  key={person.id}
+                                                  key={source.id}
                                                   className={({ active }) =>
                                                     classNames(
                                                       active
@@ -582,13 +575,23 @@ export default function settingsPage() {
                                                       'cursor-default select-none relative py-2 pl-3 pr-9'
                                                     )
                                                   }
-                                                  value={person}
+                                                  value={source}
                                                 >
                                                   {({ selected, active }) => (
                                                     <>
-                                                      <div className="flex items-center">
+                                                      <div
+                                                        className={classNames(
+                                                          'flex items-center',
+                                                          source.isLocked
+                                                            ? 'opacity-50'
+                                                            : ''
+                                                        )}
+                                                      >
+                                                        {source.isLocked ? (
+                                                          <LockClosedIcon className="h-5 w-5 mr-2" />
+                                                        ) : null}
                                                         <img
-                                                          src={person.avatar}
+                                                          src={source.avatar}
                                                           alt=""
                                                           className="flex-shrink-0 h-6 w-6 rounded-full"
                                                         />
@@ -600,8 +603,13 @@ export default function settingsPage() {
                                                             'ml-3 block truncate'
                                                           )}
                                                         >
-                                                          {person.name}
+                                                          {source.name}
                                                         </span>
+                                                        {source.isLocked ? (
+                                                          <span className="text-xs text-gray-400 ml-2">
+                                                            Skinledger
+                                                          </span>
+                                                        ) : null}
                                                       </div>
 
                                                       {selected ? (
@@ -663,7 +671,6 @@ export default function settingsPage() {
                             </div>
                           </dl>
                         </div>
-
                       </div>
                     </div>
                   </div>

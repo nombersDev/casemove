@@ -56,10 +56,8 @@ export function InfoModal({
                     <p className="text-sm text-gray-300">
                       Casemove is still in development, however, this version of
                       Casemove will no longer receive any updates unless it
-                      breaks completely. This also means that you after adding
-                      in the latest items with this update, this version of
-                      Casemove will no longer get future updates and will break
-                      eventually.
+                      breaks completely. This version will be replaced by a new
+                      version with a new code base in the future.
                       <br />
                       <br />
                       You can join the free beta for Skinledger which is
@@ -70,12 +68,16 @@ export function InfoModal({
                       I understand this may be frustrating for some of you as I
                       know how much you love Casemove, but I promise you that I
                       will still maintain a free version of Casemove that allows
-                      you to move items in the game. The new version of Casemove will still
-                      have it's source code available on GitHub. It won't have the same features that you're used to currently, 
-                      as many of these are too time consuming and expensive to maintain for free.
+                      you to move items in the game. The new version of Casemove
+                      will still have it's source code available on GitHub. It
+                      won't have the same features that you're used to
+                      currently, as many of these are too time consuming and
+                      expensive to maintain for free.
                       <br />
                       <br />
-                      Trade ups have been disabled in this version of Casemove and you will need to use Skinledger for this going forward.
+                      Trade ups, buff pricing and fastmove have all been
+                      disabled in this version of Casemove and you will need to
+                      use Skinledger for this going forward.
                       <br />
                       <br />
                       Thanks for your understanding and if you have any

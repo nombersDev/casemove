@@ -171,8 +171,6 @@ function AppContent() {
       StoreClass.run(StoreClass.buildingObject.os);
       StoreClass.run(StoreClass.buildingObject.columns);
       StoreClass.run(StoreClass.buildingObject.devmode);
-      StoreClass.run(StoreClass.buildingObject.fastmove);
-      StoreClass.run(StoreClass.buildingObject.source);
       StoreClass.run(StoreClass.buildingObject.locale);
       StoreClass.run(StoreClass.buildingObject.steamLoginShow);
     }

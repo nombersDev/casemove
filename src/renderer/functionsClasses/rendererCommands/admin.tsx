@@ -3,11 +3,9 @@ import {
   setCurrencyRate,
   setCurrencyValue,
   setDevmode,
-  setFastMove,
   setLocale,
   setOS,
-  setSourceValue,
-  setSteamLoginShow,
+  setSteamLoginShow
 } from 'renderer/store/actions/settings';
 import {
   DispatchIPCBuildingObject,
@@ -36,10 +34,7 @@ export class IPCCommunication {
 export class DispatchStore extends IPCCommunication {
   dispatch: Function;
   buildingObject: DispatchStoreHandleBuildingOptionsClass = {
-    source: {
-      name: 'pricing.source',
-      action: setSourceValue,
-    },
+    
     locale: {
       name: 'locale',
       action: setLocale
@@ -55,10 +50,6 @@ export class DispatchStore extends IPCCommunication {
     devmode: {
       name: 'devmode.value',
       action: setDevmode
-    },
-    fastmove: {
-      name: 'fastmove',
-      action: setFastMove
     },
     currency: {
       name: 'currency',
