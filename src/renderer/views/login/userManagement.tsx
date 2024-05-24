@@ -3,14 +3,18 @@ import { useState } from 'react';
 import { classNames } from 'renderer/components/content/shared/filters/inventoryFunctions';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
-export default function UserGrid({ clickOnProfile, deleteUser,  runDeleteUser }) {
+export default function UserGrid({
+  clickOnProfile,
+  deleteUser,
+  runDeleteUser,
+}) {
   const [hasRun, setHasRun] = useState(false);
   const [getUsers, setUsers] = useState([] as any);
 
   // The brain
   async function updateFunction() {
     let finalList = [] as any;
-    let seenValues = [] as any
+    let seenValues = [] as any;
 
     // Get the account details
     let doUpdate = await window.electron.ipcRenderer.getAccountDetails();
@@ -21,14 +25,14 @@ export default function UserGrid({ clickOnProfile, deleteUser,  runDeleteUser })
     // Get the order of the account details
     let valueToUse = [] as any;
     await window.electron.store.get('accountKeyList').then((returnValue) => {
-      valueToUse = returnValue
+      valueToUse = returnValue;
     });
 
     // Conditional logic
     if (valueToUse != undefined) {
-      valueToUse.forEach(element => {
+      valueToUse.forEach((element) => {
         if (seenValues.includes(element) == false) {
-          seenValues.push(element)
+          seenValues.push(element);
         }
       });
       for (const [key, value] of Object.entries(doUpdate)) {
@@ -38,14 +42,13 @@ export default function UserGrid({ clickOnProfile, deleteUser,  runDeleteUser })
           finalList.push(userObject);
         }
       }
-      seenValues.reverse()
-      seenValues.forEach(element => {
+      seenValues.reverse();
+      seenValues.forEach((element) => {
         if (doUpdate[element] != undefined) {
           let userObject = doUpdate[element] as any;
           userObject['username'] = element;
-          finalList.splice(0, 0, userObject)
+          finalList.splice(0, 0, userObject);
         }
-
       });
     } else {
       for (const [key, value] of Object.entries(doUpdate)) {
@@ -55,8 +58,7 @@ export default function UserGrid({ clickOnProfile, deleteUser,  runDeleteUser })
       }
     }
     // Apply the account details
-    setUsers(finalList)
-
+    setUsers(finalList);
   }
   // Run brain only once
   if (hasRun == false) {
@@ -70,8 +72,8 @@ export default function UserGrid({ clickOnProfile, deleteUser,  runDeleteUser })
     updateFunction();
   }
   if (deleteUser) {
-    updateFunction()
-    runDeleteUser()
+    updateFunction();
+    runDeleteUser();
   }
 
   // Drag n drop features
@@ -81,20 +83,21 @@ export default function UserGrid({ clickOnProfile, deleteUser,  runDeleteUser })
     const items = Array.from(getUsers);
 
     // Store change locally and in the settings
-    window.electron.ipcRenderer.setAccountPosition(result.draggableId, result.destination.index)
+    window.electron.ipcRenderer.setAccountPosition(
+      result.draggableId,
+      result.destination.index
+    );
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
     setUsers(items);
 
     // Storex for next session
     const orderToStore = [] as any;
-    items.forEach(element => {
-      let e = element as any
-      orderToStore.push(e.username)
-
+    items.forEach((element) => {
+      let e = element as any;
+      orderToStore.push(e.username);
     });
-    await window.electron.store.set('accountKeyList', orderToStore)
-
+    await window.electron.store.set('accountKeyList', orderToStore);
   }
 
   return (
@@ -103,7 +106,11 @@ export default function UserGrid({ clickOnProfile, deleteUser,  runDeleteUser })
         <DragDropContext onDragEnd={handleOnDragEnd}>
           <Droppable droppableId="characters">
             {(provided) => (
-              <ul className="characters" {...provided.droppableProps} ref={provided.innerRef}>
+              <ul
+                className="characters"
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
                 {getUsers.length == 0 ? (
                   <li
                     className={classNames(
@@ -129,58 +136,69 @@ export default function UserGrid({ clickOnProfile, deleteUser,  runDeleteUser })
                     </div>
                   </li>
                 ) : (
-                  getUsers.map((person, index) => (
+                  getUsers.slice(0, 1).map((person, index) => (
                     <Draggable
                       key={person.username}
                       draggableId={person.username}
                       index={index}
                     >
                       {(provided) => (
-                      <li
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className={classNames(
-                          index == 0 ? '' : 'mt-5',
-                          'relative rounded-lg border dark:border-opacity-0 dark:border-none dark:bg-dark-level-four border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"'
-                        )}
-                      >
-                        <div className="flex-shrink-0">
-                          <img
-                            className="h-10 w-10 rounded-full"
-                            src={person.imageURL}
-                            alt=""
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 dark:text-dark-white">
-                            {person.displayName}
-                          </p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                            {person.username}
-                          </p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => clickOnProfile([person.username, person.refreshToken])}
-                          className="inline-flex items-center dark:text-dark-white p-1 border border-transparent rounded-full hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-green-600 transform hover:-translate-y-1 hover:scale-110"
-                        >
-                          <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => removeUsername(person.username)}
+                        <li
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
                           className={classNames(
-                            'inline-flex items-center p-1 border border-transparent rounded-full dark:text-dark-white hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-red-600 transform hover:-translate-y-1 hover:scale-110'
+                            index == 0 ? '' : 'mt-5',
+                            'relative rounded-lg border dark:border-opacity-0 dark:border-none dark:bg-dark-level-four border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"'
                           )}
                         >
-                          <TrashIcon className="h-5 w-5" aria-hidden="true" />
-                        </button>
-                      </li>
+                          <div className="flex-shrink-0">
+                            <img
+                              className="h-10 w-10 rounded-full"
+                              src={person.imageURL}
+                              alt=""
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 dark:text-dark-white">
+                              {person.displayName}
+                            </p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                              {person.username}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              clickOnProfile([
+                                person.username,
+                                person.refreshToken,
+                              ])
+                            }
+                            className="inline-flex items-center dark:text-dark-white p-1 border border-transparent rounded-full hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-green-600 transform hover:-translate-y-1 hover:scale-110"
+                          >
+                            <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeUsername(person.username)}
+                            className={classNames(
+                              'inline-flex items-center p-1 border border-transparent rounded-full dark:text-dark-white hover:shadow-sm text-black hover:bg-gray-50 transition duration-500 ease-in-out hover:text-white hover:bg-red-600 transform hover:-translate-y-1 hover:scale-110'
+                            )}
+                          >
+                            <TrashIcon className="h-5 w-5" aria-hidden="true" />
+                          </button>
+                        </li>
                       )}
                     </Draggable>
                   ))
                 )}
+                {getUsers.length >= 1 ? (
+                  <p className="text-xs text-gray-400 text-center pt-5">
+                    Storing more than one account is no longer supported in
+                    Casemove. Please use Skinledger for this.
+                  </p>
+                ) : null}
                 {provided.placeholder}
               </ul>
             )}

@@ -15,6 +15,7 @@ import {
   moveFromClearAll,
   moveFromReset,
 } from 'renderer/store/actions/moveFromActions';
+import { Link } from 'react-router-dom';
 
 export default function MoveModal() {
   const waitTime = 100;
@@ -23,7 +24,6 @@ export default function MoveModal() {
   const [seenStorage, setStorage] = useState('');
   const dispatch = useDispatch();
   const modalData = useSelector((state: any) => state.modalMoveReducer);
-  const settingsData = useSelector((state: any) => state.settingsReducer);
   async function cancelMe() {
     window.electron.ipcRenderer.refreshInventory();
     dispatch(closeMoveModal());
@@ -40,20 +40,19 @@ export default function MoveModal() {
     dispatch(moveModalResetPayload());
   }
 
-  const fastMode = settingsData.fastMove;
+  const fastMode = false;
 
   async function runModal() {
     if (modalData.moveOpen) {
       if (modalData.doCancel.includes(modalData.modalPayload['key']) == false) {
         if (modalData.modalPayload['type'] == 'to') {
-
-          if (fastMode  && modalData.query.length > 1) {
+          if (fastMode && modalData.query.length > 1) {
             window.electron.ipcRenderer.moveToStorageUnit(
               modalData.modalPayload['storageID'],
               modalData.modalPayload['itemID'],
               true
             );
-            await new Promise(r => setTimeout(r, waitTime));
+            await new Promise((r) => setTimeout(r, waitTime));
           } else {
             try {
               await window.electron.ipcRenderer.moveToStorageUnit(
@@ -73,26 +72,23 @@ export default function MoveModal() {
         }
         if (modalData.modalPayload['type'] == 'from') {
           if (fastMode) {
-
             window.electron.ipcRenderer.moveFromStorageUnit(
               modalData.modalPayload['storageID'],
               modalData.modalPayload['itemID'],
               true
             );
-            await new Promise(r => setTimeout(r, waitTime));
-
+            await new Promise((r) => setTimeout(r, waitTime));
           } else {
             try {
               await window.electron.ipcRenderer.moveFromStorageUnit(
-               modalData.modalPayload['storageID'],
-               modalData.modalPayload['itemID'],
-               false
-             );
-             // await new Promise(r => setTimeout(r, waitTime));
-           } catch {
-             dispatch(moveModalAddToFail());
-           }
-
+                modalData.modalPayload['storageID'],
+                modalData.modalPayload['itemID'],
+                false
+              );
+              // await new Promise(r => setTimeout(r, waitTime));
+            } catch {
+              dispatch(moveModalAddToFail());
+            }
           }
 
           dispatch(moveModalUpdate());
@@ -100,7 +96,6 @@ export default function MoveModal() {
         if (modalData.modalPayload['isLast']) {
           window.electron.ipcRenderer.refreshInventory();
         }
-
       }
     }
   }
@@ -180,7 +175,23 @@ export default function MoveModal() {
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
                       Please wait while the app moves your items.
-                      {fastMode == false ? ' \nWant to speed this up? Enable fastmove in the settings.': ''}
+                      {fastMode == false ? (
+                        <p>
+                          Want to speed up the process? Use fastmove in{' '}
+                          <Link
+                            to={{
+                              pathname: "https://skinledger.com",
+                            }}
+                            target="_blank"
+                          >
+                            {' '}
+                            Skinledger
+                          </Link>{' '}
+                          for faster moving.
+                        </p>
+                      ) : (
+                        ''
+                      )}
                     </p>
 
                     {modalData.totalFailed == 0 ? (
@@ -194,7 +205,6 @@ export default function MoveModal() {
                 </div>
               </div>
 
-
               <div className="mt-5 sm:mt-6">
                 <button
                   type="button"
@@ -205,20 +215,13 @@ export default function MoveModal() {
                 </button>
               </div>
               <div className="flex flex-wrap content-center items-center justify-center mr-3 mt-2 text-gray-400 dark:text-dark-white text-xs font-medium uppercase tracking-wide">
-
-          {/* This element is to trick the browser into centering the modal contents.
+                {/* This element is to trick the browser into centering the modal contents.
             <div>
               ENABLE FAST MODE
             </div> */}
-
-
-
-
-          </div>
+              </div>
             </div>
-
           </Transition.Child>
-
         </div>
       </Dialog>
     </Transition.Root>

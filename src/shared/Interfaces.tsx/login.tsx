@@ -9,12 +9,10 @@ export type DispatchStoreHandleBuildingOptionsClass = {
 }
 
 export interface DispatchStoresettingsOptions {
-  source: string
   locale: string
   os: string
   columns: string
   devmode: string
-  fastmove: string
   currency: string
   steamLoginShow: string
 }

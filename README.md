@@ -1,18 +1,18 @@
-# CASEMOVE
+# CASEMOVE2.3.5
 
 *Casemove is an open-source desktop application that helps you easily move items out of and into Storage Units in Counter-Strike 2. The app utilizes the [Steam-user](https://github.com/DoctorMcKay/node-steam-user) & [Global Offensive](https://github.com/DoctorMcKay/node-globaloffensive) libraries to establish a connection with Steam and interact with the CS2 game coordinator.* 
 
 ----
 
-## Download Latest Version (Casemove 2.3.4)
+## Download Latest Version (Casemove 2.3.5)
 
 This is the latest stable version and can be downloaded from the [releases](https://github.com/nombersDev/casemove/releases) page, or directly from:
 
 
-- [Windows - (Casemove-2.3.4)](https://github.com/nombersDev/casemove/releases/download/v2.3.4/Casemove-Setup-2.3.4.exe)
-- [Mac - (Casemove-2.3.4)](https://github.com/nombersDev/casemove/releases/download/v2.3.4/Casemove-2.3.4.dmg)
-- [Mac ARM 64 (M1) - (Casemove-2.3.4)](https://github.com/nombersDev/casemove/releases/download/v2.3.4/Casemove-2.3.4-arm64.dmg)
-- [Linux Deb - (Casemove-2.3.4)](https://github.com/nombersDev/casemove/releases/download/v2.3.4/casemove_2.3.4_amd64.deb)
+- [Windows - (Casemove-2.3.5)](https://github.com/nombersDev/casemove/releases/download/v2.3.5/Casemove-Setup-2.3.5.exe)
+- [Mac - (Casemove-2.3.5)](https://github.com/nombersDev/casemove/releases/download/v2.3.5/Casemove-2.3.5.dmg)
+- [Mac ARM 64 (M1) - (Casemove-2.3.5)](https://github.com/nombersDev/casemove/releases/download/v2.3.5/Casemove-2.3.5-arm64.dmg)
+- [Linux Deb - (Casemove-2.3.5)](https://github.com/nombersDev/casemove/releases/download/v2.3.5/casemove_2.3.5_amd64.deb)
 
 ## Support
 
@@ -65,7 +65,7 @@ Furthermore, the libraries [Steam-user](https://github.com/DoctorMcKay/node-stea
 
 #### Does Casemove store any of my information?
 
-No, Casemove doesn’t store any information on your computer, except for when you ask it to remember your refresh token. As of Casemove 2.3.4, Casemove no longer stores your password when you login. The refresh token is stored safely using [safeStore](https://www.electronjs.org/docs/latest/api/safe-storage). Casemove doesn’t send any information to anyone outside of Steam.
+No, Casemove doesn’t store any information on your computer, except for when you ask it to remember your refresh token. As of Casemove 2.3.5, Casemove no longer stores your password when you login. The refresh token is stored safely using [safeStore](https://www.electronjs.org/docs/latest/api/safe-storage). Casemove doesn’t send any information to anyone outside of Steam.
 
 #### Why can't I just log in using the Steam Web authentication?
 
