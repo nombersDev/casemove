@@ -33,10 +33,8 @@ Features include:
   * Rename your storage units
   * Sort, search and filter your inventory
   * Sort, search and filter your storage units contents
-  * Download a file over your Storage units and inventory contents
-  * Switch between multiple accounts easily
   * Use your shared secret key instead of an auth code to log in 
-  * See your storage unit's and inventory value from Buff, Skinport & SCM in almost all currencies
+  * See your storage unit's and inventory value from SCM in almost all currencies
 
 
  
