@@ -94,14 +94,6 @@ Casemove was created by Nombers.
 - Discord: Nombers#1046
 ----
 
-## How to build
-
-The main instructions on how to build the application from source be found using the [Electron React Boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate) and it's [docs](https://electron-react-boilerplate.js.org/docs/building). 
-I've built the app using [NVM](https://github.com/nvm-sh/nvm) with node version 14.18.2. 
-
-
-----
-
 ## License
 
 Please view the license section for more details. 
