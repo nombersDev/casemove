@@ -1,18 +1,18 @@
-# CASEMOVE2.3.5
+# CASEMOVE 2.3.6
 
 *Casemove is an open-source desktop application that helps you easily move items out of and into Storage Units in Counter-Strike 2. The app utilizes the [Steam-user](https://github.com/DoctorMcKay/node-steam-user) & [Global Offensive](https://github.com/DoctorMcKay/node-globaloffensive) libraries to establish a connection with Steam and interact with the CS2 game coordinator.* 
 
 ----
 
-## Download Latest Version (Casemove 2.3.5)
+## Download Latest Version (Casemove 2.3.6)
 
 This is the latest stable version and can be downloaded from the [releases](https://github.com/nombersDev/casemove/releases) page, or directly from:
 
 
-- [Windows - (Casemove-2.3.5)](https://github.com/nombersDev/casemove/releases/download/v2.3.5/Casemove-Setup-2.3.5.exe)
-- [Mac - (Casemove-2.3.5)](https://github.com/nombersDev/casemove/releases/download/v2.3.5/Casemove-2.3.5.dmg)
-- [Mac ARM 64 (M1) - (Casemove-2.3.5)](https://github.com/nombersDev/casemove/releases/download/v2.3.5/Casemove-2.3.5-arm64.dmg)
-- [Linux Deb - (Casemove-2.3.5)](https://github.com/nombersDev/casemove/releases/download/v2.3.5/casemove_2.3.5_amd64.deb)
+- [Windows - (Casemove-2.3.6)](https://github.com/nombersDev/casemove/releases/download/v2.3.6/Casemove-Setup-2.3.6.exe)
+- [Mac - (Casemove-2.3.6)](https://github.com/nombersDev/casemove/releases/download/v2.3.6/Casemove-2.3.6.dmg)
+- [Mac ARM 64 (M1) - (Casemove-2.3.6)](https://github.com/nombersDev/casemove/releases/download/v2.3.6/Casemove-2.3.6-arm64.dmg)
+- [Linux Deb - (Casemove-2.3.6)](https://github.com/nombersDev/casemove/releases/download/v2.3.6/casemove_2.3.6_amd64.deb)
 
 ## Support
 
@@ -33,16 +33,8 @@ Features include:
   * Rename your storage units
   * Sort, search and filter your inventory
   * Sort, search and filter your storage units contents
-  * Download a file over your Storage units and inventory contents
-  * Switch between multiple accounts easily
   * Use your shared secret key instead of an auth code to log in 
-  * See your storage unit's and inventory value from Buff, Skinport & SCM in almost all currencies
-
-Trade up features:
-  * Complete trade up contracts from within the app! 
-  * See the possible outcomes from your trade up contract
-  * See an estimated EV of your trade up contract recipe
-
+ 
 
  
  
@@ -70,7 +62,7 @@ Furthermore, the libraries [Steam-user](https://github.com/DoctorMcKay/node-stea
 
 #### Does Casemove store any of my information?
 
-No, Casemove doesn’t store any information on your computer, except for when you ask it to remember your refresh token. As of Casemove 2.3.5, Casemove no longer stores your password when you login. The refresh token is stored safely using [safeStore](https://www.electronjs.org/docs/latest/api/safe-storage). Casemove doesn’t send any information to anyone outside of Steam.
+No, Casemove doesn’t store any information on your computer, except for when you ask it to remember your refresh token. As of Casemove 2.3.6, Casemove no longer stores your password when you login. The refresh token is stored safely using [safeStore](https://www.electronjs.org/docs/latest/api/safe-storage). Casemove doesn’t send any information to anyone outside of Steam.
 
 #### Why can't I just log in using the Steam Web authentication?
 
@@ -99,13 +91,6 @@ Casemove was created by Nombers.
 
 - Steam: https://steamcommunity.com/id/realNombers/
 - Discord: Nombers#1046
-----
-
-## How to build
-
-The main instructions on how to build the application from source be found using the [Electron React Boilerplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate) and it's [docs](https://electron-react-boilerplate.js.org/docs/building). 
-I've built the app using [NVM](https://github.com/nvm-sh/nvm) with node version 14.18.2. 
-
 
 ----
 

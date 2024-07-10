@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 import { Disclosure } from '@headlessui/react';
 import {
   ArchiveIcon,
-  DocumentDownloadIcon,
   FilterIcon,
   SaveAsIcon,
   SearchIcon,
@@ -16,7 +15,6 @@ import {
 import MoveModal from '../../shared/modals & notifcations/modalMove';
 import { moveModalQuerySet } from 'renderer/store/actions/modalMove actions';
 import PricingAmount from '../../shared/filters/pricingAmount';
-import { downloadReport } from 'renderer/functionsClasses/downloadReport';
 import { classNames } from '../../shared/filters/inventoryFunctions';
 
 import StorageFilterDisclosure from './storageFilterDisclosure';
@@ -168,27 +166,7 @@ function content() {
           </div>
           <div className="flex justify-end justify-items-end max-w-7xl px-4 sm:px-6 lg:px-8 ">
             <div className="flex items-center divide-x divide-gray-200">
-              <div className="pr-3">
-                <Link
-                  to=""
-                  type="button"
-                  onClick={() =>
-                    downloadReport(settingsData, pricesResult, inventoryFilter)
-                  }
-                  className={classNames(
-                    inventory.storageInventory.length == 0
-                      ? 'pointer-events-none border-gray-100'
-                      : 'hover:shadow-sm border-gray-200 ',
-                    'order-1 ml-3 inline-flex items-center px-4 py-2 border dark:bg-dark-level-three dark:border-none dark:border-opacity-0 dark:text-dark-white   text-sm font-medium rounded-md text-gray-500 bg-white hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0'
-                  )}
-                >
-                  <DocumentDownloadIcon
-                    className="mr-3 h-4 dark:text-dark-white w-4 text-gray-500"
-                    aria-hidden="true"
-                  />
-                  Download
-                </Link>
-              </div>
+             
               <div className="pl-3">
                 <PricingAmount
                   totalAmount={new Intl.NumberFormat(settingsData.locale, {

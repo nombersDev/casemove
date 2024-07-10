@@ -1,7 +1,6 @@
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { Disclosure } from '@headlessui/react';
 import {
-  DocumentDownloadIcon,
   FilterIcon,
   SearchIcon,
 } from '@heroicons/react/solid';
@@ -10,14 +9,12 @@ import {
   filterInventoryClearAll,
   inventoryFilterSetSearch,
 } from 'renderer/store/actions/filtersInventoryActions';
-import { classNames } from '../shared/filters/inventoryFunctions';
 import PricingAmount from '../shared/filters/pricingAmount';
 import MoveLeft from '../shared/filters/inventoryAmount';
 import AccountAmount from '../shared/filters/accountAmount';
 import { searchFilter } from 'renderer/functionsClasses/filters/search';
 import { ConvertPrices } from 'renderer/functionsClasses/prices';
 import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
-import { downloadReport } from 'renderer/functionsClasses/downloadReport';
 import InventoryFiltersDisclosure from './filtersDisclosure';
 import { addMajorsFilters } from 'renderer/functionsClasses/filters/filters';
 import { InventoryGetFilterManager } from './inventoryFilterSetup';
@@ -130,25 +127,7 @@ function content() {
           </div>
           <div className="flex justify-end justify-items-end max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex items-center divide-x divide-gray-200">
-              <div className="pr-3">
-                <Link
-                  to=""
-                  type="button"
-                  onClick={() => downloadReport(settingsData, pricesResult, inventoryToUse)}
-                  className={classNames(
-                    inventoryToUse.length == 0
-                      ? 'pointer-events-none border-gray-100'
-                      : 'hover:shadow-sm border-gray-200 ',
-                    'order-1 ml-3 inline-flex items-center px-4 py-2 border dark:bg-dark-level-three dark:border-none dark:border-opacity-0 dark:text-dark-white   text-sm font-medium rounded-md text-gray-500 bg-white hover:bg-gray-50 focus:outline-none focus:bg-gray-100 sm:order-0 sm:ml-0'
-                  )}
-                >
-                  <DocumentDownloadIcon
-                    className="mr-3 h-4 w-4 text-gray-500 dark:text-dark-white"
-                    aria-hidden="true"
-                  />
-                  Download
-                </Link>
-              </div>
+             
               <div className="pl-3">
                 <PricingAmount totalAmount={new Intl.NumberFormat(settingsData.locale, { style: 'currency', currency: settingsData.currency }).format(totalAmount)} />
               </div>
