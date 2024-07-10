@@ -1,4 +1,4 @@
-# CASEMOVE 2.3.6
+# CASEMOVE
 
 *Casemove is an open-source desktop application that helps you easily move items out of and into Storage Units in Counter-Strike 2. The app utilizes the [Steam-user](https://github.com/DoctorMcKay/node-steam-user) & [Global Offensive](https://github.com/DoctorMcKay/node-globaloffensive) libraries to establish a connection with Steam and interact with the CS2 game coordinator.* 
 
@@ -34,7 +34,8 @@ Features include:
   * Sort, search and filter your inventory
   * Sort, search and filter your storage units contents
   * Use your shared secret key instead of an auth code to log in 
- 
+  * See your storage unit's and inventory value from SCM in almost all currencies
+
 
  
  
@@ -92,7 +93,6 @@ Casemove was created by Nombers.
 - Steam: https://steamcommunity.com/id/realNombers/
 - Discord: Nombers#1046
 
-----
 
 ## License
 
