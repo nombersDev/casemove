@@ -13,7 +13,7 @@ async function getPricesBackup(cas) {
   cas.setPricing(pricesBackup);
 }
 async function getPrices(cas) {
-  const url = 'https://cdn.skinledger.com/casemove/prices.json';
+  const url = '';
   axios
     .get(url)
     .then(function (response) {

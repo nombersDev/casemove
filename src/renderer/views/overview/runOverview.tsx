@@ -4,35 +4,32 @@ import {
   ArchiveIcon,
   CollectionIcon,
   DatabaseIcon,
-  DownloadIcon,
   PresentationChartBarIcon,
   PresentationChartLineIcon,
   TagIcon,
 } from '@heroicons/react/solid';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  HashRouter as Router,
-  Route
-} from 'react-router-dom';
+import { HashRouter as Router, Route } from 'react-router-dom';
 import { ReducerManager } from 'renderer/functionsClasses/reducerManager';
 import { State } from 'renderer/interfaces/states';
 import { ConvertPrices, RequestPrices } from 'renderer/functionsClasses/prices';
-import { downloadReport } from 'renderer/functionsClasses/downloadReport';
 import { LoadButton } from 'renderer/components/content/loadStorageUnitsButton';
 import ListBoxOptions from './overviewOptionsDropdown';
-import { OverviewLeftCharts, OverviewRightCharts, OveviewBy } from 'renderer/variables/overviewOptions';
+import {
+  OverviewLeftCharts,
+  OverviewRightCharts,
+  OveviewBy,
+} from 'renderer/variables/overviewOptions';
 import RightGraph from './rightGraph';
 import LeftGraph from './leftGraph';
-
-
 
 function Content() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   let ReducerClass = new ReducerManager(useSelector);
   let currentState: State = ReducerClass.getStorage();
-  const userDetails = currentState.authReducer
-  const settingsData = currentState.settingsReducer
-  const inventory = currentState.inventoryReducer
+  const userDetails = currentState.authReducer;
+  const settingsData = currentState.settingsReducer;
+  const inventory = currentState.inventoryReducer;
   let hr = new Date().getHours();
   let goodMessage: string = 'Good Evening';
 
@@ -45,32 +42,35 @@ function Content() {
   } else if (hr >= 0 && hr <= 3) {
     goodMessage = 'Wassup';
   }
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  
-  let PricingRequest = new RequestPrices(dispatch, settingsData, currentState.pricingReducer)
-  PricingRequest.handleRequestArray(currentState.inventoryReducer.inventory)
-
-
+  let PricingRequest = new RequestPrices(
+    dispatch,
+    settingsData,
+    currentState.pricingReducer
+  );
+  PricingRequest.handleRequestArray(currentState.inventoryReducer.inventory);
 
   // Inventory prices
-  const PricingClass = new ConvertPrices(settingsData, currentState.pricingReducer)
-  let inventoryValue = 0
-  inventory.combinedInventory.forEach(element => {
-    const itemPrice = PricingClass.getPrice(element)
+  const PricingClass = new ConvertPrices(
+    settingsData,
+    currentState.pricingReducer
+  );
+  let inventoryValue = 0;
+  inventory.combinedInventory.forEach((element) => {
+    const itemPrice = PricingClass.getPrice(element);
     if (!isNaN(itemPrice)) {
-      inventoryValue += itemPrice * element.combined_QTY
+      inventoryValue += itemPrice * element.combined_QTY;
     }
   });
 
-  let storageUnitsValue = 0
-  inventory.storageInventory.forEach(element => {
-    const itemPrice = PricingClass.getPrice(element)
+  let storageUnitsValue = 0;
+  inventory.storageInventory.forEach((element) => {
+    const itemPrice = PricingClass.getPrice(element);
     if (!isNaN(itemPrice)) {
-      storageUnitsValue += itemPrice * element.combined_QTY
+      storageUnitsValue += itemPrice * element.combined_QTY;
     }
   });
-
 
   return (
     <>
@@ -137,26 +137,35 @@ function Content() {
                         </div>
                         <dl className="mt-6 flex flex-col sm:ml-3 sm:mt-1 sm:flex-row sm:flex-wrap">
                           <dd className="mt-3 flex items-center mb-2 text-sm text-gray-500 font-medium sm:mr-6 sm:mt-0 capitalize text-dark-white">
-                          <TagIcon
+                            <TagIcon
                               className="flex-shrink-0 mr-1.5 h-5 w- text-gray-400"
                               aria-hidden="true"
                             />
-                            
-                            <ListBoxOptions optionsObject={OveviewBy} keyToUse={'by'} />
+
+                            <ListBoxOptions
+                              optionsObject={OveviewBy}
+                              keyToUse={'by'}
+                            />
                           </dd>
                           <dd className="flex mb-2 items-center text-sm text-gray-500 font-medium capitalize sm:mr-6 text-dark-white">
                             <PresentationChartBarIcon
                               className="flex-shrink-0 mr-1.5 h-5 w- text-gray-400"
                               aria-hidden="true"
                             />
-                            <ListBoxOptions optionsObject={OverviewLeftCharts} keyToUse={'chartleft'} />
+                            <ListBoxOptions
+                              optionsObject={OverviewLeftCharts}
+                              keyToUse={'chartleft'}
+                            />
                           </dd>
                           <dd className="flex mb-2 items-center text-sm text-gray-500 font-medium capitalize sm:mr-3 text-dark-white">
                             <PresentationChartLineIcon
                               className="flex-shrink-0 mr-1.5 h-5 w-5  text-gray-400"
                               aria-hidden="true"
                             />
-                            <ListBoxOptions optionsObject={OverviewRightCharts} keyToUse={'chartRight'} />
+                            <ListBoxOptions
+                              optionsObject={OverviewRightCharts}
+                              keyToUse={'chartRight'}
+                            />
                           </dd>
                           <dt className="sr-only">Account status</dt>
                         </dl>
@@ -164,18 +173,6 @@ function Content() {
                     </div>
                   </div>
                   <div className="mt-6 flex space-x-3 md:mt-0 md:ml-4">
-                    <button
-                      onClick={() => downloadReport(settingsData, currentState.pricingReducer, [...inventory.combinedInventory, ...inventory.storageInventory])}
-                      className="inline-flex items-center px-4 py-2 shadow-sm text-sm font-medium rounded-md text-dark-white bg-dark-level-three hover:bg-dark-level-four"
-                    >
-                      {' '}
-                      <DownloadIcon
-                        className="flex-shrink-0 mr-1.5 h-5 w-5 text-dark-white"
-                        aria-hidden="true"
-                      />
-                      Download all
-                    </button>
-
                     <LoadButton />
                   </div>
                 </div>
@@ -253,7 +250,7 @@ function Content() {
                                 /{' '}
                                 {new Intl.NumberFormat('en-US').format(
                                   inventory.totalAccountItems -
-                                  inventory.inventory.length
+                                    inventory.inventory.length
                                 )}{' '}
                                 Items
                               </div>
@@ -303,7 +300,6 @@ function Content() {
                   </div>
                 </div>
               </div>
-
 
               {/* Activity table (small breakpoint and up) */}
               <div className="hidden sm:block">
