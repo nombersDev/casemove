@@ -598,9 +598,9 @@ function AppContent() {
                     <button
                       type="button"
                       onClick={() => setIsInfoModalOpen(true)}
-                      className="focus:bg-indigo-700 group relative w-full flex justify-center py-2  border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 "
+                      className="focus:bg-red-700 group relative w-full flex justify-center py-2  border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 "
                     >
-                      Casemove's future
+                      Deprecation notice
                     </button>
                   </div>
                   {/* <a href="https://skinledger.com" target="_blank">
