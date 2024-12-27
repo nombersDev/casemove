@@ -129,6 +129,7 @@
     ]
   },
   "devDependencies": {
+    "@electron/notarize": "^2.3.0",
     "@heroicons/react": "^1.0.5",
     "@pmmmwh/react-refresh-webpack-plugin": "0.5.1",
     "@svgr/core": "^6.2.0",

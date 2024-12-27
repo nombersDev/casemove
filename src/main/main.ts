@@ -33,6 +33,7 @@ import log from 'electron-log';
 import { autoUpdater } from 'electron-updater';
 import { emitterAccount } from '../emitters';
 import { flowLoginRegularQR } from './helpers/login/flowLoginRegularQR';
+import { WalletInterface } from '../renderer/interfaces/states';
 
 autoUpdater.logger = log;
 // @ts-ignore
@@ -398,7 +399,7 @@ emitterAccount.on(
         if (returnValue == undefined) {
           setValue(
             'pricing.currency',
-            currencyCodes?.[user?.wallet?.currency] || 'USD'
+            currencyCodes?.[user?.wallet?.currency ?? 1] || 'USD'
           );
         }
       });
@@ -424,11 +425,12 @@ emitterAccount.on(
                         currencyCodes?.[walletToSend?.currency];
                     }
                     const returnPackage: LoginCommandReturnPackage = {
+                      // @ts-ignore - logOnResult is not defined in the type
                       steamID: user.logOnResult.client_supplied_steamid,
                       displayName,
                       haveGCSession: csgo.haveGCSession,
                       csgoInventory: newReturnValue,
-                      walletToSend: walletToSend,
+                      walletToSend: walletToSend as unknown as WalletInterface,
                     };
 
                     startEvents(csgo, user);
@@ -436,6 +438,7 @@ emitterAccount.on(
                       storeUserAccount(
                         username,
                         displayName,
+                        // @ts-ignore - logOnResult is not defined in the type
                         user.logOnResult.client_supplied_steamid,
                         secretKey
                       );
@@ -473,7 +476,7 @@ emitterAccount.on(
 
       // Run the timeout
       let error = new Promise((resolve, _reject) => {
-        user.once('error', (error) => {
+        user.once('error', (error: any) => {
           if (error == 'Error: LoggedInElsewhere') {
             resolve('error');
           }
